@@ -1,0 +1,40 @@
+swagger: "2.0"
+info:
+  title: Tekton Hub
+  description: Service to get resource details
+  version: ""
+host: localhost:8000
+consumes:
+- application/json
+- application/xml
+- application/gob
+produces:
+- application/json
+- application/xml
+- application/gob
+paths:
+  /openapi.json:
+    get:
+      tags:
+      - api
+      summary: Download ./gen/http/openapi.json
+      operationId: api#/openapi.json
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - http
+  /resources:
+    get:
+      tags:
+      - api
+      summary: list api
+      description: Get all tasks and pipelines.
+      operationId: api#list
+      responses:
+        "200":
+          description: OK response.
+      schemes:
+      - http
