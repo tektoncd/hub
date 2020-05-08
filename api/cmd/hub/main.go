@@ -4,15 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"os/signal"
 	"strings"
 	"sync"
 
-	hub "github.com/tektoncd/hub/api"
-	api "github.com/tektoncd/hub/api/gen/api"
+	category "github.com/tektoncd/hub/api/gen/category"
+	app "github.com/tektoncd/hub/api/pkg/app"
+	hub "github.com/tektoncd/hub/api/pkg/service"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -26,30 +27,36 @@ func main() {
 		dbgF      = flag.Bool("debug", false, "Log request and response bodies")
 	)
 	flag.Parse()
-
-	// Setup logger. Replace logger with your own log package of choice.
 	var (
-		logger *log.Logger
+		api    *app.ApiConfig
+		logger *zap.SugaredLogger
+		err    error
 	)
 	{
-		logger = log.New(os.Stderr, "[hub] ", log.Ltime)
+		api, err = app.FromEnv()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "FATAL: failed to initialise: %s", err)
+			os.Exit(1)
+		}
+		defer api.Cleanup()
+		logger = api.Logger()
 	}
 
 	// Initialize the services.
 	var (
-		apiSvc api.Service
+		categorySvc category.Service
 	)
 	{
-		apiSvc = hub.NewAPI(logger)
+		categorySvc = hub.NewCategory(api.DB(), logger)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
-		apiEndpoints *api.Endpoints
+		categoryEndpoints *category.Endpoints
 	)
 	{
-		apiEndpoints = api.NewEndpoints(apiSvc)
+		categoryEndpoints = category.NewEndpoints(categorySvc)
 	}
 
 	// Create channel used by both the signal handler and server goroutines
@@ -89,7 +96,7 @@ func main() {
 			} else if u.Port() == "" {
 				u.Host += ":80"
 			}
-			handleHTTPServer(ctx, u, apiEndpoints, &wg, errc, logger, *dbgF)
+			handleHTTPServer(ctx, u, categoryEndpoints, &wg, errc, logger, *dbgF)
 		}
 
 	default:
@@ -97,11 +104,11 @@ func main() {
 	}
 
 	// Wait for signal.
-	logger.Printf("exiting (%v)", <-errc)
+	logger.Infof("exiting (%v)", <-errc)
 
 	// Send cancellation signal to the goroutines.
 	cancel()
 
 	wg.Wait()
-	logger.Println("exited")
+	logger.Info("exited")
 }
