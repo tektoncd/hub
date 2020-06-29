@@ -2,7 +2,7 @@ package hub
 
 import (
 	"context"
-	"log"
+	"go.uber.org/zap"
 
 	category "github.com/tektoncd/hub/api/gen/category"
 )
@@ -10,16 +10,16 @@ import (
 // category service example implementation.
 // The example methods log the requests and return zero values.
 type categorysrvc struct {
-	logger *log.Logger
+	logger *zap.SugaredLogger
 }
 
 // NewCategory returns the category service implementation.
-func NewCategory(logger *log.Logger) category.Service {
+func NewCategory(logger *zap.SugaredLogger) category.Service {
 	return &categorysrvc{logger}
 }
 
 // Get all Categories with their tags sorted by name
 func (s *categorysrvc) All(ctx context.Context) (res []*category.Category, err error) {
-	s.logger.Print("category.All")
+	s.logger.Info("category.All")
 	return
 }
