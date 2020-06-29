@@ -13,10 +13,10 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// The category service gives category details
+// The category service provides details about category
 type Service interface {
-	// Get all Categories with their tags sorted by name
-	All(context.Context) (res []*Category, err error)
+	// List all categories along with their tags sorted by name
+	List(context.Context) (res []*Category, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -27,21 +27,21 @@ const ServiceName = "category"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [1]string{"All"}
+var MethodNames = [1]string{"list"}
 
 type Category struct {
-	// unique id of category
+	// ID is the unique id of the category
 	ID uint
-	// name of category
+	// Name of category
 	Name string
-	// list of tag associated with category
+	// List of tags associated with the category
 	Tags []*Tag
 }
 
 type Tag struct {
-	// Id is the unique id of tags
+	// ID is the unique id of tag
 	ID uint
-	// name of tag
+	// Name of tag
 	Name string
 }
 

@@ -5,16 +5,21 @@ import (
 )
 
 var _ = Service("category", func() {
-	Description("The category service gives category details")
+	Description("The category service provides details about category")
+
+	HTTP(func() {
+		Path("/categories")
+	})
 
 	Error("internal-error", ErrorResult, "Internal Server Error")
 
-	//Method to get all categories with their tags
-	Method("All", func() {
-		Description("Get all Categories with their tags sorted by name")
+	Method("list", func() {
+		Description("List all categories along with their tags sorted by name")
 		Result(ArrayOf(Category))
+
 		HTTP(func() {
-			GET("/categories")
+			GET("/")
+
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
 		})

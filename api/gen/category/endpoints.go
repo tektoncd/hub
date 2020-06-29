@@ -15,25 +15,25 @@ import (
 
 // Endpoints wraps the "category" service endpoints.
 type Endpoints struct {
-	All goa.Endpoint
+	List goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "category" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		All: NewAllEndpoint(s),
+		List: NewListEndpoint(s),
 	}
 }
 
 // Use applies the given middleware to all the "category" service endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
-	e.All = m(e.All)
+	e.List = m(e.List)
 }
 
-// NewAllEndpoint returns an endpoint function that calls the method "All" of
+// NewListEndpoint returns an endpoint function that calls the method "list" of
 // service "category".
-func NewAllEndpoint(s Service) goa.Endpoint {
+func NewListEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		return s.All(ctx)
+		return s.List(ctx)
 	}
 }

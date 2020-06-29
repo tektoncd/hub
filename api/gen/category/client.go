@@ -15,20 +15,20 @@ import (
 
 // Client is the "category" service client.
 type Client struct {
-	AllEndpoint goa.Endpoint
+	ListEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "category" service client given the endpoints.
-func NewClient(all goa.Endpoint) *Client {
+func NewClient(list goa.Endpoint) *Client {
 	return &Client{
-		AllEndpoint: all,
+		ListEndpoint: list,
 	}
 }
 
-// All calls the "All" endpoint of the "category" service.
-func (c *Client) All(ctx context.Context) (res []*Category, err error) {
+// List calls the "list" endpoint of the "category" service.
+func (c *Client) List(ctx context.Context) (res []*Category, err error) {
 	var ires interface{}
-	ires, err = c.AllEndpoint(ctx, nil)
+	ires, err = c.ListEndpoint(ctx, nil)
 	if err != nil {
 		return
 	}

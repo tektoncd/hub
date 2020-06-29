@@ -2,36 +2,50 @@ package app
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
-	"strings"
 
 	// Blank for package side effect: loads postgres drivers
 	_ "github.com/lib/pq"
 )
 
-type Base interface {
+// Config defines methods on APIConfig
+type Config interface {
 	Environment() EnvMode
 	Logger() *zap.SugaredLogger
-	Databse() *Database
+	DB() *gorm.DB
 	Cleanup()
 }
 
-type Config interface {
-	Base
+// APIConfig defines the configuration a services requires
+type APIConfig struct {
+	mode   EnvMode
+	dbConf *Database
+	db     *gorm.DB
+	logger *zap.SugaredLogger
 }
 
+var _ Config = (*APIConfig)(nil)
+
+// EnvMode defines the mode the server is running in
 type EnvMode string
 
+// Types of EnvMode
 const (
 	Production  EnvMode = "production"
 	Development EnvMode = "development"
 	Test        EnvMode = "test"
 )
 
+// DBDialect defines dialect for db connection
+const DBDialect = "postgres"
+
+// Database Object defines db configuration fields
 type Database struct {
 	Host     string
 	Port     string
@@ -41,56 +55,58 @@ type Database struct {
 }
 
 func (db *Database) String() string {
-	return fmt.Sprintf(
-		"host=%s port=%s user=%s password=xxxxxx dbname=%s sslmode=disable",
-		db.Host, db.Port, db.User, db.Name)
+	return fmt.Sprintf("database=%s user=%s host=%s:%s", db.Name, db.User, db.Host, db.Port)
 }
 
+// ConnectionString returns the db connection string
 func (db *Database) ConnectionString() string {
 	return fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		db.Host, db.Port, db.User, db.Password, db.Name)
 }
 
-type BaseConfig struct {
-	mode   EnvMode
-	logger *zap.SugaredLogger
-	dbConf *Database
-	db     *gorm.DB
+// Environment returns the EnvMode server would be running
+func (ac *APIConfig) Environment() EnvMode {
+	return ac.mode
 }
 
-func (bc *BaseConfig) Environment() EnvMode {
-	return bc.mode
+// Database returns Database object which consist of db configurations
+func (ac *APIConfig) Database() *Database {
+	return ac.dbConf
 }
 
-func (bc *BaseConfig) Logger() *zap.SugaredLogger {
-	return bc.logger
+// DB returns gorm db object
+func (ac *APIConfig) DB() *gorm.DB {
+	return ac.db
 }
 
-func (bc *BaseConfig) Cleanup() {
-	bc.logger.Sync()
-	bc.db.Close()
+// Logger returns suggared logger object
+func (ac *APIConfig) Logger() *zap.SugaredLogger {
+	return ac.logger
 }
 
-func (bc *BaseConfig) Database() *Database {
-	return bc.dbConf
+// Cleanup flushes any buffered log entries & closes the db connection
+func (ac *APIConfig) Cleanup() {
+	ac.logger.Sync()
+	ac.db.Close()
 }
 
-func (bc *BaseConfig) DB() *gorm.DB {
-	return bc.db
+// FromEnv returns a APIConfig object consisting of db and logger.
+// Loads a .env.dev file in development mode
+// Looks for EnvMode and initialises instance of sugared Logger
+// Looks for database configuration among environment variables and connects to db
+func FromEnv() (*APIConfig, error) {
+	// load from .env.dev file for development but skip if not found
+	return FromEnvFile(".env.dev")
 }
 
-type ApiConfig struct {
-	*BaseConfig
-}
-type TestConfig struct {
-	*BaseConfig
-}
-
-func BaseConfigFromEnv() (*BaseConfig, error) {
-	// load from .env file but skip if not found
-	if err := godotenv.Load(); err != nil {
-		fmt.Fprintf(os.Stdout, "SKIP: loading .ApiConfig failed: %s", err)
+// FromEnv returns a APIConfig object consisting of db and logger.
+// Loads a .env.dev file in development mode
+// Looks for EnvMode and initialises instance of sugared Logger
+// Looks for database configuration among environment variables and connects to db
+func FromEnvFile(file string) (*APIConfig, error) {
+	if err := godotenv.Load(file); err != nil {
+		fmt.Fprintf(os.Stderr, "SKIP: loading env file %s failed: %s\n", file, err)
 	}
 	mode := Environment()
 	var err error
@@ -102,36 +118,39 @@ func BaseConfigFromEnv() (*BaseConfig, error) {
 
 	log.With("name", "app").Infof("in %q mode ", mode)
 
-	bc := &BaseConfig{mode: mode, logger: log}
-	if bc.dbConf, err = initDB(mode); err != nil {
+	ac := &APIConfig{mode: mode, logger: log}
+	if ac.dbConf, err = initDB(); err != nil {
 		log.Error(err, "failed to obtain database configuration")
 		return nil, err
 	}
-	bc.db, err = gorm.Open("postgres", bc.dbConf.ConnectionString())
+	ac.db, err = gorm.Open(DBDialect, ac.dbConf.ConnectionString())
 	if err != nil {
-		log.Error(err, "failed to establish database connection")
+		log.Errorf("failed to establish database connection: [%s]: %s", ac.dbConf, err)
 		return nil, err
 	}
-	log.Infof("Successfully connected to db %s", bc.dbConf)
-	return bc, nil
+	log.Infof("Successfully connected to [%s]", ac.dbConf)
+
+	return ac, nil
 }
 
-func FromEnv() (*ApiConfig, error) {
-	bc, err := BaseConfigFromEnv()
-	if err != nil {
-		return nil, err
+// env look for the input key to be defined as a environment variable
+// returns error if the key is not found
+func env(key string) (string, error) {
+	val, ok := os.LookupEnv(key)
+	if !ok {
+		return "", fmt.Errorf("NO %q environment variable defined", key)
 	}
-	ApiConfig := &ApiConfig{BaseConfig: bc}
-
-	return ApiConfig, nil
+	return val, nil
 }
 
+// Environment return EnvMode the Api server would be running in.
+// It looks for 'ENVIRONMENT' to be defined as environment variable and
+// if does not found it then set it as development
 func Environment() EnvMode {
 	mode := "development"
 	if val, ok := os.LookupEnv("ENVIRONMENT"); ok {
 		mode = val
 	}
-
 	switch strings.ToLower(mode) {
 	case "development":
 		return Development
@@ -142,7 +161,9 @@ func Environment() EnvMode {
 	}
 }
 
-func initDB(mode EnvMode) (*Database, error) {
+// initDB looks for db credentials in environment variables and returns as Database object
+// if it does not find a field then returns error
+func initDB() (*Database, error) {
 	var err error
 	db := &Database{}
 	if db.Host, err = env("POSTGRESQL_HOST"); err != nil {
@@ -163,14 +184,7 @@ func initDB(mode EnvMode) (*Database, error) {
 	return db, nil
 }
 
-func env(key string) (string, error) {
-	val, ok := os.LookupEnv(key)
-	if !ok {
-		return "", fmt.Errorf("NO %q environment variable defined", key)
-	}
-	return val, nil
-}
-
+// initLogger returns a instance of SugaredLogger depending on the EnvMode
 func initLogger(mode EnvMode) (*zap.SugaredLogger, error) {
 
 	var log *zap.Logger

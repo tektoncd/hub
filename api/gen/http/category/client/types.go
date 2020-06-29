@@ -12,13 +12,13 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// AllResponseBody is the type of the "category" service "All" endpoint HTTP
+// ListResponseBody is the type of the "category" service "list" endpoint HTTP
 // response body.
-type AllResponseBody []*CategoryResponse
+type ListResponseBody []*CategoryResponse
 
-// AllInternalErrorResponseBody is the type of the "category" service "All"
+// ListInternalErrorResponseBody is the type of the "category" service "list"
 // endpoint HTTP response body for the "internal-error" error.
-type AllInternalErrorResponseBody struct {
+type ListInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -36,25 +36,25 @@ type AllInternalErrorResponseBody struct {
 
 // CategoryResponse is used to define fields on response body types.
 type CategoryResponse struct {
-	// unique id of category
+	// ID is the unique id of the category
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
-	// name of category
+	// Name of category
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
-	// list of tag associated with category
+	// List of tags associated with the category
 	Tags []*TagResponse `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
 }
 
 // TagResponse is used to define fields on response body types.
 type TagResponse struct {
-	// Id is the unique id of tags
+	// ID is the unique id of tag
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
-	// name of tag
+	// Name of tag
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
-// NewAllCategoryOK builds a "category" service "All" endpoint result from a
+// NewListCategoryOK builds a "category" service "list" endpoint result from a
 // HTTP "OK" response.
-func NewAllCategoryOK(body []*CategoryResponse) []*category.Category {
+func NewListCategoryOK(body []*CategoryResponse) []*category.Category {
 	v := make([]*category.Category, len(body))
 	for i, val := range body {
 		v[i] = unmarshalCategoryResponseToCategoryCategory(val)
@@ -62,9 +62,9 @@ func NewAllCategoryOK(body []*CategoryResponse) []*category.Category {
 	return v
 }
 
-// NewAllInternalError builds a category service All endpoint internal-error
+// NewListInternalError builds a category service list endpoint internal-error
 // error.
-func NewAllInternalError(body *AllInternalErrorResponseBody) *goa.ServiceError {
+func NewListInternalError(body *ListInternalErrorResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -77,9 +77,9 @@ func NewAllInternalError(body *AllInternalErrorResponseBody) *goa.ServiceError {
 	return v
 }
 
-// ValidateAllInternalErrorResponseBody runs the validations defined on
-// All_internal-error_Response_Body
-func ValidateAllInternalErrorResponseBody(body *AllInternalErrorResponseBody) (err error) {
+// ValidateListInternalErrorResponseBody runs the validations defined on
+// list_internal-error_response_body
+func ValidateListInternalErrorResponseBody(body *ListInternalErrorResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -101,7 +101,7 @@ func ValidateAllInternalErrorResponseBody(body *AllInternalErrorResponseBody) (e
 	return
 }
 
-// ValidateCategoryResponse runs the validations defined on categoryResponse
+// ValidateCategoryResponse runs the validations defined on CategoryResponse
 func ValidateCategoryResponse(body *CategoryResponse) (err error) {
 	if body.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))

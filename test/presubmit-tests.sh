@@ -49,51 +49,60 @@ container_exists() {
   [[ $(docker ps -a --filter "name=^/$name$" --format '{{.Names}}') == $name ]]
 }
 
-ensure_no_db_running(){
-  container_exists $POSTGRES_CONTAINER || return 0
-  info "removing existing db"
-  docker rm -f -v "$POSTGRES_CONTAINER"
+ensure_container_running() {
+  local container=$1; shift
+  container_exists "$container" || return 1
+  [[ $(docker inspect --format '{{ .State.Status }}' $container) == running ]]
+}
+
+ensure_no_container_running(){
+  local container=$1; shift
+  container_exists "$container" || return 0
+
+  info "removing container: $container"
+  docker rm -f -v "$container"
 }
 
 ##  override teardown_environment
 teardown_environment() {
   header Teardown
 
-  ensure_no_db_running || true
+  ensure_no_container_running "$POSTGRES_CONTAINER"
   rm -rf ${WORK_DIR}
 }
 
 
 api-unittest(){
   pwd
-  go test -v ./...
+  go test -v ./pkg/...
 }
 
 run_db() {
   header "Running db"
   local container_id=""
 
-  source "$API_DIR/.env.test"
+  source "$API_DIR/test/config/env.test"
   container_id=$(docker run -d  \
     --name $POSTGRES_CONTAINER \
-    -e POSTGRES_USER="$POSTGRES_USER"  \
-    -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
-    -e POSTGRES_DB="$POSTGRES_PASSWORD" \
-    -p "$POSTGRES_PORT:5432" \
+    -e POSTGRES_USER="$POSTGRESQL_USER"  \
+    -e POSTGRES_PASSWORD="$POSTGRESQL_PASSWORD" \
+    -e POSTGRES_DB="$POSTGRESQL_DATABASE" \
+    -p "$POSTGRESQL_PORT:5432" \
     postgres
   )
-
-  [[ "$container_id" != "" ]]
+  [[ "$container_id" != "" ]] || return 1
+  return 0
 }
 
 api-test(){
   cd $API_DIR
-  ensure_no_db_running
+  ensure_no_container_running "$POSTGRES_CONTAINER"
 
   info "running db"
   run_db || abort "Failed to run db container $POSTGRES_CONTAINER"
-  docker ps -a
   sleep 5s
+  docker ps -a
+  ensure_container_running "$POSTGRES_CONTAINER"
 
   api-unittest
 }
@@ -101,24 +110,32 @@ api-test(){
 api-build(){
   cd $API_DIR
   go mod vendor
-  go build .
+  go build ./cmd/...
 }
 
 ### presubmit hooks ###
 
 run_build_tests() {
-  # run in a subshell so that path will remain the same when it exits
-  ( api-build )
+  # run in a subshell so that path and shell options -eu -o pipefail will
+  # will remain the same when it exits
+  (
+    set -eu -o pipefail
+    api-build
+  )
 }
 
 run_unit_tests() {
-  # run in a subshell so that path will remain the same when it exits
-  ( api-test )
+  # run in a subshell so that path and shell options -eu -o pipefail will
+  # will remain the same when it exits
+  (
+    set -eu -o pipefail
+    api-test
+  )
 }
 
 run_integration_tests() {
   warn "No integration tests to run"
-  exit 0
+  return 0
 }
 
 main $@

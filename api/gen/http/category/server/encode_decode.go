@@ -16,21 +16,21 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// EncodeAllResponse returns an encoder for responses returned by the category
-// All endpoint.
-func EncodeAllResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeListResponse returns an encoder for responses returned by the category
+// list endpoint.
+func EncodeListResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.([]*category.Category)
 		enc := encoder(ctx, w)
-		body := NewAllResponseBody(res)
+		body := NewListResponseBody(res)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
 }
 
-// EncodeAllError returns an encoder for errors returned by the All category
+// EncodeListError returns an encoder for errors returned by the list category
 // endpoint.
-func EncodeAllError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+func EncodeListError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
 	encodeError := goahttp.ErrorEncoder(encoder, formatter)
 	return func(ctx context.Context, w http.ResponseWriter, v error) error {
 		en, ok := v.(ErrorNamer)
@@ -45,7 +45,7 @@ func EncodeAllError(encoder func(context.Context, http.ResponseWriter) goahttp.E
 			if formatter != nil {
 				body = formatter(res)
 			} else {
-				body = NewAllInternalErrorResponseBody(res)
+				body = NewListInternalErrorResponseBody(res)
 			}
 			w.Header().Set("goa-error", "internal-error")
 			w.WriteHeader(http.StatusInternalServerError)

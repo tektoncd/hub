@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
-	"go.uber.org/zap"
 	"net/http"
 	"net/url"
 	"os"
 	"sync"
 	"time"
+
+	"go.uber.org/zap"
 
 	category "github.com/tektoncd/hub/api/gen/category"
 	categorysvr "github.com/tektoncd/hub/api/gen/http/category/server"
@@ -77,6 +78,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, categoryEndpoints *catego
 	for _, m := range swaggerServer.Mounts {
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
+
 	(*wg).Add(1)
 	go func() {
 		defer (*wg).Done()

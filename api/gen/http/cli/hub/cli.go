@@ -23,13 +23,13 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `category all
+	return `category list
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
-	return os.Args[0] + ` category all` + "\n" +
+	return os.Args[0] + ` category list` + "\n" +
 		""
 }
 
@@ -45,10 +45,10 @@ func ParseEndpoint(
 	var (
 		categoryFlags = flag.NewFlagSet("category", flag.ContinueOnError)
 
-		categoryAllFlags = flag.NewFlagSet("all", flag.ExitOnError)
+		categoryListFlags = flag.NewFlagSet("list", flag.ExitOnError)
 	)
 	categoryFlags.Usage = categoryUsage
-	categoryAllFlags.Usage = categoryAllUsage
+	categoryListFlags.Usage = categoryListUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -84,8 +84,8 @@ func ParseEndpoint(
 		switch svcn {
 		case "category":
 			switch epn {
-			case "all":
-				epf = categoryAllFlags
+			case "list":
+				epf = categoryListFlags
 
 			}
 
@@ -112,8 +112,8 @@ func ParseEndpoint(
 		case "category":
 			c := categoryc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
-			case "all":
-				endpoint = c.All()
+			case "list":
+				endpoint = c.List()
 				data = nil
 			}
 		}
@@ -127,23 +127,23 @@ func ParseEndpoint(
 
 // categoryUsage displays the usage of the category command and its subcommands.
 func categoryUsage() {
-	fmt.Fprintf(os.Stderr, `The category service gives category details
+	fmt.Fprintf(os.Stderr, `The category service provides details about category
 Usage:
     %s [globalflags] category COMMAND [flags]
 
 COMMAND:
-    all: Get all Categories with their tags sorted by name
+    list: List all categories along with their tags sorted by name
 
 Additional help:
     %s category COMMAND --help
 `, os.Args[0], os.Args[0])
 }
-func categoryAllUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] category all
+func categoryListUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] category list
 
-Get all Categories with their tags sorted by name
+List all categories along with their tags sorted by name
 
 Example:
-    `+os.Args[0]+` category all
+    `+os.Args[0]+` category list
 `, os.Args[0])
 }

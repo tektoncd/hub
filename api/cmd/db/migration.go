@@ -1,28 +1,26 @@
-package model
+package main
 
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gopkg.in/gormigrate.v1"
 )
 
 // Migrate create tables and populates master tables
-func Migrate(api *app.ApiConfig) error {
+func Migrate(api *app.APIConfig) error {
 
 	logger := api.Logger()
 
-	// NOTE: If writing a migration for a new table then add the same in InitSchema
+	// NOTE: when writing a migration for a new table, add the same in InitSchema
 	migration := gormigrate.New(api.DB(), gormigrate.DefaultOptions, []*gormigrate.Migration{
-		// NOTE: Add Migration Here
+		// NOTE: Add Migrations Here
 	})
 
 	migration.InitSchema(func(db *gorm.DB) error {
 		if err := db.AutoMigrate(
-			&Category{},
-			&Tag{},
-			&Catalog{},
-			&Resource{},
-			&ResourceVersion{},
+			&model.Category{},
+			&model.Tag{},
 		).Error; err != nil {
 			return err
 		}
@@ -41,25 +39,12 @@ func Migrate(api *app.ApiConfig) error {
 			return nil
 		}
 
-		if err := fkey(Tag{}, "category_id", "categories"); err != nil {
-			return err
-		}
-
-		if err := fkey(Resource{}, "catalog_id", "catalogs"); err != nil {
-			return err
-		}
-
-		if err := fkey(ResourceVersion{}, "resource_id", "resources"); err != nil {
-			return err
-		}
-		if err := fkey(ResourceTag{}, "resource_id", "resources", "tag_id", "tags"); err != nil {
+		if err := fkey(model.Tag{}, "category_id", "categories"); err != nil {
 			return err
 		}
 
 		initialiseTables(db)
-
 		logger.Info("Data added successfully !!")
-
 		return nil
 	})
 
@@ -73,7 +58,7 @@ func Migrate(api *app.ApiConfig) error {
 	return nil
 }
 
-// Initialise category table with data and associate to tag table
+// Adds data to category & tag table
 func initialiseTables(db *gorm.DB) {
 	var categories = map[string][]string{
 		"Others":         []string{},
@@ -87,11 +72,11 @@ func initialiseTables(db *gorm.DB) {
 	}
 
 	for name, tags := range categories {
-		cat := &Category{Name: name}
+		cat := &model.Category{Name: name}
 		db.Create(cat)
 
 		for _, tag := range tags {
-			db.Model(&cat).Association("Tags").Append(&Tag{Name: tag})
+			db.Model(&cat).Association("Tags").Append(&model.Tag{Name: tag})
 		}
 	}
 }

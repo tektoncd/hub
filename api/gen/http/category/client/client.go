@@ -17,8 +17,8 @@ import (
 
 // Client lists the category service endpoint HTTP clients.
 type Client struct {
-	// All Doer is the HTTP client used to make requests to the All endpoint.
-	AllDoer goahttp.Doer
+	// List Doer is the HTTP client used to make requests to the list endpoint.
+	ListDoer goahttp.Doer
 
 	// CORS Doer is the HTTP client used to make requests to the  endpoint.
 	CORSDoer goahttp.Doer
@@ -43,7 +43,7 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		AllDoer:             doer,
+		ListDoer:            doer,
 		CORSDoer:            doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
@@ -53,20 +53,20 @@ func NewClient(
 	}
 }
 
-// All returns an endpoint that makes HTTP requests to the category service All
-// server.
-func (c *Client) All() goa.Endpoint {
+// List returns an endpoint that makes HTTP requests to the category service
+// list server.
+func (c *Client) List() goa.Endpoint {
 	var (
-		decodeResponse = DecodeAllResponse(c.decoder, c.RestoreResponseBody)
+		decodeResponse = DecodeListResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildAllRequest(ctx, v)
+		req, err := c.BuildListRequest(ctx, v)
 		if err != nil {
 			return nil, err
 		}
-		resp, err := c.AllDoer.Do(req)
+		resp, err := c.ListDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("category", "All", err)
+			return nil, goahttp.ErrRequestError("category", "list", err)
 		}
 		return decodeResponse(resp)
 	}
