@@ -9,8 +9,9 @@ import (
 	"sync"
 	"time"
 
-	api "github.com/tektoncd/hub/api/gen/api"
-	apisvr "github.com/tektoncd/hub/api/gen/http/api/server"
+	category "github.com/tektoncd/hub/api/gen/category"
+	categorysvr "github.com/tektoncd/hub/api/gen/http/category/server"
+	swaggersvr "github.com/tektoncd/hub/api/gen/http/swagger/server"
 	goahttp "goa.design/goa/v3/http"
 	httpmdlwr "goa.design/goa/v3/http/middleware"
 	"goa.design/goa/v3/middleware"
@@ -18,7 +19,7 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, apiEndpoints *api.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, categoryEndpoints *category.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
 	var (
@@ -49,20 +50,24 @@ func handleHTTPServer(ctx context.Context, u *url.URL, apiEndpoints *api.Endpoin
 	// the service input and output data structures to HTTP requests and
 	// responses.
 	var (
-		apiServer *apisvr.Server
+		categoryServer *categorysvr.Server
+		swaggerServer  *swaggersvr.Server
 	)
 	{
 		eh := errorHandler(logger)
-		apiServer = apisvr.New(apiEndpoints, mux, dec, enc, eh, nil)
+		categoryServer = categorysvr.New(categoryEndpoints, mux, dec, enc, eh, nil)
+		swaggerServer = swaggersvr.New(nil, mux, dec, enc, eh, nil)
 		if debug {
 			servers := goahttp.Servers{
-				apiServer,
+				categoryServer,
+				swaggerServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
 	}
 	// Configure the mux.
-	apisvr.Mount(mux, apiServer)
+	categorysvr.Mount(mux, categoryServer)
+	swaggersvr.Mount(mux, swaggerServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.
@@ -75,10 +80,12 @@ func handleHTTPServer(ctx context.Context, u *url.URL, apiEndpoints *api.Endpoin
 	// Start HTTP server using default configuration, change the code to
 	// configure the server as required by your service.
 	srv := &http.Server{Addr: u.Host, Handler: handler}
-	for _, m := range apiServer.Mounts {
+	for _, m := range categoryServer.Mounts {
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
-
+	for _, m := range swaggerServer.Mounts {
+		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
 	(*wg).Add(1)
 	go func() {
 		defer (*wg).Done()
