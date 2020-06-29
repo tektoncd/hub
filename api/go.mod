@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/gorilla/websocket v1.4.2 // indirect
+	go.uber.org/zap v1.10.0
 	goa.design/goa/v3 v3.1.3
 	goa.design/plugins/v3 v3.1.3
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect

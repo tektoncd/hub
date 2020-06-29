@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"sync"
 	"time"
+	"go.uber.org/zap"
 
 	category "github.com/tektoncd/hub/api/gen/category"
 	categorysvr "github.com/tektoncd/hub/api/gen/http/category/server"
@@ -19,15 +19,7 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, categoryEndpoints *category.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
-
-	// Setup goa log adapter.
-	var (
-		adapter middleware.Logger
-	)
-	{
-		adapter = middleware.NewLogger(logger)
-	}
+func handleHTTPServer(ctx context.Context, u *url.URL, categoryEndpoints *category.Endpoints, wg *sync.WaitGroup, errc chan error, logger *zap.SugaredLogger, debug bool) {
 
 	// Provide the transport specific request decoder and response encoder.
 	// The goa http package has built-in support for JSON, XML and gob.
@@ -73,7 +65,6 @@ func handleHTTPServer(ctx context.Context, u *url.URL, categoryEndpoints *catego
 	// here apply to all the service endpoints.
 	var handler http.Handler = mux
 	{
-		handler = httpmdlwr.Log(adapter)(handler)
 		handler = httpmdlwr.RequestID()(handler)
 	}
 
@@ -81,10 +72,10 @@ func handleHTTPServer(ctx context.Context, u *url.URL, categoryEndpoints *catego
 	// configure the server as required by your service.
 	srv := &http.Server{Addr: u.Host, Handler: handler}
 	for _, m := range categoryServer.Mounts {
-		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range swaggerServer.Mounts {
-		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	(*wg).Add(1)
 	go func() {
@@ -92,12 +83,12 @@ func handleHTTPServer(ctx context.Context, u *url.URL, categoryEndpoints *catego
 
 		// Start HTTP server in a separate goroutine.
 		go func() {
-			logger.Printf("HTTP server listening on %q", u.Host)
+			logger.Infof("HTTP server listening on %q", u.Host)
 			errc <- srv.ListenAndServe()
 		}()
 
 		<-ctx.Done()
-		logger.Printf("shutting down HTTP server at %q", u.Host)
+		logger.Infof("shutting down HTTP server at %q", u.Host)
 
 		// Shutdown gracefully with a 30s timeout.
 		ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
@@ -110,10 +101,10 @@ func handleHTTPServer(ctx context.Context, u *url.URL, categoryEndpoints *catego
 // errorHandler returns a function that writes and logs the given error.
 // The function also writes and logs the error unique ID so that it's possible
 // to correlate.
-func errorHandler(logger *log.Logger) func(context.Context, http.ResponseWriter, error) {
+func errorHandler(logger *zap.SugaredLogger) func(context.Context, http.ResponseWriter, error) {
 	return func(ctx context.Context, w http.ResponseWriter, err error) {
 		id := ctx.Value(middleware.RequestIDKey).(string)
 		w.Write([]byte("[" + id + "] encoding: " + err.Error()))
-		logger.Printf("[%s] ERROR: %s", id, err.Error())
+		logger.Warnf("[%s] ERROR: %s", id, err.Error())
 	}
 }

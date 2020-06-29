@@ -4,15 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"os/signal"
 	"strings"
 	"sync"
+	"go.uber.org/zap"
 
 	category "github.com/tektoncd/hub/api/gen/category"
 	hub "github.com/tektoncd/hub/api/pkg/service"
+	app "github.com/tektoncd/hub/api/pkg/app"
 )
 
 func main() {
@@ -29,10 +30,19 @@ func main() {
 
 	// Setup logger. Replace logger with your own log package of choice.
 	var (
-		logger *log.Logger
+		logger *zap.SugaredLogger
+		api    *app.ApiConfig
+		err    error
 	)
 	{
-		logger = log.New(os.Stderr, "[hub] ", log.Ltime)
+		api, err = app.FromEnv()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "FATAL: failed to initialise: %s", err)
+			os.Exit(1)
+		}
+		defer api.Cleanup()
+		logger = api.Logger()
+
 	}
 
 	// Initialize the services.
@@ -98,11 +108,11 @@ func main() {
 	}
 
 	// Wait for signal.
-	logger.Printf("exiting (%v)", <-errc)
+	logger.Infof("exiting (%v)", <-errc)
 
 	// Send cancellation signal to the goroutines.
 	cancel()
 
 	wg.Wait()
-	logger.Println("exited")
+	logger.Info("exited")
 }
