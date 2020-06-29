@@ -19,13 +19,13 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// BuildAllRequest instantiates a HTTP request object with method and path set
-// to call the "category" service "All" endpoint
-func (c *Client) BuildAllRequest(ctx context.Context, v interface{}) (*http.Request, error) {
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AllCategoryPath()}
+// BuildListRequest instantiates a HTTP request object with method and path set
+// to call the "category" service "list" endpoint
+func (c *Client) BuildListRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ListCategoryPath()}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("category", "All", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("category", "list", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -34,13 +34,13 @@ func (c *Client) BuildAllRequest(ctx context.Context, v interface{}) (*http.Requ
 	return req, nil
 }
 
-// DecodeAllResponse returns a decoder for responses returned by the category
-// All endpoint. restoreBody controls whether the response body should be
+// DecodeListResponse returns a decoder for responses returned by the category
+// list endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
-// DecodeAllResponse may return the following errors:
+// DecodeListResponse may return the following errors:
 //	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
 //	- error: internal error
-func DecodeAllResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -57,12 +57,12 @@ func DecodeAllResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body AllResponseBody
+				body ListResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("category", "All", err)
+				return nil, goahttp.ErrDecodingError("category", "list", err)
 			}
 			for _, e := range body {
 				if e != nil {
@@ -72,27 +72,27 @@ func DecodeAllResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 				}
 			}
 			if err != nil {
-				return nil, goahttp.ErrValidationError("category", "All", err)
+				return nil, goahttp.ErrValidationError("category", "list", err)
 			}
-			res := NewAllCategoryOK(body)
+			res := NewListCategoryOK(body)
 			return res, nil
 		case http.StatusInternalServerError:
 			var (
-				body AllInternalErrorResponseBody
+				body ListInternalErrorResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("category", "All", err)
+				return nil, goahttp.ErrDecodingError("category", "list", err)
 			}
-			err = ValidateAllInternalErrorResponseBody(&body)
+			err = ValidateListInternalErrorResponseBody(&body)
 			if err != nil {
-				return nil, goahttp.ErrValidationError("category", "All", err)
+				return nil, goahttp.ErrValidationError("category", "list", err)
 			}
-			return nil, NewAllInternalError(&body)
+			return nil, NewListInternalError(&body)
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("category", "All", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("category", "list", resp.StatusCode, string(body))
 		}
 	}
 }

@@ -12,13 +12,13 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// AllResponseBody is the type of the "category" service "All" endpoint HTTP
+// ListResponseBody is the type of the "category" service "list" endpoint HTTP
 // response body.
-type AllResponseBody []*CategoryResponse
+type ListResponseBody []*CategoryResponse
 
-// AllInternalErrorResponseBody is the type of the "category" service "All"
+// ListInternalErrorResponseBody is the type of the "category" service "list"
 // endpoint HTTP response body for the "internal-error" error.
-type AllInternalErrorResponseBody struct {
+type ListInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -36,25 +36,25 @@ type AllInternalErrorResponseBody struct {
 
 // CategoryResponse is used to define fields on response body types.
 type CategoryResponse struct {
-	// unique id of category
+	// ID is the unique id of the category
 	ID uint `form:"id" json:"id" xml:"id"`
-	// name of category
+	// Name of category
 	Name string `form:"name" json:"name" xml:"name"`
-	// list of tag associated with category
+	// List of tags associated with the category
 	Tags []*TagResponse `form:"tags" json:"tags" xml:"tags"`
 }
 
 // TagResponse is used to define fields on response body types.
 type TagResponse struct {
-	// Id is the unique id of tags
+	// ID is the unique id of tag
 	ID uint `form:"id" json:"id" xml:"id"`
-	// name of tag
+	// Name of tag
 	Name string `form:"name" json:"name" xml:"name"`
 }
 
-// NewAllResponseBody builds the HTTP response body from the result of the
-// "All" endpoint of the "category" service.
-func NewAllResponseBody(res []*category.Category) AllResponseBody {
+// NewListResponseBody builds the HTTP response body from the result of the
+// "list" endpoint of the "category" service.
+func NewListResponseBody(res []*category.Category) ListResponseBody {
 	body := make([]*CategoryResponse, len(res))
 	for i, val := range res {
 		body[i] = marshalCategoryCategoryToCategoryResponse(val)
@@ -62,10 +62,10 @@ func NewAllResponseBody(res []*category.Category) AllResponseBody {
 	return body
 }
 
-// NewAllInternalErrorResponseBody builds the HTTP response body from the
-// result of the "All" endpoint of the "category" service.
-func NewAllInternalErrorResponseBody(res *goa.ServiceError) *AllInternalErrorResponseBody {
-	body := &AllInternalErrorResponseBody{
+// NewListInternalErrorResponseBody builds the HTTP response body from the
+// result of the "list" endpoint of the "category" service.
+func NewListInternalErrorResponseBody(res *goa.ServiceError) *ListInternalErrorResponseBody {
+	body := &ListInternalErrorResponseBody{
 		Name:      res.Name,
 		ID:        res.ID,
 		Message:   res.Message,

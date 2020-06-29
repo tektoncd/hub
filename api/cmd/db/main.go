@@ -3,9 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"github.com/tektoncd/hub/api/pkg/db/model"
-	app "github.com/tektoncd/hub/api/pkg/app"
 
+	"github.com/tektoncd/hub/api/pkg/app"
 )
 
 func main() {
@@ -17,8 +16,8 @@ func main() {
 	defer api.Cleanup()
 
 	logger := api.Logger()
-	if err = model.Migrate(api); err != nil {
-		logger.Infof("DB initialisation failed", err)
+	if err = Migrate(api); err != nil {
+		logger.Errorf("DB initialisation failed !!", err)
 	}
-	logger.Info("DB initialisation successful")
+	logger.Info("DB initialisation successful !!")
 }

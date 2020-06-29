@@ -7,7 +7,7 @@
 
 package client
 
-// AllCategoryPath returns the URL path to the category service All HTTP endpoint.
-func AllCategoryPath() string {
+// ListCategoryPath returns the URL path to the category service list HTTP endpoint.
+func ListCategoryPath() string {
 	return "/categories"
 }

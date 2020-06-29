@@ -20,7 +20,7 @@ import (
 // Server lists the category service endpoint HTTP handlers.
 type Server struct {
 	Mounts []*MountPoint
-	All    http.Handler
+	List   http.Handler
 	CORS   http.Handler
 }
 
@@ -57,10 +57,10 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"All", "GET", "/categories"},
+			{"List", "GET", "/categories"},
 			{"CORS", "OPTIONS", "/categories"},
 		},
-		All:  NewAllHandler(e.All, mux, decoder, encoder, errhandler, formatter),
+		List: NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
 		CORS: NewCORSHandler(),
 	}
 }
@@ -70,19 +70,19 @@ func (s *Server) Service() string { return "category" }
 
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
-	s.All = m(s.All)
+	s.List = m(s.List)
 	s.CORS = m(s.CORS)
 }
 
 // Mount configures the mux to serve the category endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
-	MountAllHandler(mux, h.All)
+	MountListHandler(mux, h.List)
 	MountCORSHandler(mux, h.CORS)
 }
 
-// MountAllHandler configures the mux to serve the "category" service "All"
+// MountListHandler configures the mux to serve the "category" service "list"
 // endpoint.
-func MountAllHandler(mux goahttp.Muxer, h http.Handler) {
+func MountListHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := handleCategoryOrigin(h).(http.HandlerFunc)
 	if !ok {
 		f = func(w http.ResponseWriter, r *http.Request) {
@@ -92,9 +92,9 @@ func MountAllHandler(mux goahttp.Muxer, h http.Handler) {
 	mux.Handle("GET", "/categories", f)
 }
 
-// NewAllHandler creates a HTTP handler which loads the HTTP request and calls
-// the "category" service "All" endpoint.
-func NewAllHandler(
+// NewListHandler creates a HTTP handler which loads the HTTP request and calls
+// the "category" service "list" endpoint.
+func NewListHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
 	decoder func(*http.Request) goahttp.Decoder,
@@ -103,12 +103,12 @@ func NewAllHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
-		encodeResponse = EncodeAllResponse(encoder)
-		encodeError    = EncodeAllError(encoder, formatter)
+		encodeResponse = EncodeListResponse(encoder)
+		encodeError    = EncodeListError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "All")
+		ctx = context.WithValue(ctx, goa.MethodKey, "list")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "category")
 		var err error
 		res, err := endpoint(ctx, nil)

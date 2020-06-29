@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"go.uber.org/zap"
 	"net/url"
 	"os"
 	"os/signal"
@@ -12,8 +11,9 @@ import (
 	"sync"
 
 	category "github.com/tektoncd/hub/api/gen/category"
-	app "github.com/tektoncd/hub/api/pkg/app"
-	hub "github.com/tektoncd/hub/api/pkg/service"
+	"github.com/tektoncd/hub/api/pkg/app"
+	categorysvc "github.com/tektoncd/hub/api/pkg/service/category"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -28,10 +28,9 @@ func main() {
 	)
 	flag.Parse()
 
-	// Setup logger. Replace logger with your own log package of choice.
 	var (
+		api    app.Config
 		logger *zap.SugaredLogger
-		api    *app.ApiConfig
 		err    error
 	)
 	{
@@ -40,9 +39,8 @@ func main() {
 			fmt.Fprintf(os.Stderr, "FATAL: failed to initialise: %s", err)
 			os.Exit(1)
 		}
-		defer api.Cleanup()
 		logger = api.Logger()
-
+		defer api.Cleanup()
 	}
 
 	// Initialize the services.
@@ -50,7 +48,7 @@ func main() {
 		categorySvc category.Service
 	)
 	{
-		categorySvc = hub.NewCategory(api)
+		categorySvc = categorysvc.New(api)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
@@ -60,7 +58,6 @@ func main() {
 	)
 	{
 		categoryEndpoints = category.NewEndpoints(categorySvc)
-
 	}
 
 	// Create channel used by both the signal handler and server goroutines
@@ -82,7 +79,7 @@ func main() {
 	switch *hostF {
 	case "localhost":
 		{
-			addr := "http://localhost:8000"
+			addr := "http://:8000"
 			u, err := url.Parse(addr)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "invalid URL %#v: %s\n", addr, err)
