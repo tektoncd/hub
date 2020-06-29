@@ -15,4 +15,5 @@ require (
 	golang.org/x/tools v0.0.0-20200408132156-9ee5ef7a2c0d // indirect
 	google.golang.org/genproto v0.0.0-20200408120641-fbb3ad325eb7 // indirect
 	google.golang.org/grpc v1.28.1 // indirect
+	gopkg.in/gormigrate.v1 v1.6.0
 )
