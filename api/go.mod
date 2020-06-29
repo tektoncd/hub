@@ -4,6 +4,9 @@ go 1.13
 
 require (
 	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/jinzhu/gorm v1.9.12
+	github.com/joho/godotenv v1.3.0
+	github.com/lib/pq v1.1.1
 	go.uber.org/zap v1.10.0
 	goa.design/goa/v3 v3.1.3
 	goa.design/plugins/v3 v3.1.3

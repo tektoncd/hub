@@ -4,16 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"go.uber.org/zap"
 	"net/url"
 	"os"
 	"os/signal"
 	"strings"
 	"sync"
-	"go.uber.org/zap"
 
 	category "github.com/tektoncd/hub/api/gen/category"
-	hub "github.com/tektoncd/hub/api/pkg/service"
 	app "github.com/tektoncd/hub/api/pkg/app"
+	hub "github.com/tektoncd/hub/api/pkg/service"
 )
 
 func main() {
@@ -50,7 +50,7 @@ func main() {
 		categorySvc category.Service
 	)
 	{
-		categorySvc = hub.NewCategory(logger)
+		categorySvc = hub.NewCategory(api)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services

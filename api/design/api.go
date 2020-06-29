@@ -1,8 +1,10 @@
 package design
+
 import (
 	. "goa.design/goa/v3/dsl"
 	cors "goa.design/plugins/v3/cors/dsl"
 )
+
 var _ = API("hub", func() {
 	Title("Tekton Hub")
 	Description("HTTP services for managing Tekton Hub")
