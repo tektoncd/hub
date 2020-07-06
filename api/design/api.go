@@ -15,7 +15,7 @@ var _ = API("hub", func() {
 			URI("http://api.hub.tekton.dev")
 		})
 
-		Services("category", "swagger")
+		Services("category", "resource", "swagger")
 	})
 
 	// TODO: restrict CORS origin | https://github.com/tektoncd/hub/issues/26

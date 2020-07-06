@@ -10,10 +10,13 @@ import (
 	"strings"
 	"sync"
 
+	"go.uber.org/zap"
+
 	category "github.com/tektoncd/hub/api/gen/category"
+	resource "github.com/tektoncd/hub/api/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/app"
 	categorysvc "github.com/tektoncd/hub/api/pkg/service/category"
-	"go.uber.org/zap"
+	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
 )
 
 func main() {
@@ -39,6 +42,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "FATAL: failed to initialise: %s", err)
 			os.Exit(1)
 		}
+		api.DB().LogMode(true)
 		logger = api.Logger()
 		defer api.Cleanup()
 	}
@@ -46,18 +50,22 @@ func main() {
 	// Initialize the services.
 	var (
 		categorySvc category.Service
+		resourceSvc resource.Service
 	)
 	{
 		categorySvc = categorysvc.New(api)
+		resourceSvc = resourcesvc.New(api)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
 		categoryEndpoints *category.Endpoints
+		resourceEndpoints *resource.Endpoints
 	)
 	{
 		categoryEndpoints = category.NewEndpoints(categorySvc)
+		resourceEndpoints = resource.NewEndpoints(resourceSvc)
 	}
 
 	// Create channel used by both the signal handler and server goroutines
@@ -97,7 +105,7 @@ func main() {
 			} else if u.Port() == "" {
 				u.Host += ":80"
 			}
-			handleHTTPServer(ctx, u, categoryEndpoints, &wg, errc, logger, *dbgF)
+			handleHTTPServer(ctx, u, &wg, errc, *dbgF, categoryEndpoints, resourceEndpoints, logger)
 		}
 
 	default:
