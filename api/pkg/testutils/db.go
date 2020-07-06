@@ -25,7 +25,7 @@ func LoadFixtures(t *testing.T, dir string) {
 func applyMigration() error {
 	tc := Config()
 	db := tc.DB()
-	db.AutoMigrate(model.Category{}, model.Tag{})
+	db.AutoMigrate(model.Category{}, model.Tag{}, model.Catalog{}, model.Resource{}, model.ResourceVersion{})
 	if len(db.GetErrors()) > 0 {
 		return db.GetErrors()[0]
 	}
