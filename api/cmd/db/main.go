@@ -14,7 +14,8 @@ func main() {
 		os.Exit(1)
 	}
 	defer api.Cleanup()
-
+	
+	api.DB().LogMode(true)
 	logger := api.Logger()
 	if err = Migrate(api); err != nil {
 		logger.Errorf("DB initialisation failed !!")
