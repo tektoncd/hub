@@ -1,0 +1,9 @@
+- id: 1
+  name: Tekton
+  type: official
+  url: https:/github.com/tektoncd/catalog
+  owner: tektoncd
+  context_dir: /task
+  revision: master
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC

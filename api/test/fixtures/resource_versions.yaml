@@ -1,0 +1,80 @@
+- id: 1
+  version: 0.1
+  display_name: Tekton CLI
+  description: Desc1
+  min_pipelines_version: 0.12.1
+  url: https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.1/tekton.yaml
+  resource_id: 1
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+
+- id: 2
+  version: 0.1
+  display_name: Build
+  description: Desc2
+  min_pipelines_version: 0.12.1
+  url: https://github.com/Pipelines-Marketplace/catalog/tree/master/task/build/0.1/build.yaml
+  resource_id: 2
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+
+- id: 3
+  version: 0.1
+  display_name: Image
+  description: Desc3
+  min_pipelines_version: 0.12.1
+  url: https://github.com/Pipelines-Marketplace/catalog/tree/master/task/img/0.1/img.yaml
+  resource_id: 3
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+
+- id: 4
+  version: 0.2
+  display_name: Build
+  description: Desc2
+  min_pipelines_version: 0.12.1
+  url: https://github.com/Pipelines-Marketplace/catalog/tree/master/task/build/0.2/build.yaml
+  resource_id: 2
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+
+- id: 5
+  version: 0.2
+  display_name: Tekton CLI
+  description: Desc1
+  min_pipelines_version: 0.12.1
+  url: https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml
+  resource_id: 1
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+
+
+- id: 6
+  version: 0.1.1
+  display_name: Tekton CLI
+  description: Desc1
+  min_pipelines_version: 0.12.1
+  url: https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.1.1/tekton.yaml
+  resource_id: 1
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+
+- id: 7
+  version: 0.1
+  display_name: Buildah
+  description: Desc4
+  min_pipelines_version: 0.12.1
+  url: https://github.com/Pipelines-Marketplace/catalog/tree/master/task/buildah/0.1/buildah.yaml
+  resource_id: 4
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+
+- id: 8
+  version: 0.1
+  display_name: Tkn CLI
+  description: Desc5
+  min_pipelines_version: 0.12.1
+  url: https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tkn/0.1/tkn.yaml
+  resource_id: 5
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
