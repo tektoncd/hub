@@ -4,62 +4,112 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
+	"go.uber.org/zap"
 	"gopkg.in/gormigrate.v1"
 )
 
 // Migrate create tables and populates master tables
 func Migrate(api *app.APIConfig) error {
 
-	logger := api.Logger()
+	log := api.Logger()
 
 	// NOTE: when writing a migration for a new table, add the same in InitSchema
-	migration := gormigrate.New(api.DB(), gormigrate.DefaultOptions, []*gormigrate.Migration{
-		// NOTE: Add Migrations Here
-	})
+	migration := gormigrate.New(
+		api.DB(),
+		gormigrate.DefaultOptions,
+		[]*gormigrate.Migration{
+			{
+				ID: "202006071000",
+				Migrate: func(tx *gorm.DB) error {
+
+					if err := tx.AutoMigrate(
+						&model.Tag{}, &model.Catalog{},
+						&model.Resource{}, &model.ResourceVersion{}).Error; err != nil {
+						log.Error(err)
+						return err
+					}
+
+					if err := fkey(log, tx, model.Resource{}, "catalog_id", "catalogs"); err != nil {
+						return err
+					}
+					if err := fkey(log, tx, model.ResourceVersion{}, "resource_id", "resources"); err != nil {
+						return err
+					}
+					if err := fkey(log, tx, model.ResourceTag{},
+						"resource_id", "resources",
+						"tag_id", "tags"); err != nil {
+						return err
+					}
+					return nil
+				},
+			},
+		})
 
 	migration.InitSchema(func(db *gorm.DB) error {
 		if err := db.AutoMigrate(
 			&model.Category{},
 			&model.Tag{},
+			&model.Catalog{},
+			&model.Resource{},
+			&model.ResourceVersion{},
 		).Error; err != nil {
+			log.Error(err)
 			return err
 		}
 
-		logger.Info("Schema initialised successfully !!")
-
-		fkey := func(model interface{}, args ...string) error {
-			for i := 0; i < len(args); i += 2 {
-				col := args[i]
-				table := args[i+1]
-				err := db.Model(model).AddForeignKey(col, table, "CASCADE", "CASCADE").Error
-				if err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-
-		if err := fkey(model.Tag{}, "category_id", "categories"); err != nil {
+		if err := fkey(log, db, model.Tag{}, "category_id", "categories"); err != nil {
 			return err
 		}
 
-		initialiseTables(db)
-		logger.Info("Data added successfully !!")
+		if err := fkey(log, db, model.Resource{}, "catalog_id", "catalogs"); err != nil {
+			return err
+		}
+
+		if err := fkey(log, db, model.ResourceVersion{}, "resource_id", "resources"); err != nil {
+			return err
+		}
+
+		if err := fkey(log, db, model.ResourceTag{},
+			"resource_id", "resources",
+			"tag_id", "tags"); err != nil {
+			return err
+		}
+
+		log.Info("Schema initialised successfully !!")
+
+		if err := initialiseTables(log, db); err != nil {
+			log.Info("Data initialisation failed !!")
+			return err
+		}
+		log.Info("Data added successfully !!")
+
 		return nil
 	})
 
 	if err := migration.Migrate(); err != nil {
-		logger.Error(err, "could not migrate")
+		log.Error(err, " failed to migrate")
 		return err
 	}
 
-	logger.Info("Migration ran successfully !!")
+	log.Info("Migration ran successfully !!")
+	return nil
+}
 
+func fkey(log *zap.SugaredLogger, db *gorm.DB, model interface{}, args ...string) error {
+	for i := 0; i < len(args); i += 2 {
+		col := args[i]
+		table := args[i+1]
+		err := db.Model(model).AddForeignKey(col, table, "CASCADE", "CASCADE").Error
+		if err != nil {
+			log.Error(err)
+			return err
+		}
+	}
 	return nil
 }
 
 // Adds data to category & tag table
-func initialiseTables(db *gorm.DB) {
+func initialiseTables(log *zap.SugaredLogger, db *gorm.DB) error {
 	var categories = map[string][]string{
 		"Others":         []string{},
 		"Build Tools":    []string{"build-tool"},
@@ -73,10 +123,18 @@ func initialiseTables(db *gorm.DB) {
 
 	for name, tags := range categories {
 		cat := &model.Category{Name: name}
-		db.Create(cat)
+		if err := db.Create(cat).Error; err != nil {
+			log.Error(err)
+			return err
+		}
 
 		for _, tag := range tags {
-			db.Model(&cat).Association("Tags").Append(&model.Tag{Name: tag})
+			if err := db.Model(&cat).Association("Tags").
+				Append(&model.Tag{Name: tag}).Error; err != nil {
+				log.Error(err)
+				return err
+			}
 		}
 	}
+	return nil
 }
