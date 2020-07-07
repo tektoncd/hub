@@ -17,7 +17,8 @@ func main() {
 
 	logger := api.Logger()
 	if err = Migrate(api); err != nil {
-		logger.Errorf("DB initialisation failed !!", err)
+		logger.Errorf("DB initialisation failed !!")
+		return
 	}
 	logger.Info("DB initialisation successful !!")
 }
