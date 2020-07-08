@@ -34,8 +34,6 @@ source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-te
 # TODO: enable this pleaseeeeee
 #set -e -u -o pipefail
 
-declare -r POSTGRES_CONTAINER=postgres
-
 info() {
   echo "INFO: $@"
 }
@@ -44,73 +42,39 @@ warn() {
   echo "WARN: $@"
 }
 
-container_exists() {
-  local name=$1; shift
-  [[ $(docker ps -a --filter "name=^/$name$" --format '{{.Names}}') == $name ]]
+install-postgres() {
+  info Installing postgres 🛢🛢🛢
+  apt-get install -y postgresql postgresql-contrib
+  pg_ctlcluster 11 main start
 }
 
-ensure_container_running() {
-  local container=$1; shift
-  container_exists "$container" || return 1
-  [[ $(docker inspect --format '{{ .State.Status }}' $container) == running ]]
+set-pg-passwd() {
+  local pass="$1"; shift
+  su - postgres -c \
+    "psql -c \"ALTER USER postgres PASSWORD '$pass';\""
 }
-
-ensure_no_container_running(){
-  local container=$1; shift
-  container_exists "$container" || return 0
-
-  info "removing container: $container"
-  docker rm -f -v "$container"
-}
-
-##  override teardown_environment
-teardown_environment() {
-  header Teardown
-
-  ensure_no_container_running "$POSTGRES_CONTAINER"
-  rm -rf ${WORK_DIR}
-}
-
 
 api-unittest(){
+  install-postgres
+  source $API_DIR/test/config/env.test
+  set-pg-passwd "$POSTGRESQL_PASSWORD"
   pwd
+
+  info Create test db - $POSTGRESQL_DATABASE
+
+  PGPASSWORD=$POSTGRESQL_PASSWORD \
+    psql -h localhost -p 5432 \
+    -U $POSTGRESQL_USER -c "create database $POSTGRESQL_DATABASE;"
+
+  info Running unittests
+
+  go mod vendor
   go test -v ./pkg/...
 }
 
-run_db() {
-  header "Running db"
-  local container_id=""
-
-  source "$API_DIR/test/config/env.test"
-  container_id=$(docker run -d  \
-    --name $POSTGRES_CONTAINER \
-    -e POSTGRES_USER="$POSTGRESQL_USER"  \
-    -e POSTGRES_PASSWORD="$POSTGRESQL_PASSWORD" \
-    -e POSTGRES_DB="$POSTGRESQL_DATABASE" \
-    -p "$POSTGRESQL_PORT:5432" \
-    postgres
-  )
-  [[ "$container_id" != "" ]] || return 1
-  return 0
-}
-
-api-test(){
-  cd $API_DIR
-  ensure_no_container_running "$POSTGRES_CONTAINER"
-
-  info "running db"
-  run_db || abort "Failed to run db container $POSTGRES_CONTAINER"
-  sleep 5s
-  docker ps -a
-  ensure_container_running "$POSTGRES_CONTAINER"
-
-  api-unittest
-}
-
 api-build(){
-  cd $API_DIR
   go mod vendor
-  go build ./cmd/...
+  go build -mod=vendor ./cmd/...
 }
 
 ### presubmit hooks ###
@@ -129,7 +93,11 @@ run_unit_tests() {
   # will remain the same when it exits
   (
     set -eu -o pipefail
-    api-test
+
+
+    cd $API_DIR
+    api-build
+    api-unittest
   )
 }
 
