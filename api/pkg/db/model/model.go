@@ -43,12 +43,13 @@ type (
 
 	ResourceVersion struct {
 		gorm.Model
-		Version     string
-		Description string
-		URL         string
-		DisplayName string
-		Resource    Resource
-		ResourceID  uint
+		Version             string
+		Description         string
+		URL                 string
+		DisplayName         string
+		MinPipelinesVersion string
+		Resource            Resource
+		ResourceID          uint
 	}
 
 	ResourceTag struct {

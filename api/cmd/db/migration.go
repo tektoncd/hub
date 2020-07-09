@@ -43,6 +43,17 @@ func Migrate(api *app.APIConfig) error {
 					return nil
 				},
 			},
+			{
+				ID: "202006091100",
+				Migrate: func(tx *gorm.DB) error {
+					if err := tx.AutoMigrate(
+						&model.ResourceVersion{}).Error; err != nil {
+						log.Error(err)
+						return err
+					}
+					return nil
+				},
+			},
 		})
 
 	migration.InitSchema(func(db *gorm.DB) error {
