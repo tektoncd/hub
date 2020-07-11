@@ -21,4 +21,5 @@ require (
 	golang.org/x/tools v0.0.0-20200626171337-aa94e735be7f // indirect
 	gopkg.in/gormigrate.v1 v1.6.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
+	gotest.tools/v3 v3.0.2
 )

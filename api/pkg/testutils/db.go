@@ -9,6 +9,8 @@ import (
 	"github.com/tektoncd/hub/api/pkg/db/model"
 )
 
+// LoadFixtures is called before executing each test, it clears db and
+// loads data from fixtures so that each test is executed on new db
 func LoadFixtures(t *testing.T, dir string) {
 	tc := Config()
 	fixtures, err := testfixtures.New(
@@ -19,6 +21,7 @@ func LoadFixtures(t *testing.T, dir string) {
 	assert.NoError(t, fixtures.Load())
 }
 
+// applyMigration creates tables in test db
 func applyMigration() error {
 	tc := Config()
 	db := tc.DB()
