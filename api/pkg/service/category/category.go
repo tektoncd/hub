@@ -29,7 +29,11 @@ func New(api app.Config) category.Service {
 // List all categories along with their tags sorted by name
 func (s *service) List(ctx context.Context) (res []*category.Category, err error) {
 	var all []model.Category
-	if err := s.db.Order("name").Preload("Tags").Find(&all).Error; err != nil {
+	if err := s.db.Order("name").
+		Preload("Tags", func(db *gorm.DB) *gorm.DB {
+			return db.Order("tags.name ASC")
+		}).
+		Find(&all).Error; err != nil {
 		s.logger.Error(err)
 		return nil, fetchError
 	}

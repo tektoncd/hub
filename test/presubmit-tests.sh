@@ -69,7 +69,7 @@ api-unittest(){
   info Running unittests
 
   go mod vendor
-  go test -v ./pkg/...
+  go test -p 1 -v ./pkg/...
 }
 
 api-build(){

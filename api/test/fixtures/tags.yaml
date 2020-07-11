@@ -1,20 +1,20 @@
 - id: 1
-  name: tag1
+  name: ztag
   category_id: 1
-  created_at: 2016-01-01 12:30:12
-  updated_at: 2016-01-01 12:30:12
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
 - id: 2
-  name: tag2
+  name: rtag
   category_id: 2
-  created_at: 2016-01-01 12:30:12
-  updated_at: 2016-01-01 12:30:12
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
 - id: 3
-  name: tag3
+  name: ptag
   category_id: 3
-  created_at: 2016-01-01 12:30:12
-  updated_at: 2016-01-01 12:30:12
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
 - id: 4
-  name: tag4
+  name: atag
   category_id: 2
-  created_at: 2016-01-01 12:30:12
-  updated_at: 2016-01-01 12:30:12
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC

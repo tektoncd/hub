@@ -91,19 +91,18 @@ func (ac *APIConfig) Cleanup() {
 	ac.db.Close()
 }
 
-// FromEnv returns a APIConfig object consisting of db and logger.
-// Loads a .env.dev file in development mode
-// Looks for EnvMode and initialises instance of sugared Logger
-// Looks for database configuration among environment variables and connects to db
+// FromEnv is called while initailising the api service, it calls FromEnvFile 
+// passing .env.dev file which will have configuration while running in  
+// development mode 
 func FromEnv() (*APIConfig, error) {
 	// load from .env.dev file for development but skip if not found
 	return FromEnvFile(".env.dev")
 }
 
-// FromEnv returns a APIConfig object consisting of db and logger.
-// Loads a .env.dev file in development mode
-// Looks for EnvMode and initialises instance of sugared Logger
-// Looks for database configuration among environment variables and connects to db
+// FromEnvFile expects a filepath to env file which has db configurations
+// It loads .env file, initialises a db connection & logger depending on the EnvMode
+// and returns a APIConfig Object 
+// If it doesn't finds a .env file, it looks for configuratin among environment variables
 func FromEnvFile(file string) (*APIConfig, error) {
 	if err := godotenv.Load(file); err != nil {
 		fmt.Fprintf(os.Stderr, "SKIP: loading env file %s failed: %s\n", file, err)

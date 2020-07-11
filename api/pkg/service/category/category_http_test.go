@@ -1,13 +1,15 @@
 package category
 
 import (
-	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
 
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
+	"gotest.tools/v3/golden"
+
 	category "github.com/tektoncd/hub/api/gen/category"
 	server "github.com/tektoncd/hub/api/gen/http/category/server"
 	"github.com/tektoncd/hub/api/pkg/testutils"
@@ -29,11 +31,9 @@ func TestCategories_List_Http(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var jsonMap []map[string]interface{}
-		marshallErr := json.Unmarshal([]byte(b), &jsonMap)
-		assert.NoError(t, marshallErr)
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
 
-		assert.Equal(t, 3, len(jsonMap))
-		assert.Equal(t, "abc", jsonMap[0]["name"])
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
 	})
 }
