@@ -111,6 +111,75 @@ func EncodeQueryError(encoder func(context.Context, http.ResponseWriter) goahttp
 	}
 }
 
+// EncodeListResponse returns an encoder for responses returned by the resource
+// List endpoint.
+func EncodeListResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(resourceviews.ResourceCollection)
+		enc := encoder(ctx, w)
+		body := NewResourceResponseCollection(res.Projected)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeListRequest returns a decoder for requests sent to the resource List
+// endpoint.
+func DecodeListRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			limit uint
+			err   error
+		)
+		{
+			limitRaw := r.URL.Query().Get("limit")
+			if limitRaw == "" {
+				limit = 100
+			} else {
+				v, err2 := strconv.ParseUint(limitRaw, 10, strconv.IntSize)
+				if err2 != nil {
+					err = goa.MergeErrors(err, goa.InvalidFieldTypeError("limit", limitRaw, "unsigned integer"))
+				}
+				limit = uint(v)
+			}
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewListPayload(limit)
+
+		return payload, nil
+	}
+}
+
+// EncodeListError returns an encoder for errors returned by the List resource
+// endpoint.
+func EncodeListError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "internal-error":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewListInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "internal-error")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // marshalResourceviewsResourceViewToResourceResponse builds a value of type
 // *ResourceResponse from a value of type *resourceviews.ResourceView.
 func marshalResourceviewsResourceViewToResourceResponse(v *resourceviews.ResourceView) *ResourceResponse {

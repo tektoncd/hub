@@ -11,3 +11,8 @@ package client
 func QueryResourcePath() string {
 	return "/query"
 }
+
+// ListResourcePath returns the URL path to the resource service List HTTP endpoint.
+func ListResourcePath() string {
+	return "/resources"
+}

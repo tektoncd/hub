@@ -55,3 +55,24 @@ func BuildQueryPayload(resourceQueryName string, resourceQueryType string, resou
 
 	return v, nil
 }
+
+// BuildListPayload builds the payload for the resource List endpoint from CLI
+// flags.
+func BuildListPayload(resourceListLimit string) (*resource.ListPayload, error) {
+	var err error
+	var limit uint
+	{
+		if resourceListLimit != "" {
+			var v uint64
+			v, err = strconv.ParseUint(resourceListLimit, 10, 64)
+			limit = uint(v)
+			if err != nil {
+				return nil, fmt.Errorf("invalid value for limit, must be UINT")
+			}
+		}
+	}
+	v := &resource.ListPayload{}
+	v.Limit = limit
+
+	return v, nil
+}

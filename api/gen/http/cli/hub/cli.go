@@ -25,14 +25,14 @@ import (
 //
 func UsageCommands() string {
 	return `category list
-resource query
+resource (query|list)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` resource query --name "Doloremque commodi magni enim maiores nihil a." --type "pipeline" --limit 4920150712889842071` + "\n" +
+		os.Args[0] + ` resource query --name "Commodi magni enim." --type "" --limit 3522294259516432899` + "\n" +
 		""
 }
 
@@ -56,12 +56,16 @@ func ParseEndpoint(
 		resourceQueryNameFlag  = resourceQueryFlags.String("name", "", "")
 		resourceQueryTypeFlag  = resourceQueryFlags.String("type", "", "")
 		resourceQueryLimitFlag = resourceQueryFlags.String("limit", "100", "")
+
+		resourceListFlags     = flag.NewFlagSet("list", flag.ExitOnError)
+		resourceListLimitFlag = resourceListFlags.String("limit", "100", "")
 	)
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
 
 	resourceFlags.Usage = resourceUsage
 	resourceQueryFlags.Usage = resourceQueryUsage
+	resourceListFlags.Usage = resourceListUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -109,6 +113,9 @@ func ParseEndpoint(
 			case "query":
 				epf = resourceQueryFlags
 
+			case "list":
+				epf = resourceListFlags
+
 			}
 
 		}
@@ -144,6 +151,9 @@ func ParseEndpoint(
 			case "query":
 				endpoint = c.Query()
 				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryTypeFlag, *resourceQueryLimitFlag)
+			case "list":
+				endpoint = c.List()
+				data, err = resourcec.BuildListPayload(*resourceListLimitFlag)
 			}
 		}
 	}
@@ -185,6 +195,7 @@ Usage:
 
 COMMAND:
     query: Find resources by a combination of name, type
+    list: List all resources sorted by rating and name
 
 Additional help:
     %s resource COMMAND --help
@@ -199,6 +210,17 @@ Find resources by a combination of name, type
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Doloremque commodi magni enim maiores nihil a." --type "pipeline" --limit 4920150712889842071
+    `+os.Args[0]+` resource query --name "Commodi magni enim." --type "" --limit 3522294259516432899
+`, os.Args[0])
+}
+
+func resourceListUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource list -limit UINT
+
+List all resources sorted by rating and name
+    -limit UINT: 
+
+Example:
+    `+os.Args[0]+` resource list --limit 8917412058307239266
 `, os.Args[0])
 }
