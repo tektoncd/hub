@@ -89,3 +89,15 @@ func TestQuery_NotFoundError(t *testing.T) {
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Resource not found")
 }
+
+func TestList_ByLimit(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ListPayload{Limit: 3}
+	all, err := resourceSvc.List(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, 3, len(all))
+	assert.Equal(t, "tekton", all[0].Name)
+}
