@@ -105,3 +105,9 @@ func initResource(r model.Resource) *resource.Resource {
 
 	return res
 }
+
+// List all resources sorted by rating and name
+func (s *service) List(ctx context.Context, p *resource.ListPayload) (res resource.ResourceCollection, err error) {
+	s.logger.Info("resource.List")
+	return
+}

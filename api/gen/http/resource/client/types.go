@@ -16,6 +16,10 @@ import (
 // HTTP response body.
 type QueryResponseBody []*ResourceResponse
 
+// ListResponseBody is the type of the "resource" service "List" endpoint HTTP
+// response body.
+type ListResponseBody []*ResourceResponse
+
 // QueryInternalErrorResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "internal-error" error.
 type QueryInternalErrorResponseBody struct {
@@ -37,6 +41,24 @@ type QueryInternalErrorResponseBody struct {
 // QueryNotFoundResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "not-found" error.
 type QueryNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// ListInternalErrorResponseBody is the type of the "resource" service "List"
+// endpoint HTTP response body for the "internal-error" error.
+type ListInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -145,6 +167,31 @@ func NewQueryNotFound(body *QueryNotFoundResponseBody) *goa.ServiceError {
 	return v
 }
 
+// NewListResourceCollectionOK builds a "resource" service "List" endpoint
+// result from a HTTP "OK" response.
+func NewListResourceCollectionOK(body ListResponseBody) resourceviews.ResourceCollectionView {
+	v := make([]*resourceviews.ResourceView, len(body))
+	for i, val := range body {
+		v[i] = unmarshalResourceResponseToResourceviewsResourceView(val)
+	}
+	return v
+}
+
+// NewListInternalError builds a resource service List endpoint internal-error
+// error.
+func NewListInternalError(body *ListInternalErrorResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
 // ValidateQueryInternalErrorResponseBody runs the validations defined on
 // Query_internal-error_Response_Body
 func ValidateQueryInternalErrorResponseBody(body *QueryInternalErrorResponseBody) (err error) {
@@ -172,6 +219,30 @@ func ValidateQueryInternalErrorResponseBody(body *QueryInternalErrorResponseBody
 // ValidateQueryNotFoundResponseBody runs the validations defined on
 // Query_not-found_Response_Body
 func ValidateQueryNotFoundResponseBody(body *QueryNotFoundResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateListInternalErrorResponseBody runs the validations defined on
+// List_internal-error_Response_Body
+func ValidateListInternalErrorResponseBody(body *ListInternalErrorResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}

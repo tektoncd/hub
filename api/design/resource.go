@@ -37,4 +37,23 @@ var _ = Service("resource", func() {
 			Response("not-found", StatusNotFound)
 		})
 	})
+
+	Method("List", func() {
+		Description("List all resources sorted by rating and name")
+		Payload(func() {
+			Attribute("limit", UInt, "Maximum number of resources to be returned", func() {
+				Default(100)
+			})
+		})
+		Result(CollectionOf(Resource))
+
+		HTTP(func() {
+			GET("/resources")
+			Param("limit")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+		})
+	})
+
 })

@@ -126,6 +126,95 @@ func DecodeQueryResponse(decoder func(*http.Response) goahttp.Decoder, restoreBo
 	}
 }
 
+// BuildListRequest instantiates a HTTP request object with method and path set
+// to call the "resource" service "List" endpoint
+func (c *Client) BuildListRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ListResourcePath()}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("resource", "List", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeListRequest returns an encoder for requests sent to the resource List
+// server.
+func EncodeListRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*resource.ListPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("resource", "List", "*resource.ListPayload", v)
+		}
+		values := req.URL.Query()
+		values.Add("limit", fmt.Sprintf("%v", p.Limit))
+		req.URL.RawQuery = values.Encode()
+		return nil
+	}
+}
+
+// DecodeListResponse returns a decoder for responses returned by the resource
+// List endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+// DecodeListResponse may return the following errors:
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- error: internal error
+func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body ListResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "List", err)
+			}
+			p := NewListResourceCollectionOK(body)
+			view := "default"
+			vres := resourceviews.ResourceCollection{Projected: p, View: view}
+			if err = resourceviews.ValidateResourceCollection(vres); err != nil {
+				return nil, goahttp.ErrValidationError("resource", "List", err)
+			}
+			res := resource.NewResourceCollection(vres)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body ListInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "List", err)
+			}
+			err = ValidateListInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "List", err)
+			}
+			return nil, NewListInternalError(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("resource", "List", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalResourceResponseToResourceviewsResourceView builds a value of type
 // *resourceviews.ResourceView from a value of type *ResourceResponse.
 func unmarshalResourceResponseToResourceviewsResourceView(v *ResourceResponse) *resourceviews.ResourceView {

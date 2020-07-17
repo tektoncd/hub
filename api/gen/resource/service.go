@@ -18,6 +18,8 @@ import (
 type Service interface {
 	// Find resources by a combination of name, type
 	Query(context.Context, *QueryPayload) (res ResourceCollection, err error)
+	// List all resources sorted by rating and name
+	List(context.Context, *ListPayload) (res ResourceCollection, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -28,7 +30,7 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [1]string{"Query"}
+var MethodNames = [2]string{"Query", "List"}
 
 // QueryPayload is the payload type of the resource service Query method.
 type QueryPayload struct {
@@ -42,6 +44,12 @@ type QueryPayload struct {
 
 // ResourceCollection is the result type of the resource service Query method.
 type ResourceCollection []*Resource
+
+// ListPayload is the payload type of the resource service List method.
+type ListPayload struct {
+	// Maximum number of resources to be returned
+	Limit uint
+}
 
 // The resource type describes resource information.
 type Resource struct {

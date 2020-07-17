@@ -78,6 +78,31 @@ paths:
             $ref: '#/definitions/ResourceQueryInternalErrorResponseBody'
       schemes:
       - http
+  /resources:
+    get:
+      tags:
+      - resource
+      summary: List resource
+      description: List all resources sorted by rating and name
+      operationId: resource#List
+      parameters:
+      - name: limit
+        in: query
+        description: Maximum number of resources to be returned
+        required: false
+        type: integer
+        default: 100
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/ResourceResourceResponseCollection'
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/ResourceListInternalErrorResponseBody'
+      schemes:
+      - http
   /swagger/swagger.json:
     get:
       tags:
@@ -145,7 +170,7 @@ definitions:
         example: true
     description: Internal Server Error (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
@@ -193,6 +218,49 @@ definitions:
     - id
     - name
     - tags
+  ResourceListInternalErrorResponseBody:
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+    properties:
+      fault:
+        type: boolean
+        description: Is the error a server-side fault?
+        example: false
+      id:
+        type: string
+        description: ID is a unique identifier for this particular occurrence of the problem.
+        example: 123abc
+      message:
+        type: string
+        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        example: parameter 'p' must be an integer
+      name:
+        type: string
+        description: Name is the name of this class of errors.
+        example: bad_request
+      temporary:
+        type: boolean
+        description: Is the error temporary?
+        example: true
+      timeout:
+        type: boolean
+        description: Is the error a timeout?
+        example: true
+    description: Internal Server Error (default view)
+    example:
+      fault: false
+      id: 123abc
+      message: parameter 'p' must be an integer
+      name: bad_request
+      temporary: true
+      timeout: true
+    required:
+    - name
+    - id
+    - message
+    - temporary
+    - timeout
+    - fault
   ResourceQueryInternalErrorResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -200,7 +268,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -220,7 +288,7 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: Internal Server Error (default view)
     example:
       fault: true
@@ -228,7 +296,7 @@ definitions:
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: false
+      timeout: true
     required:
     - name
     - id
@@ -243,7 +311,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -259,19 +327,19 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: Resource Not Found Error (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: false
+      timeout: true
     required:
     - name
     - id
@@ -286,6 +354,44 @@ definitions:
       $ref: '#/definitions/ResourceResponse'
     description: QueryResponseBody is the result type for an array of ResourceResponse (default view)
     example:
+    - catalog:
+        id: 1
+        type: community
+      id: 1
+      latestVersion:
+        description: Buildah task builds source into a container image and then pushes it to a container registry.
+        displayName: Buildah
+        id: 1
+        minPipelinesVersion: 0.12.1
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        updatedAt: 2020-01-01 12:00:00 +0000 UTC
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+      name: buildah
+      rating: 4.3
+      tags:
+      - id: 1
+        name: image-build
+      type: task
+    - catalog:
+        id: 1
+        type: community
+      id: 1
+      latestVersion:
+        description: Buildah task builds source into a container image and then pushes it to a container registry.
+        displayName: Buildah
+        id: 1
+        minPipelinesVersion: 0.12.1
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        updatedAt: 2020-01-01 12:00:00 +0000 UTC
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+      name: buildah
+      rating: 4.3
+      tags:
+      - id: 1
+        name: image-build
+      type: task
     - catalog:
         id: 1
         type: community
