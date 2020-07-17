@@ -34,14 +34,7 @@ func New(api app.Config) resource.Service {
 // Find resources based on name, type or both
 func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (res resource.ResourceCollection, err error) {
 
-	q := s.db.Order("rating DESC, name").Limit(p.Limit).
-		Preload("Catalog").
-		Preload("Versions", func(db *gorm.DB) *gorm.DB {
-			return db.Order("string_to_array(version, '.')::int[];")
-		}).
-		Preload("Tags", func(db *gorm.DB) *gorm.DB {
-			return db.Order("tags.name ASC")
-		})
+	q := s.db.Scopes(withResourceDetails).Limit(p.Limit)
 
 	if p.Type != "" {
 		q = q.Where("LOWER(type) = ?", p.Type)
@@ -52,16 +45,23 @@ func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (res reso
 		q = q.Where("LOWER(name) LIKE ?", name)
 	}
 
-	var all []model.Resource
-	if err := q.Find(&all).Error; err != nil {
+	return s.resourcesForQuery(q)
+}
+
+// List all resources sorted by rating and name
+func (s *service) List(ctx context.Context, p *resource.ListPayload) (res resource.ResourceCollection, err error) {
+	q := s.db.Scopes(withResourceDetails).Limit(p.Limit)
+	return s.resourcesForQuery(q)
+}
+
+func (s *service) resourcesForQuery(q *gorm.DB) (resource.ResourceCollection, error) {
+
+	var rs []model.Resource
+	if err := q.Find(&rs).Error; err != nil {
 		s.logger.Error(err)
 		return nil, fetchError
 	}
 
-	return resourceCollection(all)
-}
-
-func resourceCollection(rs []model.Resource) (resource.ResourceCollection, error) {
 	if len(rs) == 0 {
 		return nil, notFoundError
 	}
@@ -72,6 +72,18 @@ func resourceCollection(rs []model.Resource) (resource.ResourceCollection, error
 	}
 
 	return res, nil
+}
+
+// withResourceDetails defines a gorm scope to include all details of resource.
+func withResourceDetails(db *gorm.DB) *gorm.DB {
+	return db.Order("rating DESC, name").
+		Preload("Catalog").
+		Preload("Versions", func(db *gorm.DB) *gorm.DB {
+			return db.Order("string_to_array(version, '.')::int[];")
+		}).
+		Preload("Tags", func(db *gorm.DB) *gorm.DB {
+			return db.Order("tags.name ASC")
+		})
 }
 
 func initResource(r model.Resource) *resource.Resource {
@@ -104,10 +116,4 @@ func initResource(r model.Resource) *resource.Resource {
 	}
 
 	return res
-}
-
-// List all resources sorted by rating and name
-func (s *service) List(ctx context.Context, p *resource.ListPayload) (res resource.ResourceCollection, err error) {
-	s.logger.Info("resource.List")
-	return
 }

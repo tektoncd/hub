@@ -58,3 +58,50 @@ func TestQuery_Http_ErrorCase(t *testing.T) {
 		assert.Equal(t, "not-found", jsonMap["name"])
 	})
 }
+
+func TestList_Http_WithLimit(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	checker := goahttpcheck.New()
+	checker.Mount(
+		server.NewListHandler,
+		server.MountListHandler,
+		resource.NewListEndpoint(New(tc)))
+
+	checker.Test(t, http.MethodGet, "/resources?limit=2").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
+func TestList_Http_NoLimit(t *testing.T) {
+	// Test no limit returns some records
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	checker := goahttpcheck.New()
+	checker.Mount(
+		server.NewListHandler,
+		server.MountListHandler,
+		resource.NewListEndpoint(New(tc)))
+
+	checker.Test(t, http.MethodGet, "/resources").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
