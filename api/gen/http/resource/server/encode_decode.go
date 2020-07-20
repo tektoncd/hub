@@ -259,6 +259,85 @@ func EncodeVersionsByIDError(encoder func(context.Context, http.ResponseWriter) 
 	}
 }
 
+// EncodeByTypeNameVersionResponse returns an encoder for responses returned by
+// the resource ByTypeNameVersion endpoint.
+func EncodeByTypeNameVersionResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*resourceviews.Version)
+		enc := encoder(ctx, w)
+		body := NewByTypeNameVersionResponseBody(res.Projected)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeByTypeNameVersionRequest returns a decoder for requests sent to the
+// resource ByTypeNameVersion endpoint.
+func DecodeByTypeNameVersionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			type_   string
+			name    string
+			version string
+			err     error
+
+			params = mux.Vars(r)
+		)
+		type_ = params["type"]
+		if !(type_ == "task" || type_ == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("type_", type_, []interface{}{"task", "pipeline"}))
+		}
+		name = params["name"]
+		version = params["version"]
+		if err != nil {
+			return nil, err
+		}
+		payload := NewByTypeNameVersionPayload(type_, name, version)
+
+		return payload, nil
+	}
+}
+
+// EncodeByTypeNameVersionError returns an encoder for errors returned by the
+// ByTypeNameVersion resource endpoint.
+func EncodeByTypeNameVersionError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "internal-error":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByTypeNameVersionInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "internal-error")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		case "not-found":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByTypeNameVersionNotFoundResponseBody(res)
+			}
+			w.Header().Set("goa-error", "not-found")
+			w.WriteHeader(http.StatusNotFound)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // marshalResourceviewsResourceViewToResourceResponse builds a value of type
 // *ResourceResponse from a value of type *resourceviews.ResourceView.
 func marshalResourceviewsResourceViewToResourceResponse(v *resourceviews.ResourceView) *ResourceResponse {
@@ -324,14 +403,60 @@ func marshalResourceviewsTagViewToTagResponse(v *resourceviews.TagView) *TagResp
 	return res
 }
 
-// marshalResourceviewsVersionViewToVersionResponseBody builds a value of type
-// *VersionResponseBody from a value of type *resourceviews.VersionView.
-func marshalResourceviewsVersionViewToVersionResponseBody(v *resourceviews.VersionView) *VersionResponseBody {
-	res := &VersionResponseBody{
+// marshalResourceviewsVersionViewToVersionResponseBodyUrls builds a value of
+// type *VersionResponseBodyUrls from a value of type
+// *resourceviews.VersionView.
+func marshalResourceviewsVersionViewToVersionResponseBodyUrls(v *resourceviews.VersionView) *VersionResponseBodyUrls {
+	res := &VersionResponseBodyUrls{
 		ID:      *v.ID,
 		Version: *v.Version,
 		RawURL:  *v.RawURL,
 		WebURL:  *v.WebURL,
+	}
+
+	return res
+}
+
+// marshalResourceviewsResourceViewToResourceResponseBodyInfo builds a value of
+// type *ResourceResponseBodyInfo from a value of type
+// *resourceviews.ResourceView.
+func marshalResourceviewsResourceViewToResourceResponseBodyInfo(v *resourceviews.ResourceView) *ResourceResponseBodyInfo {
+	res := &ResourceResponseBodyInfo{
+		ID:     *v.ID,
+		Name:   *v.Name,
+		Type:   *v.Type,
+		Rating: *v.Rating,
+	}
+	if v.Catalog != nil {
+		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBody(v.Catalog)
+	}
+	if v.Tags != nil {
+		res.Tags = make([]*TagResponseBody, len(v.Tags))
+		for i, val := range v.Tags {
+			res.Tags[i] = marshalResourceviewsTagViewToTagResponseBody(val)
+		}
+	}
+
+	return res
+}
+
+// marshalResourceviewsCatalogViewToCatalogResponseBody builds a value of type
+// *CatalogResponseBody from a value of type *resourceviews.CatalogView.
+func marshalResourceviewsCatalogViewToCatalogResponseBody(v *resourceviews.CatalogView) *CatalogResponseBody {
+	res := &CatalogResponseBody{
+		ID:   *v.ID,
+		Type: *v.Type,
+	}
+
+	return res
+}
+
+// marshalResourceviewsTagViewToTagResponseBody builds a value of type
+// *TagResponseBody from a value of type *resourceviews.TagView.
+func marshalResourceviewsTagViewToTagResponseBody(v *resourceviews.TagView) *TagResponseBody {
+	res := &TagResponseBody{
+		ID:   *v.ID,
+		Name: *v.Name,
 	}
 
 	return res

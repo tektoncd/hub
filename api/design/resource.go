@@ -24,7 +24,9 @@ var _ = Service("resource", func() {
 				Default(100)
 			})
 		})
-		Result(CollectionOf(Resource))
+		Result(CollectionOf(Resource), func() {
+			View("default")
+		})
 
 		HTTP(func() {
 			GET("/query")
@@ -45,7 +47,9 @@ var _ = Service("resource", func() {
 				Default(100)
 			})
 		})
-		Result(CollectionOf(Resource))
+		Result(CollectionOf(Resource), func() {
+			View("default")
+		})
 
 		HTTP(func() {
 			GET("/resources")
@@ -66,6 +70,30 @@ var _ = Service("resource", func() {
 
 		HTTP(func() {
 			GET("/resource/{id}/versions")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
+		})
+	})
+
+	Method("ByTypeNameVersion", func() {
+		Description("Find resource using name, type and version of resource")
+		Payload(func() {
+			Attribute("type", String, "type of resource", func() {
+				Enum("task", "pipeline")
+			})
+			Attribute("name", String, "name of resource")
+			Attribute("version", String, "version of resource")
+
+			Required("type", "name", "version")
+		})
+		Result(ResVersion, func() {
+			View("default")
+		})
+
+		HTTP(func() {
+			GET("/resource/{type}/{name}/{version}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)

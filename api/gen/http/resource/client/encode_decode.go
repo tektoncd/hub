@@ -314,6 +314,109 @@ func DecodeVersionsByIDResponse(decoder func(*http.Response) goahttp.Decoder, re
 	}
 }
 
+// BuildByTypeNameVersionRequest instantiates a HTTP request object with method
+// and path set to call the "resource" service "ByTypeNameVersion" endpoint
+func (c *Client) BuildByTypeNameVersionRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		type_   string
+		name    string
+		version string
+	)
+	{
+		p, ok := v.(*resource.ByTypeNameVersionPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("resource", "ByTypeNameVersion", "*resource.ByTypeNameVersionPayload", v)
+		}
+		type_ = p.Type
+		name = p.Name
+		version = p.Version
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ByTypeNameVersionResourcePath(type_, name, version)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("resource", "ByTypeNameVersion", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeByTypeNameVersionResponse returns a decoder for responses returned by
+// the resource ByTypeNameVersion endpoint. restoreBody controls whether the
+// response body should be restored after having been read.
+// DecodeByTypeNameVersionResponse may return the following errors:
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- "not-found" (type *goa.ServiceError): http.StatusNotFound
+//	- error: internal error
+func DecodeByTypeNameVersionResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body ByTypeNameVersionResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByTypeNameVersion", err)
+			}
+			p := NewByTypeNameVersionVersionOK(&body)
+			view := "default"
+			vres := &resourceviews.Version{Projected: p, View: view}
+			if err = resourceviews.ValidateVersion(vres); err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByTypeNameVersion", err)
+			}
+			res := resource.NewVersion(vres)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body ByTypeNameVersionInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByTypeNameVersion", err)
+			}
+			err = ValidateByTypeNameVersionInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByTypeNameVersion", err)
+			}
+			return nil, NewByTypeNameVersionInternalError(&body)
+		case http.StatusNotFound:
+			var (
+				body ByTypeNameVersionNotFoundResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByTypeNameVersion", err)
+			}
+			err = ValidateByTypeNameVersionNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByTypeNameVersion", err)
+			}
+			return nil, NewByTypeNameVersionNotFound(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("resource", "ByTypeNameVersion", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalResourceResponseToResourceviewsResourceView builds a value of type
 // *resourceviews.ResourceView from a value of type *ResourceResponse.
 func unmarshalResourceResponseToResourceviewsResourceView(v *ResourceResponse) *resourceviews.ResourceView {
@@ -377,10 +480,74 @@ func unmarshalTagResponseToResourceviewsTagView(v *TagResponse) *resourceviews.T
 // type *resourceviews.VersionView from a value of type *VersionResponseBody.
 func unmarshalVersionResponseBodyToResourceviewsVersionView(v *VersionResponseBody) *resourceviews.VersionView {
 	res := &resourceviews.VersionView{
-		ID:      v.ID,
-		Version: v.Version,
-		RawURL:  v.RawURL,
-		WebURL:  v.WebURL,
+		ID:                  v.ID,
+		Version:             v.Version,
+		DisplayName:         v.DisplayName,
+		Description:         v.Description,
+		MinPipelinesVersion: v.MinPipelinesVersion,
+		RawURL:              v.RawURL,
+		WebURL:              v.WebURL,
+		UpdatedAt:           v.UpdatedAt,
+	}
+	res.Resource = unmarshalResourceResponseBodyToResourceviewsResourceView(v.Resource)
+
+	return res
+}
+
+// unmarshalResourceResponseBodyToResourceviewsResourceView builds a value of
+// type *resourceviews.ResourceView from a value of type *ResourceResponseBody.
+func unmarshalResourceResponseBodyToResourceviewsResourceView(v *ResourceResponseBody) *resourceviews.ResourceView {
+	res := &resourceviews.ResourceView{
+		ID:     v.ID,
+		Name:   v.Name,
+		Type:   v.Type,
+		Rating: v.Rating,
+	}
+	res.Catalog = unmarshalCatalogResponseBodyToResourceviewsCatalogView(v.Catalog)
+	res.LatestVersion = unmarshalLatestVersionResponseBodyToResourceviewsLatestVersionView(v.LatestVersion)
+	res.Tags = make([]*resourceviews.TagView, len(v.Tags))
+	for i, val := range v.Tags {
+		res.Tags[i] = unmarshalTagResponseBodyToResourceviewsTagView(val)
+	}
+
+	return res
+}
+
+// unmarshalCatalogResponseBodyToResourceviewsCatalogView builds a value of
+// type *resourceviews.CatalogView from a value of type *CatalogResponseBody.
+func unmarshalCatalogResponseBodyToResourceviewsCatalogView(v *CatalogResponseBody) *resourceviews.CatalogView {
+	res := &resourceviews.CatalogView{
+		ID:   v.ID,
+		Type: v.Type,
+	}
+
+	return res
+}
+
+// unmarshalLatestVersionResponseBodyToResourceviewsLatestVersionView builds a
+// value of type *resourceviews.LatestVersionView from a value of type
+// *LatestVersionResponseBody.
+func unmarshalLatestVersionResponseBodyToResourceviewsLatestVersionView(v *LatestVersionResponseBody) *resourceviews.LatestVersionView {
+	res := &resourceviews.LatestVersionView{
+		ID:                  v.ID,
+		Version:             v.Version,
+		DisplayName:         v.DisplayName,
+		Description:         v.Description,
+		MinPipelinesVersion: v.MinPipelinesVersion,
+		RawURL:              v.RawURL,
+		WebURL:              v.WebURL,
+		UpdatedAt:           v.UpdatedAt,
+	}
+
+	return res
+}
+
+// unmarshalTagResponseBodyToResourceviewsTagView builds a value of type
+// *resourceviews.TagView from a value of type *TagResponseBody.
+func unmarshalTagResponseBodyToResourceviewsTagView(v *TagResponseBody) *resourceviews.TagView {
+	res := &resourceviews.TagView{
+		ID:   v.ID,
+		Name: v.Name,
 	}
 
 	return res

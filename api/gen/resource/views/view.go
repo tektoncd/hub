@@ -28,6 +28,14 @@ type Versions struct {
 	View string
 }
 
+// Version is the viewed result type that is projected based on a view.
+type Version struct {
+	// Type to project
+	Projected *VersionView
+	// View to render
+	View string
+}
+
 // ResourceCollectionView is a type that runs validations on a projected type.
 type ResourceCollectionView []*ResourceView
 
@@ -99,16 +107,34 @@ type VersionView struct {
 	ID *uint
 	// Version of resource
 	Version *string
+	// Display name of version
+	DisplayName *string
+	// Description of version
+	Description *string
+	// Minimum pipelines version the resource's version is compatible with
+	MinPipelinesVersion *string
 	// Raw URL of resource's yaml file of the version
 	RawURL *string
 	// Web URL of resource's yaml file of the version
 	WebURL *string
+	// Timestamp when version was last updated
+	UpdatedAt *string
+	// Resource to which the version belongs
+	Resource *ResourceView
 }
 
 var (
 	// ResourceCollectionMap is a map of attribute names in result type
 	// ResourceCollection indexed by view name.
 	ResourceCollectionMap = map[string][]string{
+		"info": []string{
+			"id",
+			"name",
+			"catalog",
+			"type",
+			"tags",
+			"rating",
+		},
 		"default": []string{
 			"id",
 			"name",
@@ -127,9 +153,38 @@ var (
 			"versions",
 		},
 	}
+	// VersionMap is a map of attribute names in result type Version indexed by
+	// view name.
+	VersionMap = map[string][]string{
+		"urls": []string{
+			"id",
+			"version",
+			"rawURL",
+			"webURL",
+		},
+		"default": []string{
+			"id",
+			"version",
+			"description",
+			"minPipelinesVersion",
+			"displayName",
+			"rawURL",
+			"webURL",
+			"updatedAt",
+			"resource",
+		},
+	}
 	// ResourceMap is a map of attribute names in result type Resource indexed by
 	// view name.
 	ResourceMap = map[string][]string{
+		"info": []string{
+			"id",
+			"name",
+			"catalog",
+			"type",
+			"tags",
+			"rating",
+		},
 		"default": []string{
 			"id",
 			"name",
@@ -140,26 +195,18 @@ var (
 			"rating",
 		},
 	}
-	// VersionMap is a map of attribute names in result type Version indexed by
-	// view name.
-	VersionMap = map[string][]string{
-		"default": []string{
-			"id",
-			"version",
-			"rawURL",
-			"webURL",
-		},
-	}
 )
 
 // ValidateResourceCollection runs the validations defined on the viewed result
 // type ResourceCollection.
 func ValidateResourceCollection(result ResourceCollection) (err error) {
 	switch result.View {
+	case "info":
+		err = ValidateResourceCollectionViewInfo(result.Projected)
 	case "default", "":
 		err = ValidateResourceCollectionView(result.Projected)
 	default:
-		err = goa.InvalidEnumValueError("view", result.View, []interface{}{"default"})
+		err = goa.InvalidEnumValueError("view", result.View, []interface{}{"info", "default"})
 	}
 	return
 }
@@ -176,12 +223,73 @@ func ValidateVersions(result *Versions) (err error) {
 	return
 }
 
+// ValidateVersion runs the validations defined on the viewed result type
+// Version.
+func ValidateVersion(result *Version) (err error) {
+	switch result.View {
+	case "urls":
+		err = ValidateVersionViewUrls(result.Projected)
+	case "default", "":
+		err = ValidateVersionView(result.Projected)
+	default:
+		err = goa.InvalidEnumValueError("view", result.View, []interface{}{"urls", "default"})
+	}
+	return
+}
+
+// ValidateResourceCollectionViewInfo runs the validations defined on
+// ResourceCollectionView using the "info" view.
+func ValidateResourceCollectionViewInfo(result ResourceCollectionView) (err error) {
+	for _, item := range result {
+		if err2 := ValidateResourceViewInfo(item); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
 // ValidateResourceCollectionView runs the validations defined on
 // ResourceCollectionView using the "default" view.
 func ValidateResourceCollectionView(result ResourceCollectionView) (err error) {
 	for _, item := range result {
 		if err2 := ValidateResourceView(item); err2 != nil {
 			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateResourceViewInfo runs the validations defined on ResourceView using
+// the "info" view.
+func ValidateResourceViewInfo(result *ResourceView) (err error) {
+	if result.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "result"))
+	}
+	if result.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
+	}
+	if result.Catalog == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("catalog", "result"))
+	}
+	if result.Type == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("type", "result"))
+	}
+	if result.Tags == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "result"))
+	}
+	if result.Rating == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "result"))
+	}
+	if result.Catalog != nil {
+		if err2 := ValidateCatalogView(result.Catalog); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	for _, e := range result.Tags {
+		if e != nil {
+			if err2 := ValidateTagView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
 		}
 	}
 	return
@@ -310,16 +418,16 @@ func ValidateVersionsView(result *VersionsView) (err error) {
 		}
 	}
 	if result.Latest != nil {
-		if err2 := ValidateVersionView(result.Latest); err2 != nil {
+		if err2 := ValidateVersionViewUrls(result.Latest); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
 	}
 	return
 }
 
-// ValidateVersionView runs the validations defined on VersionView using the
-// "default" view.
-func ValidateVersionView(result *VersionView) (err error) {
+// ValidateVersionViewUrls runs the validations defined on VersionView using
+// the "urls" view.
+func ValidateVersionViewUrls(result *VersionView) (err error) {
 	if result.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "result"))
 	}
@@ -337,6 +445,50 @@ func ValidateVersionView(result *VersionView) (err error) {
 	}
 	if result.WebURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.webURL", *result.WebURL, goa.FormatURI))
+	}
+	return
+}
+
+// ValidateVersionView runs the validations defined on VersionView using the
+// "default" view.
+func ValidateVersionView(result *VersionView) (err error) {
+	if result.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "result"))
+	}
+	if result.Version == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("version", "result"))
+	}
+	if result.DisplayName == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("displayName", "result"))
+	}
+	if result.Description == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("description", "result"))
+	}
+	if result.MinPipelinesVersion == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("minPipelinesVersion", "result"))
+	}
+	if result.RawURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("rawURL", "result"))
+	}
+	if result.WebURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("webURL", "result"))
+	}
+	if result.UpdatedAt == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("updatedAt", "result"))
+	}
+	if result.RawURL != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))
+	}
+	if result.WebURL != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("result.webURL", *result.WebURL, goa.FormatURI))
+	}
+	if result.UpdatedAt != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("result.updatedAt", *result.UpdatedAt, goa.FormatDateTime))
+	}
+	if result.Resource != nil {
+		if err2 := ValidateResourceViewInfo(result.Resource); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
 	}
 	return
 }

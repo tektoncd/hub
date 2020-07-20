@@ -95,3 +95,33 @@ func BuildVersionsByIDPayload(resourceVersionsByIDID string) (*resource.Versions
 
 	return v, nil
 }
+
+// BuildByTypeNameVersionPayload builds the payload for the resource
+// ByTypeNameVersion endpoint from CLI flags.
+func BuildByTypeNameVersionPayload(resourceByTypeNameVersionType string, resourceByTypeNameVersionName string, resourceByTypeNameVersionVersion string) (*resource.ByTypeNameVersionPayload, error) {
+	var err error
+	var type_ string
+	{
+		type_ = resourceByTypeNameVersionType
+		if !(type_ == "task" || type_ == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("type_", type_, []interface{}{"task", "pipeline"}))
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	var name string
+	{
+		name = resourceByTypeNameVersionName
+	}
+	var version string
+	{
+		version = resourceByTypeNameVersionVersion
+	}
+	v := &resource.ByTypeNameVersionPayload{}
+	v.Type = type_
+	v.Name = name
+	v.Version = version
+
+	return v, nil
+}
