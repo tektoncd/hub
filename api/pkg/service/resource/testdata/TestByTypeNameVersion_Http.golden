@@ -1,0 +1,26 @@
+{
+	"id": 6,
+	"version": "0.1.1",
+	"description": "Desc1",
+	"minPipelinesVersion": "0.12.1",
+	"displayName": "Tekton CLI",
+	"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.1.1/tekton.yaml",
+	"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.1.1/tekton.yaml",
+	"updatedAt": "2016-01-01 12:30:12 +0000 UTC",
+	"resource": {
+		"id": 1,
+		"name": "tekton",
+		"catalog": {
+			"id": 1,
+			"type": "task"
+		},
+		"type": "task",
+		"tags": [
+			{
+				"id": 2,
+				"name": "rtag"
+			}
+		],
+		"rating": 5
+	}
+}
