@@ -25,14 +25,14 @@ import (
 //
 func UsageCommands() string {
 	return `category list
-resource (query|list|versions-by-id)
+resource (query|list|versions-by-id|by-type-name-version)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` resource query --name "Magni enim maiores nihil a." --type "pipeline" --limit 4920150712889842071` + "\n" +
+		os.Args[0] + ` resource query --name "Qui occaecati officia inventore adipisci molestiae quaerat." --type "pipeline" --limit 15132712745376926416` + "\n" +
 		""
 }
 
@@ -62,6 +62,11 @@ func ParseEndpoint(
 
 		resourceVersionsByIDFlags  = flag.NewFlagSet("versions-by-id", flag.ExitOnError)
 		resourceVersionsByIDIDFlag = resourceVersionsByIDFlags.String("id", "REQUIRED", "ID of a resource")
+
+		resourceByTypeNameVersionFlags       = flag.NewFlagSet("by-type-name-version", flag.ExitOnError)
+		resourceByTypeNameVersionTypeFlag    = resourceByTypeNameVersionFlags.String("type", "REQUIRED", "type of resource")
+		resourceByTypeNameVersionNameFlag    = resourceByTypeNameVersionFlags.String("name", "REQUIRED", "name of resource")
+		resourceByTypeNameVersionVersionFlag = resourceByTypeNameVersionFlags.String("version", "REQUIRED", "version of resource")
 	)
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
@@ -70,6 +75,7 @@ func ParseEndpoint(
 	resourceQueryFlags.Usage = resourceQueryUsage
 	resourceListFlags.Usage = resourceListUsage
 	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
+	resourceByTypeNameVersionFlags.Usage = resourceByTypeNameVersionUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -123,6 +129,9 @@ func ParseEndpoint(
 			case "versions-by-id":
 				epf = resourceVersionsByIDFlags
 
+			case "by-type-name-version":
+				epf = resourceByTypeNameVersionFlags
+
 			}
 
 		}
@@ -164,6 +173,9 @@ func ParseEndpoint(
 			case "versions-by-id":
 				endpoint = c.VersionsByID()
 				data, err = resourcec.BuildVersionsByIDPayload(*resourceVersionsByIDIDFlag)
+			case "by-type-name-version":
+				endpoint = c.ByTypeNameVersion()
+				data, err = resourcec.BuildByTypeNameVersionPayload(*resourceByTypeNameVersionTypeFlag, *resourceByTypeNameVersionNameFlag, *resourceByTypeNameVersionVersionFlag)
 			}
 		}
 	}
@@ -207,6 +219,7 @@ COMMAND:
     query: Find resources by a combination of name, type
     list: List all resources sorted by rating and name
     versions-by-id: Find all versions of a resource by its id
+    by-type-name-version: Find resource using name, type and version of resource
 
 Additional help:
     %s resource COMMAND --help
@@ -221,7 +234,7 @@ Find resources by a combination of name, type
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Magni enim maiores nihil a." --type "pipeline" --limit 4920150712889842071
+    `+os.Args[0]+` resource query --name "Qui occaecati officia inventore adipisci molestiae quaerat." --type "pipeline" --limit 15132712745376926416
 `, os.Args[0])
 }
 
@@ -232,7 +245,7 @@ List all resources sorted by rating and name
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource list --limit 7583277825226825956
+    `+os.Args[0]+` resource list --limit 12000111394796260242
 `, os.Args[0])
 }
 
@@ -243,6 +256,19 @@ Find all versions of a resource by its id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource versions-by-id --id 12390484844194469530
+    `+os.Args[0]+` resource versions-by-id --id 13327540982832606309
+`, os.Args[0])
+}
+
+func resourceByTypeNameVersionUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-type-name-version -type STRING -name STRING -version STRING
+
+Find resource using name, type and version of resource
+    -type STRING: type of resource
+    -name STRING: name of resource
+    -version STRING: version of resource
+
+Example:
+    `+os.Args[0]+` resource by-type-name-version --type "pipeline" --name "Deserunt nostrum assumenda pariatur occaecati voluptas assumenda." --version "Quaerat consequatur ullam quia."
 `, os.Args[0])
 }

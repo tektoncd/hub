@@ -15,17 +15,19 @@ import (
 
 // Endpoints wraps the "resource" service endpoints.
 type Endpoints struct {
-	Query        goa.Endpoint
-	List         goa.Endpoint
-	VersionsByID goa.Endpoint
+	Query             goa.Endpoint
+	List              goa.Endpoint
+	VersionsByID      goa.Endpoint
+	ByTypeNameVersion goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "resource" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		Query:        NewQueryEndpoint(s),
-		List:         NewListEndpoint(s),
-		VersionsByID: NewVersionsByIDEndpoint(s),
+		Query:             NewQueryEndpoint(s),
+		List:              NewListEndpoint(s),
+		VersionsByID:      NewVersionsByIDEndpoint(s),
+		ByTypeNameVersion: NewByTypeNameVersionEndpoint(s),
 	}
 }
 
@@ -34,6 +36,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Query = m(e.Query)
 	e.List = m(e.List)
 	e.VersionsByID = m(e.VersionsByID)
+	e.ByTypeNameVersion = m(e.ByTypeNameVersion)
 }
 
 // NewQueryEndpoint returns an endpoint function that calls the method "Query"
@@ -74,6 +77,20 @@ func NewVersionsByIDEndpoint(s Service) goa.Endpoint {
 			return nil, err
 		}
 		vres := NewViewedVersions(res, "default")
+		return vres, nil
+	}
+}
+
+// NewByTypeNameVersionEndpoint returns an endpoint function that calls the
+// method "ByTypeNameVersion" of service "resource".
+func NewByTypeNameVersionEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*ByTypeNameVersionPayload)
+		res, err := s.ByTypeNameVersion(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedVersion(res, "default")
 		return vres, nil
 	}
 }

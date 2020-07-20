@@ -29,6 +29,29 @@ type VersionsByIDResponseBody struct {
 	Versions []*VersionResponseBody `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
 }
 
+// ByTypeNameVersionResponseBody is the type of the "resource" service
+// "ByTypeNameVersion" endpoint HTTP response body.
+type ByTypeNameVersionResponseBody struct {
+	// ID is the unique id of resource's version
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Version of resource
+	Version *string `form:"version,omitempty" json:"version,omitempty" xml:"version,omitempty"`
+	// Display name of version
+	DisplayName *string `form:"displayName,omitempty" json:"displayName,omitempty" xml:"displayName,omitempty"`
+	// Description of version
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Minimum pipelines version the resource's version is compatible with
+	MinPipelinesVersion *string `form:"minPipelinesVersion,omitempty" json:"minPipelinesVersion,omitempty" xml:"minPipelinesVersion,omitempty"`
+	// Raw URL of resource's yaml file of the version
+	RawURL *string `form:"rawURL,omitempty" json:"rawURL,omitempty" xml:"rawURL,omitempty"`
+	// Web URL of resource's yaml file of the version
+	WebURL *string `form:"webURL,omitempty" json:"webURL,omitempty" xml:"webURL,omitempty"`
+	// Timestamp when version was last updated
+	UpdatedAt *string `form:"updatedAt,omitempty" json:"updatedAt,omitempty" xml:"updatedAt,omitempty"`
+	// Resource to which the version belongs
+	Resource *ResourceResponseBody `form:"resource,omitempty" json:"resource,omitempty" xml:"resource,omitempty"`
+}
+
 // QueryInternalErrorResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "internal-error" error.
 type QueryInternalErrorResponseBody struct {
@@ -119,6 +142,43 @@ type VersionsByIDNotFoundResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
+// ByTypeNameVersionInternalErrorResponseBody is the type of the "resource"
+// service "ByTypeNameVersion" endpoint HTTP response body for the
+// "internal-error" error.
+type ByTypeNameVersionInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// ByTypeNameVersionNotFoundResponseBody is the type of the "resource" service
+// "ByTypeNameVersion" endpoint HTTP response body for the "not-found" error.
+type ByTypeNameVersionNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
 // ResourceResponse is used to define fields on response body types.
 type ResourceResponse struct {
 	// ID is the unique id of the resource
@@ -179,10 +239,74 @@ type VersionResponseBody struct {
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Version of resource
 	Version *string `form:"version,omitempty" json:"version,omitempty" xml:"version,omitempty"`
+	// Display name of version
+	DisplayName *string `form:"displayName,omitempty" json:"displayName,omitempty" xml:"displayName,omitempty"`
+	// Description of version
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Minimum pipelines version the resource's version is compatible with
+	MinPipelinesVersion *string `form:"minPipelinesVersion,omitempty" json:"minPipelinesVersion,omitempty" xml:"minPipelinesVersion,omitempty"`
 	// Raw URL of resource's yaml file of the version
 	RawURL *string `form:"rawURL,omitempty" json:"rawURL,omitempty" xml:"rawURL,omitempty"`
 	// Web URL of resource's yaml file of the version
 	WebURL *string `form:"webURL,omitempty" json:"webURL,omitempty" xml:"webURL,omitempty"`
+	// Timestamp when version was last updated
+	UpdatedAt *string `form:"updatedAt,omitempty" json:"updatedAt,omitempty" xml:"updatedAt,omitempty"`
+	// Resource to which the version belongs
+	Resource *ResourceResponseBody `form:"resource,omitempty" json:"resource,omitempty" xml:"resource,omitempty"`
+}
+
+// ResourceResponseBody is used to define fields on response body types.
+type ResourceResponseBody struct {
+	// ID is the unique id of the resource
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name of resource
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Type of catalog to which resource belongs
+	Catalog *CatalogResponseBody `form:"catalog,omitempty" json:"catalog,omitempty" xml:"catalog,omitempty"`
+	// Type of resource
+	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
+	// Latest version of resource
+	LatestVersion *LatestVersionResponseBody `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
+	// Tags related to resource
+	Tags []*TagResponseBody `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
+	// Rating of resource
+	Rating *float64 `form:"rating,omitempty" json:"rating,omitempty" xml:"rating,omitempty"`
+}
+
+// CatalogResponseBody is used to define fields on response body types.
+type CatalogResponseBody struct {
+	// ID is the unique id of the catalog
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Type of catalog
+	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
+}
+
+// LatestVersionResponseBody is used to define fields on response body types.
+type LatestVersionResponseBody struct {
+	// ID is the unique id of resource's version
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Version of resource
+	Version *string `form:"version,omitempty" json:"version,omitempty" xml:"version,omitempty"`
+	// Display name of version
+	DisplayName *string `form:"displayName,omitempty" json:"displayName,omitempty" xml:"displayName,omitempty"`
+	// Description of version
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Minimum pipelines version the resource's version is compatible with
+	MinPipelinesVersion *string `form:"minPipelinesVersion,omitempty" json:"minPipelinesVersion,omitempty" xml:"minPipelinesVersion,omitempty"`
+	// Raw URL of resource's yaml file of the version
+	RawURL *string `form:"rawURL,omitempty" json:"rawURL,omitempty" xml:"rawURL,omitempty"`
+	// Web URL of resource's yaml file of the version
+	WebURL *string `form:"webURL,omitempty" json:"webURL,omitempty" xml:"webURL,omitempty"`
+	// Timestamp when version was last updated
+	UpdatedAt *string `form:"updatedAt,omitempty" json:"updatedAt,omitempty" xml:"updatedAt,omitempty"`
+}
+
+// TagResponseBody is used to define fields on response body types.
+type TagResponseBody struct {
+	// ID is the unique id of tag
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name of tag
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
 // NewQueryResourceCollectionOK builds a "resource" service "Query" endpoint
@@ -280,6 +404,54 @@ func NewVersionsByIDInternalError(body *VersionsByIDInternalErrorResponseBody) *
 // NewVersionsByIDNotFound builds a resource service VersionsByID endpoint
 // not-found error.
 func NewVersionsByIDNotFound(body *VersionsByIDNotFoundResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewByTypeNameVersionVersionOK builds a "resource" service
+// "ByTypeNameVersion" endpoint result from a HTTP "OK" response.
+func NewByTypeNameVersionVersionOK(body *ByTypeNameVersionResponseBody) *resourceviews.VersionView {
+	v := &resourceviews.VersionView{
+		ID:                  body.ID,
+		Version:             body.Version,
+		DisplayName:         body.DisplayName,
+		Description:         body.Description,
+		MinPipelinesVersion: body.MinPipelinesVersion,
+		RawURL:              body.RawURL,
+		WebURL:              body.WebURL,
+		UpdatedAt:           body.UpdatedAt,
+	}
+	v.Resource = unmarshalResourceResponseBodyToResourceviewsResourceView(body.Resource)
+
+	return v
+}
+
+// NewByTypeNameVersionInternalError builds a resource service
+// ByTypeNameVersion endpoint internal-error error.
+func NewByTypeNameVersionInternalError(body *ByTypeNameVersionInternalErrorResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewByTypeNameVersionNotFound builds a resource service ByTypeNameVersion
+// endpoint not-found error.
+func NewByTypeNameVersionNotFound(body *ByTypeNameVersionNotFoundResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -391,6 +563,54 @@ func ValidateVersionsByIDInternalErrorResponseBody(body *VersionsByIDInternalErr
 // ValidateVersionsByIDNotFoundResponseBody runs the validations defined on
 // VersionsByID_not-found_Response_Body
 func ValidateVersionsByIDNotFoundResponseBody(body *VersionsByIDNotFoundResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateByTypeNameVersionInternalErrorResponseBody runs the validations
+// defined on ByTypeNameVersion_internal-error_Response_Body
+func ValidateByTypeNameVersionInternalErrorResponseBody(body *ByTypeNameVersionInternalErrorResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateByTypeNameVersionNotFoundResponseBody runs the validations defined
+// on ByTypeNameVersion_not-found_Response_Body
+func ValidateByTypeNameVersionNotFoundResponseBody(body *ByTypeNameVersionNotFoundResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -530,17 +750,151 @@ func ValidateVersionResponseBody(body *VersionResponseBody) (err error) {
 	if body.Version == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("version", "body"))
 	}
+	if body.DisplayName == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("displayName", "body"))
+	}
+	if body.Description == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("description", "body"))
+	}
+	if body.MinPipelinesVersion == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("minPipelinesVersion", "body"))
+	}
 	if body.RawURL == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rawURL", "body"))
 	}
 	if body.WebURL == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("webURL", "body"))
 	}
+	if body.UpdatedAt == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("updatedAt", "body"))
+	}
+	if body.Resource == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("resource", "body"))
+	}
 	if body.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.rawURL", *body.RawURL, goa.FormatURI))
 	}
 	if body.WebURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.webURL", *body.WebURL, goa.FormatURI))
+	}
+	if body.UpdatedAt != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.updatedAt", *body.UpdatedAt, goa.FormatDateTime))
+	}
+	if body.Resource != nil {
+		if err2 := ValidateResourceResponseBody(body.Resource); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateResourceResponseBody runs the validations defined on
+// ResourceResponseBody
+func ValidateResourceResponseBody(body *ResourceResponseBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.Catalog == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("catalog", "body"))
+	}
+	if body.Type == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("type", "body"))
+	}
+	if body.LatestVersion == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("latestVersion", "body"))
+	}
+	if body.Tags == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "body"))
+	}
+	if body.Rating == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "body"))
+	}
+	if body.Catalog != nil {
+		if err2 := ValidateCatalogResponseBody(body.Catalog); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	if body.LatestVersion != nil {
+		if err2 := ValidateLatestVersionResponseBody(body.LatestVersion); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	for _, e := range body.Tags {
+		if e != nil {
+			if err2 := ValidateTagResponseBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}
+
+// ValidateCatalogResponseBody runs the validations defined on
+// CatalogResponseBody
+func ValidateCatalogResponseBody(body *CatalogResponseBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Type == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("type", "body"))
+	}
+	if body.Type != nil {
+		if !(*body.Type == "official" || *body.Type == "community") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.type", *body.Type, []interface{}{"official", "community"}))
+		}
+	}
+	return
+}
+
+// ValidateLatestVersionResponseBody runs the validations defined on
+// LatestVersionResponseBody
+func ValidateLatestVersionResponseBody(body *LatestVersionResponseBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Version == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("version", "body"))
+	}
+	if body.Description == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("description", "body"))
+	}
+	if body.DisplayName == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("displayName", "body"))
+	}
+	if body.MinPipelinesVersion == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("minPipelinesVersion", "body"))
+	}
+	if body.RawURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("rawURL", "body"))
+	}
+	if body.WebURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("webURL", "body"))
+	}
+	if body.UpdatedAt == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("updatedAt", "body"))
+	}
+	if body.RawURL != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.rawURL", *body.RawURL, goa.FormatURI))
+	}
+	if body.WebURL != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.webURL", *body.WebURL, goa.FormatURI))
+	}
+	if body.UpdatedAt != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.updatedAt", *body.UpdatedAt, goa.FormatDateTime))
+	}
+	return
+}
+
+// ValidateTagResponseBody runs the validations defined on TagResponseBody
+func ValidateTagResponseBody(body *TagResponseBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
 	return
 }

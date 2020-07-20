@@ -103,6 +103,12 @@ func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayl
 	return res, nil
 }
 
+func (s *service) ByTypeNameVersion(ctx context.Context, p *resource.ByTypeNameVersionPayload) (res *resource.Version, err error) {
+	res = &resource.Version{}
+	s.logger.Info("resource.ResourceByNameKindVersion")
+	return
+}
+
 func initResource(r model.Resource) *resource.Resource {
 	res := &resource.Resource{}
 	res.ID = r.ID
