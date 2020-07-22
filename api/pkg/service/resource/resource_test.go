@@ -18,7 +18,7 @@ func TestQuery_DefaultLimit(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "", Type: "", Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 5, len(all))
+	assert.Equal(t, 6, len(all))
 }
 
 func TestQuery_ByLimit(t *testing.T) {
@@ -176,6 +176,28 @@ func TestByVersionID_NotFoundError(t *testing.T) {
 	resourceSvc := New(tc)
 	payload := &resource.ByVersionIDPayload{VersionID: 111}
 	_, err := resourceSvc.ByVersionID(context.Background(), payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Resource not found")
+}
+
+func TestByTypeName(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByTypeNamePayload{Type: "task", Name: "img"}
+	res, err := resourceSvc.ByTypeName(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(res))
+}
+
+func TestByTypeName_NotFoundError(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByTypeNamePayload{Type: "task", Name: "foo"}
+	_, err := resourceSvc.ByTypeName(context.Background(), payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Resource not found")
 }

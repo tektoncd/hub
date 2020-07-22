@@ -78,3 +78,13 @@
   resource_id: 5
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
+
+- id: 9
+  version: 0.1
+  display_name: Image
+  description: Desc3
+  min_pipelines_version: 0.12.1
+  url: https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/img/0.1/img.yaml
+  resource_id: 6
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
