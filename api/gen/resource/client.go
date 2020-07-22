@@ -15,15 +15,17 @@ import (
 
 // Client is the "resource" service client.
 type Client struct {
-	QueryEndpoint goa.Endpoint
-	ListEndpoint  goa.Endpoint
+	QueryEndpoint        goa.Endpoint
+	ListEndpoint         goa.Endpoint
+	VersionsByIDEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "resource" service client given the endpoints.
-func NewClient(query, list goa.Endpoint) *Client {
+func NewClient(query, list, versionsByID goa.Endpoint) *Client {
 	return &Client{
-		QueryEndpoint: query,
-		ListEndpoint:  list,
+		QueryEndpoint:        query,
+		ListEndpoint:         list,
+		VersionsByIDEndpoint: versionsByID,
 	}
 }
 
@@ -45,4 +47,14 @@ func (c *Client) List(ctx context.Context, p *ListPayload) (res ResourceCollecti
 		return
 	}
 	return ires.(ResourceCollection), nil
+}
+
+// VersionsByID calls the "VersionsByID" endpoint of the "resource" service.
+func (c *Client) VersionsByID(ctx context.Context, p *VersionsByIDPayload) (res *Versions, err error) {
+	var ires interface{}
+	ires, err = c.VersionsByIDEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*Versions), nil
 }

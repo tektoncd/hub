@@ -44,14 +44,14 @@ paths:
                     name: image-build
                   - id: 2
                     name: kaniko
-                - id: 1
-                  name: Image Builder
-                  tags:
-                  - id: 1
-                    name: image-build
-                  - id: 2
-                    name: kaniko
               example:
+              - id: 1
+                name: Image Builder
+                tags:
+                - id: 1
+                  name: image-build
+                - id: 2
+                  name: kaniko
               - id: 1
                 name: Image Builder
                 tags:
@@ -95,8 +95,8 @@ paths:
           type: string
           description: Name of resource
           default: ""
-          example: Omnis quas deserunt nostrum assumenda.
-        example: Occaecati voluptas assumenda.
+          example: Suscipit aut minima autem ut est error.
+        example: Quos commodi.
       - name: type
         in: query
         description: Type of resource
@@ -110,7 +110,7 @@ paths:
           - task
           - pipeline
           - ""
-        example: pipeline
+        example: ""
       - name: limit
         in: query
         description: Maximum number of resources to be returned
@@ -119,8 +119,8 @@ paths:
           type: integer
           description: Maximum number of resources to be returned
           default: 100
-          example: 11724777226257936196
-        example: 2829482926296309606
+          example: 16734324998019840297
+        example: 16076616305336950291
       responses:
         "200":
           description: ""
@@ -198,7 +198,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -207,6 +207,71 @@ paths:
                 $ref: '#/components/schemas/Error'
               example:
                 fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: true
+                timeout: true
+  /resource/{id}/versions:
+    get:
+      tags:
+      - resource
+      summary: VersionsByID resource
+      description: Find all versions of a resource by its id
+      operationId: resource#VersionsByID
+      parameters:
+      - name: id
+        in: path
+        description: ID of a resource
+        required: true
+        schema:
+          type: integer
+          description: ID of a resource
+          example: 14793232043880619506
+        example: 2340774708918288231
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Versions'
+              example:
+                latest:
+                  id: 2
+                  rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
+                  version: "0.2"
+                  webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
+                versions:
+                - id: 1
+                  rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+                  version: "0.1"
+                  webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+                - id: 2
+                  rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
+                  version: "0.2"
+                  webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
+        "404":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: true
+                timeout: false
+        "500":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
@@ -228,8 +293,8 @@ paths:
           type: integer
           description: Maximum number of resources to be returned
           default: 100
-          example: 379431535305924829
-        example: 16478532048257346201
+          example: 312993529425355973
+        example: 16728078114425603848
       responses:
         "200":
           description: ""
@@ -306,7 +371,7 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
+                temporary: true
                 timeout: true
   /swagger/swagger.json:
     get:
@@ -399,15 +464,15 @@ components:
         timeout:
           type: boolean
           description: Is the error a timeout?
-          example: true
+          example: false
       description: Internal Server Error
       example:
         fault: false
         id: 123abc
         message: parameter 'p' must be an integer
         name: bad_request
-        temporary: false
-        timeout: false
+        temporary: true
+        timeout: true
       required:
       - name
       - id
@@ -425,7 +490,7 @@ components:
           description: ID is the unique id of the resource
           example: 1
         latestVersion:
-          $ref: '#/components/schemas/Version'
+          $ref: '#/components/schemas/LatestVersion'
         name:
           type: string
           description: Name of resource
@@ -476,6 +541,94 @@ components:
       - latestVersion
       - tags
       - rating
+    HubVersion:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID is the unique id of resource's version
+          example: 1
+        rawURL:
+          type: string
+          description: Raw URL of resource's yaml file of the version
+          example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          format: uri
+        version:
+          type: string
+          description: Version of resource
+          example: "0.1"
+        webURL:
+          type: string
+          description: Web URL of resource's yaml file of the version
+          example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          format: uri
+      description: The Version result type describes resource's version information.
+      example:
+        id: 1
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+      required:
+      - id
+      - version
+      - rawURL
+      - webURL
+    LatestVersion:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of version
+          example: Buildah task builds source into a container image and then pushes it to a container registry.
+        displayName:
+          type: string
+          description: Display name of version
+          example: Buildah
+        id:
+          type: integer
+          description: ID is the unique id of resource's version
+          example: 1
+        minPipelinesVersion:
+          type: string
+          description: Minimum pipelines version the resource's version is compatible with
+          example: 0.12.1
+        rawURL:
+          type: string
+          description: Raw URL of resource's yaml file of the version
+          example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          format: uri
+        updatedAt:
+          type: string
+          description: Timestamp when version was last updated
+          example: 2020-01-01 12:00:00 +0000 UTC
+          format: date-time
+        version:
+          type: string
+          description: Version of resource
+          example: "0.1"
+        webURL:
+          type: string
+          description: Web URL of resource's yaml file of the version
+          example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          format: uri
+      example:
+        description: Buildah task builds source into a container image and then pushes it to a container registry.
+        displayName: Buildah
+        id: 1
+        minPipelinesVersion: 0.12.1
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        updatedAt: 2020-01-01 12:00:00 +0000 UTC
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+      required:
+      - id
+      - version
+      - description
+      - displayName
+      - minPipelinesVersion
+      - rawURL
+      - webURL
+      - updatedAt
     ResourceCollection:
       type: array
       items:
@@ -536,59 +689,40 @@ components:
       required:
       - id
       - name
-    Version:
+    Versions:
       type: object
       properties:
-        description:
-          type: string
-          description: Description of version
-          example: Buildah task builds source into a container image and then pushes it to a container registry.
-        displayName:
-          type: string
-          description: Display name of version
-          example: Buildah
-        id:
-          type: integer
-          description: ID is the unique id of resource's version
-          example: 1
-        minPipelinesVersion:
-          type: string
-          description: Minimum pipelines version the resource's version is compatible with
-          example: 0.12.1
-        rawURL:
-          type: string
-          description: Raw URL of resource's yaml file of the version
-          example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-          format: uri
-        updatedAt:
-          type: string
-          description: Timestamp when version was last updated
-          example: 2020-01-01 12:00:00 +0000 UTC
-          format: date-time
-        version:
-          type: string
-          description: Version of resource
-          example: "0.1"
-        webURL:
-          type: string
-          description: Web URL of resource's yaml file of the version
-          example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-          format: uri
+        latest:
+          $ref: '#/components/schemas/HubVersion'
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/HubVersion'
+          description: List of all versions of resource
+          example:
+          - id: 1
+            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+            version: "0.1"
+            webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          - id: 2
+            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
+            version: "0.2"
+            webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
       example:
-        description: Buildah task builds source into a container image and then pushes it to a container registry.
-        displayName: Buildah
-        id: 1
-        minPipelinesVersion: 0.12.1
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-        updatedAt: 2020-01-01 12:00:00 +0000 UTC
-        version: "0.1"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        latest:
+          id: 2
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
+          version: "0.2"
+          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
+        versions:
+        - id: 1
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        - id: 2
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
+          version: "0.2"
+          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
       required:
-      - id
-      - version
-      - description
-      - displayName
-      - minPipelinesVersion
-      - rawURL
-      - webURL
-      - updatedAt
+      - latest
+      - versions

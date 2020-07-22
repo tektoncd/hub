@@ -20,6 +20,15 @@ type QueryResponseBody []*ResourceResponse
 // response body.
 type ListResponseBody []*ResourceResponse
 
+// VersionsByIDResponseBody is the type of the "resource" service
+// "VersionsByID" endpoint HTTP response body.
+type VersionsByIDResponseBody struct {
+	// Latest Version of resource
+	Latest *VersionResponseBody `form:"latest,omitempty" json:"latest,omitempty" xml:"latest,omitempty"`
+	// List of all versions of resource
+	Versions []*VersionResponseBody `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
+}
+
 // QueryInternalErrorResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "internal-error" error.
 type QueryInternalErrorResponseBody struct {
@@ -74,6 +83,42 @@ type ListInternalErrorResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
+// VersionsByIDInternalErrorResponseBody is the type of the "resource" service
+// "VersionsByID" endpoint HTTP response body for the "internal-error" error.
+type VersionsByIDInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// VersionsByIDNotFoundResponseBody is the type of the "resource" service
+// "VersionsByID" endpoint HTTP response body for the "not-found" error.
+type VersionsByIDNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
 // ResourceResponse is used to define fields on response body types.
 type ResourceResponse struct {
 	// ID is the unique id of the resource
@@ -85,7 +130,7 @@ type ResourceResponse struct {
 	// Type of resource
 	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
 	// Latest version of resource
-	LatestVersion *VersionResponse `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
+	LatestVersion *LatestVersionResponse `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
 	// Tags related to resource
 	Tags []*TagResponse `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
 	// Rating of resource
@@ -100,8 +145,8 @@ type CatalogResponse struct {
 	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
 }
 
-// VersionResponse is used to define fields on response body types.
-type VersionResponse struct {
+// LatestVersionResponse is used to define fields on response body types.
+type LatestVersionResponse struct {
 	// ID is the unique id of resource's version
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Version of resource
@@ -126,6 +171,18 @@ type TagResponse struct {
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Name of tag
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
+// VersionResponseBody is used to define fields on response body types.
+type VersionResponseBody struct {
+	// ID is the unique id of resource's version
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Version of resource
+	Version *string `form:"version,omitempty" json:"version,omitempty" xml:"version,omitempty"`
+	// Raw URL of resource's yaml file of the version
+	RawURL *string `form:"rawURL,omitempty" json:"rawURL,omitempty" xml:"rawURL,omitempty"`
+	// Web URL of resource's yaml file of the version
+	WebURL *string `form:"webURL,omitempty" json:"webURL,omitempty" xml:"webURL,omitempty"`
 }
 
 // NewQueryResourceCollectionOK builds a "resource" service "Query" endpoint
@@ -180,6 +237,49 @@ func NewListResourceCollectionOK(body ListResponseBody) resourceviews.ResourceCo
 // NewListInternalError builds a resource service List endpoint internal-error
 // error.
 func NewListInternalError(body *ListInternalErrorResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewVersionsByIDVersionsOK builds a "resource" service "VersionsByID"
+// endpoint result from a HTTP "OK" response.
+func NewVersionsByIDVersionsOK(body *VersionsByIDResponseBody) *resourceviews.VersionsView {
+	v := &resourceviews.VersionsView{}
+	v.Latest = unmarshalVersionResponseBodyToResourceviewsVersionView(body.Latest)
+	v.Versions = make([]*resourceviews.VersionView, len(body.Versions))
+	for i, val := range body.Versions {
+		v.Versions[i] = unmarshalVersionResponseBodyToResourceviewsVersionView(val)
+	}
+
+	return v
+}
+
+// NewVersionsByIDInternalError builds a resource service VersionsByID endpoint
+// internal-error error.
+func NewVersionsByIDInternalError(body *VersionsByIDInternalErrorResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewVersionsByIDNotFound builds a resource service VersionsByID endpoint
+// not-found error.
+func NewVersionsByIDNotFound(body *VersionsByIDNotFoundResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -264,6 +364,54 @@ func ValidateListInternalErrorResponseBody(body *ListInternalErrorResponseBody) 
 	return
 }
 
+// ValidateVersionsByIDInternalErrorResponseBody runs the validations defined
+// on VersionsByID_internal-error_Response_Body
+func ValidateVersionsByIDInternalErrorResponseBody(body *VersionsByIDInternalErrorResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateVersionsByIDNotFoundResponseBody runs the validations defined on
+// VersionsByID_not-found_Response_Body
+func ValidateVersionsByIDNotFoundResponseBody(body *VersionsByIDNotFoundResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
 // ValidateResourceResponse runs the validations defined on ResourceResponse
 func ValidateResourceResponse(body *ResourceResponse) (err error) {
 	if body.ID == nil {
@@ -293,7 +441,7 @@ func ValidateResourceResponse(body *ResourceResponse) (err error) {
 		}
 	}
 	if body.LatestVersion != nil {
-		if err2 := ValidateVersionResponse(body.LatestVersion); err2 != nil {
+		if err2 := ValidateLatestVersionResponse(body.LatestVersion); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
 	}
@@ -323,8 +471,9 @@ func ValidateCatalogResponse(body *CatalogResponse) (err error) {
 	return
 }
 
-// ValidateVersionResponse runs the validations defined on VersionResponse
-func ValidateVersionResponse(body *VersionResponse) (err error) {
+// ValidateLatestVersionResponse runs the validations defined on
+// LatestVersionResponse
+func ValidateLatestVersionResponse(body *LatestVersionResponse) (err error) {
 	if body.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
 	}
@@ -368,6 +517,30 @@ func ValidateTagResponse(body *TagResponse) (err error) {
 	}
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	return
+}
+
+// ValidateVersionResponseBody runs the validations defined on
+// VersionResponseBody
+func ValidateVersionResponseBody(body *VersionResponseBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Version == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("version", "body"))
+	}
+	if body.RawURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("rawURL", "body"))
+	}
+	if body.WebURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("webURL", "body"))
+	}
+	if body.RawURL != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.rawURL", *body.RawURL, goa.FormatURI))
+	}
+	if body.WebURL != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.webURL", *body.WebURL, goa.FormatURI))
 	}
 	return
 }

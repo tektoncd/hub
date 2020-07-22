@@ -20,6 +20,8 @@ type Service interface {
 	Query(context.Context, *QueryPayload) (res ResourceCollection, err error)
 	// List all resources sorted by rating and name
 	List(context.Context, *ListPayload) (res ResourceCollection, err error)
+	// Find all versions of a resource by its id
+	VersionsByID(context.Context, *VersionsByIDPayload) (res *Versions, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -30,7 +32,7 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"Query", "List"}
+var MethodNames = [3]string{"Query", "List", "VersionsByID"}
 
 // QueryPayload is the payload type of the resource service Query method.
 type QueryPayload struct {
@@ -51,6 +53,21 @@ type ListPayload struct {
 	Limit uint
 }
 
+// VersionsByIDPayload is the payload type of the resource service VersionsByID
+// method.
+type VersionsByIDPayload struct {
+	// ID of a resource
+	ID uint
+}
+
+// Versions is the result type of the resource service VersionsByID method.
+type Versions struct {
+	// Latest Version of resource
+	Latest *Version
+	// List of all versions of resource
+	Versions []*Version
+}
+
 // The resource type describes resource information.
 type Resource struct {
 	// ID is the unique id of the resource
@@ -62,7 +79,7 @@ type Resource struct {
 	// Type of resource
 	Type string
 	// Latest version of resource
-	LatestVersion *Version
+	LatestVersion *LatestVersion
 	// Tags related to resource
 	Tags []*Tag
 	// Rating of resource
@@ -76,7 +93,7 @@ type Catalog struct {
 	Type string
 }
 
-type Version struct {
+type LatestVersion struct {
 	// ID is the unique id of resource's version
 	ID uint
 	// Version of resource
@@ -100,6 +117,18 @@ type Tag struct {
 	ID uint
 	// Name of tag
 	Name string
+}
+
+// The Version result type describes resource's version information.
+type Version struct {
+	// ID is the unique id of resource's version
+	ID uint
+	// Version of resource
+	Version string
+	// Raw URL of resource's yaml file of the version
+	RawURL string
+	// Web URL of resource's yaml file of the version
+	WebURL string
 }
 
 // MakeInternalError builds a goa.ServiceError from an error.
@@ -131,6 +160,19 @@ func NewResourceCollection(vres resourceviews.ResourceCollection) ResourceCollec
 func NewViewedResourceCollection(res ResourceCollection, view string) resourceviews.ResourceCollection {
 	p := newResourceCollectionView(res)
 	return resourceviews.ResourceCollection{Projected: p, View: "default"}
+}
+
+// NewVersions initializes result type Versions from viewed result type
+// Versions.
+func NewVersions(vres *resourceviews.Versions) *Versions {
+	return newVersions(vres.Projected)
+}
+
+// NewViewedVersions initializes viewed result type Versions from result type
+// Versions using the given view.
+func NewViewedVersions(res *Versions, view string) *resourceviews.Versions {
+	p := newVersionsView(res)
+	return &resourceviews.Versions{Projected: p, View: "default"}
 }
 
 // newResourceCollection converts projected type ResourceCollection to service
@@ -172,7 +214,7 @@ func newResource(vres *resourceviews.ResourceView) *Resource {
 		res.Catalog = transformResourceviewsCatalogViewToCatalog(vres.Catalog)
 	}
 	if vres.LatestVersion != nil {
-		res.LatestVersion = transformResourceviewsVersionViewToVersion(vres.LatestVersion)
+		res.LatestVersion = transformResourceviewsLatestVersionViewToLatestVersion(vres.LatestVersion)
 	}
 	if vres.Tags != nil {
 		res.Tags = make([]*Tag, len(vres.Tags))
@@ -196,13 +238,74 @@ func newResourceView(res *Resource) *resourceviews.ResourceView {
 		vres.Catalog = transformCatalogToResourceviewsCatalogView(res.Catalog)
 	}
 	if res.LatestVersion != nil {
-		vres.LatestVersion = transformVersionToResourceviewsVersionView(res.LatestVersion)
+		vres.LatestVersion = transformLatestVersionToResourceviewsLatestVersionView(res.LatestVersion)
 	}
 	if res.Tags != nil {
 		vres.Tags = make([]*resourceviews.TagView, len(res.Tags))
 		for i, val := range res.Tags {
 			vres.Tags[i] = transformTagToResourceviewsTagView(val)
 		}
+	}
+	return vres
+}
+
+// newVersions converts projected type Versions to service type Versions.
+func newVersions(vres *resourceviews.VersionsView) *Versions {
+	res := &Versions{}
+	if vres.Versions != nil {
+		res.Versions = make([]*Version, len(vres.Versions))
+		for i, val := range vres.Versions {
+			res.Versions[i] = transformResourceviewsVersionViewToVersion(val)
+		}
+	}
+	if vres.Latest != nil {
+		res.Latest = newVersion(vres.Latest)
+	}
+	return res
+}
+
+// newVersionsView projects result type Versions to projected type VersionsView
+// using the "default" view.
+func newVersionsView(res *Versions) *resourceviews.VersionsView {
+	vres := &resourceviews.VersionsView{}
+	if res.Versions != nil {
+		vres.Versions = make([]*resourceviews.VersionView, len(res.Versions))
+		for i, val := range res.Versions {
+			vres.Versions[i] = transformVersionToResourceviewsVersionView(val)
+		}
+	}
+	if res.Latest != nil {
+		vres.Latest = newVersionView(res.Latest)
+	}
+	return vres
+}
+
+// newVersion converts projected type Version to service type Version.
+func newVersion(vres *resourceviews.VersionView) *Version {
+	res := &Version{}
+	if vres.ID != nil {
+		res.ID = *vres.ID
+	}
+	if vres.Version != nil {
+		res.Version = *vres.Version
+	}
+	if vres.RawURL != nil {
+		res.RawURL = *vres.RawURL
+	}
+	if vres.WebURL != nil {
+		res.WebURL = *vres.WebURL
+	}
+	return res
+}
+
+// newVersionView projects result type Version to projected type VersionView
+// using the "default" view.
+func newVersionView(res *Version) *resourceviews.VersionView {
+	vres := &resourceviews.VersionView{
+		ID:      &res.ID,
+		Version: &res.Version,
+		RawURL:  &res.RawURL,
+		WebURL:  &res.WebURL,
 	}
 	return vres
 }
@@ -221,13 +324,13 @@ func transformResourceviewsCatalogViewToCatalog(v *resourceviews.CatalogView) *C
 	return res
 }
 
-// transformResourceviewsVersionViewToVersion builds a value of type *Version
-// from a value of type *resourceviews.VersionView.
-func transformResourceviewsVersionViewToVersion(v *resourceviews.VersionView) *Version {
+// transformResourceviewsLatestVersionViewToLatestVersion builds a value of
+// type *LatestVersion from a value of type *resourceviews.LatestVersionView.
+func transformResourceviewsLatestVersionViewToLatestVersion(v *resourceviews.LatestVersionView) *LatestVersion {
 	if v == nil {
 		return nil
 	}
-	res := &Version{
+	res := &LatestVersion{
 		ID:                  *v.ID,
 		Version:             *v.Version,
 		DisplayName:         *v.DisplayName,
@@ -266,10 +369,10 @@ func transformCatalogToResourceviewsCatalogView(v *Catalog) *resourceviews.Catal
 	return res
 }
 
-// transformVersionToResourceviewsVersionView builds a value of type
-// *resourceviews.VersionView from a value of type *Version.
-func transformVersionToResourceviewsVersionView(v *Version) *resourceviews.VersionView {
-	res := &resourceviews.VersionView{
+// transformLatestVersionToResourceviewsLatestVersionView builds a value of
+// type *resourceviews.LatestVersionView from a value of type *LatestVersion.
+func transformLatestVersionToResourceviewsLatestVersionView(v *LatestVersion) *resourceviews.LatestVersionView {
+	res := &resourceviews.LatestVersionView{
 		ID:                  &v.ID,
 		Version:             &v.Version,
 		DisplayName:         &v.DisplayName,
@@ -289,6 +392,35 @@ func transformTagToResourceviewsTagView(v *Tag) *resourceviews.TagView {
 	res := &resourceviews.TagView{
 		ID:   &v.ID,
 		Name: &v.Name,
+	}
+
+	return res
+}
+
+// transformResourceviewsVersionViewToVersion builds a value of type *Version
+// from a value of type *resourceviews.VersionView.
+func transformResourceviewsVersionViewToVersion(v *resourceviews.VersionView) *Version {
+	if v == nil {
+		return nil
+	}
+	res := &Version{
+		ID:      *v.ID,
+		Version: *v.Version,
+		RawURL:  *v.RawURL,
+		WebURL:  *v.WebURL,
+	}
+
+	return res
+}
+
+// transformVersionToResourceviewsVersionView builds a value of type
+// *resourceviews.VersionView from a value of type *Version.
+func transformVersionToResourceviewsVersionView(v *Version) *resourceviews.VersionView {
+	res := &resourceviews.VersionView{
+		ID:      &v.ID,
+		Version: &v.Version,
+		RawURL:  &v.RawURL,
+		WebURL:  &v.WebURL,
 	}
 
 	return res

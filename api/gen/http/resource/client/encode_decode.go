@@ -215,6 +215,105 @@ func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 	}
 }
 
+// BuildVersionsByIDRequest instantiates a HTTP request object with method and
+// path set to call the "resource" service "VersionsByID" endpoint
+func (c *Client) BuildVersionsByIDRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		id uint
+	)
+	{
+		p, ok := v.(*resource.VersionsByIDPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("resource", "VersionsByID", "*resource.VersionsByIDPayload", v)
+		}
+		id = p.ID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VersionsByIDResourcePath(id)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("resource", "VersionsByID", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeVersionsByIDResponse returns a decoder for responses returned by the
+// resource VersionsByID endpoint. restoreBody controls whether the response
+// body should be restored after having been read.
+// DecodeVersionsByIDResponse may return the following errors:
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- "not-found" (type *goa.ServiceError): http.StatusNotFound
+//	- error: internal error
+func DecodeVersionsByIDResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body VersionsByIDResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "VersionsByID", err)
+			}
+			p := NewVersionsByIDVersionsOK(&body)
+			view := "default"
+			vres := &resourceviews.Versions{Projected: p, View: view}
+			if err = resourceviews.ValidateVersions(vres); err != nil {
+				return nil, goahttp.ErrValidationError("resource", "VersionsByID", err)
+			}
+			res := resource.NewVersions(vres)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body VersionsByIDInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "VersionsByID", err)
+			}
+			err = ValidateVersionsByIDInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "VersionsByID", err)
+			}
+			return nil, NewVersionsByIDInternalError(&body)
+		case http.StatusNotFound:
+			var (
+				body VersionsByIDNotFoundResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "VersionsByID", err)
+			}
+			err = ValidateVersionsByIDNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "VersionsByID", err)
+			}
+			return nil, NewVersionsByIDNotFound(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("resource", "VersionsByID", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalResourceResponseToResourceviewsResourceView builds a value of type
 // *resourceviews.ResourceView from a value of type *ResourceResponse.
 func unmarshalResourceResponseToResourceviewsResourceView(v *ResourceResponse) *resourceviews.ResourceView {
@@ -225,7 +324,7 @@ func unmarshalResourceResponseToResourceviewsResourceView(v *ResourceResponse) *
 		Rating: v.Rating,
 	}
 	res.Catalog = unmarshalCatalogResponseToResourceviewsCatalogView(v.Catalog)
-	res.LatestVersion = unmarshalVersionResponseToResourceviewsVersionView(v.LatestVersion)
+	res.LatestVersion = unmarshalLatestVersionResponseToResourceviewsLatestVersionView(v.LatestVersion)
 	res.Tags = make([]*resourceviews.TagView, len(v.Tags))
 	for i, val := range v.Tags {
 		res.Tags[i] = unmarshalTagResponseToResourceviewsTagView(val)
@@ -245,10 +344,11 @@ func unmarshalCatalogResponseToResourceviewsCatalogView(v *CatalogResponse) *res
 	return res
 }
 
-// unmarshalVersionResponseToResourceviewsVersionView builds a value of type
-// *resourceviews.VersionView from a value of type *VersionResponse.
-func unmarshalVersionResponseToResourceviewsVersionView(v *VersionResponse) *resourceviews.VersionView {
-	res := &resourceviews.VersionView{
+// unmarshalLatestVersionResponseToResourceviewsLatestVersionView builds a
+// value of type *resourceviews.LatestVersionView from a value of type
+// *LatestVersionResponse.
+func unmarshalLatestVersionResponseToResourceviewsLatestVersionView(v *LatestVersionResponse) *resourceviews.LatestVersionView {
+	res := &resourceviews.LatestVersionView{
 		ID:                  v.ID,
 		Version:             v.Version,
 		DisplayName:         v.DisplayName,
@@ -268,6 +368,19 @@ func unmarshalTagResponseToResourceviewsTagView(v *TagResponse) *resourceviews.T
 	res := &resourceviews.TagView{
 		ID:   v.ID,
 		Name: v.Name,
+	}
+
+	return res
+}
+
+// unmarshalVersionResponseBodyToResourceviewsVersionView builds a value of
+// type *resourceviews.VersionView from a value of type *VersionResponseBody.
+func unmarshalVersionResponseBodyToResourceviewsVersionView(v *VersionResponseBody) *resourceviews.VersionView {
+	res := &resourceviews.VersionView{
+		ID:      v.ID,
+		Version: v.Version,
+		RawURL:  v.RawURL,
+		WebURL:  v.WebURL,
 	}
 
 	return res

@@ -20,6 +20,14 @@ type ResourceCollection struct {
 	View string
 }
 
+// Versions is the viewed result type that is projected based on a view.
+type Versions struct {
+	// Type to project
+	Projected *VersionsView
+	// View to render
+	View string
+}
+
 // ResourceCollectionView is a type that runs validations on a projected type.
 type ResourceCollectionView []*ResourceView
 
@@ -34,7 +42,7 @@ type ResourceView struct {
 	// Type of resource
 	Type *string
 	// Latest version of resource
-	LatestVersion *VersionView
+	LatestVersion *LatestVersionView
 	// Tags related to resource
 	Tags []*TagView
 	// Rating of resource
@@ -49,8 +57,8 @@ type CatalogView struct {
 	Type *string
 }
 
-// VersionView is a type that runs validations on a projected type.
-type VersionView struct {
+// LatestVersionView is a type that runs validations on a projected type.
+type LatestVersionView struct {
 	// ID is the unique id of resource's version
 	ID *uint
 	// Version of resource
@@ -77,6 +85,26 @@ type TagView struct {
 	Name *string
 }
 
+// VersionsView is a type that runs validations on a projected type.
+type VersionsView struct {
+	// Latest Version of resource
+	Latest *VersionView
+	// List of all versions of resource
+	Versions []*VersionView
+}
+
+// VersionView is a type that runs validations on a projected type.
+type VersionView struct {
+	// ID is the unique id of resource's version
+	ID *uint
+	// Version of resource
+	Version *string
+	// Raw URL of resource's yaml file of the version
+	RawURL *string
+	// Web URL of resource's yaml file of the version
+	WebURL *string
+}
+
 var (
 	// ResourceCollectionMap is a map of attribute names in result type
 	// ResourceCollection indexed by view name.
@@ -89,6 +117,14 @@ var (
 			"latestVersion",
 			"tags",
 			"rating",
+		},
+	}
+	// VersionsMap is a map of attribute names in result type Versions indexed by
+	// view name.
+	VersionsMap = map[string][]string{
+		"default": []string{
+			"latest",
+			"versions",
 		},
 	}
 	// ResourceMap is a map of attribute names in result type Resource indexed by
@@ -104,6 +140,16 @@ var (
 			"rating",
 		},
 	}
+	// VersionMap is a map of attribute names in result type Version indexed by
+	// view name.
+	VersionMap = map[string][]string{
+		"default": []string{
+			"id",
+			"version",
+			"rawURL",
+			"webURL",
+		},
+	}
 )
 
 // ValidateResourceCollection runs the validations defined on the viewed result
@@ -112,6 +158,18 @@ func ValidateResourceCollection(result ResourceCollection) (err error) {
 	switch result.View {
 	case "default", "":
 		err = ValidateResourceCollectionView(result.Projected)
+	default:
+		err = goa.InvalidEnumValueError("view", result.View, []interface{}{"default"})
+	}
+	return
+}
+
+// ValidateVersions runs the validations defined on the viewed result type
+// Versions.
+func ValidateVersions(result *Versions) (err error) {
+	switch result.View {
+	case "default", "":
+		err = ValidateVersionsView(result.Projected)
 	default:
 		err = goa.InvalidEnumValueError("view", result.View, []interface{}{"default"})
 	}
@@ -159,7 +217,7 @@ func ValidateResourceView(result *ResourceView) (err error) {
 		}
 	}
 	if result.LatestVersion != nil {
-		if err2 := ValidateVersionView(result.LatestVersion); err2 != nil {
+		if err2 := ValidateLatestVersionView(result.LatestVersion); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
 	}
@@ -189,8 +247,8 @@ func ValidateCatalogView(result *CatalogView) (err error) {
 	return
 }
 
-// ValidateVersionView runs the validations defined on VersionView.
-func ValidateVersionView(result *VersionView) (err error) {
+// ValidateLatestVersionView runs the validations defined on LatestVersionView.
+func ValidateLatestVersionView(result *LatestVersionView) (err error) {
 	if result.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "result"))
 	}
@@ -234,6 +292,51 @@ func ValidateTagView(result *TagView) (err error) {
 	}
 	if result.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
+	}
+	return
+}
+
+// ValidateVersionsView runs the validations defined on VersionsView using the
+// "default" view.
+func ValidateVersionsView(result *VersionsView) (err error) {
+	if result.Versions == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("versions", "result"))
+	}
+	for _, e := range result.Versions {
+		if e != nil {
+			if err2 := ValidateVersionView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	if result.Latest != nil {
+		if err2 := ValidateVersionView(result.Latest); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateVersionView runs the validations defined on VersionView using the
+// "default" view.
+func ValidateVersionView(result *VersionView) (err error) {
+	if result.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "result"))
+	}
+	if result.Version == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("version", "result"))
+	}
+	if result.RawURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("rawURL", "result"))
+	}
+	if result.WebURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("webURL", "result"))
+	}
+	if result.RawURL != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))
+	}
+	if result.WebURL != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("result.webURL", *result.WebURL, goa.FormatURI))
 	}
 	return
 }
