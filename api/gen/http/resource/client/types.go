@@ -52,6 +52,29 @@ type ByTypeNameVersionResponseBody struct {
 	Resource *ResourceResponseBody `form:"resource,omitempty" json:"resource,omitempty" xml:"resource,omitempty"`
 }
 
+// ByVersionIDResponseBody is the type of the "resource" service "ByVersionId"
+// endpoint HTTP response body.
+type ByVersionIDResponseBody struct {
+	// ID is the unique id of resource's version
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Version of resource
+	Version *string `form:"version,omitempty" json:"version,omitempty" xml:"version,omitempty"`
+	// Display name of version
+	DisplayName *string `form:"displayName,omitempty" json:"displayName,omitempty" xml:"displayName,omitempty"`
+	// Description of version
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Minimum pipelines version the resource's version is compatible with
+	MinPipelinesVersion *string `form:"minPipelinesVersion,omitempty" json:"minPipelinesVersion,omitempty" xml:"minPipelinesVersion,omitempty"`
+	// Raw URL of resource's yaml file of the version
+	RawURL *string `form:"rawURL,omitempty" json:"rawURL,omitempty" xml:"rawURL,omitempty"`
+	// Web URL of resource's yaml file of the version
+	WebURL *string `form:"webURL,omitempty" json:"webURL,omitempty" xml:"webURL,omitempty"`
+	// Timestamp when version was last updated
+	UpdatedAt *string `form:"updatedAt,omitempty" json:"updatedAt,omitempty" xml:"updatedAt,omitempty"`
+	// Resource to which the version belongs
+	Resource *ResourceResponseBody `form:"resource,omitempty" json:"resource,omitempty" xml:"resource,omitempty"`
+}
+
 // QueryInternalErrorResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "internal-error" error.
 type QueryInternalErrorResponseBody struct {
@@ -164,6 +187,42 @@ type ByTypeNameVersionInternalErrorResponseBody struct {
 // ByTypeNameVersionNotFoundResponseBody is the type of the "resource" service
 // "ByTypeNameVersion" endpoint HTTP response body for the "not-found" error.
 type ByTypeNameVersionNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// ByVersionIDInternalErrorResponseBody is the type of the "resource" service
+// "ByVersionId" endpoint HTTP response body for the "internal-error" error.
+type ByVersionIDInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// ByVersionIDNotFoundResponseBody is the type of the "resource" service
+// "ByVersionId" endpoint HTTP response body for the "not-found" error.
+type ByVersionIDNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -464,6 +523,54 @@ func NewByTypeNameVersionNotFound(body *ByTypeNameVersionNotFoundResponseBody) *
 	return v
 }
 
+// NewByVersionIDVersionOK builds a "resource" service "ByVersionId" endpoint
+// result from a HTTP "OK" response.
+func NewByVersionIDVersionOK(body *ByVersionIDResponseBody) *resourceviews.VersionView {
+	v := &resourceviews.VersionView{
+		ID:                  body.ID,
+		Version:             body.Version,
+		DisplayName:         body.DisplayName,
+		Description:         body.Description,
+		MinPipelinesVersion: body.MinPipelinesVersion,
+		RawURL:              body.RawURL,
+		WebURL:              body.WebURL,
+		UpdatedAt:           body.UpdatedAt,
+	}
+	v.Resource = unmarshalResourceResponseBodyToResourceviewsResourceView(body.Resource)
+
+	return v
+}
+
+// NewByVersionIDInternalError builds a resource service ByVersionId endpoint
+// internal-error error.
+func NewByVersionIDInternalError(body *ByVersionIDInternalErrorResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewByVersionIDNotFound builds a resource service ByVersionId endpoint
+// not-found error.
+func NewByVersionIDNotFound(body *ByVersionIDNotFoundResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
 // ValidateQueryInternalErrorResponseBody runs the validations defined on
 // Query_internal-error_Response_Body
 func ValidateQueryInternalErrorResponseBody(body *QueryInternalErrorResponseBody) (err error) {
@@ -611,6 +718,54 @@ func ValidateByTypeNameVersionInternalErrorResponseBody(body *ByTypeNameVersionI
 // ValidateByTypeNameVersionNotFoundResponseBody runs the validations defined
 // on ByTypeNameVersion_not-found_Response_Body
 func ValidateByTypeNameVersionNotFoundResponseBody(body *ByTypeNameVersionNotFoundResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateByVersionIDInternalErrorResponseBody runs the validations defined on
+// ByVersionId_internal-error_Response_Body
+func ValidateByVersionIDInternalErrorResponseBody(body *ByVersionIDInternalErrorResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateByVersionIDNotFoundResponseBody runs the validations defined on
+// ByVersionId_not-found_Response_Body
+func ValidateByVersionIDNotFoundResponseBody(body *ByVersionIDNotFoundResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}

@@ -49,6 +49,29 @@ type ByTypeNameVersionResponseBody struct {
 	Resource *ResourceResponseBodyInfo `form:"resource" json:"resource" xml:"resource"`
 }
 
+// ByVersionIDResponseBody is the type of the "resource" service "ByVersionId"
+// endpoint HTTP response body.
+type ByVersionIDResponseBody struct {
+	// ID is the unique id of resource's version
+	ID uint `form:"id" json:"id" xml:"id"`
+	// Version of resource
+	Version string `form:"version" json:"version" xml:"version"`
+	// Description of version
+	Description string `form:"description" json:"description" xml:"description"`
+	// Minimum pipelines version the resource's version is compatible with
+	MinPipelinesVersion string `form:"minPipelinesVersion" json:"minPipelinesVersion" xml:"minPipelinesVersion"`
+	// Display name of version
+	DisplayName string `form:"displayName" json:"displayName" xml:"displayName"`
+	// Raw URL of resource's yaml file of the version
+	RawURL string `form:"rawURL" json:"rawURL" xml:"rawURL"`
+	// Web URL of resource's yaml file of the version
+	WebURL string `form:"webURL" json:"webURL" xml:"webURL"`
+	// Timestamp when version was last updated
+	UpdatedAt string `form:"updatedAt" json:"updatedAt" xml:"updatedAt"`
+	// Resource to which the version belongs
+	Resource *ResourceResponseBodyInfo `form:"resource" json:"resource" xml:"resource"`
+}
+
 // QueryInternalErrorResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "internal-error" error.
 type QueryInternalErrorResponseBody struct {
@@ -161,6 +184,42 @@ type ByTypeNameVersionInternalErrorResponseBody struct {
 // ByTypeNameVersionNotFoundResponseBody is the type of the "resource" service
 // "ByTypeNameVersion" endpoint HTTP response body for the "not-found" error.
 type ByTypeNameVersionNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// ByVersionIDInternalErrorResponseBody is the type of the "resource" service
+// "ByVersionId" endpoint HTTP response body for the "internal-error" error.
+type ByVersionIDInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// ByVersionIDNotFoundResponseBody is the type of the "resource" service
+// "ByVersionId" endpoint HTTP response body for the "not-found" error.
+type ByVersionIDNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -319,6 +378,25 @@ func NewByTypeNameVersionResponseBody(res *resourceviews.VersionView) *ByTypeNam
 	return body
 }
 
+// NewByVersionIDResponseBody builds the HTTP response body from the result of
+// the "ByVersionId" endpoint of the "resource" service.
+func NewByVersionIDResponseBody(res *resourceviews.VersionView) *ByVersionIDResponseBody {
+	body := &ByVersionIDResponseBody{
+		ID:                  *res.ID,
+		Version:             *res.Version,
+		DisplayName:         *res.DisplayName,
+		Description:         *res.Description,
+		MinPipelinesVersion: *res.MinPipelinesVersion,
+		RawURL:              *res.RawURL,
+		WebURL:              *res.WebURL,
+		UpdatedAt:           *res.UpdatedAt,
+	}
+	if res.Resource != nil {
+		body.Resource = marshalResourceviewsResourceViewToResourceResponseBodyInfo(res.Resource)
+	}
+	return body
+}
+
 // NewQueryInternalErrorResponseBody builds the HTTP response body from the
 // result of the "Query" endpoint of the "resource" service.
 func NewQueryInternalErrorResponseBody(res *goa.ServiceError) *QueryInternalErrorResponseBody {
@@ -418,6 +496,34 @@ func NewByTypeNameVersionNotFoundResponseBody(res *goa.ServiceError) *ByTypeName
 	return body
 }
 
+// NewByVersionIDInternalErrorResponseBody builds the HTTP response body from
+// the result of the "ByVersionId" endpoint of the "resource" service.
+func NewByVersionIDInternalErrorResponseBody(res *goa.ServiceError) *ByVersionIDInternalErrorResponseBody {
+	body := &ByVersionIDInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewByVersionIDNotFoundResponseBody builds the HTTP response body from the
+// result of the "ByVersionId" endpoint of the "resource" service.
+func NewByVersionIDNotFoundResponseBody(res *goa.ServiceError) *ByVersionIDNotFoundResponseBody {
+	body := &ByVersionIDNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewQueryPayload builds a resource service Query endpoint payload.
 func NewQueryPayload(name string, type_ string, limit uint) *resource.QueryPayload {
 	v := &resource.QueryPayload{}
@@ -452,6 +558,14 @@ func NewByTypeNameVersionPayload(type_ string, name string, version string) *res
 	v.Type = type_
 	v.Name = name
 	v.Version = version
+
+	return v
+}
+
+// NewByVersionIDPayload builds a resource service ByVersionId endpoint payload.
+func NewByVersionIDPayload(versionID uint) *resource.ByVersionIDPayload {
+	v := &resource.ByVersionIDPayload{}
+	v.VersionID = versionID
 
 	return v
 }

@@ -19,15 +19,17 @@ type Client struct {
 	ListEndpoint              goa.Endpoint
 	VersionsByIDEndpoint      goa.Endpoint
 	ByTypeNameVersionEndpoint goa.Endpoint
+	ByVersionIDEndpoint       goa.Endpoint
 }
 
 // NewClient initializes a "resource" service client given the endpoints.
-func NewClient(query, list, versionsByID, byTypeNameVersion goa.Endpoint) *Client {
+func NewClient(query, list, versionsByID, byTypeNameVersion, byVersionID goa.Endpoint) *Client {
 	return &Client{
 		QueryEndpoint:             query,
 		ListEndpoint:              list,
 		VersionsByIDEndpoint:      versionsByID,
 		ByTypeNameVersionEndpoint: byTypeNameVersion,
+		ByVersionIDEndpoint:       byVersionID,
 	}
 }
 
@@ -66,6 +68,16 @@ func (c *Client) VersionsByID(ctx context.Context, p *VersionsByIDPayload) (res 
 func (c *Client) ByTypeNameVersion(ctx context.Context, p *ByTypeNameVersionPayload) (res *Version, err error) {
 	var ires interface{}
 	ires, err = c.ByTypeNameVersionEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*Version), nil
+}
+
+// ByVersionID calls the "ByVersionId" endpoint of the "resource" service.
+func (c *Client) ByVersionID(ctx context.Context, p *ByVersionIDPayload) (res *Version, err error) {
+	var ires interface{}
+	ires, err = c.ByVersionIDEndpoint(ctx, p)
 	if err != nil {
 		return
 	}

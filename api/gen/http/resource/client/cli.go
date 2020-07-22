@@ -125,3 +125,22 @@ func BuildByTypeNameVersionPayload(resourceByTypeNameVersionType string, resourc
 
 	return v, nil
 }
+
+// BuildByVersionIDPayload builds the payload for the resource ByVersionId
+// endpoint from CLI flags.
+func BuildByVersionIDPayload(resourceByVersionIDVersionID string) (*resource.ByVersionIDPayload, error) {
+	var err error
+	var versionID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(resourceByVersionIDVersionID, 10, 64)
+		versionID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for versionID, must be UINT")
+		}
+	}
+	v := &resource.ByVersionIDPayload{}
+	v.VersionID = versionID
+
+	return v, nil
+}
