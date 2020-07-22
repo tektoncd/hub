@@ -25,14 +25,14 @@ import (
 //
 func UsageCommands() string {
 	return `category list
-resource (query|list|versions-by-id|by-type-name-version|by-version-id)
+resource (query|list|versions-by-id|by-type-name-version|by-version-id|by-type-name)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` resource query --name "Occaecati officia inventore adipisci." --type "pipeline" --limit 364697698949290656` + "\n" +
+		os.Args[0] + ` resource query --name "Animi qui qui." --type "task" --limit 5862861802766617649` + "\n" +
 		""
 }
 
@@ -70,6 +70,10 @@ func ParseEndpoint(
 
 		resourceByVersionIDFlags         = flag.NewFlagSet("by-version-id", flag.ExitOnError)
 		resourceByVersionIDVersionIDFlag = resourceByVersionIDFlags.String("version-id", "REQUIRED", "Version ID of a resource's version")
+
+		resourceByTypeNameFlags    = flag.NewFlagSet("by-type-name", flag.ExitOnError)
+		resourceByTypeNameTypeFlag = resourceByTypeNameFlags.String("type", "REQUIRED", "Type of resource")
+		resourceByTypeNameNameFlag = resourceByTypeNameFlags.String("name", "REQUIRED", "Name of resource")
 	)
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
@@ -80,6 +84,7 @@ func ParseEndpoint(
 	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
 	resourceByTypeNameVersionFlags.Usage = resourceByTypeNameVersionUsage
 	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
+	resourceByTypeNameFlags.Usage = resourceByTypeNameUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -139,6 +144,9 @@ func ParseEndpoint(
 			case "by-version-id":
 				epf = resourceByVersionIDFlags
 
+			case "by-type-name":
+				epf = resourceByTypeNameFlags
+
 			}
 
 		}
@@ -186,6 +194,9 @@ func ParseEndpoint(
 			case "by-version-id":
 				endpoint = c.ByVersionID()
 				data, err = resourcec.BuildByVersionIDPayload(*resourceByVersionIDVersionIDFlag)
+			case "by-type-name":
+				endpoint = c.ByTypeName()
+				data, err = resourcec.BuildByTypeNamePayload(*resourceByTypeNameTypeFlag, *resourceByTypeNameNameFlag)
 			}
 		}
 	}
@@ -231,6 +242,7 @@ COMMAND:
     versions-by-id: Find all versions of a resource by its id
     by-type-name-version: Find resource using name, type and version of resource
     by-version-id: Find a resource using its version's id
+    by-type-name: Find resources using name and type
 
 Additional help:
     %s resource COMMAND --help
@@ -245,7 +257,7 @@ Find resources by a combination of name, type
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Occaecati officia inventore adipisci." --type "pipeline" --limit 364697698949290656
+    `+os.Args[0]+` resource query --name "Animi qui qui." --type "task" --limit 5862861802766617649
 `, os.Args[0])
 }
 
@@ -256,7 +268,7 @@ List all resources sorted by rating and name
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource list --limit 11281538076509796713
+    `+os.Args[0]+` resource list --limit 10108643860615476272
 `, os.Args[0])
 }
 
@@ -267,7 +279,7 @@ Find all versions of a resource by its id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource versions-by-id --id 10108643860615476272
+    `+os.Args[0]+` resource versions-by-id --id 12809560377624145324
 `, os.Args[0])
 }
 
@@ -280,7 +292,7 @@ Find resource using name, type and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-type-name-version --type "task" --name "Omnis quas deserunt nostrum assumenda." --version "Occaecati voluptas assumenda."
+    `+os.Args[0]+` resource by-type-name-version --type "pipeline" --name "Pariatur occaecati voluptas assumenda maiores quaerat consequatur." --version "Quia nihil officia itaque."
 `, os.Args[0])
 }
 
@@ -291,6 +303,18 @@ Find a resource using its version's id
     -version-id UINT: Version ID of a resource's version
 
 Example:
-    `+os.Args[0]+` resource by-version-id --version-id 11745309465362025378
+    `+os.Args[0]+` resource by-version-id --version-id 3498608874726864246
+`, os.Args[0])
+}
+
+func resourceByTypeNameUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-type-name -type STRING -name STRING
+
+Find resources using name and type
+    -type STRING: Type of resource
+    -name STRING: Name of resource
+
+Example:
+    `+os.Args[0]+` resource by-type-name --type "task" --name "Esse fugit."
 `, os.Args[0])
 }

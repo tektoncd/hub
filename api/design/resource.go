@@ -120,4 +120,26 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	Method("ByTypeName", func() {
+		Description("Find resources using name and type")
+		Payload(func() {
+			Attribute("type", String, "Type of resource", func() {
+				Enum("task", "pipeline")
+			})
+			Attribute("name", String, "Name of resource")
+			Required("type", "name")
+		})
+		Result(CollectionOf(Resource), func() {
+			View("default")
+		})
+
+		HTTP(func() {
+			GET("/resource/{type}/{name}")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
+		})
+	})
+
 })
