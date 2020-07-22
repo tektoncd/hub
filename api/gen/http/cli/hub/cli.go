@@ -25,14 +25,14 @@ import (
 //
 func UsageCommands() string {
 	return `category list
-resource (query|list)
+resource (query|list|versions-by-id)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` resource query --name "Commodi magni enim." --type "" --limit 3522294259516432899` + "\n" +
+		os.Args[0] + ` resource query --name "Magni enim maiores nihil a." --type "pipeline" --limit 4920150712889842071` + "\n" +
 		""
 }
 
@@ -59,6 +59,9 @@ func ParseEndpoint(
 
 		resourceListFlags     = flag.NewFlagSet("list", flag.ExitOnError)
 		resourceListLimitFlag = resourceListFlags.String("limit", "100", "")
+
+		resourceVersionsByIDFlags  = flag.NewFlagSet("versions-by-id", flag.ExitOnError)
+		resourceVersionsByIDIDFlag = resourceVersionsByIDFlags.String("id", "REQUIRED", "ID of a resource")
 	)
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
@@ -66,6 +69,7 @@ func ParseEndpoint(
 	resourceFlags.Usage = resourceUsage
 	resourceQueryFlags.Usage = resourceQueryUsage
 	resourceListFlags.Usage = resourceListUsage
+	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -116,6 +120,9 @@ func ParseEndpoint(
 			case "list":
 				epf = resourceListFlags
 
+			case "versions-by-id":
+				epf = resourceVersionsByIDFlags
+
 			}
 
 		}
@@ -154,6 +161,9 @@ func ParseEndpoint(
 			case "list":
 				endpoint = c.List()
 				data, err = resourcec.BuildListPayload(*resourceListLimitFlag)
+			case "versions-by-id":
+				endpoint = c.VersionsByID()
+				data, err = resourcec.BuildVersionsByIDPayload(*resourceVersionsByIDIDFlag)
 			}
 		}
 	}
@@ -196,6 +206,7 @@ Usage:
 COMMAND:
     query: Find resources by a combination of name, type
     list: List all resources sorted by rating and name
+    versions-by-id: Find all versions of a resource by its id
 
 Additional help:
     %s resource COMMAND --help
@@ -210,7 +221,7 @@ Find resources by a combination of name, type
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Commodi magni enim." --type "" --limit 3522294259516432899
+    `+os.Args[0]+` resource query --name "Magni enim maiores nihil a." --type "pipeline" --limit 4920150712889842071
 `, os.Args[0])
 }
 
@@ -221,6 +232,17 @@ List all resources sorted by rating and name
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource list --limit 8917412058307239266
+    `+os.Args[0]+` resource list --limit 7583277825226825956
+`, os.Args[0])
+}
+
+func resourceVersionsByIDUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource versions-by-id -id UINT
+
+Find all versions of a resource by its id
+    -id UINT: ID of a resource
+
+Example:
+    `+os.Args[0]+` resource versions-by-id --id 12390484844194469530
 `, os.Args[0])
 }

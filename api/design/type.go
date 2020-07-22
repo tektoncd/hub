@@ -48,7 +48,8 @@ var Catalog = Type("Catalog", func() {
 	Required("id", "type")
 })
 
-var Version = Type("Version", func() {
+// TODO: Replace LatestVersion with Version | https://github.com/tektoncd/hub/issues/39
+var LatestVersion = Type("LatestVersion", func() {
 	Attribute("id", UInt, "ID is the unique id of resource's version", func() {
 		Example("id", 1)
 	})
@@ -80,6 +81,28 @@ var Version = Type("Version", func() {
 	Required("id", "version", "description", "displayName", "minPipelinesVersion", "rawURL", "webURL", "updatedAt")
 })
 
+var Version = ResultType("application/vnd.hub.version", func() {
+	Description("The Version result type describes resource's version information.")
+	TypeName("Version")
+
+	Attribute("id", UInt, "ID is the unique id of resource's version", func() {
+		Example("id", 1)
+	})
+	Attribute("version", String, "Version of resource", func() {
+		Example("version", "0.1")
+	})
+	Attribute("rawURL", String, "Raw URL of resource's yaml file of the version", func() {
+		Format(FormatURI)
+		Example("rawURL", "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml")
+	})
+	Attribute("webURL", String, "Web URL of resource's yaml file of the version", func() {
+		Format(FormatURI)
+		Example("webURL", "https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml")
+	})
+
+	Required("id", "version", "rawURL", "webURL")
+})
+
 var Resource = ResultType("application/vnd.hub.resource", func() {
 	Description("The resource type describes resource information.")
 	TypeName("Resource")
@@ -98,7 +121,7 @@ var Resource = ResultType("application/vnd.hub.resource", func() {
 	Attribute("type", String, "Type of resource", func() {
 		Example("type", "task")
 	})
-	Attribute("latestVersion", Version, "Latest version of resource", func() {
+	Attribute("latestVersion", LatestVersion, "Latest version of resource", func() {
 		Example("latestVersion", func() {
 			Value(Val{
 				"id":                  1,
@@ -124,4 +147,37 @@ var Resource = ResultType("application/vnd.hub.resource", func() {
 	})
 
 	Required("id", "name", "catalog", "type", "latestVersion", "tags", "rating")
+})
+
+var Versions = ResultType("application/vnd.hub.versions", func() {
+	Description("The Versions type describes response for versions by resource id API.")
+	TypeName("Versions")
+
+	Attribute("latest", Version, "Latest Version of resource", func() {
+		Example("latest", func() {
+			Value(Val{
+				"id":      2,
+				"version": "0.2",
+				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml",
+				"webURL":  "https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml",
+			})
+		})
+	})
+	Attribute("versions", ArrayOf(Version), "List of all versions of resource", func() {
+		Example("versions", func() {
+			Value([]Val{{
+				"id":      1,
+				"version": "0.1",
+				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml",
+				"webURL":  "https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml",
+			}, {
+				"id":      2,
+				"version": "0.2",
+				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml",
+				"webURL":  "https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml",
+			}})
+		})
+	})
+
+	Required("latest", "versions")
 })

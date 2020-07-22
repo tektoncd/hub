@@ -7,6 +7,10 @@
 
 package client
 
+import (
+	"fmt"
+)
+
 // QueryResourcePath returns the URL path to the resource service Query HTTP endpoint.
 func QueryResourcePath() string {
 	return "/query"
@@ -15,4 +19,9 @@ func QueryResourcePath() string {
 // ListResourcePath returns the URL path to the resource service List HTTP endpoint.
 func ListResourcePath() string {
 	return "/resources"
+}
+
+// VersionsByIDResourcePath returns the URL path to the resource service VersionsByID HTTP endpoint.
+func VersionsByIDResourcePath(id uint) string {
+	return fmt.Sprintf("/resource/%v/versions", id)
 }

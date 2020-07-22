@@ -17,6 +17,15 @@ import (
 // endpoint HTTP response body.
 type ResourceResponseCollection []*ResourceResponse
 
+// VersionsByIDResponseBody is the type of the "resource" service
+// "VersionsByID" endpoint HTTP response body.
+type VersionsByIDResponseBody struct {
+	// Latest Version of resource
+	Latest *VersionResponseBody `form:"latest" json:"latest" xml:"latest"`
+	// List of all versions of resource
+	Versions []*VersionResponseBody `form:"versions" json:"versions" xml:"versions"`
+}
+
 // QueryInternalErrorResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "internal-error" error.
 type QueryInternalErrorResponseBody struct {
@@ -71,6 +80,42 @@ type ListInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// VersionsByIDInternalErrorResponseBody is the type of the "resource" service
+// "VersionsByID" endpoint HTTP response body for the "internal-error" error.
+type VersionsByIDInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// VersionsByIDNotFoundResponseBody is the type of the "resource" service
+// "VersionsByID" endpoint HTTP response body for the "not-found" error.
+type VersionsByIDNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
 // ResourceResponse is used to define fields on response body types.
 type ResourceResponse struct {
 	// ID is the unique id of the resource
@@ -82,7 +127,7 @@ type ResourceResponse struct {
 	// Type of resource
 	Type string `form:"type" json:"type" xml:"type"`
 	// Latest version of resource
-	LatestVersion *VersionResponse `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
+	LatestVersion *LatestVersionResponse `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
 	// Tags related to resource
 	Tags []*TagResponse `form:"tags" json:"tags" xml:"tags"`
 	// Rating of resource
@@ -97,8 +142,8 @@ type CatalogResponse struct {
 	Type string `form:"type" json:"type" xml:"type"`
 }
 
-// VersionResponse is used to define fields on response body types.
-type VersionResponse struct {
+// LatestVersionResponse is used to define fields on response body types.
+type LatestVersionResponse struct {
 	// ID is the unique id of resource's version
 	ID uint `form:"id" json:"id" xml:"id"`
 	// Version of resource
@@ -125,12 +170,40 @@ type TagResponse struct {
 	Name string `form:"name" json:"name" xml:"name"`
 }
 
+// VersionResponseBody is used to define fields on response body types.
+type VersionResponseBody struct {
+	// ID is the unique id of resource's version
+	ID uint `form:"id" json:"id" xml:"id"`
+	// Version of resource
+	Version string `form:"version" json:"version" xml:"version"`
+	// Raw URL of resource's yaml file of the version
+	RawURL string `form:"rawURL" json:"rawURL" xml:"rawURL"`
+	// Web URL of resource's yaml file of the version
+	WebURL string `form:"webURL" json:"webURL" xml:"webURL"`
+}
+
 // NewResourceResponseCollection builds the HTTP response body from the result
 // of the "Query" endpoint of the "resource" service.
 func NewResourceResponseCollection(res resourceviews.ResourceCollectionView) ResourceResponseCollection {
 	body := make([]*ResourceResponse, len(res))
 	for i, val := range res {
 		body[i] = marshalResourceviewsResourceViewToResourceResponse(val)
+	}
+	return body
+}
+
+// NewVersionsByIDResponseBody builds the HTTP response body from the result of
+// the "VersionsByID" endpoint of the "resource" service.
+func NewVersionsByIDResponseBody(res *resourceviews.VersionsView) *VersionsByIDResponseBody {
+	body := &VersionsByIDResponseBody{}
+	if res.Latest != nil {
+		body.Latest = marshalResourceviewsVersionViewToVersionResponseBody(res.Latest)
+	}
+	if res.Versions != nil {
+		body.Versions = make([]*VersionResponseBody, len(res.Versions))
+		for i, val := range res.Versions {
+			body.Versions[i] = marshalResourceviewsVersionViewToVersionResponseBody(val)
+		}
 	}
 	return body
 }
@@ -177,6 +250,34 @@ func NewListInternalErrorResponseBody(res *goa.ServiceError) *ListInternalErrorR
 	return body
 }
 
+// NewVersionsByIDInternalErrorResponseBody builds the HTTP response body from
+// the result of the "VersionsByID" endpoint of the "resource" service.
+func NewVersionsByIDInternalErrorResponseBody(res *goa.ServiceError) *VersionsByIDInternalErrorResponseBody {
+	body := &VersionsByIDInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewVersionsByIDNotFoundResponseBody builds the HTTP response body from the
+// result of the "VersionsByID" endpoint of the "resource" service.
+func NewVersionsByIDNotFoundResponseBody(res *goa.ServiceError) *VersionsByIDNotFoundResponseBody {
+	body := &VersionsByIDNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewQueryPayload builds a resource service Query endpoint payload.
 func NewQueryPayload(name string, type_ string, limit uint) *resource.QueryPayload {
 	v := &resource.QueryPayload{}
@@ -191,6 +292,15 @@ func NewQueryPayload(name string, type_ string, limit uint) *resource.QueryPaylo
 func NewListPayload(limit uint) *resource.ListPayload {
 	v := &resource.ListPayload{}
 	v.Limit = limit
+
+	return v
+}
+
+// NewVersionsByIDPayload builds a resource service VersionsByID endpoint
+// payload.
+func NewVersionsByIDPayload(id uint) *resource.VersionsByIDPayload {
+	v := &resource.VersionsByIDPayload{}
+	v.ID = id
 
 	return v
 }
