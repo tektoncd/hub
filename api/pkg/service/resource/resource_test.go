@@ -101,3 +101,26 @@ func TestList_ByLimit(t *testing.T) {
 	assert.Equal(t, 3, len(all))
 	assert.Equal(t, "tekton", all[0].Name)
 }
+
+func TestVersionsByID(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.VersionsByIDPayload{ID: 1}
+	all, err := resourceSvc.VersionsByID(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, 3, len(all.Versions))
+	assert.Equal(t, "0.2", all.Latest.Version)
+}
+
+func TestVersionsByID_NotFoundError(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.VersionsByIDPayload{ID: 11}
+	_, err := resourceSvc.VersionsByID(context.Background(), payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Resource not found")
+}

@@ -105,3 +105,47 @@ func TestList_Http_NoLimit(t *testing.T) {
 		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
 	})
 }
+
+func VersionsByIDChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	checker := goahttpcheck.New()
+	checker.Mount(
+		server.NewVersionsByIDHandler,
+		server.MountVersionsByIDHandler,
+		resource.NewVersionsByIDEndpoint(New(tc)))
+	return checker
+}
+
+func TestVersionsByID_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	VersionsByIDChecker(tc).Test(t, http.MethodGet, "/resource/1/versions").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
+func TestVersionsByID_Http_ErrorCase(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	VersionsByIDChecker(tc).Test(t, http.MethodGet, "/resource/111/versions").Check().
+		HasStatus(404).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		var jsonMap map[string]interface{}
+		marshallErr := json.Unmarshal([]byte(b), &jsonMap)
+		assert.NoError(t, marshallErr)
+
+		assert.Equal(t, "not-found", jsonMap["name"])
+	})
+}
