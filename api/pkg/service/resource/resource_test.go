@@ -157,3 +157,25 @@ func TestByTypeNameVersion_ResourceVersionNotFound(t *testing.T) {
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Resource not found")
 }
+
+func TestByVersionID(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByVersionIDPayload{VersionID: 6}
+	res, err := resourceSvc.ByVersionID(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, "0.1.1", res.Version)
+}
+
+func TestByVersionID_NotFoundError(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByVersionIDPayload{VersionID: 111}
+	_, err := resourceSvc.ByVersionID(context.Background(), payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Resource not found")
+}

@@ -96,13 +96,13 @@ func (s *service) ByTypeNameVersion(ctx context.Context, p *resource.ByTypeNameV
 
 	switch count := len(r.Versions); {
 	case count == 1:
-		return completeVersionInfo(r), nil
+		return versionInfoFromResource(r), nil
 	case count == 0:
 		return nil, notFoundError
 	default:
 		s.logger.Warnf("expected to find one version but found %d", count)
 		r.Versions = []model.ResourceVersion{r.Versions[0]}
-		return completeVersionInfo(r), nil
+		return versionInfoFromResource(r), nil
 	}
 }
 
@@ -128,9 +128,18 @@ func (s *service) resourcesForQuery(q *gorm.DB) (resource.ResourceCollection, er
 
 // find a resource using its version's id
 func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayload) (res *resource.Version, err error) {
-	res = &resource.Version{}
-	s.logger.Info("resource.VersionByVersionId")
-	return
+
+	q := s.db.Scopes(withResourceVersionDetails, filterByVersionID(p.VersionID))
+
+	var v model.ResourceVersion
+	if err := q.Find(&v).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, notFoundError
+		}
+		return nil, fetchError
+	}
+
+	return versionInfoFromVersion(v), nil
 }
 
 func initResource(r model.Resource) *resource.Resource {
@@ -176,7 +185,7 @@ func minVersionInfo(r model.ResourceVersion) *resource.Version {
 	return res
 }
 
-func completeVersionInfo(r model.Resource) *resource.Version {
+func versionInfoFromResource(r model.Resource) *resource.Version {
 
 	tags := []*resource.Tag{}
 	for _, tag := range r.Tags {
@@ -213,10 +222,19 @@ func completeVersionInfo(r model.Resource) *resource.Version {
 	return ver
 }
 
+func versionInfoFromVersion(v model.ResourceVersion) *resource.Version {
+
+	// NOTE: we are not preloading all versions (optimisation) and we only
+	// need to return version detials of v, thus manually populating only
+	// the required info
+	v.Resource.Versions = []model.ResourceVersion{v}
+	return versionInfoFromResource(v.Resource)
+}
+
 func withCatalogAndTags(db *gorm.DB) *gorm.DB {
 	return db.
 		Preload("Catalog").
-		Preload("Tags", func(db *gorm.DB) *gorm.DB { return db.Order("tags.name ASC") })
+		Preload("Tags", orderByTags)
 }
 
 // withResourceDetails defines a gorm scope to include all details of resource.
@@ -235,8 +253,26 @@ func withVersionInfo(version string) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+func orderByTags(db *gorm.DB) *gorm.DB {
+	return db.Order("tags.name ASC")
+}
+
 func orderByVersion(db *gorm.DB) *gorm.DB {
 	return db.Order("string_to_array(version, '.')::int[];")
+}
+
+// withResourceVersionDetails defines a gorm scope to include all details of
+// resource in resource version.
+func withResourceVersionDetails(db *gorm.DB) *gorm.DB {
+	return db.Preload("Resource").
+		Preload("Resource.Catalog").
+		Preload("Resource.Tags", orderByTags)
+}
+
+func preloadCatalogAndTags(db *gorm.DB) *gorm.DB {
+	return db.
+		Preload("Catalog").
+		Preload("Tags", orderByTags)
 }
 
 func filterByType(t string) func(db *gorm.DB) *gorm.DB {
@@ -256,6 +292,12 @@ func filterByResourceID(id uint) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+func filterByVersionID(versionID uint) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("id = ?", versionID)
+	}
+}
+
 func filterByName(name string) func(db *gorm.DB) *gorm.DB {
 	if name == "" {
 		return noop
@@ -272,9 +314,9 @@ func matchesName(name string) func(db *gorm.DB) *gorm.DB {
 		return noop
 	}
 
+	likeName := "%" + strings.ToLower(name) + "%"
 	return func(db *gorm.DB) *gorm.DB {
-		str := "%" + strings.ToLower(name) + "%"
-		return db.Where("LOWER(name) LIKE ?", str)
+		return db.Where("LOWER(name) LIKE ?", likeName)
 	}
 }
 
