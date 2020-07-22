@@ -24,6 +24,8 @@ type Service interface {
 	VersionsByID(context.Context, *VersionsByIDPayload) (res *Versions, err error)
 	// Find resource using name, type and version of resource
 	ByTypeNameVersion(context.Context, *ByTypeNameVersionPayload) (res *Version, err error)
+	// Find a resource using its version's id
+	ByVersionID(context.Context, *ByVersionIDPayload) (res *Version, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -34,7 +36,7 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [4]string{"Query", "List", "VersionsByID", "ByTypeNameVersion"}
+var MethodNames = [5]string{"Query", "List", "VersionsByID", "ByTypeNameVersion", "ByVersionId"}
 
 // QueryPayload is the payload type of the resource service Query method.
 type QueryPayload struct {
@@ -101,6 +103,13 @@ type Version struct {
 	UpdatedAt string
 	// Resource to which the version belongs
 	Resource *Resource
+}
+
+// ByVersionIDPayload is the payload type of the resource service ByVersionId
+// method.
+type ByVersionIDPayload struct {
+	// Version ID of a resource's version
+	VersionID uint
 }
 
 // The resource type describes resource information.

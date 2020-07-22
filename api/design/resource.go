@@ -101,4 +101,23 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	Method("ByVersionId", func() {
+		Description("Find a resource using its version's id")
+		Payload(func() {
+			Attribute("versionID", UInt, "Version ID of a resource's version")
+			Required("versionID")
+		})
+		Result(ResVersion, func() {
+			View("default")
+		})
+
+		HTTP(func() {
+			GET("/resource/version/{versionID}")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
+		})
+	})
+
 })

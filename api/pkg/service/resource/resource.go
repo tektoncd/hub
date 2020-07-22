@@ -126,6 +126,13 @@ func (s *service) resourcesForQuery(q *gorm.DB) (resource.ResourceCollection, er
 	return res, nil
 }
 
+// find a resource using its version's id
+func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayload) (res *resource.Version, err error) {
+	res = &resource.Version{}
+	s.logger.Info("resource.VersionByVersionId")
+	return
+}
+
 func initResource(r model.Resource) *resource.Resource {
 	res := &resource.Resource{}
 	res.ID = r.ID

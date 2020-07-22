@@ -417,6 +417,105 @@ func DecodeByTypeNameVersionResponse(decoder func(*http.Response) goahttp.Decode
 	}
 }
 
+// BuildByVersionIDRequest instantiates a HTTP request object with method and
+// path set to call the "resource" service "ByVersionId" endpoint
+func (c *Client) BuildByVersionIDRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		versionID uint
+	)
+	{
+		p, ok := v.(*resource.ByVersionIDPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("resource", "ByVersionId", "*resource.ByVersionIDPayload", v)
+		}
+		versionID = p.VersionID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ByVersionIDResourcePath(versionID)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("resource", "ByVersionId", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeByVersionIDResponse returns a decoder for responses returned by the
+// resource ByVersionId endpoint. restoreBody controls whether the response
+// body should be restored after having been read.
+// DecodeByVersionIDResponse may return the following errors:
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- "not-found" (type *goa.ServiceError): http.StatusNotFound
+//	- error: internal error
+func DecodeByVersionIDResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body ByVersionIDResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByVersionId", err)
+			}
+			p := NewByVersionIDVersionOK(&body)
+			view := "default"
+			vres := &resourceviews.Version{Projected: p, View: view}
+			if err = resourceviews.ValidateVersion(vres); err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByVersionId", err)
+			}
+			res := resource.NewVersion(vres)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body ByVersionIDInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByVersionId", err)
+			}
+			err = ValidateByVersionIDInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByVersionId", err)
+			}
+			return nil, NewByVersionIDInternalError(&body)
+		case http.StatusNotFound:
+			var (
+				body ByVersionIDNotFoundResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByVersionId", err)
+			}
+			err = ValidateByVersionIDNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByVersionId", err)
+			}
+			return nil, NewByVersionIDNotFound(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("resource", "ByVersionId", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalResourceResponseToResourceviewsResourceView builds a value of type
 // *resourceviews.ResourceView from a value of type *ResourceResponse.
 func unmarshalResourceResponseToResourceviewsResourceView(v *ResourceResponse) *resourceviews.ResourceView {
