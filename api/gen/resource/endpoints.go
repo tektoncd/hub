@@ -20,6 +20,7 @@ type Endpoints struct {
 	VersionsByID      goa.Endpoint
 	ByTypeNameVersion goa.Endpoint
 	ByVersionID       goa.Endpoint
+	ByTypeName        goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "resource" service with endpoints.
@@ -30,6 +31,7 @@ func NewEndpoints(s Service) *Endpoints {
 		VersionsByID:      NewVersionsByIDEndpoint(s),
 		ByTypeNameVersion: NewByTypeNameVersionEndpoint(s),
 		ByVersionID:       NewByVersionIDEndpoint(s),
+		ByTypeName:        NewByTypeNameEndpoint(s),
 	}
 }
 
@@ -40,6 +42,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.VersionsByID = m(e.VersionsByID)
 	e.ByTypeNameVersion = m(e.ByTypeNameVersion)
 	e.ByVersionID = m(e.ByVersionID)
+	e.ByTypeName = m(e.ByTypeName)
 }
 
 // NewQueryEndpoint returns an endpoint function that calls the method "Query"
@@ -108,6 +111,20 @@ func NewByVersionIDEndpoint(s Service) goa.Endpoint {
 			return nil, err
 		}
 		vres := NewViewedVersion(res, "default")
+		return vres, nil
+	}
+}
+
+// NewByTypeNameEndpoint returns an endpoint function that calls the method
+// "ByTypeName" of service "resource".
+func NewByTypeNameEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*ByTypeNamePayload)
+		res, err := s.ByTypeName(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedResourceCollection(res, "default")
 		return vres, nil
 	}
 }

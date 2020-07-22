@@ -142,6 +142,13 @@ func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayloa
 	return versionInfoFromVersion(v), nil
 }
 
+// find resources using name and type
+func (s *service) ByTypeName(ctx context.Context, p *resource.ByTypeNamePayload) (res resource.ResourceCollection, err error) {
+	res = resource.ResourceCollection{}
+	s.logger.Info("resource.ByNameKind")
+	return
+}
+
 func initResource(r model.Resource) *resource.Resource {
 	res := &resource.Resource{}
 	res.ID = r.ID

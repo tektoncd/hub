@@ -516,6 +516,107 @@ func DecodeByVersionIDResponse(decoder func(*http.Response) goahttp.Decoder, res
 	}
 }
 
+// BuildByTypeNameRequest instantiates a HTTP request object with method and
+// path set to call the "resource" service "ByTypeName" endpoint
+func (c *Client) BuildByTypeNameRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		type_ string
+		name  string
+	)
+	{
+		p, ok := v.(*resource.ByTypeNamePayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("resource", "ByTypeName", "*resource.ByTypeNamePayload", v)
+		}
+		type_ = p.Type
+		name = p.Name
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ByTypeNameResourcePath(type_, name)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("resource", "ByTypeName", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeByTypeNameResponse returns a decoder for responses returned by the
+// resource ByTypeName endpoint. restoreBody controls whether the response body
+// should be restored after having been read.
+// DecodeByTypeNameResponse may return the following errors:
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- "not-found" (type *goa.ServiceError): http.StatusNotFound
+//	- error: internal error
+func DecodeByTypeNameResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body ByTypeNameResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByTypeName", err)
+			}
+			p := NewByTypeNameResourceCollectionOK(body)
+			view := "default"
+			vres := resourceviews.ResourceCollection{Projected: p, View: view}
+			if err = resourceviews.ValidateResourceCollection(vres); err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByTypeName", err)
+			}
+			res := resource.NewResourceCollection(vres)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body ByTypeNameInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByTypeName", err)
+			}
+			err = ValidateByTypeNameInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByTypeName", err)
+			}
+			return nil, NewByTypeNameInternalError(&body)
+		case http.StatusNotFound:
+			var (
+				body ByTypeNameNotFoundResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByTypeName", err)
+			}
+			err = ValidateByTypeNameNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByTypeName", err)
+			}
+			return nil, NewByTypeNameNotFound(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("resource", "ByTypeName", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalResourceResponseToResourceviewsResourceView builds a value of type
 // *resourceviews.ResourceView from a value of type *ResourceResponse.
 func unmarshalResourceResponseToResourceviewsResourceView(v *ResourceResponse) *resourceviews.ResourceView {

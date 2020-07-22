@@ -235,6 +235,42 @@ type ByVersionIDNotFoundResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// ByTypeNameInternalErrorResponseBody is the type of the "resource" service
+// "ByTypeName" endpoint HTTP response body for the "internal-error" error.
+type ByTypeNameInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// ByTypeNameNotFoundResponseBody is the type of the "resource" service
+// "ByTypeName" endpoint HTTP response body for the "not-found" error.
+type ByTypeNameNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
 // ResourceResponse is used to define fields on response body types.
 type ResourceResponse struct {
 	// ID is the unique id of the resource
@@ -524,6 +560,34 @@ func NewByVersionIDNotFoundResponseBody(res *goa.ServiceError) *ByVersionIDNotFo
 	return body
 }
 
+// NewByTypeNameInternalErrorResponseBody builds the HTTP response body from
+// the result of the "ByTypeName" endpoint of the "resource" service.
+func NewByTypeNameInternalErrorResponseBody(res *goa.ServiceError) *ByTypeNameInternalErrorResponseBody {
+	body := &ByTypeNameInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewByTypeNameNotFoundResponseBody builds the HTTP response body from the
+// result of the "ByTypeName" endpoint of the "resource" service.
+func NewByTypeNameNotFoundResponseBody(res *goa.ServiceError) *ByTypeNameNotFoundResponseBody {
+	body := &ByTypeNameNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewQueryPayload builds a resource service Query endpoint payload.
 func NewQueryPayload(name string, type_ string, limit uint) *resource.QueryPayload {
 	v := &resource.QueryPayload{}
@@ -566,6 +630,15 @@ func NewByTypeNameVersionPayload(type_ string, name string, version string) *res
 func NewByVersionIDPayload(versionID uint) *resource.ByVersionIDPayload {
 	v := &resource.ByVersionIDPayload{}
 	v.VersionID = versionID
+
+	return v
+}
+
+// NewByTypeNamePayload builds a resource service ByTypeName endpoint payload.
+func NewByTypeNamePayload(type_ string, name string) *resource.ByTypeNamePayload {
+	v := &resource.ByTypeNamePayload{}
+	v.Type = type_
+	v.Name = name
 
 	return v
 }

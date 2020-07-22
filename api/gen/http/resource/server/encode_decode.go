@@ -417,6 +417,83 @@ func EncodeByVersionIDError(encoder func(context.Context, http.ResponseWriter) g
 	}
 }
 
+// EncodeByTypeNameResponse returns an encoder for responses returned by the
+// resource ByTypeName endpoint.
+func EncodeByTypeNameResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(resourceviews.ResourceCollection)
+		enc := encoder(ctx, w)
+		body := NewResourceResponseCollection(res.Projected)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeByTypeNameRequest returns a decoder for requests sent to the resource
+// ByTypeName endpoint.
+func DecodeByTypeNameRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			type_ string
+			name  string
+			err   error
+
+			params = mux.Vars(r)
+		)
+		type_ = params["type"]
+		if !(type_ == "task" || type_ == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("type_", type_, []interface{}{"task", "pipeline"}))
+		}
+		name = params["name"]
+		if err != nil {
+			return nil, err
+		}
+		payload := NewByTypeNamePayload(type_, name)
+
+		return payload, nil
+	}
+}
+
+// EncodeByTypeNameError returns an encoder for errors returned by the
+// ByTypeName resource endpoint.
+func EncodeByTypeNameError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "internal-error":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByTypeNameInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "internal-error")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		case "not-found":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByTypeNameNotFoundResponseBody(res)
+			}
+			w.Header().Set("goa-error", "not-found")
+			w.WriteHeader(http.StatusNotFound)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // marshalResourceviewsResourceViewToResourceResponse builds a value of type
 // *ResourceResponse from a value of type *resourceviews.ResourceView.
 func marshalResourceviewsResourceViewToResourceResponse(v *resourceviews.ResourceView) *ResourceResponse {
