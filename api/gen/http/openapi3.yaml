@@ -6,6 +6,22 @@ info:
 servers:
 - url: api.hub.tekton.dev
 paths:
+  /:
+    get:
+      tags:
+      - status
+      summary: Status status
+      description: Return status 'ok' when the server has started successfully
+      operationId: status#Status
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponseBody'
+              example:
+                status: ok
   /categories:
     get:
       tags:
@@ -1251,6 +1267,17 @@ components:
         - id: 1
           name: image-build
         type: task
+    StatusResponseBody:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of server
+          example: ok
+      example:
+        status: ok
+      required:
+      - status
     Tag:
       type: object
       properties:

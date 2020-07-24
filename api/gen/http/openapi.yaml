@@ -13,6 +13,22 @@ produces:
 - application/xml
 - application/gob
 paths:
+  /:
+    get:
+      tags:
+      - status
+      summary: Status status
+      description: Return status 'ok' when the server has started successfully
+      operationId: status#Status
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/StatusStatusResponseBody'
+            required:
+            - status
+      schemes:
+      - http
   /categories:
     get:
       tags:
@@ -1286,6 +1302,18 @@ definitions:
     required:
     - latest
     - versions
+  StatusStatusResponseBody:
+    title: StatusStatusResponseBody
+    type: object
+    properties:
+      status:
+        type: string
+        description: Status of server
+        example: ok
+    example:
+      status: ok
+    required:
+    - status
   TagResponse:
     title: TagResponse
     type: object

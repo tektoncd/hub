@@ -15,6 +15,7 @@ import (
 
 	categoryc "github.com/tektoncd/hub/api/gen/http/category/client"
 	resourcec "github.com/tektoncd/hub/api/gen/http/resource/client"
+	statusc "github.com/tektoncd/hub/api/gen/http/status/client"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -25,6 +26,7 @@ import (
 //
 func UsageCommands() string {
 	return `category list
+status status
 resource (query|list|versions-by-id|by-type-name-version|by-version-id|by-type-name)
 `
 }
@@ -32,6 +34,7 @@ resource (query|list|versions-by-id|by-type-name-version|by-version-id|by-type-n
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
+		os.Args[0] + ` status status` + "\n" +
 		os.Args[0] + ` resource query --name "Animi qui qui." --type "task" --limit 5862861802766617649` + "\n" +
 		""
 }
@@ -49,6 +52,10 @@ func ParseEndpoint(
 		categoryFlags = flag.NewFlagSet("category", flag.ContinueOnError)
 
 		categoryListFlags = flag.NewFlagSet("list", flag.ExitOnError)
+
+		statusFlags = flag.NewFlagSet("status", flag.ContinueOnError)
+
+		statusStatusFlags = flag.NewFlagSet("status", flag.ExitOnError)
 
 		resourceFlags = flag.NewFlagSet("resource", flag.ContinueOnError)
 
@@ -78,6 +85,9 @@ func ParseEndpoint(
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
 
+	statusFlags.Usage = statusUsage
+	statusStatusFlags.Usage = statusStatusUsage
+
 	resourceFlags.Usage = resourceUsage
 	resourceQueryFlags.Usage = resourceQueryUsage
 	resourceListFlags.Usage = resourceListUsage
@@ -103,6 +113,8 @@ func ParseEndpoint(
 		switch svcn {
 		case "category":
 			svcf = categoryFlags
+		case "status":
+			svcf = statusFlags
 		case "resource":
 			svcf = resourceFlags
 		default:
@@ -124,6 +136,13 @@ func ParseEndpoint(
 			switch epn {
 			case "list":
 				epf = categoryListFlags
+
+			}
+
+		case "status":
+			switch epn {
+			case "status":
+				epf = statusStatusFlags
 
 			}
 
@@ -174,6 +193,13 @@ func ParseEndpoint(
 			switch epn {
 			case "list":
 				endpoint = c.List()
+				data = nil
+			}
+		case "status":
+			c := statusc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "status":
+				endpoint = c.Status()
 				data = nil
 			}
 		case "resource":
@@ -227,6 +253,29 @@ List all categories along with their tags sorted by name
 
 Example:
     `+os.Args[0]+` category list
+`, os.Args[0])
+}
+
+// statusUsage displays the usage of the status command and its subcommands.
+func statusUsage() {
+	fmt.Fprintf(os.Stderr, `Describes the status of the server
+Usage:
+    %s [globalflags] status COMMAND [flags]
+
+COMMAND:
+    status: Return status 'ok' when the server has started successfully
+
+Additional help:
+    %s status COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func statusStatusUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] status status
+
+Return status 'ok' when the server has started successfully
+
+Example:
+    `+os.Args[0]+` status status
 `, os.Args[0])
 }
 
