@@ -17,8 +17,10 @@ import (
 	category "github.com/tektoncd/hub/api/gen/category"
 	categorysvr "github.com/tektoncd/hub/api/gen/http/category/server"
 	resourcesvr "github.com/tektoncd/hub/api/gen/http/resource/server"
+	statussvr "github.com/tektoncd/hub/api/gen/http/status/server"
 	swaggersvr "github.com/tektoncd/hub/api/gen/http/swagger/server"
 	resource "github.com/tektoncd/hub/api/gen/resource"
+	status "github.com/tektoncd/hub/api/gen/status"
 )
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
@@ -26,6 +28,7 @@ import (
 func handleHTTPServer(ctx context.Context, u *url.URL, wg *sync.WaitGroup, errc chan error, debug bool,
 	categoryEndpoints *category.Endpoints,
 	resourceEndpoints *resource.Endpoints,
+	statusEndpoints *status.Endpoints,
 	logger *zap.SugaredLogger) {
 
 	// Provide the transport specific request decoder and response encoder.
@@ -51,17 +54,21 @@ func handleHTTPServer(ctx context.Context, u *url.URL, wg *sync.WaitGroup, errc 
 	var (
 		categoryServer *categorysvr.Server
 		resourceServer *resourcesvr.Server
+		statusServer   *statussvr.Server
 		swaggerServer  *swaggersvr.Server
 	)
 	{
 		eh := errorHandler(logger)
 		categoryServer = categorysvr.New(categoryEndpoints, mux, dec, enc, eh, nil)
 		resourceServer = resourcesvr.New(resourceEndpoints, mux, dec, enc, eh, nil)
+		statusServer = statussvr.New(statusEndpoints, mux, dec, enc, eh, nil)
 		swaggerServer = swaggersvr.New(nil, mux, dec, enc, eh, nil)
+
 		if debug {
 			servers := goahttp.Servers{
 				categoryServer,
 				resourceServer,
+				statusServer,
 				swaggerServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
@@ -70,6 +77,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, wg *sync.WaitGroup, errc 
 	// Configure the mux.
 	categorysvr.Mount(mux, categoryServer)
 	resourcesvr.Mount(mux, resourceServer)
+	statussvr.Mount(mux, statusServer)
 	swaggersvr.Mount(mux, swaggerServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
@@ -86,6 +94,9 @@ func handleHTTPServer(ctx context.Context, u *url.URL, wg *sync.WaitGroup, errc 
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range resourceServer.Mounts {
+		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range statusServer.Mounts {
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range swaggerServer.Mounts {

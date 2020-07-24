@@ -20,6 +20,24 @@ spec:
           image: ko://github.com/tektoncd/hub/api/cmd/api
           ports:
             - containerPort: 8000
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8000
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8000
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
           env:
             - name: POSTGRESQL_HOST
               value: db
