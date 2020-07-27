@@ -4,14 +4,46 @@ The Tekton hub is a web based platform for developers to discover,
 share and contribute tasks and pipelines for Tekton. This repository
 contains the source code of this service.
 
+
+> Currently, Hub is launched as a preview [hub-preview.tekton.dev](https://hub-preview.tekton.dev) :mega:
+
+You can find the source code [here](https://github.com/tektoncd/experimental/tree/master/hub).
+
+
+The project is being moved from [experimental](https://github.com/tektoncd/experimental/tree/master/hub) to [hub](https://github.com/tektoncd/hub). Stay tuned for further updates :bow:
+
+Please file all issues on [hub](https://github.com/tektoncd/hub/issues/new/choose).
+
+
+
+
 ## Key features
 
-* Display Task and Pipelines in a curated way
-* Filter tasks on basis of tags
-* Search a task on basis of name
-* Sort tasks on name, rating and downloads
-* Rate a task
-* Upload a task
+
+* Tekton Hub provides the following features:
+
+
+
+1. Display of resources in a curated way:
+
+     User gets detailed information such as description, YAML, tags and rating of resources.
+
+
+  2. Filter by  categories :
+
+     This allows user to filter resources based on categories which will help user to get multiple resources.
+
+  3. Search resources on the basis of `name` or `displayName`
+
+  4. Rating
+
+     - User can rate a resource based on the experience
+     - This can even help the other user as by knowing the rating they can directly compare and use the resource
+
+  5. Sort resources on the basis of name or rating.
+
+  6. Install resources on cluster :
+     - The Tekton Hub provides cluster installation commands for tasks or pipelines.
 
 ## Contributing and Support
 
