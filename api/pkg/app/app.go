@@ -1,3 +1,17 @@
+// Copyright © 2020 The Tekton Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package app
 
 import (
@@ -91,9 +105,9 @@ func (ac *APIConfig) Cleanup() {
 	ac.db.Close()
 }
 
-// FromEnv is called while initailising the api service, it calls FromEnvFile 
-// passing .env.dev file which will have configuration while running in  
-// development mode 
+// FromEnv is called while initailising the api service, it calls FromEnvFile
+// passing .env.dev file which will have configuration while running in
+// development mode
 func FromEnv() (*APIConfig, error) {
 	// load from .env.dev file for development but skip if not found
 	return FromEnvFile(".env.dev")
@@ -101,7 +115,7 @@ func FromEnv() (*APIConfig, error) {
 
 // FromEnvFile expects a filepath to env file which has db configurations
 // It loads .env file, initialises a db connection & logger depending on the EnvMode
-// and returns a APIConfig Object 
+// and returns a APIConfig Object
 // If it doesn't finds a .env file, it looks for configuratin among environment variables
 func FromEnvFile(file string) (*APIConfig, error) {
 	if err := godotenv.Load(file); err != nil {
