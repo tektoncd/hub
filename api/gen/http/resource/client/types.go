@@ -24,9 +24,9 @@ type ListResponseBody []*ResourceResponse
 // "VersionsByID" endpoint HTTP response body.
 type VersionsByIDResponseBody struct {
 	// Latest Version of resource
-	Latest *VersionResponseBody `form:"latest,omitempty" json:"latest,omitempty" xml:"latest,omitempty"`
+	Latest *MinVersionInfoResponseBody `form:"latest,omitempty" json:"latest,omitempty" xml:"latest,omitempty"`
 	// List of all versions of resource
-	Versions []*VersionResponseBody `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
+	Versions []*MinVersionInfoResponseBody `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
 }
 
 // ByTypeNameVersionResponseBody is the type of the "resource" service
@@ -36,12 +36,12 @@ type ByTypeNameVersionResponseBody struct {
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Version of resource
 	Version *string `form:"version,omitempty" json:"version,omitempty" xml:"version,omitempty"`
-	// Display name of version
-	DisplayName *string `form:"displayName,omitempty" json:"displayName,omitempty" xml:"displayName,omitempty"`
 	// Description of version
 	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
 	// Minimum pipelines version the resource's version is compatible with
 	MinPipelinesVersion *string `form:"minPipelinesVersion,omitempty" json:"minPipelinesVersion,omitempty" xml:"minPipelinesVersion,omitempty"`
+	// Display name of version
+	DisplayName *string `form:"displayName,omitempty" json:"displayName,omitempty" xml:"displayName,omitempty"`
 	// Raw URL of resource's yaml file of the version
 	RawURL *string `form:"rawURL,omitempty" json:"rawURL,omitempty" xml:"rawURL,omitempty"`
 	// Web URL of resource's yaml file of the version
@@ -59,12 +59,12 @@ type ByVersionIDResponseBody struct {
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Version of resource
 	Version *string `form:"version,omitempty" json:"version,omitempty" xml:"version,omitempty"`
-	// Display name of version
-	DisplayName *string `form:"displayName,omitempty" json:"displayName,omitempty" xml:"displayName,omitempty"`
 	// Description of version
 	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
 	// Minimum pipelines version the resource's version is compatible with
 	MinPipelinesVersion *string `form:"minPipelinesVersion,omitempty" json:"minPipelinesVersion,omitempty" xml:"minPipelinesVersion,omitempty"`
+	// Display name of version
+	DisplayName *string `form:"displayName,omitempty" json:"displayName,omitempty" xml:"displayName,omitempty"`
 	// Raw URL of resource's yaml file of the version
 	RawURL *string `form:"rawURL,omitempty" json:"rawURL,omitempty" xml:"rawURL,omitempty"`
 	// Web URL of resource's yaml file of the version
@@ -78,6 +78,27 @@ type ByVersionIDResponseBody struct {
 // ByTypeNameResponseBody is the type of the "resource" service "ByTypeName"
 // endpoint HTTP response body.
 type ByTypeNameResponseBody []*ResourceResponse
+
+// ByIDResponseBody is the type of the "resource" service "ById" endpoint HTTP
+// response body.
+type ByIDResponseBody struct {
+	// ID is the unique id of the resource
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name of resource
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Type of catalog to which resource belongs
+	Catalog *CatalogResponseBody `form:"catalog,omitempty" json:"catalog,omitempty" xml:"catalog,omitempty"`
+	// Type of resource
+	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
+	// Latest version of resource
+	LatestVersion *LatestVersionResponseBody `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
+	// Tags related to resource
+	Tags []*TagResponseBody `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
+	// Rating of resource
+	Rating *float64 `form:"rating,omitempty" json:"rating,omitempty" xml:"rating,omitempty"`
+	// List of all versions of a resource
+	Versions []*MinVersionInfoResponseBody `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
+}
 
 // QueryInternalErrorResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "internal-error" error.
@@ -278,6 +299,42 @@ type ByTypeNameNotFoundResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
+// ByIDInternalErrorResponseBody is the type of the "resource" service "ById"
+// endpoint HTTP response body for the "internal-error" error.
+type ByIDInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// ByIDNotFoundResponseBody is the type of the "resource" service "ById"
+// endpoint HTTP response body for the "not-found" error.
+type ByIDNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
 // ResourceResponse is used to define fields on response body types.
 type ResourceResponse struct {
 	// ID is the unique id of the resource
@@ -294,6 +351,8 @@ type ResourceResponse struct {
 	Tags []*TagResponse `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
 	// Rating of resource
 	Rating *float64 `form:"rating,omitempty" json:"rating,omitempty" xml:"rating,omitempty"`
+	// List of all versions of a resource
+	Versions []*MinVersionInfoResponse `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
 }
 
 // CatalogResponse is used to define fields on response body types.
@@ -332,26 +391,28 @@ type TagResponse struct {
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
-// VersionResponseBody is used to define fields on response body types.
-type VersionResponseBody struct {
+// MinVersionInfoResponse is used to define fields on response body types.
+type MinVersionInfoResponse struct {
 	// ID is the unique id of resource's version
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Version of resource
 	Version *string `form:"version,omitempty" json:"version,omitempty" xml:"version,omitempty"`
-	// Display name of version
-	DisplayName *string `form:"displayName,omitempty" json:"displayName,omitempty" xml:"displayName,omitempty"`
-	// Description of version
-	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
-	// Minimum pipelines version the resource's version is compatible with
-	MinPipelinesVersion *string `form:"minPipelinesVersion,omitempty" json:"minPipelinesVersion,omitempty" xml:"minPipelinesVersion,omitempty"`
 	// Raw URL of resource's yaml file of the version
 	RawURL *string `form:"rawURL,omitempty" json:"rawURL,omitempty" xml:"rawURL,omitempty"`
 	// Web URL of resource's yaml file of the version
 	WebURL *string `form:"webURL,omitempty" json:"webURL,omitempty" xml:"webURL,omitempty"`
-	// Timestamp when version was last updated
-	UpdatedAt *string `form:"updatedAt,omitempty" json:"updatedAt,omitempty" xml:"updatedAt,omitempty"`
-	// Resource to which the version belongs
-	Resource *ResourceResponseBody `form:"resource,omitempty" json:"resource,omitempty" xml:"resource,omitempty"`
+}
+
+// MinVersionInfoResponseBody is used to define fields on response body types.
+type MinVersionInfoResponseBody struct {
+	// ID is the unique id of resource's version
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Version of resource
+	Version *string `form:"version,omitempty" json:"version,omitempty" xml:"version,omitempty"`
+	// Raw URL of resource's yaml file of the version
+	RawURL *string `form:"rawURL,omitempty" json:"rawURL,omitempty" xml:"rawURL,omitempty"`
+	// Web URL of resource's yaml file of the version
+	WebURL *string `form:"webURL,omitempty" json:"webURL,omitempty" xml:"webURL,omitempty"`
 }
 
 // ResourceResponseBody is used to define fields on response body types.
@@ -370,6 +431,8 @@ type ResourceResponseBody struct {
 	Tags []*TagResponseBody `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
 	// Rating of resource
 	Rating *float64 `form:"rating,omitempty" json:"rating,omitempty" xml:"rating,omitempty"`
+	// List of all versions of a resource
+	Versions []*MinVersionInfoResponseBody `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
 }
 
 // CatalogResponseBody is used to define fields on response body types.
@@ -476,10 +539,10 @@ func NewListInternalError(body *ListInternalErrorResponseBody) *goa.ServiceError
 // endpoint result from a HTTP "OK" response.
 func NewVersionsByIDVersionsOK(body *VersionsByIDResponseBody) *resourceviews.VersionsView {
 	v := &resourceviews.VersionsView{}
-	v.Latest = unmarshalVersionResponseBodyToResourceviewsVersionView(body.Latest)
-	v.Versions = make([]*resourceviews.VersionView, len(body.Versions))
+	v.Latest = unmarshalMinVersionInfoResponseBodyToResourceviewsMinVersionInfoView(body.Latest)
+	v.Versions = make([]*resourceviews.MinVersionInfoView, len(body.Versions))
 	for i, val := range body.Versions {
-		v.Versions[i] = unmarshalVersionResponseBodyToResourceviewsVersionView(val)
+		v.Versions[i] = unmarshalMinVersionInfoResponseBodyToResourceviewsMinVersionInfoView(val)
 	}
 
 	return v
@@ -521,9 +584,9 @@ func NewByTypeNameVersionVersionOK(body *ByTypeNameVersionResponseBody) *resourc
 	v := &resourceviews.VersionView{
 		ID:                  body.ID,
 		Version:             body.Version,
-		DisplayName:         body.DisplayName,
 		Description:         body.Description,
 		MinPipelinesVersion: body.MinPipelinesVersion,
+		DisplayName:         body.DisplayName,
 		RawURL:              body.RawURL,
 		WebURL:              body.WebURL,
 		UpdatedAt:           body.UpdatedAt,
@@ -569,9 +632,9 @@ func NewByVersionIDVersionOK(body *ByVersionIDResponseBody) *resourceviews.Versi
 	v := &resourceviews.VersionView{
 		ID:                  body.ID,
 		Version:             body.Version,
-		DisplayName:         body.DisplayName,
 		Description:         body.Description,
 		MinPipelinesVersion: body.MinPipelinesVersion,
+		DisplayName:         body.DisplayName,
 		RawURL:              body.RawURL,
 		WebURL:              body.WebURL,
 		UpdatedAt:           body.UpdatedAt,
@@ -639,6 +702,58 @@ func NewByTypeNameInternalError(body *ByTypeNameInternalErrorResponseBody) *goa.
 // NewByTypeNameNotFound builds a resource service ByTypeName endpoint
 // not-found error.
 func NewByTypeNameNotFound(body *ByTypeNameNotFoundResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewByIDResourceOK builds a "resource" service "ById" endpoint result from a
+// HTTP "OK" response.
+func NewByIDResourceOK(body *ByIDResponseBody) *resourceviews.ResourceView {
+	v := &resourceviews.ResourceView{
+		ID:     body.ID,
+		Name:   body.Name,
+		Type:   body.Type,
+		Rating: body.Rating,
+	}
+	v.Catalog = unmarshalCatalogResponseBodyToResourceviewsCatalogView(body.Catalog)
+	v.LatestVersion = unmarshalLatestVersionResponseBodyToResourceviewsLatestVersionView(body.LatestVersion)
+	v.Tags = make([]*resourceviews.TagView, len(body.Tags))
+	for i, val := range body.Tags {
+		v.Tags[i] = unmarshalTagResponseBodyToResourceviewsTagView(val)
+	}
+	v.Versions = make([]*resourceviews.MinVersionInfoView, len(body.Versions))
+	for i, val := range body.Versions {
+		v.Versions[i] = unmarshalMinVersionInfoResponseBodyToResourceviewsMinVersionInfoView(val)
+	}
+
+	return v
+}
+
+// NewByIDInternalError builds a resource service ById endpoint internal-error
+// error.
+func NewByIDInternalError(body *ByIDInternalErrorResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewByIDNotFound builds a resource service ById endpoint not-found error.
+func NewByIDNotFound(body *ByIDNotFoundResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -915,6 +1030,54 @@ func ValidateByTypeNameNotFoundResponseBody(body *ByTypeNameNotFoundResponseBody
 	return
 }
 
+// ValidateByIDInternalErrorResponseBody runs the validations defined on
+// ById_internal-error_Response_Body
+func ValidateByIDInternalErrorResponseBody(body *ByIDInternalErrorResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateByIDNotFoundResponseBody runs the validations defined on
+// ById_not-found_Response_Body
+func ValidateByIDNotFoundResponseBody(body *ByIDNotFoundResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
 // ValidateResourceResponse runs the validations defined on ResourceResponse
 func ValidateResourceResponse(body *ResourceResponse) (err error) {
 	if body.ID == nil {
@@ -938,6 +1101,9 @@ func ValidateResourceResponse(body *ResourceResponse) (err error) {
 	if body.Rating == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "body"))
 	}
+	if body.Versions == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("versions", "body"))
+	}
 	if body.Catalog != nil {
 		if err2 := ValidateCatalogResponse(body.Catalog); err2 != nil {
 			err = goa.MergeErrors(err, err2)
@@ -951,6 +1117,13 @@ func ValidateResourceResponse(body *ResourceResponse) (err error) {
 	for _, e := range body.Tags {
 		if e != nil {
 			if err2 := ValidateTagResponse(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	for _, e := range body.Versions {
+		if e != nil {
+			if err2 := ValidateMinVersionInfoResponse(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
@@ -1024,23 +1197,14 @@ func ValidateTagResponse(body *TagResponse) (err error) {
 	return
 }
 
-// ValidateVersionResponseBody runs the validations defined on
-// VersionResponseBody
-func ValidateVersionResponseBody(body *VersionResponseBody) (err error) {
+// ValidateMinVersionInfoResponse runs the validations defined on
+// MinVersionInfoResponse
+func ValidateMinVersionInfoResponse(body *MinVersionInfoResponse) (err error) {
 	if body.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
 	}
 	if body.Version == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("version", "body"))
-	}
-	if body.DisplayName == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("displayName", "body"))
-	}
-	if body.Description == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("description", "body"))
-	}
-	if body.MinPipelinesVersion == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("minPipelinesVersion", "body"))
 	}
 	if body.RawURL == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rawURL", "body"))
@@ -1048,25 +1212,35 @@ func ValidateVersionResponseBody(body *VersionResponseBody) (err error) {
 	if body.WebURL == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("webURL", "body"))
 	}
-	if body.UpdatedAt == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("updatedAt", "body"))
-	}
-	if body.Resource == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("resource", "body"))
-	}
 	if body.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.rawURL", *body.RawURL, goa.FormatURI))
 	}
 	if body.WebURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.webURL", *body.WebURL, goa.FormatURI))
 	}
-	if body.UpdatedAt != nil {
-		err = goa.MergeErrors(err, goa.ValidateFormat("body.updatedAt", *body.UpdatedAt, goa.FormatDateTime))
+	return
+}
+
+// ValidateMinVersionInfoResponseBody runs the validations defined on
+// MinVersionInfoResponseBody
+func ValidateMinVersionInfoResponseBody(body *MinVersionInfoResponseBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
 	}
-	if body.Resource != nil {
-		if err2 := ValidateResourceResponseBody(body.Resource); err2 != nil {
-			err = goa.MergeErrors(err, err2)
-		}
+	if body.Version == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("version", "body"))
+	}
+	if body.RawURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("rawURL", "body"))
+	}
+	if body.WebURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("webURL", "body"))
+	}
+	if body.RawURL != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.rawURL", *body.RawURL, goa.FormatURI))
+	}
+	if body.WebURL != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.webURL", *body.WebURL, goa.FormatURI))
 	}
 	return
 }
@@ -1095,6 +1269,9 @@ func ValidateResourceResponseBody(body *ResourceResponseBody) (err error) {
 	if body.Rating == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "body"))
 	}
+	if body.Versions == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("versions", "body"))
+	}
 	if body.Catalog != nil {
 		if err2 := ValidateCatalogResponseBody(body.Catalog); err2 != nil {
 			err = goa.MergeErrors(err, err2)
@@ -1108,6 +1285,13 @@ func ValidateResourceResponseBody(body *ResourceResponseBody) (err error) {
 	for _, e := range body.Tags {
 		if e != nil {
 			if err2 := ValidateTagResponseBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	for _, e := range body.Versions {
+		if e != nil {
+			if err2 := ValidateMinVersionInfoResponseBody(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}

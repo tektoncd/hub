@@ -40,3 +40,8 @@ func ByVersionIDResourcePath(versionID uint) string {
 func ByTypeNameResourcePath(type_ string, name string) string {
 	return fmt.Sprintf("/resource/%v/%v", type_, name)
 }
+
+// ByIDResourcePath returns the URL path to the resource service ById HTTP endpoint.
+func ByIDResourcePath(id uint) string {
+	return fmt.Sprintf("/resource/%v", id)
+}

@@ -23,7 +23,7 @@ func EncodeQueryResponse(encoder func(context.Context, http.ResponseWriter) goah
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(resourceviews.ResourceCollection)
 		enc := encoder(ctx, w)
-		body := NewResourceResponseCollection(res.Projected)
+		body := NewResourceResponseWithoutVersionCollection(res.Projected)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
@@ -117,7 +117,7 @@ func EncodeListResponse(encoder func(context.Context, http.ResponseWriter) goaht
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(resourceviews.ResourceCollection)
 		enc := encoder(ctx, w)
-		body := NewResourceResponseCollection(res.Projected)
+		body := NewResourceResponseWithoutVersionCollection(res.Projected)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
@@ -423,7 +423,7 @@ func EncodeByTypeNameResponse(encoder func(context.Context, http.ResponseWriter)
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(resourceviews.ResourceCollection)
 		enc := encoder(ctx, w)
-		body := NewResourceResponseCollection(res.Projected)
+		body := NewResourceResponseWithoutVersionCollection(res.Projected)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
@@ -494,10 +494,90 @@ func EncodeByTypeNameError(encoder func(context.Context, http.ResponseWriter) go
 	}
 }
 
-// marshalResourceviewsResourceViewToResourceResponse builds a value of type
-// *ResourceResponse from a value of type *resourceviews.ResourceView.
-func marshalResourceviewsResourceViewToResourceResponse(v *resourceviews.ResourceView) *ResourceResponse {
-	res := &ResourceResponse{
+// EncodeByIDResponse returns an encoder for responses returned by the resource
+// ById endpoint.
+func EncodeByIDResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*resourceviews.Resource)
+		enc := encoder(ctx, w)
+		body := NewByIDResponseBody(res.Projected)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeByIDRequest returns a decoder for requests sent to the resource ById
+// endpoint.
+func DecodeByIDRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			id  uint
+			err error
+
+			params = mux.Vars(r)
+		)
+		{
+			idRaw := params["id"]
+			v, err2 := strconv.ParseUint(idRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("id", idRaw, "unsigned integer"))
+			}
+			id = uint(v)
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewByIDPayload(id)
+
+		return payload, nil
+	}
+}
+
+// EncodeByIDError returns an encoder for errors returned by the ById resource
+// endpoint.
+func EncodeByIDError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "internal-error":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByIDInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "internal-error")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		case "not-found":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByIDNotFoundResponseBody(res)
+			}
+			w.Header().Set("goa-error", "not-found")
+			w.WriteHeader(http.StatusNotFound)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
+// marshalResourceviewsResourceViewToResourceResponseWithoutVersion builds a
+// value of type *ResourceResponseWithoutVersion from a value of type
+// *resourceviews.ResourceView.
+func marshalResourceviewsResourceViewToResourceResponseWithoutVersion(v *resourceviews.ResourceView) *ResourceResponseWithoutVersion {
+	res := &ResourceResponseWithoutVersion{
 		ID:     *v.ID,
 		Name:   *v.Name,
 		Type:   *v.Type,
@@ -559,11 +639,11 @@ func marshalResourceviewsTagViewToTagResponse(v *resourceviews.TagView) *TagResp
 	return res
 }
 
-// marshalResourceviewsVersionViewToVersionResponseBodyUrls builds a value of
-// type *VersionResponseBodyUrls from a value of type
-// *resourceviews.VersionView.
-func marshalResourceviewsVersionViewToVersionResponseBodyUrls(v *resourceviews.VersionView) *VersionResponseBodyUrls {
-	res := &VersionResponseBodyUrls{
+// marshalResourceviewsMinVersionInfoViewToMinVersionInfoResponseBody builds a
+// value of type *MinVersionInfoResponseBody from a value of type
+// *resourceviews.MinVersionInfoView.
+func marshalResourceviewsMinVersionInfoViewToMinVersionInfoResponseBody(v *resourceviews.MinVersionInfoView) *MinVersionInfoResponseBody {
+	res := &MinVersionInfoResponseBody{
 		ID:      *v.ID,
 		Version: *v.Version,
 		RawURL:  *v.RawURL,
@@ -613,6 +693,36 @@ func marshalResourceviewsTagViewToTagResponseBody(v *resourceviews.TagView) *Tag
 	res := &TagResponseBody{
 		ID:   *v.ID,
 		Name: *v.Name,
+	}
+
+	return res
+}
+
+// marshalResourceviewsLatestVersionViewToLatestVersionResponseBody builds a
+// value of type *LatestVersionResponseBody from a value of type
+// *resourceviews.LatestVersionView.
+func marshalResourceviewsLatestVersionViewToLatestVersionResponseBody(v *resourceviews.LatestVersionView) *LatestVersionResponseBody {
+	res := &LatestVersionResponseBody{
+		ID:                  *v.ID,
+		Version:             *v.Version,
+		DisplayName:         *v.DisplayName,
+		Description:         *v.Description,
+		MinPipelinesVersion: *v.MinPipelinesVersion,
+		RawURL:              *v.RawURL,
+		WebURL:              *v.WebURL,
+		UpdatedAt:           *v.UpdatedAt,
+	}
+
+	return res
+}
+
+// marshalResourceviewsMinVersionInfoViewToMinVersionInfoResponseBodyTiny
+// builds a value of type *MinVersionInfoResponseBodyTiny from a value of type
+// *resourceviews.MinVersionInfoView.
+func marshalResourceviewsMinVersionInfoViewToMinVersionInfoResponseBodyTiny(v *resourceviews.MinVersionInfoView) *MinVersionInfoResponseBodyTiny {
+	res := &MinVersionInfoResponseBodyTiny{
+		ID:      *v.ID,
+		Version: *v.Version,
 	}
 
 	return res

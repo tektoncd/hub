@@ -13,17 +13,17 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// ResourceResponseCollection is the type of the "resource" service "Query"
-// endpoint HTTP response body.
-type ResourceResponseCollection []*ResourceResponse
+// ResourceResponseWithoutVersionCollection is the type of the "resource"
+// service "Query" endpoint HTTP response body.
+type ResourceResponseWithoutVersionCollection []*ResourceResponseWithoutVersion
 
 // VersionsByIDResponseBody is the type of the "resource" service
 // "VersionsByID" endpoint HTTP response body.
 type VersionsByIDResponseBody struct {
 	// Latest Version of resource
-	Latest *VersionResponseBodyUrls `form:"latest" json:"latest" xml:"latest"`
+	Latest *MinVersionInfoResponseBody `form:"latest" json:"latest" xml:"latest"`
 	// List of all versions of resource
-	Versions []*VersionResponseBodyUrls `form:"versions" json:"versions" xml:"versions"`
+	Versions []*MinVersionInfoResponseBody `form:"versions" json:"versions" xml:"versions"`
 }
 
 // ByTypeNameVersionResponseBody is the type of the "resource" service
@@ -70,6 +70,27 @@ type ByVersionIDResponseBody struct {
 	UpdatedAt string `form:"updatedAt" json:"updatedAt" xml:"updatedAt"`
 	// Resource to which the version belongs
 	Resource *ResourceResponseBodyInfo `form:"resource" json:"resource" xml:"resource"`
+}
+
+// ByIDResponseBody is the type of the "resource" service "ById" endpoint HTTP
+// response body.
+type ByIDResponseBody struct {
+	// ID is the unique id of the resource
+	ID uint `form:"id" json:"id" xml:"id"`
+	// Name of resource
+	Name string `form:"name" json:"name" xml:"name"`
+	// Type of catalog to which resource belongs
+	Catalog *CatalogResponseBody `form:"catalog" json:"catalog" xml:"catalog"`
+	// Type of resource
+	Type string `form:"type" json:"type" xml:"type"`
+	// Latest version of resource
+	LatestVersion *LatestVersionResponseBody `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
+	// Tags related to resource
+	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
+	// Rating of resource
+	Rating float64 `form:"rating" json:"rating" xml:"rating"`
+	// List of all versions of a resource
+	Versions []*MinVersionInfoResponseBodyTiny `form:"versions" json:"versions" xml:"versions"`
 }
 
 // QueryInternalErrorResponseBody is the type of the "resource" service "Query"
@@ -271,8 +292,45 @@ type ByTypeNameNotFoundResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
-// ResourceResponse is used to define fields on response body types.
-type ResourceResponse struct {
+// ByIDInternalErrorResponseBody is the type of the "resource" service "ById"
+// endpoint HTTP response body for the "internal-error" error.
+type ByIDInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// ByIDNotFoundResponseBody is the type of the "resource" service "ById"
+// endpoint HTTP response body for the "not-found" error.
+type ByIDNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// ResourceResponseWithoutVersion is used to define fields on response body
+// types.
+type ResourceResponseWithoutVersion struct {
 	// ID is the unique id of the resource
 	ID uint `form:"id" json:"id" xml:"id"`
 	// Name of resource
@@ -325,8 +383,8 @@ type TagResponse struct {
 	Name string `form:"name" json:"name" xml:"name"`
 }
 
-// VersionResponseBodyUrls is used to define fields on response body types.
-type VersionResponseBodyUrls struct {
+// MinVersionInfoResponseBody is used to define fields on response body types.
+type MinVersionInfoResponseBody struct {
 	// ID is the unique id of resource's version
 	ID uint `form:"id" json:"id" xml:"id"`
 	// Version of resource
@@ -369,12 +427,41 @@ type TagResponseBody struct {
 	Name string `form:"name" json:"name" xml:"name"`
 }
 
-// NewResourceResponseCollection builds the HTTP response body from the result
-// of the "Query" endpoint of the "resource" service.
-func NewResourceResponseCollection(res resourceviews.ResourceCollectionView) ResourceResponseCollection {
-	body := make([]*ResourceResponse, len(res))
+// LatestVersionResponseBody is used to define fields on response body types.
+type LatestVersionResponseBody struct {
+	// ID is the unique id of resource's version
+	ID uint `form:"id" json:"id" xml:"id"`
+	// Version of resource
+	Version string `form:"version" json:"version" xml:"version"`
+	// Display name of version
+	DisplayName string `form:"displayName" json:"displayName" xml:"displayName"`
+	// Description of version
+	Description string `form:"description" json:"description" xml:"description"`
+	// Minimum pipelines version the resource's version is compatible with
+	MinPipelinesVersion string `form:"minPipelinesVersion" json:"minPipelinesVersion" xml:"minPipelinesVersion"`
+	// Raw URL of resource's yaml file of the version
+	RawURL string `form:"rawURL" json:"rawURL" xml:"rawURL"`
+	// Web URL of resource's yaml file of the version
+	WebURL string `form:"webURL" json:"webURL" xml:"webURL"`
+	// Timestamp when version was last updated
+	UpdatedAt string `form:"updatedAt" json:"updatedAt" xml:"updatedAt"`
+}
+
+// MinVersionInfoResponseBodyTiny is used to define fields on response body
+// types.
+type MinVersionInfoResponseBodyTiny struct {
+	// ID is the unique id of resource's version
+	ID uint `form:"id" json:"id" xml:"id"`
+	// Version of resource
+	Version string `form:"version" json:"version" xml:"version"`
+}
+
+// NewResourceResponseWithoutVersionCollection builds the HTTP response body
+// from the result of the "Query" endpoint of the "resource" service.
+func NewResourceResponseWithoutVersionCollection(res resourceviews.ResourceCollectionView) ResourceResponseWithoutVersionCollection {
+	body := make([]*ResourceResponseWithoutVersion, len(res))
 	for i, val := range res {
-		body[i] = marshalResourceviewsResourceViewToResourceResponse(val)
+		body[i] = marshalResourceviewsResourceViewToResourceResponseWithoutVersion(val)
 	}
 	return body
 }
@@ -384,12 +471,12 @@ func NewResourceResponseCollection(res resourceviews.ResourceCollectionView) Res
 func NewVersionsByIDResponseBody(res *resourceviews.VersionsView) *VersionsByIDResponseBody {
 	body := &VersionsByIDResponseBody{}
 	if res.Latest != nil {
-		body.Latest = marshalResourceviewsVersionViewToVersionResponseBodyUrls(res.Latest)
+		body.Latest = marshalResourceviewsMinVersionInfoViewToMinVersionInfoResponseBody(res.Latest)
 	}
 	if res.Versions != nil {
-		body.Versions = make([]*VersionResponseBodyUrls, len(res.Versions))
+		body.Versions = make([]*MinVersionInfoResponseBody, len(res.Versions))
 		for i, val := range res.Versions {
-			body.Versions[i] = marshalResourceviewsVersionViewToVersionResponseBodyUrls(val)
+			body.Versions[i] = marshalResourceviewsMinVersionInfoViewToMinVersionInfoResponseBody(val)
 		}
 	}
 	return body
@@ -401,9 +488,9 @@ func NewByTypeNameVersionResponseBody(res *resourceviews.VersionView) *ByTypeNam
 	body := &ByTypeNameVersionResponseBody{
 		ID:                  *res.ID,
 		Version:             *res.Version,
-		DisplayName:         *res.DisplayName,
 		Description:         *res.Description,
 		MinPipelinesVersion: *res.MinPipelinesVersion,
+		DisplayName:         *res.DisplayName,
 		RawURL:              *res.RawURL,
 		WebURL:              *res.WebURL,
 		UpdatedAt:           *res.UpdatedAt,
@@ -420,15 +507,45 @@ func NewByVersionIDResponseBody(res *resourceviews.VersionView) *ByVersionIDResp
 	body := &ByVersionIDResponseBody{
 		ID:                  *res.ID,
 		Version:             *res.Version,
-		DisplayName:         *res.DisplayName,
 		Description:         *res.Description,
 		MinPipelinesVersion: *res.MinPipelinesVersion,
+		DisplayName:         *res.DisplayName,
 		RawURL:              *res.RawURL,
 		WebURL:              *res.WebURL,
 		UpdatedAt:           *res.UpdatedAt,
 	}
 	if res.Resource != nil {
 		body.Resource = marshalResourceviewsResourceViewToResourceResponseBodyInfo(res.Resource)
+	}
+	return body
+}
+
+// NewByIDResponseBody builds the HTTP response body from the result of the
+// "ById" endpoint of the "resource" service.
+func NewByIDResponseBody(res *resourceviews.ResourceView) *ByIDResponseBody {
+	body := &ByIDResponseBody{
+		ID:     *res.ID,
+		Name:   *res.Name,
+		Type:   *res.Type,
+		Rating: *res.Rating,
+	}
+	if res.Catalog != nil {
+		body.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBody(res.Catalog)
+	}
+	if res.LatestVersion != nil {
+		body.LatestVersion = marshalResourceviewsLatestVersionViewToLatestVersionResponseBody(res.LatestVersion)
+	}
+	if res.Tags != nil {
+		body.Tags = make([]*TagResponseBody, len(res.Tags))
+		for i, val := range res.Tags {
+			body.Tags[i] = marshalResourceviewsTagViewToTagResponseBody(val)
+		}
+	}
+	if res.Versions != nil {
+		body.Versions = make([]*MinVersionInfoResponseBodyTiny, len(res.Versions))
+		for i, val := range res.Versions {
+			body.Versions[i] = marshalResourceviewsMinVersionInfoViewToMinVersionInfoResponseBodyTiny(val)
+		}
 	}
 	return body
 }
@@ -588,6 +705,34 @@ func NewByTypeNameNotFoundResponseBody(res *goa.ServiceError) *ByTypeNameNotFoun
 	return body
 }
 
+// NewByIDInternalErrorResponseBody builds the HTTP response body from the
+// result of the "ById" endpoint of the "resource" service.
+func NewByIDInternalErrorResponseBody(res *goa.ServiceError) *ByIDInternalErrorResponseBody {
+	body := &ByIDInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewByIDNotFoundResponseBody builds the HTTP response body from the result of
+// the "ById" endpoint of the "resource" service.
+func NewByIDNotFoundResponseBody(res *goa.ServiceError) *ByIDNotFoundResponseBody {
+	body := &ByIDNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewQueryPayload builds a resource service Query endpoint payload.
 func NewQueryPayload(name string, type_ string, limit uint) *resource.QueryPayload {
 	v := &resource.QueryPayload{}
@@ -639,6 +784,14 @@ func NewByTypeNamePayload(type_ string, name string) *resource.ByTypeNamePayload
 	v := &resource.ByTypeNamePayload{}
 	v.Type = type_
 	v.Name = name
+
+	return v
+}
+
+// NewByIDPayload builds a resource service ById endpoint payload.
+func NewByIDPayload(id uint) *resource.ByIDPayload {
+	v := &resource.ByIDPayload{}
+	v.ID = id
 
 	return v
 }

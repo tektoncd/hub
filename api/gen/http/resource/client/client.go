@@ -39,6 +39,9 @@ type Client struct {
 	// endpoint.
 	ByTypeNameDoer goahttp.Doer
 
+	// ByID Doer is the HTTP client used to make requests to the ById endpoint.
+	ByIDDoer goahttp.Doer
+
 	// CORS Doer is the HTTP client used to make requests to the  endpoint.
 	CORSDoer goahttp.Doer
 
@@ -68,6 +71,7 @@ func NewClient(
 		ByTypeNameVersionDoer: doer,
 		ByVersionIDDoer:       doer,
 		ByTypeNameDoer:        doer,
+		ByIDDoer:              doer,
 		CORSDoer:              doer,
 		RestoreResponseBody:   restoreBody,
 		scheme:                scheme,
@@ -196,6 +200,25 @@ func (c *Client) ByTypeName() goa.Endpoint {
 		resp, err := c.ByTypeNameDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("resource", "ByTypeName", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// ByID returns an endpoint that makes HTTP requests to the resource service
+// ById server.
+func (c *Client) ByID() goa.Endpoint {
+	var (
+		decodeResponse = DecodeByIDResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildByIDRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.ByIDDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("resource", "ById", err)
 		}
 		return decodeResponse(resp)
 	}
