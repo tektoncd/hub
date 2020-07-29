@@ -169,3 +169,22 @@ func BuildByTypeNamePayload(resourceByTypeNameType string, resourceByTypeNameNam
 
 	return v, nil
 }
+
+// BuildByIDPayload builds the payload for the resource ById endpoint from CLI
+// flags.
+func BuildByIDPayload(resourceByIDID string) (*resource.ByIDPayload, error) {
+	var err error
+	var id uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(resourceByIDID, 10, 64)
+		id = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for id, must be UINT")
+		}
+	}
+	v := &resource.ByIDPayload{}
+	v.ID = id
+
+	return v, nil
+}

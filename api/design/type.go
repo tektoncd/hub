@@ -137,12 +137,33 @@ var Resource = ResultType("application/vnd.hub.resource", func() {
 	Attribute("rating", Float64, "Rating of resource", func() {
 		Example("rating", 4.3)
 	})
+	Attribute("versions", ArrayOf(MinVersionInfo), "List of all versions of a resource", func() {
+		Example("versions", func() {
+			Value([]Val{{
+				"id":      1,
+				"version": "0.1",
+			}, {
+				"id":      2,
+				"version": "0.2",
+			}})
+		})
+	})
 
 	View("info", func() {
 		Attribute("id")
 		Attribute("name")
 		Attribute("catalog")
 		Attribute("type")
+		Attribute("tags")
+		Attribute("rating")
+	})
+
+	View("withoutVersion", func() {
+		Attribute("id")
+		Attribute("name")
+		Attribute("catalog")
+		Attribute("type")
+		Attribute("latestVersion")
 		Attribute("tags")
 		Attribute("rating")
 	})
@@ -155,29 +176,23 @@ var Resource = ResultType("application/vnd.hub.resource", func() {
 		Attribute("latestVersion")
 		Attribute("tags")
 		Attribute("rating")
+		Attribute("versions", func() {
+			View("tiny")
+		})
 	})
 
-	Required("id", "name", "catalog", "type", "latestVersion", "tags", "rating")
+	Required("id", "name", "catalog", "type", "latestVersion", "tags", "rating", "versions")
 })
 
-var ResVersion = ResultType("application/vnd.hub.version", func() {
-	Description("The Version result type describes resource's version information.")
-	TypeName("Version")
+var MinVersionInfo = ResultType("application/vnd.hub.min-version-info", func() {
+	Description("The MinimumVersionInfo type describes the minimum version information of a resource")
+	TypeName("MinVersionInfo")
 
 	Attribute("id", UInt, "ID is the unique id of resource's version", func() {
 		Example("id", 1)
 	})
 	Attribute("version", String, "Version of resource", func() {
 		Example("version", "0.1")
-	})
-	Attribute("displayName", String, "Display name of version", func() {
-		Example("displayName", "Buildah")
-	})
-	Attribute("description", String, "Description of version", func() {
-		Example("descripiton", "Buildah task builds source into a container image and then pushes it to a container registry.")
-	})
-	Attribute("minPipelinesVersion", String, "Minimum pipelines version the resource's version is compatible with", func() {
-		Example("minPipelinesVersion", "0.12.1")
 	})
 	Attribute("rawURL", String, "Raw URL of resource's yaml file of the version", func() {
 		Format(FormatURI)
@@ -187,6 +202,40 @@ var ResVersion = ResultType("application/vnd.hub.version", func() {
 		Format(FormatURI)
 		Example("webURL", "https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml")
 	})
+
+	View("tiny", func() {
+		Attribute("id")
+		Attribute("version")
+	})
+
+	View("default", func() {
+		Attribute("id")
+		Attribute("version")
+		Attribute("rawURL")
+		Attribute("webURL")
+	})
+
+	Required("id", "version", "rawURL", "webURL")
+})
+
+var ResVersion = ResultType("application/vnd.hub.version", func() {
+	Description("The Version result type describes resource's version information.")
+	TypeName("Version")
+	Reference(MinVersionInfo)
+
+	Attribute("id")
+	Attribute("version")
+	Attribute("description", String, "Description of version", func() {
+		Example("descripiton", "Buildah task builds source into a container image and then pushes it to a container registry.")
+	})
+	Attribute("minPipelinesVersion", String, "Minimum pipelines version the resource's version is compatible with", func() {
+		Example("minPipelinesVersion", "0.12.1")
+	})
+	Attribute("displayName", String, "Display name of version", func() {
+		Example("displayName", "Buildah")
+	})
+	Attribute("rawURL")
+	Attribute("webURL")
 	Attribute("updatedAt", String, "Timestamp when version was last updated", func() {
 		Format(FormatDateTime)
 		Example("updatedAt", "2020-01-01 12:00:00 +0000 UTC")
@@ -205,25 +254,6 @@ var ResVersion = ResultType("application/vnd.hub.version", func() {
 		})
 	})
 
-	View("urls", func() {
-		Attribute("id")
-		Attribute("version")
-		Attribute("rawURL")
-		Attribute("webURL")
-	})
-
-	View("default", func() {
-		Attribute("id")
-		Attribute("version")
-		Attribute("description")
-		Attribute("minPipelinesVersion")
-		Attribute("displayName")
-		Attribute("rawURL")
-		Attribute("webURL")
-		Attribute("updatedAt")
-		Attribute("resource")
-	})
-
 	Required("id", "version", "displayName", "description", "minPipelinesVersion", "rawURL", "webURL", "updatedAt", "resource")
 })
 
@@ -231,7 +261,7 @@ var Versions = ResultType("application/vnd.hub.versions", func() {
 	Description("The Versions type describes response for versions by resource id API.")
 	TypeName("Versions")
 
-	Attribute("latest", ResVersion, "Latest Version of resource", func() {
+	Attribute("latest", MinVersionInfo, "Latest Version of resource", func() {
 		Example("latest", func() {
 			Value(Val{
 				"id":      2,
@@ -241,7 +271,7 @@ var Versions = ResultType("application/vnd.hub.versions", func() {
 			})
 		})
 	})
-	Attribute("versions", ArrayOf(ResVersion), "List of all versions of resource", func() {
+	Attribute("versions", ArrayOf(MinVersionInfo), "List of all versions of resource", func() {
 		Example("versions", func() {
 			Value([]Val{{
 				"id":      1,
@@ -259,10 +289,10 @@ var Versions = ResultType("application/vnd.hub.versions", func() {
 
 	View("default", func() {
 		Attribute("latest", func() {
-			View("urls")
+			View("default")
 		})
 		Attribute("versions", func() {
-			View("urls")
+			View("default")
 		})
 	})
 

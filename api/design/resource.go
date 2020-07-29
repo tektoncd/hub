@@ -39,7 +39,7 @@ var _ = Service("resource", func() {
 			})
 		})
 		Result(CollectionOf(Resource), func() {
-			View("default")
+			View("withoutVersion")
 		})
 
 		HTTP(func() {
@@ -62,7 +62,7 @@ var _ = Service("resource", func() {
 			})
 		})
 		Result(CollectionOf(Resource), func() {
-			View("default")
+			View("withoutVersion")
 		})
 
 		HTTP(func() {
@@ -102,9 +102,7 @@ var _ = Service("resource", func() {
 
 			Required("type", "name", "version")
 		})
-		Result(ResVersion, func() {
-			View("default")
-		})
+		Result(ResVersion)
 
 		HTTP(func() {
 			GET("/resource/{type}/{name}/{version}")
@@ -121,9 +119,7 @@ var _ = Service("resource", func() {
 			Attribute("versionID", UInt, "Version ID of a resource's version")
 			Required("versionID")
 		})
-		Result(ResVersion, func() {
-			View("default")
-		})
+		Result(ResVersion)
 
 		HTTP(func() {
 			GET("/resource/version/{versionID}")
@@ -144,11 +140,30 @@ var _ = Service("resource", func() {
 			Required("type", "name")
 		})
 		Result(CollectionOf(Resource), func() {
-			View("default")
+			View("withoutVersion")
 		})
 
 		HTTP(func() {
 			GET("/resource/{type}/{name}")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
+		})
+	})
+
+	Method("ById", func() {
+		Description("Find a resource using it's id")
+		Payload(func() {
+			Attribute("id", UInt, "ID of a resource")
+			Required("id")
+		})
+		Result(Resource, func() {
+			View("default")
+		})
+
+		HTTP(func() {
+			GET("/resource/{id}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
