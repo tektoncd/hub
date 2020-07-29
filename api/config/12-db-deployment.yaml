@@ -57,6 +57,16 @@ spec:
           volumeMounts:
             - name: db
               mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command: [bash, -c ,"psql -w -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'SELECT 1'"]
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
+          livenessProbe:
+            exec:
+              command: [bash, -c ,"psql -w -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'SELECT 1'"]
+            initialDelaySeconds: 45
+            timeoutSeconds: 2
       volumes:
         - name: db
           persistentVolumeClaim:
