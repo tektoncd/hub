@@ -26,27 +26,27 @@ spec:
         - name: db-migration
           image: ko://github.com/tektoncd/hub/api/cmd/db
           env:
-            - name: POSTGRESQL_HOST
+            - name: POSTGRES_HOST
               value: db
-            - name: POSTGRESQL_PORT
+            - name: POSTGRES_PORT
               valueFrom:
                 secretKeyRef:
                   name: db
-                  key: POSTGRESQL_PORT
-            - name: POSTGRESQL_DATABASE
+                  key: POSTGRES_PORT
+            - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:
                   name: db
-                  key: POSTGRESQL_DATABASE
-            - name: POSTGRESQL_USER
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
                   name: db
-                  key: POSTGRESQL_USER
-            - name: POSTGRESQL_PASSWORD
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: db
-                  key: POSTGRESQL_PASSWORD
+                  key: POSTGRES_PASSWORD
       restartPolicy: Never
   backoffLimit: 3
