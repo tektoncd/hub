@@ -102,12 +102,6 @@ func Migrate(api *app.APIConfig) error {
 
 		log.Info("Schema initialised successfully !!")
 
-		if err := initialiseTables(log, db); err != nil {
-			log.Info("Data initialisation failed !!")
-			return err
-		}
-		log.Info("Data added successfully !!")
-
 		return nil
 	})
 
@@ -128,37 +122,6 @@ func fkey(log *zap.SugaredLogger, db *gorm.DB, model interface{}, args ...string
 		if err != nil {
 			log.Error(err)
 			return err
-		}
-	}
-	return nil
-}
-
-// Adds data to category & tag table
-func initialiseTables(log *zap.SugaredLogger, db *gorm.DB) error {
-	var categories = map[string][]string{
-		"Others":         []string{},
-		"Build Tools":    []string{"build-tool"},
-		"CLI":            []string{"cli"},
-		"Cloud":          []string{"gcp", "aws", "azure", "cloud"},
-		"Deploy":         []string{"deploy"},
-		"Image Build":    []string{"image-build"},
-		"Notification":   []string{"notification"},
-		"Test Framework": []string{"test"},
-	}
-
-	for name, tags := range categories {
-		cat := &model.Category{Name: name}
-		if err := db.Create(cat).Error; err != nil {
-			log.Error(err)
-			return err
-		}
-
-		for _, tag := range tags {
-			if err := db.Model(&cat).Association("Tags").
-				Append(&model.Tag{Name: tag}).Error; err != nil {
-				log.Error(err)
-				return err
-			}
 		}
 	}
 	return nil

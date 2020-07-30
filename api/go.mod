@@ -8,6 +8,8 @@ require (
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.3.0
+	github.com/spf13/afero v1.2.2 // indirect
+	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.5.1
 	go.uber.org/zap v1.10.0
 	goa.design/goa/v3 v3.2.0

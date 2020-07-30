@@ -29,7 +29,7 @@ type (
 		gorm.Model
 		Name       string `gorm:"size:100;not null;unique"`
 		Category   Category
-		CategoryID int
+		CategoryID uint
 		Resources  []*Resource `gorm:"many2many:resource_tags;"`
 	}
 

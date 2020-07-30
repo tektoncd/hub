@@ -15,12 +15,14 @@
 package app
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"strings"
 
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
@@ -33,6 +35,7 @@ type Config interface {
 	Environment() EnvMode
 	Logger() *zap.SugaredLogger
 	DB() *gorm.DB
+	Data() *Data
 	Cleanup()
 }
 
@@ -42,6 +45,7 @@ type APIConfig struct {
 	dbConf *Database
 	db     *gorm.DB
 	logger *zap.SugaredLogger
+	data   Data
 }
 
 var _ Config = (*APIConfig)(nil)
@@ -99,6 +103,11 @@ func (ac *APIConfig) Logger() *zap.SugaredLogger {
 	return ac.logger
 }
 
+// Data returns Data object which consist data from config file
+func (ac *APIConfig) Data() *Data {
+	return &ac.data
+}
+
 // Cleanup flushes any buffered log entries & closes the db connection
 func (ac *APIConfig) Cleanup() {
 	ac.logger.Sync()
@@ -121,9 +130,13 @@ func FromEnvFile(file string) (*APIConfig, error) {
 	if err := godotenv.Load(file); err != nil {
 		fmt.Fprintf(os.Stderr, "SKIP: loading env file %s failed: %s\n", file, err)
 	}
+
+	// Enables viper to read Environment Variables
+	// NOTE: DO NOT move this line; viper must be initialized before reading ENV variables
+	viper.AutomaticEnv()
+
 	mode := Environment()
 	var err error
-
 	var log *zap.SugaredLogger
 	if log, err = initLogger(mode); err != nil {
 		return nil, err
@@ -133,7 +146,7 @@ func FromEnvFile(file string) (*APIConfig, error) {
 
 	ac := &APIConfig{mode: mode, logger: log}
 	if ac.dbConf, err = initDB(); err != nil {
-		log.Error(err, "failed to obtain database configuration")
+		log.Errorf("failed to obtain database configuration: %v", err)
 		return nil, err
 	}
 	ac.db, err = gorm.Open(DBDialect, ac.dbConf.ConnectionString())
@@ -143,17 +156,27 @@ func FromEnvFile(file string) (*APIConfig, error) {
 	}
 	log.Infof("Successfully connected to [%s]", ac.dbConf)
 
-	return ac, nil
-}
-
-// env look for the input key to be defined as a environment variable
-// returns error if the key is not found
-func env(key string) (string, error) {
-	val, ok := os.LookupEnv(key)
-	if !ok {
-		return "", fmt.Errorf("NO %q environment variable defined", key)
+	url, err := configFileURL()
+	if err != nil {
+		return nil, err
 	}
-	return val, nil
+
+	// Reads data from config file
+	data, err := dataFromURL(url)
+	if err != nil {
+		log.Errorf("failed to read config file: %v", err)
+		return nil, err
+	}
+
+	// Viper unmarshals data from config file into Data Object
+	viper.SetConfigType("yaml")
+	viper.ReadConfig(bytes.NewBuffer(data))
+	if err := viper.Unmarshal(&ac.data); err != nil {
+		log.Errorf("failed to unmarshal config data: %v", err)
+		return nil, err
+	}
+
+	return ac, nil
 }
 
 // Environment return EnvMode the Api server would be running in.
@@ -161,7 +184,7 @@ func env(key string) (string, error) {
 // if does not found it then set it as development
 func Environment() EnvMode {
 	mode := "development"
-	if val, ok := os.LookupEnv("ENVIRONMENT"); ok {
+	if val := viper.GetString("ENVIRONMENT"); val != "" {
 		mode = val
 	}
 	switch strings.ToLower(mode) {
@@ -177,22 +200,22 @@ func Environment() EnvMode {
 // initDB looks for db credentials in environment variables and returns as Database object
 // if it does not find a field then returns error
 func initDB() (*Database, error) {
-	var err error
+
 	db := &Database{}
-	if db.Host, err = env("POSTGRES_HOST"); err != nil {
-		return nil, err
+	if db.Host = viper.GetString("POSTGRES_HOST"); db.Host == "" {
+		return nil, fmt.Errorf("no POSTGRES_HOST environment variable defined")
 	}
-	if db.Port, err = env("POSTGRES_PORT"); err != nil {
-		return nil, err
+	if db.Port = viper.GetString("POSTGRES_PORT"); db.Port == "" {
+		return nil, fmt.Errorf("no POSTGRES_PORT environment variable defined")
 	}
-	if db.Name, err = env("POSTGRES_DB"); err != nil {
-		return nil, err
+	if db.Name = viper.GetString("POSTGRES_DB"); db.Name == "" {
+		return nil, fmt.Errorf("no POSTGRES_DB environment variable defined")
 	}
-	if db.User, err = env("POSTGRES_USER"); err != nil {
-		return nil, err
+	if db.User = viper.GetString("POSTGRES_USER"); db.User == "" {
+		return nil, fmt.Errorf("no POSTGRES_USER environment variable defined")
 	}
-	if db.Password, err = env("POSTGRES_PASSWORD"); err != nil {
-		return nil, err
+	if db.Password = viper.GetString("POSTGRES_PASSWORD"); db.Password == "" {
+		return nil, fmt.Errorf("no POSTGRES_PASSWORD environment variable defined")
 	}
 	return db, nil
 }
@@ -217,4 +240,15 @@ func initLogger(mode EnvMode) (*zap.SugaredLogger, error) {
 		return nil, err
 	}
 	return log.Sugar(), nil
+}
+
+// configFileURL will look for CONFIG_FILE_URL to be defined among
+// environment variables
+func configFileURL() (string, error) {
+
+	val := viper.GetString("CONFIG_FILE_URL")
+	if val == "" {
+		return "", fmt.Errorf("no CONFIG_FILE_URL environment variable defined")
+	}
+	return val, nil
 }
