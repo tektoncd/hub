@@ -63,10 +63,10 @@ Two ways to run postgresql database:
   source .env.dev
 
   docker run -d  --name hub \
-    -e POSTGRES_USER=$POSTGRESQL_USER \
-    -e POSTGRES_PASSWORD=$POSTGRESQL_PASSWORD \
-    -e POSTGRES_DB=$POSTGRESQL_DATABASE \
-    -p $POSTGRESQL_PORT:5432 \
+    -e POSTGRES_USER=$POSTGRES_USER \
+    -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+    -e POSTGRES_DB=$POSTGRES_DB \
+    -p $POSTGRES_PORT:5432 \
     postgres
   ```
 
@@ -105,7 +105,7 @@ To run the tests, we need a test db.
   source .env.dev
 
   docker exec -it hub bash -c \
-    "PGPASSWORD=$POSTGRESQL_PASSWORD \
+    "PGPASSWORD=$POSTGRES_PASSWORD \
      psql -h localhost -p 5432 -U postgres -c 'create database hub_test;'"
   ```
 

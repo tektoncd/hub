@@ -179,19 +179,19 @@ func Environment() EnvMode {
 func initDB() (*Database, error) {
 	var err error
 	db := &Database{}
-	if db.Host, err = env("POSTGRESQL_HOST"); err != nil {
+	if db.Host, err = env("POSTGRES_HOST"); err != nil {
 		return nil, err
 	}
-	if db.Port, err = env("POSTGRESQL_PORT"); err != nil {
+	if db.Port, err = env("POSTGRES_PORT"); err != nil {
 		return nil, err
 	}
-	if db.Name, err = env("POSTGRESQL_DATABASE"); err != nil {
+	if db.Name, err = env("POSTGRES_DB"); err != nil {
 		return nil, err
 	}
-	if db.User, err = env("POSTGRESQL_USER"); err != nil {
+	if db.User, err = env("POSTGRES_USER"); err != nil {
 		return nil, err
 	}
-	if db.Password, err = env("POSTGRESQL_PASSWORD"); err != nil {
+	if db.Password, err = env("POSTGRES_PASSWORD"); err != nil {
 		return nil, err
 	}
 	return db, nil

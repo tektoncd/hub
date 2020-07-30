@@ -57,14 +57,14 @@ set-pg-passwd() {
 api-unittest(){
   install-postgres
   source $API_DIR/test/config/env.test
-  set-pg-passwd "$POSTGRESQL_PASSWORD"
+  set-pg-passwd "$POSTGRES_PASSWORD"
   pwd
 
-  info Create test db - $POSTGRESQL_DATABASE
+  info Create test db - $POSTGRES_DB
 
-  PGPASSWORD=$POSTGRESQL_PASSWORD \
+  PGPASSWORD=$POSTGRES_PASSWORD \
     psql -h localhost -p 5432 \
-    -U $POSTGRESQL_USER -c "create database $POSTGRESQL_DATABASE;"
+    -U $POSTGRES_USER -c "create database $POSTGRES_DB;"
 
   info Running unittests
 
