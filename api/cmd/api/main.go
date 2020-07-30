@@ -30,6 +30,7 @@ import (
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	status "github.com/tektoncd/hub/api/gen/status"
 	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/pkg/db/initializer"
 	categorysvc "github.com/tektoncd/hub/api/pkg/service/category"
 	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
 	statussvc "github.com/tektoncd/hub/api/pkg/service/status"
@@ -61,6 +62,12 @@ func main() {
 		api.DB().LogMode(true)
 		logger = api.Logger()
 		defer api.Cleanup()
+	}
+
+	// Populate Tables
+	initializer := initializer.New(api)
+	if err := initializer.Run(); err != nil {
+		logger.Fatalf("Failed to populate table: %v", err)
 	}
 
 	// Initialize the services.

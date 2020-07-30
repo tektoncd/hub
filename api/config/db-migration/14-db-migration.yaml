@@ -48,5 +48,10 @@ spec:
                 secretKeyRef:
                   name: db
                   key: POSTGRES_PASSWORD
+            - name: CONFIG_FILE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: api
+                  key: CONFIG_FILE_URL
       restartPolicy: Never
   backoffLimit: 3
