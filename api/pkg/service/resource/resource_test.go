@@ -215,3 +215,25 @@ func TestByTypeName_NotFoundError(t *testing.T) {
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Resource not found")
 }
+
+func TestByID(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByIDPayload{ID: 1}
+	res, err := resourceSvc.ByID(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, "tekton", res.Name)
+}
+
+func TestByID_NotFoundError(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByIDPayload{ID: 77}
+	_, err := resourceSvc.ByID(context.Background(), payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Resource not found")
+}

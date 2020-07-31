@@ -291,3 +291,47 @@ func TestByTypeName_Http_ErrorCase(t *testing.T) {
 		assert.Equal(t, "not-found", jsonMap["name"])
 	})
 }
+
+func ByIDChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	checker := goahttpcheck.New()
+	checker.Mount(
+		server.NewByIDHandler,
+		server.MountByIDHandler,
+		resource.NewByIDEndpoint(New(tc)))
+	return checker
+}
+
+func TestByID_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByIDChecker(tc).Test(t, http.MethodGet, "/resource/1").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
+func TestByID_Http_ErrorCase(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByIDChecker(tc).Test(t, http.MethodGet, "/resource/77").Check().
+		HasStatus(404).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		var jsonMap map[string]interface{}
+		marshallErr := json.Unmarshal([]byte(b), &jsonMap)
+		assert.NoError(t, marshallErr)
+
+		assert.Equal(t, "not-found", jsonMap["name"])
+	})
+}
