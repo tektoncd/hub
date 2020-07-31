@@ -81,16 +81,11 @@ func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayl
 		return nil, notFoundError
 	}
 
-	var allVersions []*resource.Version
+	res = &resource.Versions{}
 	for _, r := range all {
-		allVersions = append(allVersions, minVersionInfo(r))
+		res.Versions = append(res.Versions, minVersionInfo(r))
 	}
-	latestVersion := minVersionInfo(all[len(all)-1])
-
-	res = &resource.Versions{
-		Latest:   latestVersion,
-		Versions: allVersions,
-	}
+	res.Latest = minVersionInfo(all[len(all)-1])
 
 	return res, nil
 }
@@ -143,16 +138,24 @@ func (s *service) ByTypeName(ctx context.Context, p *resource.ByTypeNamePayload)
 	return s.resourcesForQuery(q)
 }
 
-func findOne(db *gorm.DB, result interface{}) error {
+// Find a resource using it's id
+func (s *service) ByID(ctx context.Context, p *resource.ByIDPayload) (res *resource.Resource, err error) {
 
-	err := db.Find(result).Error
-	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			return notFoundError
-		}
-		return fetchError
+	q := s.db.Scopes(withResourceDetails,
+		filterByID(p.ID))
+
+	var r model.Resource
+	if err := findOne(q, &r); err != nil {
+		return nil, err
 	}
-	return nil
+
+	res = initResource(r)
+
+	for _, v := range r.Versions {
+		res.Versions = append(res.Versions, tinyVersionInfo(v))
+	}
+
+	return res, nil
 }
 
 func (s *service) resourcesForQuery(q *gorm.DB) (resource.ResourceCollection, error) {
@@ -208,14 +211,21 @@ func initResource(r model.Resource) *resource.Resource {
 	return res
 }
 
-func minVersionInfo(r model.ResourceVersion) *resource.Version {
+func tinyVersionInfo(r model.ResourceVersion) *resource.MinVersionInfo {
 
-	res := &resource.Version{
+	res := &resource.MinVersionInfo{
 		ID:      r.ID,
 		Version: r.Version,
-		WebURL:  r.URL,
-		RawURL:  replaceStrings.Replace(r.URL),
 	}
+
+	return res
+}
+
+func minVersionInfo(r model.ResourceVersion) *resource.MinVersionInfo {
+
+	res := tinyVersionInfo(r)
+	res.WebURL = r.URL
+	res.RawURL = replaceStrings.Replace(r.URL)
 
 	return res
 }
@@ -293,7 +303,8 @@ func withVersionInfo(version string) func(db *gorm.DB) *gorm.DB {
 // withResourceVersionDetails defines a gorm scope to include all details of
 // resource in resource version.
 func withResourceVersionDetails(db *gorm.DB) *gorm.DB {
-	return db.Preload("Resource").
+	return db.
+		Preload("Resource").
 		Preload("Resource.Catalog").
 		Preload("Resource.Tags", orderByTags)
 }
@@ -304,6 +315,24 @@ func orderByTags(db *gorm.DB) *gorm.DB {
 
 func orderByVersion(db *gorm.DB) *gorm.DB {
 	return db.Order("string_to_array(version, '.')::int[];")
+}
+
+func findOne(db *gorm.DB, result interface{}) error {
+
+	err := db.Find(result).Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return notFoundError
+		}
+		return fetchError
+	}
+	return nil
+}
+
+func filterByID(id uint) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("id = ?", id)
+	}
 }
 
 func filterByType(t string) func(db *gorm.DB) *gorm.DB {
