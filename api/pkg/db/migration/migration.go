@@ -24,7 +24,7 @@ import (
 )
 
 // Migrate create tables and populates master tables
-func Migrate(api *app.APIConfig) error {
+func Migrate(api *app.APIBase) error {
 
 	log := api.Logger()
 

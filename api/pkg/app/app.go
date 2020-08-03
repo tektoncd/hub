@@ -25,13 +25,15 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/github"
 
 	// Blank for package side effect: loads postgres drivers
 	_ "github.com/lib/pq"
 )
 
-// Config defines methods on APIConfig
-type Config interface {
+// BaseConfig defines methods on APIBase
+type BaseConfig interface {
 	Environment() EnvMode
 	Logger() *zap.SugaredLogger
 	DB() *gorm.DB
@@ -39,14 +41,31 @@ type Config interface {
 	Cleanup()
 }
 
-// APIConfig defines the configuration a services requires
-type APIConfig struct {
+// APIBase defines the base configuration every service requires
+type APIBase struct {
 	mode   EnvMode
 	dbConf *Database
 	db     *gorm.DB
 	logger *zap.SugaredLogger
 	data   Data
 }
+
+// Config defines methods on APIConfig includes BaseConfig
+type Config interface {
+	BaseConfig
+	OAuthConfig() *oauth2.Config
+	JWTSigningKey() string
+}
+
+// APIConfig defines struct on top of APIBase with GitHub Oauth
+// Configuration & JWT Signing Key
+type APIConfig struct {
+	*APIBase
+	conf   *oauth2.Config
+	jwtKey string
+}
+
+var _ BaseConfig = (*APIBase)(nil)
 
 var _ Config = (*APIConfig)(nil)
 
@@ -84,49 +103,84 @@ func (db *Database) ConnectionString() string {
 }
 
 // Environment returns the EnvMode server would be running
-func (ac *APIConfig) Environment() EnvMode {
-	return ac.mode
-}
-
-// Database returns Database object which consist of db configurations
-func (ac *APIConfig) Database() *Database {
-	return ac.dbConf
+func (ab *APIBase) Environment() EnvMode {
+	return ab.mode
 }
 
 // DB returns gorm db object
-func (ac *APIConfig) DB() *gorm.DB {
-	return ac.db
+func (ab *APIBase) DB() *gorm.DB {
+	return ab.db
 }
 
 // Logger returns suggared logger object
-func (ac *APIConfig) Logger() *zap.SugaredLogger {
-	return ac.logger
+func (ab *APIBase) Logger() *zap.SugaredLogger {
+	return ab.logger
 }
 
-// Data returns Data object which consist data from config file
-func (ac *APIConfig) Data() *Data {
-	return &ac.data
+// Data returns Data object which consist app data from config file
+func (ab *APIBase) Data() *Data {
+	return &ab.data
 }
 
 // Cleanup flushes any buffered log entries & closes the db connection
-func (ac *APIConfig) Cleanup() {
-	ac.logger.Sync()
-	ac.db.Close()
+func (ab *APIBase) Cleanup() {
+	ab.logger.Sync()
+	ab.db.Close()
 }
 
-// FromEnv is called while initailising the api service, it calls FromEnvFile
-// passing .env.dev file which will have configuration while running in
-// development mode
+// OAuthConfig returns oauth2 config object
+func (ac *APIConfig) OAuthConfig() *oauth2.Config {
+	return ac.conf
+}
+
+// JWTSigningKey returns JWT Signing key
+func (ac *APIConfig) JWTSigningKey() string {
+	return ac.jwtKey
+}
+
+// FromEnv will initialise APIConfig Object. This is called while starting
+// the api server. It passes .env.dev which contains configurations for
+// development mode, if it doesn't find the file it skips it and will look
+// for configration among env variable
 func FromEnv() (*APIConfig, error) {
 	// load from .env.dev file for development but skip if not found
 	return FromEnvFile(".env.dev")
 }
 
-// FromEnvFile expects a filepath to env file which has db configurations
-// It loads .env file, initialises a db connection & logger depending on the EnvMode
-// and returns a APIConfig Object
-// If it doesn't finds a .env file, it looks for configuratin among environment variables
+// FromEnvFile expects a file name containing configurations. This is called
+// when for running test where test config file is passed to initialise a
+// APIConfig Object.
 func FromEnvFile(file string) (*APIConfig, error) {
+	ab, err := APIBaseFromEnvFile(file)
+	if err != nil {
+		return nil, err
+	}
+
+	ac := &APIConfig{APIBase: ab}
+	if ac.conf, err = initOAuthConfig(); err != nil {
+		return nil, err
+	}
+	if ac.jwtKey, err = jwtSigningKey(); err != nil {
+		return nil, err
+	}
+
+	return ac, nil
+}
+
+// APIBaseFromEnv initialises APIBase Object passing .env.dev file to
+// APIBaseFromEnvFile which will have configuration for development mode.
+// This will initialise db connection and logger only. This is called while
+// running db migration.
+func APIBaseFromEnv() (*APIBase, error) {
+	// load from .env.dev file for development but skip if not found
+	return APIBaseFromEnvFile(".env.dev")
+}
+
+// APIBaseFromEnvFile expects a filepath to env file which has configurations
+// It loads .env file, skips it if not found, initialises a db connection &
+// logger depending on the EnvMode and returns a APIBase Object. It reads the
+// application data and put it in APIBase.data.
+func APIBaseFromEnvFile(file string) (*APIBase, error) {
 	if err := godotenv.Load(file); err != nil {
 		fmt.Fprintf(os.Stderr, "SKIP: loading env file %s failed: %s\n", file, err)
 	}
@@ -144,7 +198,7 @@ func FromEnvFile(file string) (*APIConfig, error) {
 
 	log.With("name", "app").Infof("in %q mode ", mode)
 
-	ac := &APIConfig{mode: mode, logger: log}
+	ac := &APIBase{mode: mode, logger: log}
 	if ac.dbConf, err = initDB(); err != nil {
 		log.Errorf("failed to obtain database configuration: %v", err)
 		return nil, err
@@ -181,7 +235,7 @@ func FromEnvFile(file string) (*APIConfig, error) {
 
 // Environment return EnvMode the Api server would be running in.
 // It looks for 'ENVIRONMENT' to be defined as environment variable and
-// if does not found it then set it as development
+// if does not found it then set it as development mode
 func Environment() EnvMode {
 	mode := "development"
 	if val := viper.GetString("ENVIRONMENT"); val != "" {
@@ -249,6 +303,37 @@ func configFileURL() (string, error) {
 	val := viper.GetString("CONFIG_FILE_URL")
 	if val == "" {
 		return "", fmt.Errorf("no CONFIG_FILE_URL environment variable defined")
+	}
+	return val, nil
+}
+
+// initOAuthConfig looks for configuration among environment variables
+// and intialises the GitHub Oauth Config
+func initOAuthConfig() (*oauth2.Config, error) {
+
+	var clientID, clientSecret string
+	if clientID = viper.GetString("GH_CLIENT_ID"); clientID == "" {
+		return nil, fmt.Errorf("no GH_CLIENT_ID environment variable defined")
+	}
+	if clientSecret = viper.GetString("GH_CLIENT_SECRET"); clientSecret == "" {
+		return nil, fmt.Errorf("no GH_CLIENT_SECRET environment variable defined")
+	}
+
+	conf := &oauth2.Config{
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		Endpoint:     github.Endpoint,
+	}
+	return conf, nil
+}
+
+// jwtSigningKey will look for JWT_SIGNING_KEY to be defined among
+// environment variables
+func jwtSigningKey() (string, error) {
+
+	val := viper.GetString("JWT_SIGNING_KEY")
+	if val == "" {
+		return "", fmt.Errorf("no JWT_SIGNING_KEY environment variable defined")
 	}
 	return val, nil
 }

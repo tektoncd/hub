@@ -19,11 +19,11 @@ type Initializer struct {
 }
 
 // New returns the Initializer implementation.
-func New(c app.Config) *Initializer {
+func New(api app.BaseConfig) *Initializer {
 	return &Initializer{
-		log:  c.Logger().With("component", "initiailizer"),
-		db:   c.DB(),
-		data: c.Data(),
+		log:  api.Logger().With("component", "initiailizer"),
+		db:   api.DB(),
+		data: api.Data(),
 	}
 }
 

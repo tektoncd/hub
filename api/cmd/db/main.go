@@ -23,7 +23,7 @@ import (
 )
 
 func main() {
-	api, err := app.FromEnv()
+	api, err := app.APIBaseFromEnv()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "FATAL: failed to initialise: %s", err)
 		os.Exit(1)

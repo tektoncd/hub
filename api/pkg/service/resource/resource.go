@@ -41,7 +41,7 @@ var (
 )
 
 // New returns the resource service implementation.
-func New(api app.Config) resource.Service {
+func New(api app.BaseConfig) resource.Service {
 	return &service{api.Logger(), api.DB()}
 }
 

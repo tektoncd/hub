@@ -17,19 +17,25 @@ package auth
 import (
 	"context"
 
+	"github.com/jinzhu/gorm"
 	"go.uber.org/zap"
+	"golang.org/x/oauth2"
 
 	"github.com/tektoncd/hub/api/gen/auth"
 	"github.com/tektoncd/hub/api/pkg/app"
 )
 
 type service struct {
-	logger *zap.SugaredLogger
+	api           app.Config
+	logger        *zap.SugaredLogger
+	db            *gorm.DB
+	oauth         *oauth2.Config
+	jwtSigningKey string
 }
 
 // New returns the auth service implementation.
 func New(api app.Config) auth.Service {
-	return &service{api.Logger()}
+	return &service{api, api.Logger(), api.DB(), api.OAuthConfig(), api.JWTSigningKey()}
 }
 
 // Authenticates users against GitHub OAuth
