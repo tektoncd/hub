@@ -26,11 +26,13 @@ import (
 
 	"go.uber.org/zap"
 
+	auth "github.com/tektoncd/hub/api/gen/auth"
 	category "github.com/tektoncd/hub/api/gen/category"
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	status "github.com/tektoncd/hub/api/gen/status"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/initializer"
+	authsvc "github.com/tektoncd/hub/api/pkg/service/auth"
 	categorysvc "github.com/tektoncd/hub/api/pkg/service/category"
 	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
 	statussvc "github.com/tektoncd/hub/api/pkg/service/status"
@@ -72,11 +74,13 @@ func main() {
 
 	// Initialize the services.
 	var (
+		authSvc     auth.Service
 		categorySvc category.Service
 		resourceSvc resource.Service
 		statusSvc   status.Service
 	)
 	{
+		authSvc = authsvc.New(api)
 		categorySvc = categorysvc.New(api)
 		resourceSvc = resourcesvc.New(api)
 		statusSvc = statussvc.New()
@@ -85,11 +89,13 @@ func main() {
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
+		authEndpoints     *auth.Endpoints
 		categoryEndpoints *category.Endpoints
 		resourceEndpoints *resource.Endpoints
 		statusEndpoints   *status.Endpoints
 	)
 	{
+		authEndpoints = auth.NewEndpoints(authSvc)
 		categoryEndpoints = category.NewEndpoints(categorySvc)
 		resourceEndpoints = resource.NewEndpoints(resourceSvc)
 		statusEndpoints = status.NewEndpoints(statusSvc)
@@ -134,7 +140,7 @@ func main() {
 			}
 			handleHTTPServer(
 				ctx, u, &wg, errc, *dbgF,
-				categoryEndpoints, resourceEndpoints, statusEndpoints,
+				authEndpoints, categoryEndpoints, resourceEndpoints, statusEndpoints,
 				logger,
 			)
 		}

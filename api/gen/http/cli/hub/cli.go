@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 
+	authc "github.com/tektoncd/hub/api/gen/http/auth/client"
 	categoryc "github.com/tektoncd/hub/api/gen/http/category/client"
 	resourcec "github.com/tektoncd/hub/api/gen/http/resource/client"
 	statusc "github.com/tektoncd/hub/api/gen/http/status/client"
@@ -26,6 +27,7 @@ import (
 //
 func UsageCommands() string {
 	return `category list
+auth authenticate
 status status
 resource (query|list|versions-by-id|by-type-name-version|by-version-id|by-type-name|by-id)
 `
@@ -34,8 +36,9 @@ resource (query|list|versions-by-id|by-type-name-version|by-version-id|by-type-n
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
+		os.Args[0] + ` auth authenticate --code "Vel assumenda."` + "\n" +
 		os.Args[0] + ` status status` + "\n" +
-		os.Args[0] + ` resource query --name "Qui qui temporibus consequuntur." --type "" --limit 1858365715749821454` + "\n" +
+		os.Args[0] + ` resource query --name "Amet doloribus molestias corporis minus." --type "pipeline" --limit 1788395932113577245` + "\n" +
 		""
 }
 
@@ -52,6 +55,11 @@ func ParseEndpoint(
 		categoryFlags = flag.NewFlagSet("category", flag.ContinueOnError)
 
 		categoryListFlags = flag.NewFlagSet("list", flag.ExitOnError)
+
+		authFlags = flag.NewFlagSet("auth", flag.ContinueOnError)
+
+		authAuthenticateFlags    = flag.NewFlagSet("authenticate", flag.ExitOnError)
+		authAuthenticateCodeFlag = authAuthenticateFlags.String("code", "REQUIRED", "")
 
 		statusFlags = flag.NewFlagSet("status", flag.ContinueOnError)
 
@@ -88,6 +96,9 @@ func ParseEndpoint(
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
 
+	authFlags.Usage = authUsage
+	authAuthenticateFlags.Usage = authAuthenticateUsage
+
 	statusFlags.Usage = statusUsage
 	statusStatusFlags.Usage = statusStatusUsage
 
@@ -117,6 +128,8 @@ func ParseEndpoint(
 		switch svcn {
 		case "category":
 			svcf = categoryFlags
+		case "auth":
+			svcf = authFlags
 		case "status":
 			svcf = statusFlags
 		case "resource":
@@ -140,6 +153,13 @@ func ParseEndpoint(
 			switch epn {
 			case "list":
 				epf = categoryListFlags
+
+			}
+
+		case "auth":
+			switch epn {
+			case "authenticate":
+				epf = authAuthenticateFlags
 
 			}
 
@@ -201,6 +221,13 @@ func ParseEndpoint(
 			case "list":
 				endpoint = c.List()
 				data = nil
+			}
+		case "auth":
+			c := authc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "authenticate":
+				endpoint = c.Authenticate()
+				data, err = authc.BuildAuthenticatePayload(*authAuthenticateCodeFlag)
 			}
 		case "status":
 			c := statusc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -266,6 +293,30 @@ Example:
 `, os.Args[0])
 }
 
+// authUsage displays the usage of the auth command and its subcommands.
+func authUsage() {
+	fmt.Fprintf(os.Stderr, `The auth service exposes endpoint to authenticate User against GitHub OAuth
+Usage:
+    %s [globalflags] auth COMMAND [flags]
+
+COMMAND:
+    authenticate: Authenticates users against GitHub OAuth
+
+Additional help:
+    %s auth COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func authAuthenticateUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] auth authenticate -code STRING
+
+Authenticates users against GitHub OAuth
+    -code STRING: 
+
+Example:
+    `+os.Args[0]+` auth authenticate --code "Vel assumenda."
+`, os.Args[0])
+}
+
 // statusUsage displays the usage of the status command and its subcommands.
 func statusUsage() {
 	fmt.Fprintf(os.Stderr, `Describes the status of the server
@@ -317,7 +368,7 @@ Find resources by a combination of name, type
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Qui qui temporibus consequuntur." --type "" --limit 1858365715749821454
+    `+os.Args[0]+` resource query --name "Amet doloribus molestias corporis minus." --type "pipeline" --limit 1788395932113577245
 `, os.Args[0])
 }
 
@@ -328,7 +379,7 @@ List all resources sorted by rating and name
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource list --limit 13327540982832606309
+    `+os.Args[0]+` resource list --limit 4267160088367500256
 `, os.Args[0])
 }
 
@@ -339,7 +390,7 @@ Find all versions of a resource by its id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource versions-by-id --id 16145536668908977689
+    `+os.Args[0]+` resource versions-by-id --id 379431535305924829
 `, os.Args[0])
 }
 
@@ -352,7 +403,7 @@ Find resource using name, type and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-type-name-version --type "pipeline" --name "Consequatur ullam quia nihil officia itaque." --version "Aut qui dolor consequatur assumenda suscipit aut."
+    `+os.Args[0]+` resource by-type-name-version --type "task" --name "Ut tenetur laborum." --version "Eaque esse fugit earum."
 `, os.Args[0])
 }
 
@@ -363,7 +414,7 @@ Find a resource using its version's id
     -version-id UINT: Version ID of a resource's version
 
 Example:
-    `+os.Args[0]+` resource by-version-id --version-id 2583862062577786198
+    `+os.Args[0]+` resource by-version-id --version-id 16005837393171438086
 `, os.Args[0])
 }
 
@@ -375,7 +426,7 @@ Find resources using name and type
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-type-name --type "task" --name "Iure modi facere cumque omnis non ut."
+    `+os.Args[0]+` resource by-type-name --type "task" --name "Nihil eum placeat voluptas et consequuntur."
 `, os.Args[0])
 }
 
@@ -386,6 +437,6 @@ Find a resource using it's id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource by-id --id 1607812625788888782
+    `+os.Args[0]+` resource by-id --id 3519426768215004667
 `, os.Args[0])
 }

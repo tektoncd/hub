@@ -12,29 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package design
+package auth
 
 import (
-	. "goa.design/goa/v3/dsl"
-	cors "goa.design/plugins/v3/cors/dsl"
+	"context"
+
+	"go.uber.org/zap"
+
+	"github.com/tektoncd/hub/api/gen/auth"
+	"github.com/tektoncd/hub/api/pkg/app"
 )
 
-var _ = API("hub", func() {
-	Title("Tekton Hub")
-	Description("HTTP services for managing Tekton Hub")
-	Version("0.1")
-	Meta("swagger:example", "false")
-	Server("hub", func() {
-		Host("production", func() {
-			URI("http://api.hub.tekton.dev")
-		})
+type service struct {
+	logger *zap.SugaredLogger
+}
 
-		Services("auth", "category", "resource", "status", "swagger")
-	})
+// New returns the auth service implementation.
+func New(api app.Config) auth.Service {
+	return &service{api.Logger()}
+}
 
-	// TODO: restrict CORS origin | https://github.com/tektoncd/hub/issues/26
-	cors.Origin("*", func() {
-		cors.Headers("Content-Type")
-		cors.Methods("GET", "POST")
-	})
-})
+// Authenticates users against GitHub OAuth
+func (s *service) Authenticate(ctx context.Context, p *auth.AuthenticatePayload) (res *auth.AuthenticateResult, err error) {
+	s.logger.Info("auth.Authenticate")
+	return
+}

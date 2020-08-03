@@ -160,7 +160,7 @@ func handleCategoryOrigin(h http.Handler) http.Handler {
 			w.Header().Set("Access-Control-Allow-Credentials", "false")
 			if acrm := r.Header.Get("Access-Control-Request-Method"); acrm != "" {
 				// We are handling a preflight request
-				w.Header().Set("Access-Control-Allow-Methods", "GET")
+				w.Header().Set("Access-Control-Allow-Methods", "GET, POST")
 				w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 			}
 			origHndlr(w, r)
