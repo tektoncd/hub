@@ -36,7 +36,7 @@ var (
 )
 
 // New returns the category service implementation.
-func New(api app.Config) category.Service {
+func New(api app.BaseConfig) category.Service {
 	return &service{api.Logger(), api.DB()}
 }
 

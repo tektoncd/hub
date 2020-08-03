@@ -25,7 +25,7 @@ import (
 )
 
 // TestConfig defines configurations required for running tests
-// APIConfig contains the db object and logger
+// APIConfig contains the db object, logger and github oauth conf
 // fixturePath is the path to fixture directory which contains test data
 // configPath is the path to test config file
 // err will have error if occured during initialising the test db connection

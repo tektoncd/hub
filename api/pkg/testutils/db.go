@@ -39,7 +39,7 @@ func LoadFixtures(t *testing.T, dir string) {
 func applyMigration() error {
 	tc := Config()
 	logger := tc.Logger()
-	if err := migration.Migrate(tc.APIConfig); err != nil {
+	if err := migration.Migrate(tc.APIBase); err != nil {
 		logger.Errorf("DB initialisation failed !!")
 		return err
 	}
