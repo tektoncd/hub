@@ -3,7 +3,10 @@ module github.com/tektoncd/hub/api
 go 1.14
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-testfixtures/testfixtures/v3 v3.2.0
+	github.com/google/go-github v17.0.0+incompatible
+	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/ikawaha/goahttpcheck v1.3.1
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
@@ -19,5 +22,6 @@ require (
 	golang.org/x/tools v0.0.0-20200811215021-48a8ffc5b207 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/gormigrate.v1 v1.6.0
+	gopkg.in/h2non/gock.v1 v1.0.15
 	gotest.tools/v3 v3.0.2
 )

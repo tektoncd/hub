@@ -12,8 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# DO NOT DELETE THIS FILE
-# After initializing connection with db, we read config file which is in the
-# root of project for populating db but for test we load data using fixtures.
-# So, to avoid unnecessary reading of data from config, we read this empty
-# file while executing tests.
+# NOTE: After initializing connection with db, we read config file which is in 
+# the root of project for populating db but for test we load data using fixtures.
+# So, to avoid unnecessary reading of data from config, we read only the data 
+# which is reqired.
+
+default:
+  scopes:
+    - api:read
+    - api:write

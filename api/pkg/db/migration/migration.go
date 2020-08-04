@@ -47,6 +47,7 @@ func Migrate(api *app.APIBase) error {
 			&model.Catalog{},
 			&model.Resource{},
 			&model.ResourceVersion{},
+			&model.User{},
 		).Error; err != nil {
 			log.Error(err)
 			return err

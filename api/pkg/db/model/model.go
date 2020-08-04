@@ -70,4 +70,10 @@ type (
 		ResourceID uint
 		TagID      uint
 	}
+
+	User struct {
+		gorm.Model
+		GithubLogin string
+		GithubName  string
+	}
 )
