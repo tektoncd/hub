@@ -32,8 +32,8 @@ import (
 
 // Token for the user with github name "test-user" and github login "test"
 const validToken string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-	"eyJpZCI6MTAwMDEsImxvZ2luIjoidGVzdCIsIm5hbWUiOiJ0ZXN0LXVzZXIiLCJzY29wZXMiOlsiYXBpOnJlYWQiLCJhcGk6d3JpdGUiXX0." +
-	"d4yoKt3HUT38L6mf71tjAx9VCEI6_GHvS3To3I66nGE"
+	"eyJpZCI6MTAwMDEsImxvZ2luIjoidGVzdCIsIm5hbWUiOiJ0ZXN0LXVzZXIiLCJzY29wZXMiOlsicmF0aW5nOnJlYWQiLCJyYXRpbmc6d3JpdGUiXX0." +
+	"zFztueyvZLLCyx3RD7WpzzfVaTrybzxgS5a_pDsq5M8"
 
 func AuthenticateChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	checker := goahttpcheck.New()

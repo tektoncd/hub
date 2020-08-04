@@ -18,31 +18,35 @@ import (
 	. "goa.design/goa/v3/dsl"
 )
 
-var _ = Service("auth", func() {
-	Description("The auth service exposes endpoint to authenticate User against GitHub OAuth")
+var _ = Service("rating", func() {
+	Description("The rating service exposes endpoints to read and write user's rating for resources")
 
-	Error("invalid-code", ErrorResult, "Invalid Authorization code")
+	Error("not-found", ErrorResult, "Resource Not Found Error")
+	Error("internal-error", ErrorResult, "Internal server error")
 	Error("invalid-token", ErrorResult, "Invalid User token")
 	Error("invalid-scopes", ErrorResult, "Invalid User scope")
-	Error("internal-error", ErrorResult, "Internal Server Error")
 
-	Method("Authenticate", func() {
-		Description("Authenticates users against GitHub OAuth")
+	Method("Get", func() {
+		Description("Find user's rating for a resource")
+		Security(JWTAuth, func() {
+			Scope("rating:read")
+		})
 		Payload(func() {
-			Attribute("code", String, "OAuth Authorization code of User")
-			Required("code")
+			Attribute("id", UInt, "ID of a resource")
+			Token("token", String, "JWT")
+			Required("id", "token")
 		})
 		Result(func() {
-			Attribute("token", String, "JWT")
-			Required("token")
+			Attribute("rating", Int, "User rating for resource")
+			Required("rating")
 		})
 
 		HTTP(func() {
-			POST("/auth/login")
-			Param("code")
+			GET("/resource/{id}/rating")
+			Header("token:Authorization")
 
 			Response(StatusOK)
-			Response("invalid-code", StatusBadRequest)
+			Response("not-found", StatusNotFound)
 			Response("internal-error", StatusInternalServerError)
 			Response("invalid-token", StatusUnauthorized)
 			Response("invalid-scopes", StatusForbidden)

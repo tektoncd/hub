@@ -39,8 +39,8 @@ catalogs:
 
 default:
   scopes:
-    - api:read
-    - api:write
+    - rating:read
+    - rating:write
 
 # Template
 # catalogs:
