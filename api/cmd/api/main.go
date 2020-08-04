@@ -28,12 +28,14 @@ import (
 
 	auth "github.com/tektoncd/hub/api/gen/auth"
 	category "github.com/tektoncd/hub/api/gen/category"
+	rating "github.com/tektoncd/hub/api/gen/rating"
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	status "github.com/tektoncd/hub/api/gen/status"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/initializer"
 	authsvc "github.com/tektoncd/hub/api/pkg/service/auth"
 	categorysvc "github.com/tektoncd/hub/api/pkg/service/category"
+	ratingsvc "github.com/tektoncd/hub/api/pkg/service/rating"
 	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
 	statussvc "github.com/tektoncd/hub/api/pkg/service/status"
 )
@@ -76,12 +78,14 @@ func main() {
 	var (
 		authSvc     auth.Service
 		categorySvc category.Service
+		ratingSvc   rating.Service
 		resourceSvc resource.Service
 		statusSvc   status.Service
 	)
 	{
 		authSvc = authsvc.New(api)
 		categorySvc = categorysvc.New(api)
+		ratingSvc = ratingsvc.New(api)
 		resourceSvc = resourcesvc.New(api)
 		statusSvc = statussvc.New()
 	}
@@ -91,12 +95,14 @@ func main() {
 	var (
 		authEndpoints     *auth.Endpoints
 		categoryEndpoints *category.Endpoints
+		ratingEndpoints   *rating.Endpoints
 		resourceEndpoints *resource.Endpoints
 		statusEndpoints   *status.Endpoints
 	)
 	{
 		authEndpoints = auth.NewEndpoints(authSvc)
 		categoryEndpoints = category.NewEndpoints(categorySvc)
+		ratingEndpoints = rating.NewEndpoints(ratingSvc)
 		resourceEndpoints = resource.NewEndpoints(resourceSvc)
 		statusEndpoints = status.NewEndpoints(statusSvc)
 	}
@@ -140,7 +146,7 @@ func main() {
 			}
 			handleHTTPServer(
 				ctx, u, &wg, errc, *dbgF,
-				authEndpoints, categoryEndpoints, resourceEndpoints, statusEndpoints,
+				authEndpoints, categoryEndpoints, ratingEndpoints, resourceEndpoints, statusEndpoints,
 				logger,
 			)
 		}

@@ -52,6 +52,24 @@ func MakeInvalidCode(err error) *goa.ServiceError {
 	}
 }
 
+// MakeInvalidToken builds a goa.ServiceError from an error.
+func MakeInvalidToken(err error) *goa.ServiceError {
+	return &goa.ServiceError{
+		Name:    "invalid-token",
+		ID:      goa.NewErrorID(),
+		Message: err.Error(),
+	}
+}
+
+// MakeInvalidScopes builds a goa.ServiceError from an error.
+func MakeInvalidScopes(err error) *goa.ServiceError {
+	return &goa.ServiceError{
+		Name:    "invalid-scopes",
+		ID:      goa.NewErrorID(),
+		Message: err.Error(),
+	}
+}
+
 // MakeInternalError builds a goa.ServiceError from an error.
 func MakeInternalError(err error) *goa.ServiceError {
 	return &goa.ServiceError{

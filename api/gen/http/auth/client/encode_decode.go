@@ -54,6 +54,8 @@ func EncodeAuthenticateRequest(encoder func(*http.Request) goahttp.Encoder) func
 // DecodeAuthenticateResponse may return the following errors:
 //	- "invalid-code" (type *goa.ServiceError): http.StatusBadRequest
 //	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
+//	- "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
 //	- error: internal error
 func DecodeAuthenticateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
@@ -113,6 +115,34 @@ func DecodeAuthenticateResponse(decoder func(*http.Response) goahttp.Decoder, re
 				return nil, goahttp.ErrValidationError("auth", "Authenticate", err)
 			}
 			return nil, NewAuthenticateInternalError(&body)
+		case http.StatusUnauthorized:
+			var (
+				body AuthenticateInvalidTokenResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("auth", "Authenticate", err)
+			}
+			err = ValidateAuthenticateInvalidTokenResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("auth", "Authenticate", err)
+			}
+			return nil, NewAuthenticateInvalidToken(&body)
+		case http.StatusForbidden:
+			var (
+				body AuthenticateInvalidScopesResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("auth", "Authenticate", err)
+			}
+			err = ValidateAuthenticateInvalidScopesResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("auth", "Authenticate", err)
+			}
+			return nil, NewAuthenticateInvalidScopes(&body)
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("auth", "Authenticate", resp.StatusCode, string(body))

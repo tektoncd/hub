@@ -15,6 +15,7 @@ import (
 
 	authc "github.com/tektoncd/hub/api/gen/http/auth/client"
 	categoryc "github.com/tektoncd/hub/api/gen/http/category/client"
+	ratingc "github.com/tektoncd/hub/api/gen/http/rating/client"
 	resourcec "github.com/tektoncd/hub/api/gen/http/resource/client"
 	statusc "github.com/tektoncd/hub/api/gen/http/status/client"
 	goahttp "goa.design/goa/v3/http"
@@ -30,15 +31,17 @@ func UsageCommands() string {
 auth authenticate
 status status
 resource (query|list|versions-by-id|by-type-name-version|by-version-id|by-type-name|by-id)
+rating get
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` auth authenticate --code "Vel assumenda."` + "\n" +
+		os.Args[0] + ` auth authenticate --code "Nesciunt placeat provident ducimus amet doloribus molestias."` + "\n" +
 		os.Args[0] + ` status status` + "\n" +
-		os.Args[0] + ` resource query --name "Amet doloribus molestias corporis minus." --type "pipeline" --limit 1788395932113577245` + "\n" +
+		os.Args[0] + ` resource query --name "Quia nihil officia itaque." --type "" --limit 10573978620324901534` + "\n" +
+		os.Args[0] + ` rating get --id 14236020767980603451 --token "Quo velit vitae."` + "\n" +
 		""
 }
 
@@ -92,6 +95,12 @@ func ParseEndpoint(
 
 		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
 		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
+
+		ratingFlags = flag.NewFlagSet("rating", flag.ContinueOnError)
+
+		ratingGetFlags     = flag.NewFlagSet("get", flag.ExitOnError)
+		ratingGetIDFlag    = ratingGetFlags.String("id", "REQUIRED", "ID of a resource")
+		ratingGetTokenFlag = ratingGetFlags.String("token", "REQUIRED", "")
 	)
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
@@ -110,6 +119,9 @@ func ParseEndpoint(
 	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
 	resourceByTypeNameFlags.Usage = resourceByTypeNameUsage
 	resourceByIDFlags.Usage = resourceByIDUsage
+
+	ratingFlags.Usage = ratingUsage
+	ratingGetFlags.Usage = ratingGetUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -134,6 +146,8 @@ func ParseEndpoint(
 			svcf = statusFlags
 		case "resource":
 			svcf = resourceFlags
+		case "rating":
+			svcf = ratingFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -192,6 +206,13 @@ func ParseEndpoint(
 
 			case "by-id":
 				epf = resourceByIDFlags
+
+			}
+
+		case "rating":
+			switch epn {
+			case "get":
+				epf = ratingGetFlags
 
 			}
 
@@ -261,6 +282,13 @@ func ParseEndpoint(
 				endpoint = c.ByID()
 				data, err = resourcec.BuildByIDPayload(*resourceByIDIDFlag)
 			}
+		case "rating":
+			c := ratingc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "get":
+				endpoint = c.Get()
+				data, err = ratingc.BuildGetPayload(*ratingGetIDFlag, *ratingGetTokenFlag)
+			}
 		}
 	}
 	if err != nil {
@@ -313,7 +341,7 @@ Authenticates users against GitHub OAuth
     -code STRING: 
 
 Example:
-    `+os.Args[0]+` auth authenticate --code "Vel assumenda."
+    `+os.Args[0]+` auth authenticate --code "Nesciunt placeat provident ducimus amet doloribus molestias."
 `, os.Args[0])
 }
 
@@ -368,7 +396,7 @@ Find resources by a combination of name, type
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Amet doloribus molestias corporis minus." --type "pipeline" --limit 1788395932113577245
+    `+os.Args[0]+` resource query --name "Quia nihil officia itaque." --type "" --limit 10573978620324901534
 `, os.Args[0])
 }
 
@@ -379,7 +407,7 @@ List all resources sorted by rating and name
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource list --limit 4267160088367500256
+    `+os.Args[0]+` resource list --limit 15517078331389740260
 `, os.Args[0])
 }
 
@@ -390,7 +418,7 @@ Find all versions of a resource by its id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource versions-by-id --id 379431535305924829
+    `+os.Args[0]+` resource versions-by-id --id 710655447639764616
 `, os.Args[0])
 }
 
@@ -403,7 +431,7 @@ Find resource using name, type and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-type-name-version --type "task" --name "Ut tenetur laborum." --version "Eaque esse fugit earum."
+    `+os.Args[0]+` resource by-type-name-version --type "task" --name "Modi facere cumque omnis non." --version "Aut quos distinctio ipsam."
 `, os.Args[0])
 }
 
@@ -414,7 +442,7 @@ Find a resource using its version's id
     -version-id UINT: Version ID of a resource's version
 
 Example:
-    `+os.Args[0]+` resource by-version-id --version-id 16005837393171438086
+    `+os.Args[0]+` resource by-version-id --version-id 1444474864354154477
 `, os.Args[0])
 }
 
@@ -426,7 +454,7 @@ Find resources using name and type
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-type-name --type "task" --name "Nihil eum placeat voluptas et consequuntur."
+    `+os.Args[0]+` resource by-type-name --type "pipeline" --name "Fugiat earum ut sunt est ea."
 `, os.Args[0])
 }
 
@@ -437,6 +465,31 @@ Find a resource using it's id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource by-id --id 3519426768215004667
+    `+os.Args[0]+` resource by-id --id 17711942709692033898
+`, os.Args[0])
+}
+
+// ratingUsage displays the usage of the rating command and its subcommands.
+func ratingUsage() {
+	fmt.Fprintf(os.Stderr, `The rating service exposes endpoints to read and write user's rating for resources
+Usage:
+    %s [globalflags] rating COMMAND [flags]
+
+COMMAND:
+    get: Find user's rating for a resource
+
+Additional help:
+    %s rating COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func ratingGetUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] rating get -id UINT -token STRING
+
+Find user's rating for a resource
+    -id UINT: ID of a resource
+    -token STRING: 
+
+Example:
+    `+os.Args[0]+` rating get --id 14236020767980603451 --token "Quo velit vitae."
 `, os.Args[0])
 }
