@@ -37,6 +37,11 @@ catalogs:
     url: https://github.com/tektoncd/catalog
     revision: master
 
+default:
+  scopes:
+    - api:read
+    - api:write
+
 # Template
 # catalogs:
 #   - name: Name of Catalog

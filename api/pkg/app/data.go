@@ -24,6 +24,7 @@ import (
 type Data struct {
 	Catalogs   []Catalog
 	Categories []Category
+	Default    Default
 }
 
 type Category struct {
@@ -38,6 +39,10 @@ type Catalog struct {
 	URL        string
 	ContextDir string
 	Revision   string
+}
+
+type Default struct {
+	Scopes []string
 }
 
 // dataFromURL reads data from file using URL or path
