@@ -48,6 +48,7 @@ func Migrate(api *app.APIBase) error {
 			&model.Resource{},
 			&model.ResourceVersion{},
 			&model.User{},
+			&model.UserResourceRating{},
 		).Error; err != nil {
 			log.Error(err)
 			return err
@@ -68,6 +69,12 @@ func Migrate(api *app.APIBase) error {
 		if err := fkey(log, db, model.ResourceTag{},
 			"resource_id", "resources",
 			"tag_id", "tags"); err != nil {
+			return err
+		}
+
+		if err := fkey(log, db, model.UserResourceRating{},
+			"resource_id", "resources",
+			"user_id", "users"); err != nil {
 			return err
 		}
 
