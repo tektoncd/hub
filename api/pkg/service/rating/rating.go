@@ -20,32 +20,65 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"go.uber.org/zap"
-	"goa.design/goa/v3/security"
 
 	"github.com/tektoncd/hub/api/gen/rating"
 	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/pkg/db/model"
+	"github.com/tektoncd/hub/api/pkg/service/auth"
 )
 
 type service struct {
+	*auth.Validator
 	logger *zap.SugaredLogger
 	db     *gorm.DB
-	jwtKey string
 }
+
+var (
+	fetchError    = rating.MakeInternalError(fmt.Errorf("failed to fetch rating"))
+	notFoundError = rating.MakeNotFound(fmt.Errorf("resource not found"))
+)
 
 // New returns the rating service implementation.
 func New(api app.Config) rating.Service {
-	return &service{api.Logger(), api.DB(), api.JWTSigningKey()}
-}
-
-// JWTAuth implements the authorization logic for service "rating" for the
-// "jwt" security scheme.
-func (s *service) JWTAuth(ctx context.Context, token string, scheme *security.JWTScheme) (context.Context, error) {
-	return ctx, fmt.Errorf("not implemented")
+	return &service{
+		Validator: &auth.Validator{
+			DB:     api.DB(),
+			Logger: api.Logger().With("service", "validator"),
+			JWTKey: api.JWTSigningKey(),
+		},
+		logger: api.Logger().With("service", "rating"),
+		db:     api.DB(),
+	}
 }
 
 // Find user's rating for a resource
-func (s *service) Get(ctx context.Context, p *rating.GetPayload) (res *rating.GetResult, err error) {
-	res = &rating.GetResult{}
-	s.logger.Info("rating.Get")
-	return
+func (s *service) Get(ctx context.Context, p *rating.GetPayload) (*rating.GetResult, error) {
+
+	user, err := s.Validator.UserFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var res model.Resource
+	if err := s.db.First(&res, p.ID).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, notFoundError
+		}
+		s.logger.Error(err)
+		return nil, fetchError
+	}
+
+	q := s.db.Where("user_id = ? AND resource_id = ?", user.ID, p.ID)
+
+	r := model.UserResourceRating{}
+	if err := q.Find(&r).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return &rating.GetResult{Rating: -1}, nil
+		}
+
+		s.logger.Error(err)
+		return nil, fetchError
+	}
+
+	return &rating.GetResult{Rating: int(r.Rating)}, nil
 }

@@ -76,4 +76,13 @@ type (
 		GithubLogin string
 		GithubName  string
 	}
+
+	UserResourceRating struct {
+		gorm.Model
+		UserID     uint
+		User       User
+		Resource   Resource
+		ResourceID uint
+		Rating     uint `gorm:"not null;default:null"`
+	}
 )
