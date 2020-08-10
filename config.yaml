@@ -31,9 +31,17 @@ categories:
     tags: [test]
 
 catalogs:
-  - name: tektoncd
+  - name: catalog
+    org: tektoncd
     type: community
-    owner: tektoncd
     url: https://github.com/tektoncd/catalog
     revision: master
-    contextDir: /
+
+# Template
+# catalogs:
+#   - name: Name of Catalog
+#     org:  Organization of Catalog
+#     type: Type of Catalog [official, verified, community]
+#     url:  URL of repository
+#     revision: Branch of repository 
+#     contextDir(Optional): Path to resource dir 
