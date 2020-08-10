@@ -33,9 +33,9 @@ type Category struct {
 
 type Catalog struct {
 	Name       string
+	Org        string
 	Type       string
 	URL        string
-	Owner      string
 	ContextDir string
 	Revision   string
 }

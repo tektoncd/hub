@@ -35,13 +35,13 @@ type (
 
 	Catalog struct {
 		gorm.Model
-		Name       string
-		Type       string
-		URL        string
-		Owner      string
+		Name       string `gorm:"unique_index:uix_name_org"`
+		Org        string `gorm:"unique_index:uix_name_org"`
+		Type       string `gorm:"not null;default:null"`
+		URL        string `gorm:"not null;default:null"`
+		Revision   string `gorm:"not null;default:null"`
 		ContextDir string
 		Resources  []Resource
-		Revision   string
 	}
 
 	Resource struct {

@@ -33,6 +33,7 @@ func Migrate(api *app.APIConfig) error {
 		gormigrate.DefaultOptions,
 		[]*gormigrate.Migration{
 			{
+				// Creates Resource, ResourceVersion & Catalog tables and foreign keys on them
 				ID: "202006071000",
 				Migrate: func(tx *gorm.DB) error {
 
@@ -58,6 +59,7 @@ func Migrate(api *app.APIConfig) error {
 				},
 			},
 			{
+				// Adds minPipelineVersion Column in ResourceVersion Table
 				ID: "202006091100",
 				Migrate: func(tx *gorm.DB) error {
 					if err := tx.AutoMigrate(
@@ -65,6 +67,47 @@ func Migrate(api *app.APIConfig) error {
 						log.Error(err)
 						return err
 					}
+					return nil
+				},
+			},
+			{
+				// Adds Org column and drops Owner from Catalog Table
+				// Adds Unique constraint on (name,org) and
+				// NOT NULL Constraint on type and url columns
+				ID: "202008071700",
+				Migrate: func(tx *gorm.DB) error {
+					if err := tx.Model(&model.Catalog{}).
+						DropColumn("owner").Error; err != nil {
+						log.Error(err)
+						return err
+					}
+					if err := tx.AutoMigrate(
+						&model.Catalog{}).Error; err != nil {
+						log.Error(err)
+						return err
+					}
+					if err := tx.Model(&model.Catalog{}).
+						AddUniqueIndex("uix_name_org", "name", "org").Error; err != nil {
+						log.Error(err)
+						return err
+					}
+
+					catalogQuery := `ALTER TABLE catalogs
+						ALTER COLUMN type SET NOT NULL,
+						ALTER COLUMN url  SET NOT NULL,
+						ALTER COLUMN revision SET NOT NULL`
+					if err := tx.Exec(catalogQuery).Error; err != nil {
+						log.Error(err)
+						return err
+					}
+
+					// update existing record
+					if err := tx.Model(&model.Catalog{}).
+						Updates(map[string]interface{}{"name": "catalog", "org": "tektoncd"}).Error; err != nil {
+						log.Error(err)
+						return err
+					}
+
 					return nil
 				},
 			},

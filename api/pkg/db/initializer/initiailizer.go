@@ -79,13 +79,13 @@ func (i *Initializer) addCatalogs() error {
 	for _, c := range i.data.Catalogs {
 		cat := &model.Catalog{
 			Name:       c.Name,
+			Org:        c.Org,
 			Type:       c.Type,
 			URL:        c.URL,
-			Owner:      c.Owner,
 			Revision:   c.Revision,
 			ContextDir: c.ContextDir,
 		}
-		if err := db.Where(&model.Catalog{Name: c.Name, Type: c.Type}).
+		if err := db.Where(&model.Catalog{Name: c.Name, Org: c.Org}).
 			FirstOrCreate(cat).
 			Error; err != nil {
 			i.log.Error(err)
