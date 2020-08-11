@@ -12,29 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package migration
 
 import (
-	"fmt"
-	"os"
+	"github.com/jinzhu/gorm"
+	"go.uber.org/zap"
+	"gopkg.in/gormigrate.v1"
 
-	"github.com/tektoncd/hub/api/pkg/app"
-	"github.com/tektoncd/hub/api/pkg/db/migration"
+	"github.com/tektoncd/hub/api/pkg/db/model"
 )
 
-func main() {
-	api, err := app.FromEnv()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "FATAL: failed to initialise: %s", err)
-		os.Exit(1)
-	}
-	defer api.Cleanup()
+func addMinimumPipelineVersionToResourceVersion(log *zap.SugaredLogger) *gormigrate.Migration {
 
-	api.DB().LogMode(true)
-	logger := api.Logger()
-	if err = migration.Migrate(api); err != nil {
-		logger.Errorf("DB initialisation failed !!")
-		return
+	return &gormigrate.Migration{
+		ID: "202006091100",
+		Migrate: func(db *gorm.DB) error {
+			if err := db.AutoMigrate(
+				&model.ResourceVersion{}).Error; err != nil {
+				log.Error(err)
+				return err
+			}
+			return nil
+		},
 	}
-	logger.Info("DB initialisation successful !!")
 }

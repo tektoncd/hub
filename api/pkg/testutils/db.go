@@ -20,7 +20,7 @@ import (
 	"github.com/go-testfixtures/testfixtures/v3"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/pkg/app"
-	"github.com/tektoncd/hub/api/pkg/db/model"
+	"github.com/tektoncd/hub/api/pkg/db/migration"
 )
 
 // LoadFixtures is called before executing each test, it clears db and
@@ -38,10 +38,11 @@ func LoadFixtures(t *testing.T, dir string) {
 // applyMigration creates tables in test db
 func applyMigration() error {
 	tc := Config()
-	db := tc.DB()
-	db.AutoMigrate(model.Category{}, model.Tag{}, model.Catalog{}, model.Resource{}, model.ResourceVersion{})
-	if len(db.GetErrors()) > 0 {
-		return db.GetErrors()[0]
+	logger := tc.Logger()
+	if err := migration.Migrate(tc.APIConfig); err != nil {
+		logger.Errorf("DB initialisation failed !!")
+		return err
 	}
+	logger.Info("DB initialisation successful !!")
 	return nil
 }
