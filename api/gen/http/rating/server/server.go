@@ -21,6 +21,7 @@ import (
 type Server struct {
 	Mounts []*MountPoint
 	Get    http.Handler
+	Update http.Handler
 	CORS   http.Handler
 }
 
@@ -58,10 +59,12 @@ func New(
 	return &Server{
 		Mounts: []*MountPoint{
 			{"Get", "GET", "/resource/{id}/rating"},
+			{"Update", "PUT", "/resource/{id}/rating"},
 			{"CORS", "OPTIONS", "/resource/{id}/rating"},
 		},
-		Get:  NewGetHandler(e.Get, mux, decoder, encoder, errhandler, formatter),
-		CORS: NewCORSHandler(),
+		Get:    NewGetHandler(e.Get, mux, decoder, encoder, errhandler, formatter),
+		Update: NewUpdateHandler(e.Update, mux, decoder, encoder, errhandler, formatter),
+		CORS:   NewCORSHandler(),
 	}
 }
 
@@ -71,12 +74,14 @@ func (s *Server) Service() string { return "rating" }
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.Get = m(s.Get)
+	s.Update = m(s.Update)
 	s.CORS = m(s.CORS)
 }
 
 // Mount configures the mux to serve the rating endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountGetHandler(mux, h.Get)
+	MountUpdateHandler(mux, h.Update)
 	MountCORSHandler(mux, h.CORS)
 }
 
@@ -110,6 +115,57 @@ func NewGetHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "Get")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "rating")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountUpdateHandler configures the mux to serve the "rating" service "Update"
+// endpoint.
+func MountUpdateHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := handleRatingOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("PUT", "/resource/{id}/rating", f)
+}
+
+// NewUpdateHandler creates a HTTP handler which loads the HTTP request and
+// calls the "rating" service "Update" endpoint.
+func NewUpdateHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeUpdateRequest(mux, decoder)
+		encodeResponse = EncodeUpdateResponse(encoder)
+		encodeError    = EncodeUpdateError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "Update")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "rating")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -167,7 +223,7 @@ func handleRatingOrigin(h http.Handler) http.Handler {
 			w.Header().Set("Access-Control-Allow-Credentials", "false")
 			if acrm := r.Header.Get("Access-Control-Request-Method"); acrm != "" {
 				// We are handling a preflight request
-				w.Header().Set("Access-Control-Allow-Methods", "GET, POST")
+				w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT")
 				w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 			}
 			origHndlr(w, r)

@@ -15,3 +15,8 @@ import (
 func GetRatingPath(id uint) string {
 	return fmt.Sprintf("/resource/%v/rating", id)
 }
+
+// UpdateRatingPath returns the URL path to the rating service Update HTTP endpoint.
+func UpdateRatingPath(id uint) string {
+	return fmt.Sprintf("/resource/%v/rating", id)
+}

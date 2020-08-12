@@ -52,4 +52,31 @@ var _ = Service("rating", func() {
 			Response("invalid-scopes", StatusForbidden)
 		})
 	})
+
+	Method("Update", func() {
+		Description("Update user's rating for a resource")
+		Security(JWTAuth, func() {
+			Scope("rating:write")
+		})
+		Payload(func() {
+			Attribute("id", UInt, "ID of a resource")
+			Attribute("rating", UInt, "User rating for resource", func() {
+				Minimum(0)
+				Maximum(5)
+			})
+			Token("token", String, "JWT")
+			Required("id", "token", "rating")
+		})
+
+		HTTP(func() {
+			PUT("/resource/{id}/rating")
+			Header("token:Authorization")
+
+			Response(StatusOK)
+			Response("not-found", StatusNotFound)
+			Response("internal-error", StatusInternalServerError)
+			Response("invalid-token", StatusUnauthorized)
+			Response("invalid-scopes", StatusForbidden)
+		})
+	})
 })

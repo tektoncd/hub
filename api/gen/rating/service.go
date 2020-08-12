@@ -19,6 +19,8 @@ import (
 type Service interface {
 	// Find user's rating for a resource
 	Get(context.Context, *GetPayload) (res *GetResult, err error)
+	// Update user's rating for a resource
+	Update(context.Context, *UpdatePayload) (err error)
 }
 
 // Auther defines the authorization functions to be implemented by the service.
@@ -35,7 +37,7 @@ const ServiceName = "rating"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [1]string{"Get"}
+var MethodNames = [2]string{"Get", "Update"}
 
 // GetPayload is the payload type of the rating service Get method.
 type GetPayload struct {
@@ -49,6 +51,16 @@ type GetPayload struct {
 type GetResult struct {
 	// User rating for resource
 	Rating int
+}
+
+// UpdatePayload is the payload type of the rating service Update method.
+type UpdatePayload struct {
+	// ID of a resource
+	ID uint
+	// User rating for resource
+	Rating uint
+	// JWT
+	Token string
 }
 
 // MakeNotFound builds a goa.ServiceError from an error.

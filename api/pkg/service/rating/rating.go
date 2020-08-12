@@ -82,3 +82,9 @@ func (s *service) Get(ctx context.Context, p *rating.GetPayload) (*rating.GetRes
 
 	return &rating.GetResult{Rating: int(r.Rating)}, nil
 }
+
+// Update user's rating for a resource
+func (s *service) Update(ctx context.Context, p *rating.UpdatePayload) error {
+	s.logger.Info("rating.Update")
+	return nil
+}

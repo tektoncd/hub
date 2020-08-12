@@ -42,6 +42,6 @@ var _ = API("hub", func() {
 	// TODO: restrict CORS origin | https://github.com/tektoncd/hub/issues/26
 	cors.Origin("*", func() {
 		cors.Headers("Content-Type")
-		cors.Methods("GET", "POST")
+		cors.Methods("GET", "POST", "PUT")
 	})
 })
