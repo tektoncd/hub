@@ -61,3 +61,26 @@ func TestGet_ResourceNotFound(t *testing.T) {
 	assert.Error(t, err)
 	assert.EqualError(t, err, "resource not found")
 }
+
+func TestUpdate(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ratingSvc := New(tc)
+	ctx := auth.WithUserID(context.Background(), 11)
+	payload := &rating.UpdatePayload{ID: 1, Rating: 3, Token: "token"}
+	err := ratingSvc.Update(ctx, payload)
+	assert.NoError(t, err)
+}
+
+func TestUpdate_ResourceNotFound(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ratingSvc := New(tc)
+	ctx := auth.WithUserID(context.Background(), 11)
+	payload := &rating.UpdatePayload{ID: 99, Rating: 3, Token: "token"}
+	err := ratingSvc.Update(ctx, payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "resource not found")
+}

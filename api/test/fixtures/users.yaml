@@ -17,3 +17,9 @@
   github_login: foo
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
+
+- id: 21
+  github_name: abc-def
+  github_login: abc
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
