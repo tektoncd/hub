@@ -143,3 +143,46 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 		assert.Equal(t, "not-found", err.Name)
 	})
 }
+
+func UpdateChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	validate := &auth.Validator{DB: tc.DB(), JWTKey: tc.JWTSigningKey()}
+	checker := goahttpcheck.New()
+	checker.Mount(server.NewUpdateHandler,
+		server.MountUpdateHandler,
+		rating.NewUpdateEndpoint(New(tc), validate.JWTAuth))
+	return checker
+}
+
+func TestUpdate_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	data := []byte(`{"rating": 2}`)
+
+	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/1/rating").
+		WithHeader("Authorization", validToken).
+		WithBody(data).Check().
+		HasStatus(200)
+}
+
+func TestUpdate_Http_ResourceNotFound(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	data := []byte(`{"rating": 2}`)
+
+	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/99/rating").
+		WithHeader("Authorization", validToken).
+		WithBody(data).Check().
+		HasStatus(404).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		var err *goa.ServiceError
+		marshallErr := json.Unmarshal([]byte(b), &err)
+		assert.NoError(t, marshallErr)
+
+		assert.Equal(t, "not-found", err.Name)
+	})
+}
