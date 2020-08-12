@@ -102,7 +102,9 @@ var _ = Service("resource", func() {
 
 			Required("type", "name", "version")
 		})
-		Result(ResVersion)
+		Result(ResVersion, func() {
+			View("default")
+		})
 
 		HTTP(func() {
 			GET("/resource/{type}/{name}/{version}")
@@ -119,7 +121,9 @@ var _ = Service("resource", func() {
 			Attribute("versionID", UInt, "Version ID of a resource's version")
 			Required("versionID")
 		})
-		Result(ResVersion)
+		Result(ResVersion, func() {
+			View("default")
+		})
 
 		HTTP(func() {
 			GET("/resource/version/{versionID}")

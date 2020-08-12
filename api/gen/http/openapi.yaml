@@ -417,176 +417,6 @@ definitions:
     - id
     - name
     - tags
-  LatestVersionResponse:
-    title: LatestVersionResponse
-    type: object
-    properties:
-      description:
-        type: string
-        description: Description of version
-        example: Buildah task builds source into a container image and then pushes it to a container registry.
-      displayName:
-        type: string
-        description: Display name of version
-        example: Buildah
-      id:
-        type: integer
-        description: ID is the unique id of resource's version
-        example: 1
-        format: int64
-      minPipelinesVersion:
-        type: string
-        description: Minimum pipelines version the resource's version is compatible with
-        example: 0.12.1
-      rawURL:
-        type: string
-        description: Raw URL of resource's yaml file of the version
-        example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-        format: uri
-      updatedAt:
-        type: string
-        description: Timestamp when version was last updated
-        example: 2020-01-01 12:00:00 +0000 UTC
-        format: date-time
-      version:
-        type: string
-        description: Version of resource
-        example: "0.1"
-      webURL:
-        type: string
-        description: Web URL of resource's yaml file of the version
-        example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-        format: uri
-    example:
-      description: Buildah task builds source into a container image and then pushes it to a container registry.
-      displayName: Buildah
-      id: 1
-      minPipelinesVersion: 0.12.1
-      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-      updatedAt: 2020-01-01 12:00:00 +0000 UTC
-      version: "0.1"
-      webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-    required:
-    - id
-    - version
-    - description
-    - displayName
-    - minPipelinesVersion
-    - rawURL
-    - webURL
-    - updatedAt
-  LatestVersionResponseBody:
-    title: LatestVersionResponseBody
-    type: object
-    properties:
-      description:
-        type: string
-        description: Description of version
-        example: Buildah task builds source into a container image and then pushes it to a container registry.
-      displayName:
-        type: string
-        description: Display name of version
-        example: Buildah
-      id:
-        type: integer
-        description: ID is the unique id of resource's version
-        example: 1
-        format: int64
-      minPipelinesVersion:
-        type: string
-        description: Minimum pipelines version the resource's version is compatible with
-        example: 0.12.1
-      rawURL:
-        type: string
-        description: Raw URL of resource's yaml file of the version
-        example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-        format: uri
-      updatedAt:
-        type: string
-        description: Timestamp when version was last updated
-        example: 2020-01-01 12:00:00 +0000 UTC
-        format: date-time
-      version:
-        type: string
-        description: Version of resource
-        example: "0.1"
-      webURL:
-        type: string
-        description: Web URL of resource's yaml file of the version
-        example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-        format: uri
-    example:
-      description: Buildah task builds source into a container image and then pushes it to a container registry.
-      displayName: Buildah
-      id: 1
-      minPipelinesVersion: 0.12.1
-      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-      updatedAt: 2020-01-01 12:00:00 +0000 UTC
-      version: "0.1"
-      webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-    required:
-    - id
-    - version
-    - description
-    - displayName
-    - minPipelinesVersion
-    - rawURL
-    - webURL
-    - updatedAt
-  MinVersionInfoResponseBody:
-    title: 'Mediatype identifier: application/vnd.hub.min-version-info; view=default'
-    type: object
-    properties:
-      id:
-        type: integer
-        description: ID is the unique id of resource's version
-        example: 1
-        format: int64
-      rawURL:
-        type: string
-        description: Raw URL of resource's yaml file of the version
-        example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-        format: uri
-      version:
-        type: string
-        description: Version of resource
-        example: "0.1"
-      webURL:
-        type: string
-        description: Web URL of resource's yaml file of the version
-        example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-        format: uri
-    description: The MinimumVersionInfo type describes the minimum version information of a resource
-    example:
-      id: 1
-      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-      version: "0.1"
-      webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-    required:
-    - id
-    - version
-    - rawURL
-    - webURL
-  MinVersionInfoResponseBodyTiny:
-    title: 'Mediatype identifier: application/vnd.hub.min-version-info; view=default'
-    type: object
-    properties:
-      id:
-        type: integer
-        description: ID is the unique id of resource's version
-        example: 1
-        format: int64
-      version:
-        type: string
-        description: Version of resource
-        example: "0.1"
-    description: The MinimumVersionInfo type describes the minimum version information of a resource (default view)
-    example:
-      id: 1
-      version: "0.1"
-    required:
-    - id
-    - version
   ResourceByIDInternalErrorResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -685,7 +515,7 @@ definitions:
         example: 1
         format: int64
       latestVersion:
-        $ref: '#/definitions/LatestVersionResponseBody'
+        $ref: '#/definitions/VersionResponseBodyWithoutResource'
       name:
         type: string
         description: Name of resource
@@ -710,7 +540,7 @@ definitions:
       versions:
         type: array
         items:
-          $ref: '#/definitions/MinVersionInfoResponseBodyTiny'
+          $ref: '#/definitions/VersionResponseBodyTiny'
         description: List of all versions of a resource
         example:
         - id: 1
@@ -1427,7 +1257,7 @@ definitions:
         example: 1
         format: int64
       latestVersion:
-        $ref: '#/definitions/LatestVersionResponse'
+        $ref: '#/definitions/VersionResponseWithoutResource'
       name:
         type: string
         description: Name of resource
@@ -1569,11 +1399,11 @@ definitions:
     type: object
     properties:
       latest:
-        $ref: '#/definitions/MinVersionInfoResponseBody'
+        $ref: '#/definitions/VersionResponseBodyMin'
       versions:
         type: array
         items:
-          $ref: '#/definitions/MinVersionInfoResponseBody'
+          $ref: '#/definitions/VersionResponseBodyMin'
         description: List of all versions of resource
         example:
         - id: 1
@@ -1653,3 +1483,175 @@ definitions:
     required:
     - id
     - name
+  VersionResponseBodyMin:
+    title: 'Mediatype identifier: application/vnd.hub.version; view=default'
+    type: object
+    properties:
+      id:
+        type: integer
+        description: ID is the unique id of resource's version
+        example: 1
+        format: int64
+      rawURL:
+        type: string
+        description: Raw URL of resource's yaml file of the version
+        example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        format: uri
+      version:
+        type: string
+        description: Version of resource
+        example: "0.1"
+      webURL:
+        type: string
+        description: Web URL of resource's yaml file of the version
+        example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        format: uri
+    description: The Version result type describes resource's version information. (default view)
+    example:
+      id: 1
+      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+      version: "0.1"
+      webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+    required:
+    - id
+    - version
+    - rawURL
+    - webURL
+  VersionResponseBodyTiny:
+    title: 'Mediatype identifier: application/vnd.hub.version; view=default'
+    type: object
+    properties:
+      id:
+        type: integer
+        description: ID is the unique id of resource's version
+        example: 1
+        format: int64
+      version:
+        type: string
+        description: Version of resource
+        example: "0.1"
+    description: The Version result type describes resource's version information. (default view)
+    example:
+      id: 1
+      version: "0.1"
+    required:
+    - id
+    - version
+  VersionResponseBodyWithoutResource:
+    title: 'Mediatype identifier: application/vnd.hub.version; view=default'
+    type: object
+    properties:
+      description:
+        type: string
+        description: Description of version
+        example: Buildah task builds source into a container image and then pushes it to a container registry.
+      displayName:
+        type: string
+        description: Display name of version
+        example: Buildah
+      id:
+        type: integer
+        description: ID is the unique id of resource's version
+        example: 1
+        format: int64
+      minPipelinesVersion:
+        type: string
+        description: Minimum pipelines version the resource's version is compatible with
+        example: 0.12.1
+      rawURL:
+        type: string
+        description: Raw URL of resource's yaml file of the version
+        example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        format: uri
+      updatedAt:
+        type: string
+        description: Timestamp when version was last updated
+        example: 2020-01-01 12:00:00 +0000 UTC
+        format: date-time
+      version:
+        type: string
+        description: Version of resource
+        example: "0.1"
+      webURL:
+        type: string
+        description: Web URL of resource's yaml file of the version
+        example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        format: uri
+    description: The Version result type describes resource's version information. (default view)
+    example:
+      description: Buildah task builds source into a container image and then pushes it to a container registry.
+      displayName: Buildah
+      id: 1
+      minPipelinesVersion: 0.12.1
+      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+      updatedAt: 2020-01-01 12:00:00 +0000 UTC
+      version: "0.1"
+      webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+    required:
+    - id
+    - version
+    - displayName
+    - description
+    - minPipelinesVersion
+    - rawURL
+    - webURL
+    - updatedAt
+  VersionResponseWithoutResource:
+    title: 'Mediatype identifier: application/vnd.hub.version; view=default'
+    type: object
+    properties:
+      description:
+        type: string
+        description: Description of version
+        example: Buildah task builds source into a container image and then pushes it to a container registry.
+      displayName:
+        type: string
+        description: Display name of version
+        example: Buildah
+      id:
+        type: integer
+        description: ID is the unique id of resource's version
+        example: 1
+        format: int64
+      minPipelinesVersion:
+        type: string
+        description: Minimum pipelines version the resource's version is compatible with
+        example: 0.12.1
+      rawURL:
+        type: string
+        description: Raw URL of resource's yaml file of the version
+        example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        format: uri
+      updatedAt:
+        type: string
+        description: Timestamp when version was last updated
+        example: 2020-01-01 12:00:00 +0000 UTC
+        format: date-time
+      version:
+        type: string
+        description: Version of resource
+        example: "0.1"
+      webURL:
+        type: string
+        description: Web URL of resource's yaml file of the version
+        example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        format: uri
+    description: The Version result type describes resource's version information. (default view)
+    example:
+      description: Buildah task builds source into a container image and then pushes it to a container registry.
+      displayName: Buildah
+      id: 1
+      minPipelinesVersion: 0.12.1
+      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+      updatedAt: 2020-01-01 12:00:00 +0000 UTC
+      version: "0.1"
+      webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+    required:
+    - id
+    - version
+    - displayName
+    - description
+    - minPipelinesVersion
+    - rawURL
+    - webURL
+    - updatedAt

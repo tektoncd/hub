@@ -191,7 +191,7 @@ func initResource(r model.Resource) *resource.Resource {
 	res.Rating = r.Rating
 
 	lv := (r.Versions)[len(r.Versions)-1]
-	res.LatestVersion = &resource.LatestVersion{
+	res.LatestVersion = &resource.Version{
 		ID:                  lv.ID,
 		Version:             lv.Version,
 		Description:         lv.Description,
@@ -211,9 +211,9 @@ func initResource(r model.Resource) *resource.Resource {
 	return res
 }
 
-func tinyVersionInfo(r model.ResourceVersion) *resource.MinVersionInfo {
+func tinyVersionInfo(r model.ResourceVersion) *resource.Version {
 
-	res := &resource.MinVersionInfo{
+	res := &resource.Version{
 		ID:      r.ID,
 		Version: r.Version,
 	}
@@ -221,7 +221,7 @@ func tinyVersionInfo(r model.ResourceVersion) *resource.MinVersionInfo {
 	return res
 }
 
-func minVersionInfo(r model.ResourceVersion) *resource.MinVersionInfo {
+func minVersionInfo(r model.ResourceVersion) *resource.Version {
 
 	res := tinyVersionInfo(r)
 	res.WebURL = r.URL
