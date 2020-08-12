@@ -4,7 +4,7 @@ info:
   description: HTTP services for managing Tekton Hub
   version: "0.1"
 servers:
-- url: api.hub.tekton.dev
+- url: http://api.hub.tekton.dev
 paths:
   /:
     get:
@@ -494,7 +494,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Version'
+                $ref: '#/components/schemas/ByTypeNameVersionResponseBody'
               example:
                 description: Buildah task builds source into a container image and then pushes it to a container registry.
                 displayName: Buildah
@@ -564,7 +564,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Version'
+                $ref: '#/components/schemas/ByTypeNameVersionResponseBody'
               example:
                 description: Buildah task builds source into a container image and then pushes it to a container registry.
                 displayName: Buildah
@@ -710,7 +710,7 @@ components:
           description: ID is the unique id of the resource
           example: 1
         latestVersion:
-          $ref: '#/components/schemas/LatestVersion'
+          $ref: '#/components/schemas/Version'
         name:
           type: string
           description: Name of resource
@@ -735,7 +735,7 @@ components:
         versions:
           type: array
           items:
-            $ref: '#/components/schemas/HubMinVersionInfo2'
+            $ref: '#/components/schemas/Version3'
           description: List of all versions of a resource
           example:
           - id: 1
@@ -777,6 +777,77 @@ components:
       - tags
       - rating
       - versions
+    ByTypeNameVersionResponseBody:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of version
+          example: Buildah task builds source into a container image and then pushes it to a container registry.
+        displayName:
+          type: string
+          description: Display name of version
+          example: Buildah
+        id:
+          type: integer
+          description: ID is the unique id of resource's version
+          example: 1
+        minPipelinesVersion:
+          type: string
+          description: Minimum pipelines version the resource's version is compatible with
+          example: 0.12.1
+        rawURL:
+          type: string
+          description: Raw URL of resource's yaml file of the version
+          example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          format: uri
+        resource:
+          $ref: '#/components/schemas/Resource2'
+        updatedAt:
+          type: string
+          description: Timestamp when version was last updated
+          example: 2020-01-01 12:00:00 +0000 UTC
+          format: date-time
+        version:
+          type: string
+          description: Version of resource
+          example: "0.1"
+        webURL:
+          type: string
+          description: Web URL of resource's yaml file of the version
+          example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          format: uri
+      description: ByTypeNameVersionResponseBody result type (default view)
+      example:
+        description: Buildah task builds source into a container image and then pushes it to a container registry.
+        displayName: Buildah
+        id: 1
+        minPipelinesVersion: 0.12.1
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        resource:
+          catalog:
+            id: 1
+            type: community
+          id: 1
+          name: buildah
+          rating: 4.3
+          tags:
+          - id: 1
+            name: image-build
+          type: task
+        updatedAt: 2020-01-01 12:00:00 +0000 UTC
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+      required:
+      - id
+      - version
+      - displayName
+      - description
+      - minPipelinesVersion
+      - rawURL
+      - webURL
+      - updatedAt
+      - resource
     Catalog:
       type: object
       properties:
@@ -872,59 +943,7 @@ components:
       - temporary
       - timeout
       - fault
-    HubMinVersionInfo:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: ID is the unique id of resource's version
-          example: 1
-        rawURL:
-          type: string
-          description: Raw URL of resource's yaml file of the version
-          example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-          format: uri
-        version:
-          type: string
-          description: Version of resource
-          example: "0.1"
-        webURL:
-          type: string
-          description: Web URL of resource's yaml file of the version
-          example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-          format: uri
-      description: The MinimumVersionInfo type describes the minimum version information of a resource
-      example:
-        id: 1
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-        version: "0.1"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-      required:
-      - id
-      - version
-      - rawURL
-      - webURL
-    HubMinVersionInfo2:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: ID is the unique id of resource's version
-          example: 1
-        version:
-          type: string
-          description: Version of resource
-          example: "0.1"
-      description: The MinimumVersionInfo type describes the minimum version information of a resource
-      example:
-        id: 1
-        version: "0.1"
-      required:
-      - id
-      - version
-      - rawURL
-      - webURL
-    HubResource:
+    Resource:
       type: object
       properties:
         catalog:
@@ -934,7 +953,7 @@ components:
           description: ID is the unique id of the resource
           example: 1
         latestVersion:
-          $ref: '#/components/schemas/LatestVersion'
+          $ref: '#/components/schemas/Version2'
         name:
           type: string
           description: Name of resource
@@ -959,7 +978,7 @@ components:
         versions:
           type: array
           items:
-            $ref: '#/components/schemas/HubMinVersionInfo'
+            $ref: '#/components/schemas/Version2'
           description: List of all versions of a resource
           example:
           - id: 1
@@ -1001,62 +1020,57 @@ components:
       - tags
       - rating
       - versions
-    LatestVersion:
+    Resource2:
       type: object
       properties:
-        description:
-          type: string
-          description: Description of version
-          example: Buildah task builds source into a container image and then pushes it to a container registry.
-        displayName:
-          type: string
-          description: Display name of version
-          example: Buildah
+        catalog:
+          $ref: '#/components/schemas/Catalog'
         id:
           type: integer
-          description: ID is the unique id of resource's version
+          description: ID is the unique id of the resource
           example: 1
-        minPipelinesVersion:
+        name:
           type: string
-          description: Minimum pipelines version the resource's version is compatible with
-          example: 0.12.1
-        rawURL:
+          description: Name of resource
+          example: buildah
+        rating:
+          type: number
+          description: Rating of resource
+          example: 4.3
+          format: double
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          description: Tags related to resource
+          example:
+          - id: 1
+            name: image-build
+        type:
           type: string
-          description: Raw URL of resource's yaml file of the version
-          example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-          format: uri
-        updatedAt:
-          type: string
-          description: Timestamp when version was last updated
-          example: 2020-01-01 12:00:00 +0000 UTC
-          format: date-time
-        version:
-          type: string
-          description: Version of resource
-          example: "0.1"
-        webURL:
-          type: string
-          description: Web URL of resource's yaml file of the version
-          example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-          format: uri
+          description: Type of resource
+          example: task
+      description: The resource type describes resource information.
       example:
-        description: Buildah task builds source into a container image and then pushes it to a container registry.
-        displayName: Buildah
+        catalog:
+          id: 1
+          type: community
         id: 1
-        minPipelinesVersion: 0.12.1
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-        updatedAt: 2020-01-01 12:00:00 +0000 UTC
-        version: "0.1"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        name: buildah
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+        type: task
       required:
       - id
-      - version
-      - description
-      - displayName
-      - minPipelinesVersion
-      - rawURL
-      - webURL
-      - updatedAt
+      - name
+      - catalog
+      - type
+      - latestVersion
+      - tags
+      - rating
+      - versions
     ResourceResponseWithoutVersion:
       type: object
       properties:
@@ -1067,7 +1081,7 @@ components:
           description: ID is the unique id of the resource
           example: 1
         latestVersion:
-          $ref: '#/components/schemas/LatestVersion'
+          $ref: '#/components/schemas/Version'
         name:
           type: string
           description: Name of resource
@@ -1252,8 +1266,6 @@ components:
           description: Raw URL of resource's yaml file of the version
           example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
           format: uri
-        resource:
-          $ref: '#/components/schemas/HubResource'
         updatedAt:
           type: string
           description: Timestamp when version was last updated
@@ -1268,6 +1280,67 @@ components:
           description: Web URL of resource's yaml file of the version
           example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
           format: uri
+      description: The Version result type describes resource's version information.
+      example:
+        description: Buildah task builds source into a container image and then pushes it to a container registry.
+        displayName: Buildah
+        id: 1
+        minPipelinesVersion: 0.12.1
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        updatedAt: 2020-01-01 12:00:00 +0000 UTC
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+      required:
+      - id
+      - version
+      - displayName
+      - description
+      - minPipelinesVersion
+      - rawURL
+      - webURL
+      - updatedAt
+      - resource
+    Version2:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of version
+          example: Buildah task builds source into a container image and then pushes it to a container registry.
+        displayName:
+          type: string
+          description: Display name of version
+          example: Buildah
+        id:
+          type: integer
+          description: ID is the unique id of resource's version
+          example: 1
+        minPipelinesVersion:
+          type: string
+          description: Minimum pipelines version the resource's version is compatible with
+          example: 0.12.1
+        rawURL:
+          type: string
+          description: Raw URL of resource's yaml file of the version
+          example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          format: uri
+        resource:
+          $ref: '#/components/schemas/Resource'
+        updatedAt:
+          type: string
+          description: Timestamp when version was last updated
+          example: 2020-01-01 12:00:00 +0000 UTC
+          format: date-time
+        version:
+          type: string
+          description: Version of resource
+          example: "0.1"
+        webURL:
+          type: string
+          description: Web URL of resource's yaml file of the version
+          example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          format: uri
+      description: The Version result type describes resource's version information.
       example:
         description: Buildah task builds source into a container image and then pushes it to a container registry.
         displayName: Buildah
@@ -1298,15 +1371,40 @@ components:
       - webURL
       - updatedAt
       - resource
+    Version3:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID is the unique id of resource's version
+          example: 1
+        version:
+          type: string
+          description: Version of resource
+          example: "0.1"
+      description: The Version result type describes resource's version information.
+      example:
+        id: 1
+        version: "0.1"
+      required:
+      - id
+      - version
+      - displayName
+      - description
+      - minPipelinesVersion
+      - rawURL
+      - webURL
+      - updatedAt
+      - resource
     Versions:
       type: object
       properties:
         latest:
-          $ref: '#/components/schemas/HubMinVersionInfo'
+          $ref: '#/components/schemas/Version2'
         versions:
           type: array
           items:
-            $ref: '#/components/schemas/HubMinVersionInfo'
+            $ref: '#/components/schemas/Version2'
           description: List of all versions of resource
           example:
           - id: 1
