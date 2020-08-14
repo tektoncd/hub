@@ -28,6 +28,7 @@
 declare -r SCRIPT_PATH=$(readlink -f "$0")
 declare -r SCRIPT_DIR=$(cd $(dirname "$SCRIPT_PATH") && pwd)
 declare -r API_DIR="$SCRIPT_DIR/../api"
+declare -r UI_DIR="$SCRIPT_DIR/../ui"
 
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-tests.sh
 
@@ -40,6 +41,21 @@ info() {
 
 warn() {
   echo "WARN: $@"
+}
+
+install-node() {
+  info Installing node
+
+  curl -sL https://deb.nodesource.com/setup_14.x | bash -
+  apt-get install -y nodejs
+
+  node --version
+}
+
+ui-unittest(){
+    install-node
+
+    CI=true npm test
 }
 
 install-postgres() {
@@ -77,6 +93,14 @@ api-build(){
   go build -mod=vendor ./cmd/...
 }
 
+ui-build(){
+  cd $UI_DIR
+  install-node
+  npm install
+
+  CI=true npm run build
+}
+
 ### presubmit hooks ###
 
 run_build_tests() {
@@ -85,6 +109,7 @@ run_build_tests() {
   (
     set -eu -o pipefail
     api-build
+    ui-build
   )
 }
 
@@ -98,6 +123,14 @@ run_unit_tests() {
     cd $API_DIR
     api-build
     api-unittest
+  )
+  (
+    set -eu -o pipefail
+
+
+    cd $UI_DIR
+    ui-build
+    ui-unittest
   )
 }
 
