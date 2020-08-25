@@ -13,7 +13,8 @@
     "jest": true
   },
   "rules": {
-    "no-console": "warn"
+    "no-console": "warn",
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   },
   "settings": {
     "react": {
