@@ -18,9 +18,9 @@ type Endpoints struct {
 	Query             goa.Endpoint
 	List              goa.Endpoint
 	VersionsByID      goa.Endpoint
-	ByTypeNameVersion goa.Endpoint
+	ByKindNameVersion goa.Endpoint
 	ByVersionID       goa.Endpoint
-	ByTypeName        goa.Endpoint
+	ByKindName        goa.Endpoint
 	ByID              goa.Endpoint
 }
 
@@ -30,9 +30,9 @@ func NewEndpoints(s Service) *Endpoints {
 		Query:             NewQueryEndpoint(s),
 		List:              NewListEndpoint(s),
 		VersionsByID:      NewVersionsByIDEndpoint(s),
-		ByTypeNameVersion: NewByTypeNameVersionEndpoint(s),
+		ByKindNameVersion: NewByKindNameVersionEndpoint(s),
 		ByVersionID:       NewByVersionIDEndpoint(s),
-		ByTypeName:        NewByTypeNameEndpoint(s),
+		ByKindName:        NewByKindNameEndpoint(s),
 		ByID:              NewByIDEndpoint(s),
 	}
 }
@@ -42,9 +42,9 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Query = m(e.Query)
 	e.List = m(e.List)
 	e.VersionsByID = m(e.VersionsByID)
-	e.ByTypeNameVersion = m(e.ByTypeNameVersion)
+	e.ByKindNameVersion = m(e.ByKindNameVersion)
 	e.ByVersionID = m(e.ByVersionID)
-	e.ByTypeName = m(e.ByTypeName)
+	e.ByKindName = m(e.ByKindName)
 	e.ByID = m(e.ByID)
 }
 
@@ -90,12 +90,12 @@ func NewVersionsByIDEndpoint(s Service) goa.Endpoint {
 	}
 }
 
-// NewByTypeNameVersionEndpoint returns an endpoint function that calls the
-// method "ByTypeNameVersion" of service "resource".
-func NewByTypeNameVersionEndpoint(s Service) goa.Endpoint {
+// NewByKindNameVersionEndpoint returns an endpoint function that calls the
+// method "ByKindNameVersion" of service "resource".
+func NewByKindNameVersionEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*ByTypeNameVersionPayload)
-		res, err := s.ByTypeNameVersion(ctx, p)
+		p := req.(*ByKindNameVersionPayload)
+		res, err := s.ByKindNameVersion(ctx, p)
 		if err != nil {
 			return nil, err
 		}
@@ -118,12 +118,12 @@ func NewByVersionIDEndpoint(s Service) goa.Endpoint {
 	}
 }
 
-// NewByTypeNameEndpoint returns an endpoint function that calls the method
-// "ByTypeName" of service "resource".
-func NewByTypeNameEndpoint(s Service) goa.Endpoint {
+// NewByKindNameEndpoint returns an endpoint function that calls the method
+// "ByKindName" of service "resource".
+func NewByKindNameEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*ByTypeNamePayload)
-		res, err := s.ByTypeName(ctx, p)
+		p := req.(*ByKindNamePayload)
+		res, err := s.ByKindName(ctx, p)
 		if err != nil {
 			return nil, err
 		}

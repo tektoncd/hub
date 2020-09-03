@@ -28,7 +28,7 @@ func addNotNullToResourceAndResourceVersion(log *zap.SugaredLogger) *gormigrate.
 
 			resourceQuery := `ALTER TABLE resources
 						 ALTER COLUMN name set NOT NULL,
-						 ALTER COLUMN type set NOT NULL;`
+						 ALTER COLUMN kind set NOT NULL;`
 			if err := db.Exec(resourceQuery).Error; err != nil {
 				log.Error(err)
 				return err

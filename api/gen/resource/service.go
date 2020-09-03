@@ -14,20 +14,20 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// The resource service provides details about all type of resources
+// The resource service provides details about all kind of resources
 type Service interface {
-	// Find resources by a combination of name, type
+	// Find resources by a combination of name, kind
 	Query(context.Context, *QueryPayload) (res ResourceCollection, err error)
 	// List all resources sorted by rating and name
 	List(context.Context, *ListPayload) (res ResourceCollection, err error)
 	// Find all versions of a resource by its id
 	VersionsByID(context.Context, *VersionsByIDPayload) (res *Versions, err error)
-	// Find resource using name, type and version of resource
-	ByTypeNameVersion(context.Context, *ByTypeNameVersionPayload) (res *Version, err error)
+	// Find resource using name, kind and version of resource
+	ByKindNameVersion(context.Context, *ByKindNameVersionPayload) (res *Version, err error)
 	// Find a resource using its version's id
 	ByVersionID(context.Context, *ByVersionIDPayload) (res *Version, err error)
-	// Find resources using name and type
-	ByTypeName(context.Context, *ByTypeNamePayload) (res ResourceCollection, err error)
+	// Find resources using name and kind
+	ByKindName(context.Context, *ByKindNamePayload) (res ResourceCollection, err error)
 	// Find a resource using it's id
 	ByID(context.Context, *ByIDPayload) (res *Resource, err error)
 }
@@ -40,14 +40,14 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [7]string{"Query", "List", "VersionsByID", "ByTypeNameVersion", "ByVersionId", "ByTypeName", "ById"}
+var MethodNames = [7]string{"Query", "List", "VersionsByID", "ByKindNameVersion", "ByVersionId", "ByKindName", "ById"}
 
 // QueryPayload is the payload type of the resource service Query method.
 type QueryPayload struct {
 	// Name of resource
 	Name string
-	// Type of resource
-	Type string
+	// Kind of resource
+	Kind string
 	// Maximum number of resources to be returned
 	Limit uint
 }
@@ -76,18 +76,18 @@ type Versions struct {
 	Versions []*Version
 }
 
-// ByTypeNameVersionPayload is the payload type of the resource service
-// ByTypeNameVersion method.
-type ByTypeNameVersionPayload struct {
-	// type of resource
-	Type string
+// ByKindNameVersionPayload is the payload type of the resource service
+// ByKindNameVersion method.
+type ByKindNameVersionPayload struct {
+	// kind of resource
+	Kind string
 	// name of resource
 	Name string
 	// version of resource
 	Version string
 }
 
-// Version is the result type of the resource service ByTypeNameVersion method.
+// Version is the result type of the resource service ByKindNameVersion method.
 type Version struct {
 	// ID is the unique id of resource's version
 	ID uint
@@ -116,11 +116,11 @@ type ByVersionIDPayload struct {
 	VersionID uint
 }
 
-// ByTypeNamePayload is the payload type of the resource service ByTypeName
+// ByKindNamePayload is the payload type of the resource service ByKindName
 // method.
-type ByTypeNamePayload struct {
-	// Type of resource
-	Type string
+type ByKindNamePayload struct {
+	// kind of resource
+	Kind string
 	// Name of resource
 	Name string
 }
@@ -139,8 +139,8 @@ type Resource struct {
 	Name string
 	// Type of catalog to which resource belongs
 	Catalog *Catalog
-	// Type of resource
-	Type string
+	// Kind of resource
+	Kind string
 	// Latest version of resource
 	LatestVersion *Version
 	// Tags related to resource
@@ -369,8 +369,8 @@ func newResourceInfo(vres *resourceviews.ResourceView) *Resource {
 	if vres.Name != nil {
 		res.Name = *vres.Name
 	}
-	if vres.Type != nil {
-		res.Type = *vres.Type
+	if vres.Kind != nil {
+		res.Kind = *vres.Kind
 	}
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
@@ -400,8 +400,8 @@ func newResourceWithoutVersion(vres *resourceviews.ResourceView) *Resource {
 	if vres.Name != nil {
 		res.Name = *vres.Name
 	}
-	if vres.Type != nil {
-		res.Type = *vres.Type
+	if vres.Kind != nil {
+		res.Kind = *vres.Kind
 	}
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
@@ -430,8 +430,8 @@ func newResource(vres *resourceviews.ResourceView) *Resource {
 	if vres.Name != nil {
 		res.Name = *vres.Name
 	}
-	if vres.Type != nil {
-		res.Type = *vres.Type
+	if vres.Kind != nil {
+		res.Kind = *vres.Kind
 	}
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
@@ -463,7 +463,7 @@ func newResourceViewInfo(res *Resource) *resourceviews.ResourceView {
 	vres := &resourceviews.ResourceView{
 		ID:     &res.ID,
 		Name:   &res.Name,
-		Type:   &res.Type,
+		Kind:   &res.Kind,
 		Rating: &res.Rating,
 	}
 	if res.Catalog != nil {
@@ -484,7 +484,7 @@ func newResourceViewWithoutVersion(res *Resource) *resourceviews.ResourceView {
 	vres := &resourceviews.ResourceView{
 		ID:     &res.ID,
 		Name:   &res.Name,
-		Type:   &res.Type,
+		Kind:   &res.Kind,
 		Rating: &res.Rating,
 	}
 	if res.Catalog != nil {
@@ -508,7 +508,7 @@ func newResourceView(res *Resource) *resourceviews.ResourceView {
 	vres := &resourceviews.ResourceView{
 		ID:     &res.ID,
 		Name:   &res.Name,
-		Type:   &res.Type,
+		Kind:   &res.Kind,
 		Rating: &res.Rating,
 	}
 	if res.Catalog != nil {
@@ -784,8 +784,8 @@ func transformResourceviewsResourceViewToResource(v *resourceviews.ResourceView)
 	if v.Name != nil {
 		res.Name = *v.Name
 	}
-	if v.Type != nil {
-		res.Type = *v.Type
+	if v.Kind != nil {
+		res.Kind = *v.Kind
 	}
 	if v.Rating != nil {
 		res.Rating = *v.Rating
@@ -857,7 +857,7 @@ func transformResourceToResourceviewsResourceView(v *Resource) *resourceviews.Re
 	res := &resourceviews.ResourceView{
 		ID:     &v.ID,
 		Name:   &v.Name,
-		Type:   &v.Type,
+		Kind:   &v.Kind,
 		Rating: &v.Rating,
 	}
 	if v.Catalog != nil {

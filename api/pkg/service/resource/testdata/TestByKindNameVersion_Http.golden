@@ -12,9 +12,9 @@
 		"name": "tekton",
 		"catalog": {
 			"id": 1,
-			"type": "task"
+			"type": "official"
 		},
-		"type": "task",
+		"kind": "task",
 		"tags": [
 			{
 				"id": 2,

@@ -6,7 +6,7 @@
 			"id": 2,
 			"type": "community"
 		},
-		"type": "task",
+		"kind": "task",
 		"latestVersion": {
 			"id": 9,
 			"version": "0.1",
@@ -27,7 +27,7 @@
 			"id": 1,
 			"type": "official"
 		},
-		"type": "task",
+		"kind": "task",
 		"latestVersion": {
 			"id": 3,
 			"version": "0.1",

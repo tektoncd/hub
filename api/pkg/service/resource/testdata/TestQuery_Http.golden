@@ -6,7 +6,7 @@
 			"id": 1,
 			"type": "official"
 		},
-		"type": "pipeline",
+		"kind": "pipeline",
 		"latestVersion": {
 			"id": 4,
 			"version": "0.2",
