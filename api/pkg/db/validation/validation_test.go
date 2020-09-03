@@ -36,7 +36,7 @@ func TestCheckNotNull(t *testing.T) {
 
 	err = db.Create(&model.Resource{Name: "tekton", Rating: 4}).Error
 	assert.Error(t, err)
-	assert.Equal(t, "pq: null value in column \"type\" violates not-null constraint", err.Error())
+	assert.Equal(t, "pq: null value in column \"kind\" violates not-null constraint", err.Error())
 
 	err = db.Create(&model.ResourceVersion{Version: "", Description: "task", URL: "", DisplayName: "Task", MinPipelinesVersion: ""}).Error
 	assert.Error(t, err)

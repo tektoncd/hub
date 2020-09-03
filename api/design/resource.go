@@ -19,18 +19,18 @@ import (
 )
 
 var _ = Service("resource", func() {
-	Description("The resource service provides details about all type of resources")
+	Description("The resource service provides details about all kind of resources")
 
 	Error("internal-error", ErrorResult, "Internal Server Error")
 	Error("not-found", ErrorResult, "Resource Not Found Error")
 
 	Method("Query", func() {
-		Description("Find resources by a combination of name, type")
+		Description("Find resources by a combination of name, kind")
 		Payload(func() {
 			Attribute("name", String, "Name of resource", func() {
 				Default("")
 			})
-			Attribute("type", String, "Type of resource", func() {
+			Attribute("kind", String, "Kind of resource", func() {
 				Enum("task", "pipeline", "")
 				Default("")
 			})
@@ -45,7 +45,7 @@ var _ = Service("resource", func() {
 		HTTP(func() {
 			GET("/query")
 			Param("name")
-			Param("type")
+			Param("kind")
 			Param("limit")
 
 			Response(StatusOK)
@@ -91,23 +91,23 @@ var _ = Service("resource", func() {
 		})
 	})
 
-	Method("ByTypeNameVersion", func() {
-		Description("Find resource using name, type and version of resource")
+	Method("ByKindNameVersion", func() {
+		Description("Find resource using name, kind and version of resource")
 		Payload(func() {
-			Attribute("type", String, "type of resource", func() {
+			Attribute("kind", String, "kind of resource", func() {
 				Enum("task", "pipeline")
 			})
 			Attribute("name", String, "name of resource")
 			Attribute("version", String, "version of resource")
 
-			Required("type", "name", "version")
+			Required("kind", "name", "version")
 		})
 		Result(ResVersion, func() {
 			View("default")
 		})
 
 		HTTP(func() {
-			GET("/resource/{type}/{name}/{version}")
+			GET("/resource/{kind}/{name}/{version}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
@@ -134,21 +134,21 @@ var _ = Service("resource", func() {
 		})
 	})
 
-	Method("ByTypeName", func() {
-		Description("Find resources using name and type")
+	Method("ByKindName", func() {
+		Description("Find resources using name and kind")
 		Payload(func() {
-			Attribute("type", String, "Type of resource", func() {
+			Attribute("kind", String, "kind of resource", func() {
 				Enum("task", "pipeline")
 			})
 			Attribute("name", String, "Name of resource")
-			Required("type", "name")
+			Required("kind", "name")
 		})
 		Result(CollectionOf(Resource), func() {
 			View("withoutVersion")
 		})
 
 		HTTP(func() {
-			GET("/resource/{type}/{name}")
+			GET("/resource/{kind}/{name}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)

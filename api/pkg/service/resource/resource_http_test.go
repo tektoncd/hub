@@ -42,7 +42,7 @@ func TestQuery_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	QueryChecker(tc).Test(t, http.MethodGet, "/query?name=build&type=pipeline&limit=1").Check().
+	QueryChecker(tc).Test(t, http.MethodGet, "/query?name=build&kind=pipeline&limit=1").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -160,20 +160,20 @@ func TestVersionsByID_Http_ErrorCase(t *testing.T) {
 	})
 }
 
-func ByTypeNameVersionChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+func ByKindNameVersionChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	checker := goahttpcheck.New()
 	checker.Mount(
-		server.NewByTypeNameVersionHandler,
-		server.MountByTypeNameVersionHandler,
-		resource.NewByTypeNameVersionEndpoint(New(tc)))
+		server.NewByKindNameVersionHandler,
+		server.MountByKindNameVersionHandler,
+		resource.NewByKindNameVersionEndpoint(New(tc)))
 	return checker
 }
 
-func TestByTypeNameVersion_Http(t *testing.T) {
+func TestByKindNameVersion_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByTypeNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/task/tekton/0.1.1").Check().
+	ByKindNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/task/tekton/0.1.1").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -186,11 +186,11 @@ func TestByTypeNameVersion_Http(t *testing.T) {
 	})
 }
 
-func TestByTypeNameVersion_Http_ErrorCase(t *testing.T) {
+func TestByKindNameVersion_Http_ErrorCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByTypeNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/task/foo/0.1.1").Check().
+	ByKindNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/task/foo/0.1.1").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -248,20 +248,20 @@ func TestByVersionID_Http_ErrorCase(t *testing.T) {
 	})
 }
 
-func ByTypeNameChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+func ByKindNameChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	checker := goahttpcheck.New()
 	checker.Mount(
-		server.NewByTypeNameHandler,
-		server.MountByTypeNameHandler,
-		resource.NewByTypeNameEndpoint(New(tc)))
+		server.NewByKindNameHandler,
+		server.MountByKindNameHandler,
+		resource.NewByKindNameEndpoint(New(tc)))
 	return checker
 }
 
-func TestByTypeName_Http(t *testing.T) {
+func TestByKindName_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByTypeNameChecker(tc).Test(t, http.MethodGet, "/resource/task/img").Check().
+	ByKindNameChecker(tc).Test(t, http.MethodGet, "/resource/task/img").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -274,11 +274,11 @@ func TestByTypeName_Http(t *testing.T) {
 	})
 }
 
-func TestByTypeName_Http_ErrorCase(t *testing.T) {
+func TestByKindName_Http_ErrorCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByTypeNameChecker(tc).Test(t, http.MethodGet, "/resource/task/foo").Check().
+	ByKindNameChecker(tc).Test(t, http.MethodGet, "/resource/task/foo").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)

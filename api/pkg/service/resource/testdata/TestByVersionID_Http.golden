@@ -12,9 +12,9 @@
 		"name": "build-pipeline",
 		"catalog": {
 			"id": 1,
-			"type": "pipeline"
+			"type": "official"
 		},
-		"type": "pipeline",
+		"kind": "pipeline",
 		"tags": [
 			{
 				"id": 4,

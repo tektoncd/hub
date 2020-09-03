@@ -29,9 +29,9 @@ type VersionsByIDResponseBody struct {
 	Versions []*VersionResponseBody `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
 }
 
-// ByTypeNameVersionResponseBody is the type of the "resource" service
-// "ByTypeNameVersion" endpoint HTTP response body.
-type ByTypeNameVersionResponseBody struct {
+// ByKindNameVersionResponseBody is the type of the "resource" service
+// "ByKindNameVersion" endpoint HTTP response body.
+type ByKindNameVersionResponseBody struct {
 	// ID is the unique id of resource's version
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Version of resource
@@ -75,9 +75,9 @@ type ByVersionIDResponseBody struct {
 	Resource *ResourceResponseBody `form:"resource,omitempty" json:"resource,omitempty" xml:"resource,omitempty"`
 }
 
-// ByTypeNameResponseBody is the type of the "resource" service "ByTypeName"
+// ByKindNameResponseBody is the type of the "resource" service "ByKindName"
 // endpoint HTTP response body.
-type ByTypeNameResponseBody []*ResourceResponse
+type ByKindNameResponseBody []*ResourceResponse
 
 // ByIDResponseBody is the type of the "resource" service "ById" endpoint HTTP
 // response body.
@@ -88,8 +88,8 @@ type ByIDResponseBody struct {
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Type of catalog to which resource belongs
 	Catalog *CatalogResponseBody `form:"catalog,omitempty" json:"catalog,omitempty" xml:"catalog,omitempty"`
-	// Type of resource
-	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
+	// Kind of resource
+	Kind *string `form:"kind,omitempty" json:"kind,omitempty" xml:"kind,omitempty"`
 	// Latest version of resource
 	LatestVersion *VersionResponseBody `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
 	// Tags related to resource
@@ -190,10 +190,10 @@ type VersionsByIDNotFoundResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
-// ByTypeNameVersionInternalErrorResponseBody is the type of the "resource"
-// service "ByTypeNameVersion" endpoint HTTP response body for the
+// ByKindNameVersionInternalErrorResponseBody is the type of the "resource"
+// service "ByKindNameVersion" endpoint HTTP response body for the
 // "internal-error" error.
-type ByTypeNameVersionInternalErrorResponseBody struct {
+type ByKindNameVersionInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -209,9 +209,9 @@ type ByTypeNameVersionInternalErrorResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
-// ByTypeNameVersionNotFoundResponseBody is the type of the "resource" service
-// "ByTypeNameVersion" endpoint HTTP response body for the "not-found" error.
-type ByTypeNameVersionNotFoundResponseBody struct {
+// ByKindNameVersionNotFoundResponseBody is the type of the "resource" service
+// "ByKindNameVersion" endpoint HTTP response body for the "not-found" error.
+type ByKindNameVersionNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -263,9 +263,9 @@ type ByVersionIDNotFoundResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
-// ByTypeNameInternalErrorResponseBody is the type of the "resource" service
-// "ByTypeName" endpoint HTTP response body for the "internal-error" error.
-type ByTypeNameInternalErrorResponseBody struct {
+// ByKindNameInternalErrorResponseBody is the type of the "resource" service
+// "ByKindName" endpoint HTTP response body for the "internal-error" error.
+type ByKindNameInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -281,9 +281,9 @@ type ByTypeNameInternalErrorResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
-// ByTypeNameNotFoundResponseBody is the type of the "resource" service
-// "ByTypeName" endpoint HTTP response body for the "not-found" error.
-type ByTypeNameNotFoundResponseBody struct {
+// ByKindNameNotFoundResponseBody is the type of the "resource" service
+// "ByKindName" endpoint HTTP response body for the "not-found" error.
+type ByKindNameNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -343,8 +343,8 @@ type ResourceResponse struct {
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Type of catalog to which resource belongs
 	Catalog *CatalogResponse `form:"catalog,omitempty" json:"catalog,omitempty" xml:"catalog,omitempty"`
-	// Type of resource
-	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
+	// Kind of resource
+	Kind *string `form:"kind,omitempty" json:"kind,omitempty" xml:"kind,omitempty"`
 	// Latest version of resource
 	LatestVersion *VersionResponse `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
 	// Tags related to resource
@@ -423,8 +423,8 @@ type ResourceResponseBody struct {
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Type of catalog to which resource belongs
 	Catalog *CatalogResponseBody `form:"catalog,omitempty" json:"catalog,omitempty" xml:"catalog,omitempty"`
-	// Type of resource
-	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
+	// Kind of resource
+	Kind *string `form:"kind,omitempty" json:"kind,omitempty" xml:"kind,omitempty"`
 	// Latest version of resource
 	LatestVersion *VersionResponseBody `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
 	// Tags related to resource
@@ -558,9 +558,9 @@ func NewVersionsByIDNotFound(body *VersionsByIDNotFoundResponseBody) *goa.Servic
 	return v
 }
 
-// NewByTypeNameVersionVersionOK builds a "resource" service
-// "ByTypeNameVersion" endpoint result from a HTTP "OK" response.
-func NewByTypeNameVersionVersionOK(body *ByTypeNameVersionResponseBody) *resourceviews.VersionView {
+// NewByKindNameVersionVersionOK builds a "resource" service
+// "ByKindNameVersion" endpoint result from a HTTP "OK" response.
+func NewByKindNameVersionVersionOK(body *ByKindNameVersionResponseBody) *resourceviews.VersionView {
 	v := &resourceviews.VersionView{
 		ID:                  body.ID,
 		Version:             body.Version,
@@ -576,9 +576,9 @@ func NewByTypeNameVersionVersionOK(body *ByTypeNameVersionResponseBody) *resourc
 	return v
 }
 
-// NewByTypeNameVersionInternalError builds a resource service
-// ByTypeNameVersion endpoint internal-error error.
-func NewByTypeNameVersionInternalError(body *ByTypeNameVersionInternalErrorResponseBody) *goa.ServiceError {
+// NewByKindNameVersionInternalError builds a resource service
+// ByKindNameVersion endpoint internal-error error.
+func NewByKindNameVersionInternalError(body *ByKindNameVersionInternalErrorResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -591,9 +591,9 @@ func NewByTypeNameVersionInternalError(body *ByTypeNameVersionInternalErrorRespo
 	return v
 }
 
-// NewByTypeNameVersionNotFound builds a resource service ByTypeNameVersion
+// NewByKindNameVersionNotFound builds a resource service ByKindNameVersion
 // endpoint not-found error.
-func NewByTypeNameVersionNotFound(body *ByTypeNameVersionNotFoundResponseBody) *goa.ServiceError {
+func NewByKindNameVersionNotFound(body *ByKindNameVersionNotFoundResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -654,9 +654,9 @@ func NewByVersionIDNotFound(body *ByVersionIDNotFoundResponseBody) *goa.ServiceE
 	return v
 }
 
-// NewByTypeNameResourceCollectionOK builds a "resource" service "ByTypeName"
+// NewByKindNameResourceCollectionOK builds a "resource" service "ByKindName"
 // endpoint result from a HTTP "OK" response.
-func NewByTypeNameResourceCollectionOK(body ByTypeNameResponseBody) resourceviews.ResourceCollectionView {
+func NewByKindNameResourceCollectionOK(body ByKindNameResponseBody) resourceviews.ResourceCollectionView {
 	v := make([]*resourceviews.ResourceView, len(body))
 	for i, val := range body {
 		v[i] = unmarshalResourceResponseToResourceviewsResourceView(val)
@@ -664,9 +664,9 @@ func NewByTypeNameResourceCollectionOK(body ByTypeNameResponseBody) resourceview
 	return v
 }
 
-// NewByTypeNameInternalError builds a resource service ByTypeName endpoint
+// NewByKindNameInternalError builds a resource service ByKindName endpoint
 // internal-error error.
-func NewByTypeNameInternalError(body *ByTypeNameInternalErrorResponseBody) *goa.ServiceError {
+func NewByKindNameInternalError(body *ByKindNameInternalErrorResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -679,9 +679,9 @@ func NewByTypeNameInternalError(body *ByTypeNameInternalErrorResponseBody) *goa.
 	return v
 }
 
-// NewByTypeNameNotFound builds a resource service ByTypeName endpoint
+// NewByKindNameNotFound builds a resource service ByKindName endpoint
 // not-found error.
-func NewByTypeNameNotFound(body *ByTypeNameNotFoundResponseBody) *goa.ServiceError {
+func NewByKindNameNotFound(body *ByKindNameNotFoundResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -700,7 +700,7 @@ func NewByIDResourceOK(body *ByIDResponseBody) *resourceviews.ResourceView {
 	v := &resourceviews.ResourceView{
 		ID:     body.ID,
 		Name:   body.Name,
-		Type:   body.Type,
+		Kind:   body.Kind,
 		Rating: body.Rating,
 	}
 	v.Catalog = unmarshalCatalogResponseBodyToResourceviewsCatalogView(body.Catalog)
@@ -866,9 +866,9 @@ func ValidateVersionsByIDNotFoundResponseBody(body *VersionsByIDNotFoundResponse
 	return
 }
 
-// ValidateByTypeNameVersionInternalErrorResponseBody runs the validations
-// defined on ByTypeNameVersion_internal-error_Response_Body
-func ValidateByTypeNameVersionInternalErrorResponseBody(body *ByTypeNameVersionInternalErrorResponseBody) (err error) {
+// ValidateByKindNameVersionInternalErrorResponseBody runs the validations
+// defined on ByKindNameVersion_internal-error_Response_Body
+func ValidateByKindNameVersionInternalErrorResponseBody(body *ByKindNameVersionInternalErrorResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -890,9 +890,9 @@ func ValidateByTypeNameVersionInternalErrorResponseBody(body *ByTypeNameVersionI
 	return
 }
 
-// ValidateByTypeNameVersionNotFoundResponseBody runs the validations defined
-// on ByTypeNameVersion_not-found_Response_Body
-func ValidateByTypeNameVersionNotFoundResponseBody(body *ByTypeNameVersionNotFoundResponseBody) (err error) {
+// ValidateByKindNameVersionNotFoundResponseBody runs the validations defined
+// on ByKindNameVersion_not-found_Response_Body
+func ValidateByKindNameVersionNotFoundResponseBody(body *ByKindNameVersionNotFoundResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -962,9 +962,9 @@ func ValidateByVersionIDNotFoundResponseBody(body *ByVersionIDNotFoundResponseBo
 	return
 }
 
-// ValidateByTypeNameInternalErrorResponseBody runs the validations defined on
-// ByTypeName_internal-error_Response_Body
-func ValidateByTypeNameInternalErrorResponseBody(body *ByTypeNameInternalErrorResponseBody) (err error) {
+// ValidateByKindNameInternalErrorResponseBody runs the validations defined on
+// ByKindName_internal-error_Response_Body
+func ValidateByKindNameInternalErrorResponseBody(body *ByKindNameInternalErrorResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -986,9 +986,9 @@ func ValidateByTypeNameInternalErrorResponseBody(body *ByTypeNameInternalErrorRe
 	return
 }
 
-// ValidateByTypeNameNotFoundResponseBody runs the validations defined on
-// ByTypeName_not-found_Response_Body
-func ValidateByTypeNameNotFoundResponseBody(body *ByTypeNameNotFoundResponseBody) (err error) {
+// ValidateByKindNameNotFoundResponseBody runs the validations defined on
+// ByKindName_not-found_Response_Body
+func ValidateByKindNameNotFoundResponseBody(body *ByKindNameNotFoundResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -1069,8 +1069,8 @@ func ValidateResourceResponse(body *ResourceResponse) (err error) {
 	if body.Catalog == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("catalog", "body"))
 	}
-	if body.Type == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("type", "body"))
+	if body.Kind == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "body"))
 	}
 	if body.LatestVersion == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("latestVersion", "body"))
@@ -1243,8 +1243,8 @@ func ValidateResourceResponseBody(body *ResourceResponseBody) (err error) {
 	if body.Catalog == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("catalog", "body"))
 	}
-	if body.Type == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("type", "body"))
+	if body.Kind == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "body"))
 	}
 	if body.LatestVersion == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("latestVersion", "body"))

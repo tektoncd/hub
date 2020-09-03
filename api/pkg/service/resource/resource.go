@@ -45,12 +45,12 @@ func New(api app.BaseConfig) resource.Service {
 	return &service{api.Logger(), api.DB()}
 }
 
-// Find resources based on name, type or both
+// Find resources based on name, kind or both
 func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (res resource.ResourceCollection, err error) {
 
 	q := s.db.Scopes(
 		withResourceDetails,
-		filterByType(p.Type),
+		filterByKind(p.Kind),
 		matchesName(p.Name),
 	).Limit(p.Limit)
 
@@ -90,11 +90,11 @@ func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayl
 	return res, nil
 }
 
-func (s *service) ByTypeNameVersion(ctx context.Context, p *resource.ByTypeNameVersionPayload) (res *resource.Version, err error) {
+func (s *service) ByKindNameVersion(ctx context.Context, p *resource.ByKindNameVersionPayload) (res *resource.Version, err error) {
 
 	q := s.db.Scopes(
 		withVersionInfo(p.Version),
-		filterByType(p.Type),
+		filterByKind(p.Kind),
 		filterByName(p.Name))
 
 	var r model.Resource
@@ -127,12 +127,12 @@ func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayloa
 	return versionInfoFromVersion(v), nil
 }
 
-// find resources using name and type
-func (s *service) ByTypeName(ctx context.Context, p *resource.ByTypeNamePayload) (res resource.ResourceCollection, err error) {
+// find resources using name and kind
+func (s *service) ByKindName(ctx context.Context, p *resource.ByKindNamePayload) (res resource.ResourceCollection, err error) {
 
 	q := s.db.Scopes(
 		withResourceDetails,
-		filterByType(p.Type),
+		filterByKind(p.Kind),
 		filterByName(p.Name))
 
 	return s.resourcesForQuery(q)
@@ -187,7 +187,7 @@ func initResource(r model.Resource) *resource.Resource {
 		ID:   r.Catalog.ID,
 		Type: r.Catalog.Type,
 	}
-	res.Type = r.Type
+	res.Kind = r.Kind
 	res.Rating = r.Rating
 
 	lv := (r.Versions)[len(r.Versions)-1]
@@ -242,12 +242,12 @@ func versionInfoFromResource(r model.Resource) *resource.Version {
 	res := &resource.Resource{
 		ID:     r.ID,
 		Name:   r.Name,
-		Type:   r.Type,
+		Kind:   r.Kind,
 		Rating: r.Rating,
 		Tags:   tags,
 		Catalog: &resource.Catalog{
 			ID:   r.Catalog.ID,
-			Type: r.Type,
+			Type: r.Catalog.Type,
 		},
 	}
 
@@ -335,14 +335,14 @@ func filterByID(id uint) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func filterByType(t string) func(db *gorm.DB) *gorm.DB {
+func filterByKind(t string) func(db *gorm.DB) *gorm.DB {
 	if t == "" {
 		return noop
 	}
 
 	t = strings.ToLower(t)
 	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("LOWER(type) = ?", t)
+		return db.Where("LOWER(kind) = ?", t)
 	}
 }
 

@@ -47,7 +47,7 @@ type (
 	Resource struct {
 		gorm.Model
 		Name      string `gorm:"not null;default:null"`
-		Type      string `gorm:"not null;default:null"`
+		Kind      string `gorm:"not null;default:null"`
 		Rating    float64
 		Catalog   Catalog
 		CatalogID uint

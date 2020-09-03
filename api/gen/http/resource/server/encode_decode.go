@@ -35,7 +35,7 @@ func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 	return func(r *http.Request) (interface{}, error) {
 		var (
 			name  string
-			type_ string
+			kind  string
 			limit uint
 			err   error
 		)
@@ -43,12 +43,12 @@ func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 		if nameRaw != "" {
 			name = nameRaw
 		}
-		type_Raw := r.URL.Query().Get("type")
-		if type_Raw != "" {
-			type_ = type_Raw
+		kindRaw := r.URL.Query().Get("kind")
+		if kindRaw != "" {
+			kind = kindRaw
 		}
-		if !(type_ == "task" || type_ == "pipeline" || type_ == "") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("type_", type_, []interface{}{"task", "pipeline", ""}))
+		if !(kind == "task" || kind == "pipeline" || kind == "") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline", ""}))
 		}
 		{
 			limitRaw := r.URL.Query().Get("limit")
@@ -65,7 +65,7 @@ func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 		if err != nil {
 			return nil, err
 		}
-		payload := NewQueryPayload(name, type_, limit)
+		payload := NewQueryPayload(name, kind, limit)
 
 		return payload, nil
 	}
@@ -259,48 +259,48 @@ func EncodeVersionsByIDError(encoder func(context.Context, http.ResponseWriter) 
 	}
 }
 
-// EncodeByTypeNameVersionResponse returns an encoder for responses returned by
-// the resource ByTypeNameVersion endpoint.
-func EncodeByTypeNameVersionResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeByKindNameVersionResponse returns an encoder for responses returned by
+// the resource ByKindNameVersion endpoint.
+func EncodeByKindNameVersionResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(*resourceviews.Version)
 		enc := encoder(ctx, w)
-		body := NewByTypeNameVersionResponseBody(res.Projected)
+		body := NewByKindNameVersionResponseBody(res.Projected)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
 }
 
-// DecodeByTypeNameVersionRequest returns a decoder for requests sent to the
-// resource ByTypeNameVersion endpoint.
-func DecodeByTypeNameVersionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+// DecodeByKindNameVersionRequest returns a decoder for requests sent to the
+// resource ByKindNameVersion endpoint.
+func DecodeByKindNameVersionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			type_   string
+			kind    string
 			name    string
 			version string
 			err     error
 
 			params = mux.Vars(r)
 		)
-		type_ = params["type"]
-		if !(type_ == "task" || type_ == "pipeline") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("type_", type_, []interface{}{"task", "pipeline"}))
+		kind = params["kind"]
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
 		}
 		name = params["name"]
 		version = params["version"]
 		if err != nil {
 			return nil, err
 		}
-		payload := NewByTypeNameVersionPayload(type_, name, version)
+		payload := NewByKindNameVersionPayload(kind, name, version)
 
 		return payload, nil
 	}
 }
 
-// EncodeByTypeNameVersionError returns an encoder for errors returned by the
-// ByTypeNameVersion resource endpoint.
-func EncodeByTypeNameVersionError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+// EncodeByKindNameVersionError returns an encoder for errors returned by the
+// ByKindNameVersion resource endpoint.
+func EncodeByKindNameVersionError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
 	encodeError := goahttp.ErrorEncoder(encoder, formatter)
 	return func(ctx context.Context, w http.ResponseWriter, v error) error {
 		en, ok := v.(ErrorNamer)
@@ -315,7 +315,7 @@ func EncodeByTypeNameVersionError(encoder func(context.Context, http.ResponseWri
 			if formatter != nil {
 				body = formatter(res)
 			} else {
-				body = NewByTypeNameVersionInternalErrorResponseBody(res)
+				body = NewByKindNameVersionInternalErrorResponseBody(res)
 			}
 			w.Header().Set("goa-error", "internal-error")
 			w.WriteHeader(http.StatusInternalServerError)
@@ -327,7 +327,7 @@ func EncodeByTypeNameVersionError(encoder func(context.Context, http.ResponseWri
 			if formatter != nil {
 				body = formatter(res)
 			} else {
-				body = NewByTypeNameVersionNotFoundResponseBody(res)
+				body = NewByKindNameVersionNotFoundResponseBody(res)
 			}
 			w.Header().Set("goa-error", "not-found")
 			w.WriteHeader(http.StatusNotFound)
@@ -417,9 +417,9 @@ func EncodeByVersionIDError(encoder func(context.Context, http.ResponseWriter) g
 	}
 }
 
-// EncodeByTypeNameResponse returns an encoder for responses returned by the
-// resource ByTypeName endpoint.
-func EncodeByTypeNameResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeByKindNameResponse returns an encoder for responses returned by the
+// resource ByKindName endpoint.
+func EncodeByKindNameResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(resourceviews.ResourceCollection)
 		enc := encoder(ctx, w)
@@ -429,34 +429,34 @@ func EncodeByTypeNameResponse(encoder func(context.Context, http.ResponseWriter)
 	}
 }
 
-// DecodeByTypeNameRequest returns a decoder for requests sent to the resource
-// ByTypeName endpoint.
-func DecodeByTypeNameRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+// DecodeByKindNameRequest returns a decoder for requests sent to the resource
+// ByKindName endpoint.
+func DecodeByKindNameRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			type_ string
-			name  string
-			err   error
+			kind string
+			name string
+			err  error
 
 			params = mux.Vars(r)
 		)
-		type_ = params["type"]
-		if !(type_ == "task" || type_ == "pipeline") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("type_", type_, []interface{}{"task", "pipeline"}))
+		kind = params["kind"]
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
 		}
 		name = params["name"]
 		if err != nil {
 			return nil, err
 		}
-		payload := NewByTypeNamePayload(type_, name)
+		payload := NewByKindNamePayload(kind, name)
 
 		return payload, nil
 	}
 }
 
-// EncodeByTypeNameError returns an encoder for errors returned by the
-// ByTypeName resource endpoint.
-func EncodeByTypeNameError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+// EncodeByKindNameError returns an encoder for errors returned by the
+// ByKindName resource endpoint.
+func EncodeByKindNameError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
 	encodeError := goahttp.ErrorEncoder(encoder, formatter)
 	return func(ctx context.Context, w http.ResponseWriter, v error) error {
 		en, ok := v.(ErrorNamer)
@@ -471,7 +471,7 @@ func EncodeByTypeNameError(encoder func(context.Context, http.ResponseWriter) go
 			if formatter != nil {
 				body = formatter(res)
 			} else {
-				body = NewByTypeNameInternalErrorResponseBody(res)
+				body = NewByKindNameInternalErrorResponseBody(res)
 			}
 			w.Header().Set("goa-error", "internal-error")
 			w.WriteHeader(http.StatusInternalServerError)
@@ -483,7 +483,7 @@ func EncodeByTypeNameError(encoder func(context.Context, http.ResponseWriter) go
 			if formatter != nil {
 				body = formatter(res)
 			} else {
-				body = NewByTypeNameNotFoundResponseBody(res)
+				body = NewByKindNameNotFoundResponseBody(res)
 			}
 			w.Header().Set("goa-error", "not-found")
 			w.WriteHeader(http.StatusNotFound)
@@ -580,7 +580,7 @@ func marshalResourceviewsResourceViewToResourceResponseWithoutVersion(v *resourc
 	res := &ResourceResponseWithoutVersion{
 		ID:     *v.ID,
 		Name:   *v.Name,
-		Type:   *v.Type,
+		Kind:   *v.Kind,
 		Rating: *v.Rating,
 	}
 	if v.Catalog != nil {
@@ -659,7 +659,7 @@ func marshalResourceviewsResourceViewToResourceResponseBodyInfo(v *resourceviews
 	res := &ResourceResponseBodyInfo{
 		ID:     *v.ID,
 		Name:   *v.Name,
-		Type:   *v.Type,
+		Kind:   *v.Kind,
 		Rating: *v.Rating,
 	}
 	if v.Catalog != nil {

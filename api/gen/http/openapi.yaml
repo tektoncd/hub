@@ -92,7 +92,7 @@ paths:
       tags:
       - resource
       summary: Query resource
-      description: Find resources by a combination of name, type
+      description: Find resources by a combination of name, kind
       operationId: resource#Query
       parameters:
       - name: name
@@ -101,9 +101,9 @@ paths:
         required: false
         type: string
         default: ""
-      - name: type
+      - name: kind
         in: query
-        description: Type of resource
+        description: Kind of resource
         required: false
         type: string
         default: ""
@@ -288,17 +288,17 @@ paths:
             $ref: '#/definitions/ResourceVersionsByIDInternalErrorResponseBody'
       schemes:
       - http
-  /resource/{type}/{name}:
+  /resource/{kind}/{name}:
     get:
       tags:
       - resource
-      summary: ByTypeName resource
-      description: Find resources using name and type
-      operationId: resource#ByTypeName
+      summary: ByKindName resource
+      description: Find resources using name and kind
+      operationId: resource#ByKindName
       parameters:
-      - name: type
+      - name: kind
         in: path
-        description: Type of resource
+        description: kind of resource
         required: true
         type: string
         enum:
@@ -317,24 +317,24 @@ paths:
         "404":
           description: Not Found response.
           schema:
-            $ref: '#/definitions/ResourceByTypeNameNotFoundResponseBody'
+            $ref: '#/definitions/ResourceByKindNameNotFoundResponseBody'
         "500":
           description: Internal Server Error response.
           schema:
-            $ref: '#/definitions/ResourceByTypeNameInternalErrorResponseBody'
+            $ref: '#/definitions/ResourceByKindNameInternalErrorResponseBody'
       schemes:
       - http
-  /resource/{type}/{name}/{version}:
+  /resource/{kind}/{name}/{version}:
     get:
       tags:
       - resource
-      summary: ByTypeNameVersion resource
-      description: Find resource using name, type and version of resource
-      operationId: resource#ByTypeNameVersion
+      summary: ByKindNameVersion resource
+      description: Find resource using name, kind and version of resource
+      operationId: resource#ByKindNameVersion
       parameters:
-      - name: type
+      - name: kind
         in: path
-        description: type of resource
+        description: kind of resource
         required: true
         type: string
         enum:
@@ -354,15 +354,15 @@ paths:
         "200":
           description: OK response.
           schema:
-            $ref: '#/definitions/ResourceByTypeNameVersionResponseBody'
+            $ref: '#/definitions/ResourceByKindNameVersionResponseBody'
         "404":
           description: Not Found response.
           schema:
-            $ref: '#/definitions/ResourceByTypeNameVersionNotFoundResponseBody'
+            $ref: '#/definitions/ResourceByKindNameVersionNotFoundResponseBody'
         "500":
           description: Internal Server Error response.
           schema:
-            $ref: '#/definitions/ResourceByTypeNameVersionInternalErrorResponseBody'
+            $ref: '#/definitions/ResourceByKindNameVersionInternalErrorResponseBody'
       schemes:
       - http
   /resource/version/{versionID}:
@@ -1207,6 +1207,10 @@ definitions:
         description: ID is the unique id of the resource
         example: 1
         format: int64
+      kind:
+        type: string
+        description: Kind of resource
+        example: task
       latestVersion:
         $ref: '#/definitions/VersionResponseBodyWithoutResource'
       name:
@@ -1226,10 +1230,6 @@ definitions:
         example:
         - id: 1
           name: image-build
-      type:
-        type: string
-        description: Type of resource
-        example: task
       versions:
         type: array
         items:
@@ -1246,6 +1246,7 @@ definitions:
         id: 1
         type: community
       id: 1
+      kind: task
       latestVersion:
         description: Buildah task builds source into a container image and then pushes it to a container registry.
         displayName: Buildah
@@ -1260,7 +1261,6 @@ definitions:
       tags:
       - id: 1
         name: image-build
-      type: task
       versions:
       - id: 1
         version: "0.1"
@@ -1270,12 +1270,12 @@ definitions:
     - id
     - name
     - catalog
-    - type
+    - kind
     - latestVersion
     - tags
     - rating
     - versions
-  ResourceByTypeNameInternalErrorResponseBody:
+  ResourceByKindNameInternalErrorResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -1318,7 +1318,7 @@ definitions:
     - temporary
     - timeout
     - fault
-  ResourceByTypeNameNotFoundResponseBody:
+  ResourceByKindNameNotFoundResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -1361,7 +1361,7 @@ definitions:
     - temporary
     - timeout
     - fault
-  ResourceByTypeNameVersionInternalErrorResponseBody:
+  ResourceByKindNameVersionInternalErrorResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -1404,7 +1404,7 @@ definitions:
     - temporary
     - timeout
     - fault
-  ResourceByTypeNameVersionNotFoundResponseBody:
+  ResourceByKindNameVersionNotFoundResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -1447,7 +1447,7 @@ definitions:
     - temporary
     - timeout
     - fault
-  ResourceByTypeNameVersionResponseBody:
+  ResourceByKindNameVersionResponseBody:
     title: 'Mediatype identifier: application/vnd.hub.version; view=default'
     type: object
     properties:
@@ -1489,7 +1489,7 @@ definitions:
         description: Web URL of resource's yaml file of the version
         example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
         format: uri
-    description: ByTypeNameVersionResponseBody result type (default view)
+    description: ByKindNameVersionResponseBody result type (default view)
     example:
       description: Buildah task builds source into a container image and then pushes it to a container registry.
       displayName: Buildah
@@ -1501,12 +1501,12 @@ definitions:
           id: 1
           type: community
         id: 1
+        kind: task
         name: buildah
         rating: 4.3
         tags:
         - id: 1
           name: image-build
-        type: task
       updatedAt: 2020-01-01 12:00:00 +0000 UTC
       version: "0.1"
       webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
@@ -1660,12 +1660,12 @@ definitions:
           id: 1
           type: community
         id: 1
+        kind: task
         name: buildah
         rating: 4.3
         tags:
         - id: 1
           name: image-build
-        type: task
       updatedAt: 2020-01-01 12:00:00 +0000 UTC
       version: "0.1"
       webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
@@ -1819,6 +1819,7 @@ definitions:
         id: 1
         type: community
       id: 1
+      kind: task
       latestVersion:
         description: Buildah task builds source into a container image and then pushes it to a container registry.
         displayName: Buildah
@@ -1833,7 +1834,6 @@ definitions:
       tags:
       - id: 1
         name: image-build
-      type: task
       versions:
       - id: 1
         version: "0.1"
@@ -1843,6 +1843,7 @@ definitions:
         id: 1
         type: community
       id: 1
+      kind: task
       latestVersion:
         description: Buildah task builds source into a container image and then pushes it to a container registry.
         displayName: Buildah
@@ -1857,7 +1858,6 @@ definitions:
       tags:
       - id: 1
         name: image-build
-      type: task
       versions:
       - id: 1
         version: "0.1"
@@ -1867,6 +1867,7 @@ definitions:
         id: 1
         type: community
       id: 1
+      kind: task
       latestVersion:
         description: Buildah task builds source into a container image and then pushes it to a container registry.
         displayName: Buildah
@@ -1881,7 +1882,6 @@ definitions:
       tags:
       - id: 1
         name: image-build
-      type: task
       versions:
       - id: 1
         version: "0.1"
@@ -1891,6 +1891,7 @@ definitions:
         id: 1
         type: community
       id: 1
+      kind: task
       latestVersion:
         description: Buildah task builds source into a container image and then pushes it to a container registry.
         displayName: Buildah
@@ -1905,7 +1906,6 @@ definitions:
       tags:
       - id: 1
         name: image-build
-      type: task
       versions:
       - id: 1
         version: "0.1"
@@ -1922,6 +1922,10 @@ definitions:
         description: ID is the unique id of the resource
         example: 1
         format: int64
+      kind:
+        type: string
+        description: Kind of resource
+        example: task
       name:
         type: string
         description: Name of resource
@@ -1939,27 +1943,23 @@ definitions:
         example:
         - id: 1
           name: image-build
-      type:
-        type: string
-        description: Type of resource
-        example: task
     description: The resource type describes resource information. (default view)
     example:
       catalog:
         id: 1
         type: community
       id: 1
+      kind: task
       name: buildah
       rating: 4.3
       tags:
       - id: 1
         name: image-build
-      type: task
     required:
     - id
     - name
     - catalog
-    - type
+    - kind
     - tags
     - rating
   ResourceResponseWithoutVersion:
@@ -1973,6 +1973,10 @@ definitions:
         description: ID is the unique id of the resource
         example: 1
         format: int64
+      kind:
+        type: string
+        description: Kind of resource
+        example: task
       latestVersion:
         $ref: '#/definitions/VersionResponseWithoutResource'
       name:
@@ -1992,16 +1996,13 @@ definitions:
         example:
         - id: 1
           name: image-build
-      type:
-        type: string
-        description: Type of resource
-        example: task
     description: The resource type describes resource information. (withoutVersion view) (default view)
     example:
       catalog:
         id: 1
         type: community
       id: 1
+      kind: task
       latestVersion:
         description: Buildah task builds source into a container image and then pushes it to a container registry.
         displayName: Buildah
@@ -2016,12 +2017,11 @@ definitions:
       tags:
       - id: 1
         name: image-build
-      type: task
     required:
     - id
     - name
     - catalog
-    - type
+    - kind
     - latestVersion
     - tags
     - rating

@@ -17,7 +17,7 @@ import (
 
 // BuildQueryPayload builds the payload for the resource Query endpoint from
 // CLI flags.
-func BuildQueryPayload(resourceQueryName string, resourceQueryType string, resourceQueryLimit string) (*resource.QueryPayload, error) {
+func BuildQueryPayload(resourceQueryName string, resourceQueryKind string, resourceQueryLimit string) (*resource.QueryPayload, error) {
 	var err error
 	var name string
 	{
@@ -25,12 +25,12 @@ func BuildQueryPayload(resourceQueryName string, resourceQueryType string, resou
 			name = resourceQueryName
 		}
 	}
-	var type_ string
+	var kind string
 	{
-		if resourceQueryType != "" {
-			type_ = resourceQueryType
-			if !(type_ == "task" || type_ == "pipeline" || type_ == "") {
-				err = goa.MergeErrors(err, goa.InvalidEnumValueError("type_", type_, []interface{}{"task", "pipeline", ""}))
+		if resourceQueryKind != "" {
+			kind = resourceQueryKind
+			if !(kind == "task" || kind == "pipeline" || kind == "") {
+				err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline", ""}))
 			}
 			if err != nil {
 				return nil, err
@@ -50,7 +50,7 @@ func BuildQueryPayload(resourceQueryName string, resourceQueryType string, resou
 	}
 	v := &resource.QueryPayload{}
 	v.Name = name
-	v.Type = type_
+	v.Kind = kind
 	v.Limit = limit
 
 	return v, nil
@@ -96,15 +96,15 @@ func BuildVersionsByIDPayload(resourceVersionsByIDID string) (*resource.Versions
 	return v, nil
 }
 
-// BuildByTypeNameVersionPayload builds the payload for the resource
-// ByTypeNameVersion endpoint from CLI flags.
-func BuildByTypeNameVersionPayload(resourceByTypeNameVersionType string, resourceByTypeNameVersionName string, resourceByTypeNameVersionVersion string) (*resource.ByTypeNameVersionPayload, error) {
+// BuildByKindNameVersionPayload builds the payload for the resource
+// ByKindNameVersion endpoint from CLI flags.
+func BuildByKindNameVersionPayload(resourceByKindNameVersionKind string, resourceByKindNameVersionName string, resourceByKindNameVersionVersion string) (*resource.ByKindNameVersionPayload, error) {
 	var err error
-	var type_ string
+	var kind string
 	{
-		type_ = resourceByTypeNameVersionType
-		if !(type_ == "task" || type_ == "pipeline") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("type_", type_, []interface{}{"task", "pipeline"}))
+		kind = resourceByKindNameVersionKind
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
 		}
 		if err != nil {
 			return nil, err
@@ -112,14 +112,14 @@ func BuildByTypeNameVersionPayload(resourceByTypeNameVersionType string, resourc
 	}
 	var name string
 	{
-		name = resourceByTypeNameVersionName
+		name = resourceByKindNameVersionName
 	}
 	var version string
 	{
-		version = resourceByTypeNameVersionVersion
+		version = resourceByKindNameVersionVersion
 	}
-	v := &resource.ByTypeNameVersionPayload{}
-	v.Type = type_
+	v := &resource.ByKindNameVersionPayload{}
+	v.Kind = kind
 	v.Name = name
 	v.Version = version
 
@@ -145,15 +145,15 @@ func BuildByVersionIDPayload(resourceByVersionIDVersionID string) (*resource.ByV
 	return v, nil
 }
 
-// BuildByTypeNamePayload builds the payload for the resource ByTypeName
+// BuildByKindNamePayload builds the payload for the resource ByKindName
 // endpoint from CLI flags.
-func BuildByTypeNamePayload(resourceByTypeNameType string, resourceByTypeNameName string) (*resource.ByTypeNamePayload, error) {
+func BuildByKindNamePayload(resourceByKindNameKind string, resourceByKindNameName string) (*resource.ByKindNamePayload, error) {
 	var err error
-	var type_ string
+	var kind string
 	{
-		type_ = resourceByTypeNameType
-		if !(type_ == "task" || type_ == "pipeline") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("type_", type_, []interface{}{"task", "pipeline"}))
+		kind = resourceByKindNameKind
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
 		}
 		if err != nil {
 			return nil, err
@@ -161,10 +161,10 @@ func BuildByTypeNamePayload(resourceByTypeNameType string, resourceByTypeNameNam
 	}
 	var name string
 	{
-		name = resourceByTypeNameName
+		name = resourceByKindNameName
 	}
-	v := &resource.ByTypeNamePayload{}
-	v.Type = type_
+	v := &resource.ByKindNamePayload{}
+	v.Kind = kind
 	v.Name = name
 
 	return v, nil

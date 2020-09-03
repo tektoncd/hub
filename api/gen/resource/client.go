@@ -18,21 +18,21 @@ type Client struct {
 	QueryEndpoint             goa.Endpoint
 	ListEndpoint              goa.Endpoint
 	VersionsByIDEndpoint      goa.Endpoint
-	ByTypeNameVersionEndpoint goa.Endpoint
+	ByKindNameVersionEndpoint goa.Endpoint
 	ByVersionIDEndpoint       goa.Endpoint
-	ByTypeNameEndpoint        goa.Endpoint
+	ByKindNameEndpoint        goa.Endpoint
 	ByIDEndpoint              goa.Endpoint
 }
 
 // NewClient initializes a "resource" service client given the endpoints.
-func NewClient(query, list, versionsByID, byTypeNameVersion, byVersionID, byTypeName, byID goa.Endpoint) *Client {
+func NewClient(query, list, versionsByID, byKindNameVersion, byVersionID, byKindName, byID goa.Endpoint) *Client {
 	return &Client{
 		QueryEndpoint:             query,
 		ListEndpoint:              list,
 		VersionsByIDEndpoint:      versionsByID,
-		ByTypeNameVersionEndpoint: byTypeNameVersion,
+		ByKindNameVersionEndpoint: byKindNameVersion,
 		ByVersionIDEndpoint:       byVersionID,
-		ByTypeNameEndpoint:        byTypeName,
+		ByKindNameEndpoint:        byKindName,
 		ByIDEndpoint:              byID,
 	}
 }
@@ -67,11 +67,11 @@ func (c *Client) VersionsByID(ctx context.Context, p *VersionsByIDPayload) (res 
 	return ires.(*Versions), nil
 }
 
-// ByTypeNameVersion calls the "ByTypeNameVersion" endpoint of the "resource"
+// ByKindNameVersion calls the "ByKindNameVersion" endpoint of the "resource"
 // service.
-func (c *Client) ByTypeNameVersion(ctx context.Context, p *ByTypeNameVersionPayload) (res *Version, err error) {
+func (c *Client) ByKindNameVersion(ctx context.Context, p *ByKindNameVersionPayload) (res *Version, err error) {
 	var ires interface{}
-	ires, err = c.ByTypeNameVersionEndpoint(ctx, p)
+	ires, err = c.ByKindNameVersionEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
@@ -88,10 +88,10 @@ func (c *Client) ByVersionID(ctx context.Context, p *ByVersionIDPayload) (res *V
 	return ires.(*Version), nil
 }
 
-// ByTypeName calls the "ByTypeName" endpoint of the "resource" service.
-func (c *Client) ByTypeName(ctx context.Context, p *ByTypeNamePayload) (res ResourceCollection, err error) {
+// ByKindName calls the "ByKindName" endpoint of the "resource" service.
+func (c *Client) ByKindName(ctx context.Context, p *ByKindNamePayload) (res ResourceCollection, err error) {
 	var ires interface{}
-	ires, err = c.ByTypeNameEndpoint(ctx, p)
+	ires, err = c.ByKindNameEndpoint(ctx, p)
 	if err != nil {
 		return
 	}

@@ -14,7 +14,7 @@
 
 - id: 1
   name: tekton
-  type: task
+  kind: task
   rating: 5
   catalog_id: 1
   created_at: 2016-01-01 12:30:12 UTC
@@ -22,7 +22,7 @@
 
 - id: 2
   name: build-pipeline
-  type: pipeline
+  kind: pipeline
   rating: 4.4
   catalog_id: 1
   created_at: 2016-01-01 12:30:12 UTC
@@ -30,16 +30,15 @@
 
 - id: 3
   name: img
-  type: task
+  kind: task
   rating: 2
   catalog_id: 1
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
 
-
 - id: 4
   name: buildah
-  type: task
+  kind: task
   rating: 1.3
   catalog_id: 1
   created_at: 2016-01-01 12:30:12 UTC
@@ -47,7 +46,7 @@
 
 - id: 5
   name: tkn
-  type: task
+  kind: task
   rating: 5
   catalog_id: 1
   created_at: 2016-01-01 12:30:12 UTC
@@ -55,7 +54,7 @@
 
 - id: 6
   name: img
-  type: task
+  kind: task
   rating: 2.3
   catalog_id: 2
   created_at: 2016-01-01 12:30:12 UTC

@@ -30,8 +30,8 @@ func UsageCommands() string {
 	return `category list
 auth authenticate
 status status
-resource (query|list|versions-by-id|by-type-name-version|by-version-id|by-type-name|by-id)
-rating (get|update)
+resource (query|list|versions-by-id|by-kind-name-version|by-version-id|by-kind-name|by-id)
+rating get
 `
 }
 
@@ -40,8 +40,8 @@ func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
 		os.Args[0] + ` auth authenticate --code "Omnis quas deserunt nostrum assumenda."` + "\n" +
 		os.Args[0] + ` status status` + "\n" +
-		os.Args[0] + ` resource query --name "Assumenda suscipit aut minima autem ut." --type "task" --limit 12718807288466121090` + "\n" +
-		os.Args[0] + ` rating get --id 1029125940089474859 --token "Reprehenderit libero soluta sapiente deleniti voluptatem distinctio."` + "\n" +
+		os.Args[0] + ` resource query --name "Quia nihil officia itaque." --kind "" --limit 10573978620324901534` + "\n" +
+		os.Args[0] + ` rating get --id 14236020767980603451 --token "Quo velit vitae."` + "\n" +
 		""
 }
 
@@ -72,7 +72,7 @@ func ParseEndpoint(
 
 		resourceQueryFlags     = flag.NewFlagSet("query", flag.ExitOnError)
 		resourceQueryNameFlag  = resourceQueryFlags.String("name", "", "")
-		resourceQueryTypeFlag  = resourceQueryFlags.String("type", "", "")
+		resourceQueryKindFlag  = resourceQueryFlags.String("kind", "", "")
 		resourceQueryLimitFlag = resourceQueryFlags.String("limit", "100", "")
 
 		resourceListFlags     = flag.NewFlagSet("list", flag.ExitOnError)
@@ -81,17 +81,17 @@ func ParseEndpoint(
 		resourceVersionsByIDFlags  = flag.NewFlagSet("versions-by-id", flag.ExitOnError)
 		resourceVersionsByIDIDFlag = resourceVersionsByIDFlags.String("id", "REQUIRED", "ID of a resource")
 
-		resourceByTypeNameVersionFlags       = flag.NewFlagSet("by-type-name-version", flag.ExitOnError)
-		resourceByTypeNameVersionTypeFlag    = resourceByTypeNameVersionFlags.String("type", "REQUIRED", "type of resource")
-		resourceByTypeNameVersionNameFlag    = resourceByTypeNameVersionFlags.String("name", "REQUIRED", "name of resource")
-		resourceByTypeNameVersionVersionFlag = resourceByTypeNameVersionFlags.String("version", "REQUIRED", "version of resource")
+		resourceByKindNameVersionFlags       = flag.NewFlagSet("by-kind-name-version", flag.ExitOnError)
+		resourceByKindNameVersionKindFlag    = resourceByKindNameVersionFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByKindNameVersionNameFlag    = resourceByKindNameVersionFlags.String("name", "REQUIRED", "name of resource")
+		resourceByKindNameVersionVersionFlag = resourceByKindNameVersionFlags.String("version", "REQUIRED", "version of resource")
 
 		resourceByVersionIDFlags         = flag.NewFlagSet("by-version-id", flag.ExitOnError)
 		resourceByVersionIDVersionIDFlag = resourceByVersionIDFlags.String("version-id", "REQUIRED", "Version ID of a resource's version")
 
-		resourceByTypeNameFlags    = flag.NewFlagSet("by-type-name", flag.ExitOnError)
-		resourceByTypeNameTypeFlag = resourceByTypeNameFlags.String("type", "REQUIRED", "Type of resource")
-		resourceByTypeNameNameFlag = resourceByTypeNameFlags.String("name", "REQUIRED", "Name of resource")
+		resourceByKindNameFlags    = flag.NewFlagSet("by-kind-name", flag.ExitOnError)
+		resourceByKindNameKindFlag = resourceByKindNameFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByKindNameNameFlag = resourceByKindNameFlags.String("name", "REQUIRED", "Name of resource")
 
 		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
 		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
@@ -120,9 +120,9 @@ func ParseEndpoint(
 	resourceQueryFlags.Usage = resourceQueryUsage
 	resourceListFlags.Usage = resourceListUsage
 	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
-	resourceByTypeNameVersionFlags.Usage = resourceByTypeNameVersionUsage
+	resourceByKindNameVersionFlags.Usage = resourceByKindNameVersionUsage
 	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
-	resourceByTypeNameFlags.Usage = resourceByTypeNameUsage
+	resourceByKindNameFlags.Usage = resourceByKindNameUsage
 	resourceByIDFlags.Usage = resourceByIDUsage
 
 	ratingFlags.Usage = ratingUsage
@@ -201,14 +201,14 @@ func ParseEndpoint(
 			case "versions-by-id":
 				epf = resourceVersionsByIDFlags
 
-			case "by-type-name-version":
-				epf = resourceByTypeNameVersionFlags
+			case "by-kind-name-version":
+				epf = resourceByKindNameVersionFlags
 
 			case "by-version-id":
 				epf = resourceByVersionIDFlags
 
-			case "by-type-name":
-				epf = resourceByTypeNameFlags
+			case "by-kind-name":
+				epf = resourceByKindNameFlags
 
 			case "by-id":
 				epf = resourceByIDFlags
@@ -271,22 +271,22 @@ func ParseEndpoint(
 			switch epn {
 			case "query":
 				endpoint = c.Query()
-				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryTypeFlag, *resourceQueryLimitFlag)
+				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryKindFlag, *resourceQueryLimitFlag)
 			case "list":
 				endpoint = c.List()
 				data, err = resourcec.BuildListPayload(*resourceListLimitFlag)
 			case "versions-by-id":
 				endpoint = c.VersionsByID()
 				data, err = resourcec.BuildVersionsByIDPayload(*resourceVersionsByIDIDFlag)
-			case "by-type-name-version":
-				endpoint = c.ByTypeNameVersion()
-				data, err = resourcec.BuildByTypeNameVersionPayload(*resourceByTypeNameVersionTypeFlag, *resourceByTypeNameVersionNameFlag, *resourceByTypeNameVersionVersionFlag)
+			case "by-kind-name-version":
+				endpoint = c.ByKindNameVersion()
+				data, err = resourcec.BuildByKindNameVersionPayload(*resourceByKindNameVersionKindFlag, *resourceByKindNameVersionNameFlag, *resourceByKindNameVersionVersionFlag)
 			case "by-version-id":
 				endpoint = c.ByVersionID()
 				data, err = resourcec.BuildByVersionIDPayload(*resourceByVersionIDVersionIDFlag)
-			case "by-type-name":
-				endpoint = c.ByTypeName()
-				data, err = resourcec.BuildByTypeNamePayload(*resourceByTypeNameTypeFlag, *resourceByTypeNameNameFlag)
+			case "by-kind-name":
+				endpoint = c.ByKindName()
+				data, err = resourcec.BuildByKindNamePayload(*resourceByKindNameKindFlag, *resourceByKindNameNameFlag)
 			case "by-id":
 				endpoint = c.ByID()
 				data, err = resourcec.BuildByIDPayload(*resourceByIDIDFlag)
@@ -350,7 +350,7 @@ func authAuthenticateUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] auth authenticate -code STRING
 
 Authenticates users against GitHub OAuth
-    -code STRING: 
+    -code STRING:
 
 Example:
     `+os.Args[0]+` auth authenticate --code "Omnis quas deserunt nostrum assumenda."
@@ -382,17 +382,17 @@ Example:
 
 // resourceUsage displays the usage of the resource command and its subcommands.
 func resourceUsage() {
-	fmt.Fprintf(os.Stderr, `The resource service provides details about all type of resources
+	fmt.Fprintf(os.Stderr, `The resource service provides details about all kind of resources
 Usage:
     %s [globalflags] resource COMMAND [flags]
 
 COMMAND:
-    query: Find resources by a combination of name, type
+    query: Find resources by a combination of name, kind
     list: List all resources sorted by rating and name
     versions-by-id: Find all versions of a resource by its id
-    by-type-name-version: Find resource using name, type and version of resource
+    by-kind-name-version: Find resource using name, kind and version of resource
     by-version-id: Find a resource using its version's id
-    by-type-name: Find resources using name and type
+    by-kind-name: Find resources using name and kind
     by-id: Find a resource using it's id
 
 Additional help:
@@ -400,15 +400,15 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func resourceQueryUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -type STRING -limit UINT
+	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -kind STRING -limit UINT
 
-Find resources by a combination of name, type
-    -name STRING: 
-    -type STRING: 
-    -limit UINT: 
+Find resources by a combination of name, kind
+    -name STRING:
+    -kind STRING:
+    -limit UINT:
 
 Example:
-    `+os.Args[0]+` resource query --name "Assumenda suscipit aut minima autem ut." --type "task" --limit 12718807288466121090
+    `+os.Args[0]+` resource query --name "Quia nihil officia itaque." --kind "" --limit 10573978620324901534
 `, os.Args[0])
 }
 
@@ -416,7 +416,7 @@ func resourceListUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] resource list -limit UINT
 
 List all resources sorted by rating and name
-    -limit UINT: 
+    -limit UINT:
 
 Example:
     `+os.Args[0]+` resource list --limit 312993529425355973
@@ -434,16 +434,16 @@ Example:
 `, os.Args[0])
 }
 
-func resourceByTypeNameVersionUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource by-type-name-version -type STRING -name STRING -version STRING
+func resourceByKindNameVersionUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-kind-name-version -kind STRING -name STRING -version STRING
 
-Find resource using name, type and version of resource
-    -type STRING: type of resource
+Find resource using name, kind and version of resource
+    -kind STRING: kind of resource
     -name STRING: name of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-type-name-version --type "task" --name "Placeat voluptas et consequuntur voluptas et enim." --version "Rerum repellat aut."
+    `+os.Args[0]+` resource by-kind-name-version --kind "task" --name "Modi facere cumque omnis non." --version "Aut quos distinctio ipsam."
 `, os.Args[0])
 }
 
@@ -458,15 +458,15 @@ Example:
 `, os.Args[0])
 }
 
-func resourceByTypeNameUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource by-type-name -type STRING -name STRING
+func resourceByKindNameUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-kind-name -kind STRING -name STRING
 
-Find resources using name and type
-    -type STRING: Type of resource
+Find resources using name and kind
+    -kind STRING: kind of resource
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-type-name --type "pipeline" --name "Corrupti non quo velit."
+    `+os.Args[0]+` resource by-kind-name --kind "pipeline" --name "Fugiat earum ut sunt est ea."
 `, os.Args[0])
 }
 
@@ -500,7 +500,7 @@ func ratingGetUsage() {
 
 Find user's rating for a resource
     -id UINT: ID of a resource
-    -token STRING: 
+    -token STRING:
 
 Example:
     `+os.Args[0]+` rating get --id 1029125940089474859 --token "Reprehenderit libero soluta sapiente deleniti voluptatem distinctio."
@@ -511,9 +511,9 @@ func ratingUpdateUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] rating update -body JSON -id UINT -token STRING
 
 Update user's rating for a resource
-    -body JSON: 
+    -body JSON:
     -id UINT: ID of a resource
-    -token STRING: 
+    -token STRING:
 
 Example:
     `+os.Args[0]+` rating update --body '{

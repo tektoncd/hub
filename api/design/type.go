@@ -99,7 +99,7 @@ var ResVersion = ResultType("application/vnd.hub.version", "Version", func() {
 				"id":      1,
 				"name":    "buildah",
 				"catalog": Val{"id": 1, "type": "community"},
-				"type":    "task",
+				"kind":    "task",
 				"tags":    []Val{{"id": 1, "name": "image-build"}},
 				"rating":  4.3,
 			})
@@ -158,8 +158,8 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 			Value(Val{"id": 1, "type": "community"})
 		})
 	})
-	Attribute("type", String, "Type of resource", func() {
-		Example("type", "task")
+	Attribute("kind", String, "Kind of resource", func() {
+		Example("kind", "task")
 	})
 	Attribute("latestVersion", "Version", "Latest version of resource", func() {
 		View("withoutResource")
@@ -202,7 +202,7 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 		Attribute("id")
 		Attribute("name")
 		Attribute("catalog")
-		Attribute("type")
+		Attribute("kind")
 		Attribute("tags")
 		Attribute("rating")
 	})
@@ -211,7 +211,7 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 		Attribute("id")
 		Attribute("name")
 		Attribute("catalog")
-		Attribute("type")
+		Attribute("kind")
 		Attribute("latestVersion")
 		Attribute("tags")
 		Attribute("rating")
@@ -221,7 +221,7 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 		Attribute("id")
 		Attribute("name")
 		Attribute("catalog")
-		Attribute("type")
+		Attribute("kind")
 		Attribute("latestVersion")
 		Attribute("tags")
 		Attribute("rating")
@@ -230,7 +230,7 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 		})
 	})
 
-	Required("id", "name", "catalog", "type", "latestVersion", "tags", "rating", "versions")
+	Required("id", "name", "catalog", "kind", "latestVersion", "tags", "rating", "versions")
 })
 
 var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {

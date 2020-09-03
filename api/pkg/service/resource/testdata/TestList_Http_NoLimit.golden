@@ -6,7 +6,7 @@
 			"id": 1,
 			"type": "official"
 		},
-		"type": "task",
+		"kind": "task",
 		"latestVersion": {
 			"id": 5,
 			"version": "0.2",
@@ -32,7 +32,7 @@
 			"id": 1,
 			"type": "official"
 		},
-		"type": "task",
+		"kind": "task",
 		"latestVersion": {
 			"id": 8,
 			"version": "0.1",
@@ -58,7 +58,7 @@
 			"id": 1,
 			"type": "official"
 		},
-		"type": "pipeline",
+		"kind": "pipeline",
 		"latestVersion": {
 			"id": 4,
 			"version": "0.2",
@@ -88,7 +88,7 @@
 			"id": 2,
 			"type": "community"
 		},
-		"type": "task",
+		"kind": "task",
 		"latestVersion": {
 			"id": 9,
 			"version": "0.1",
@@ -109,7 +109,7 @@
 			"id": 1,
 			"type": "official"
 		},
-		"type": "task",
+		"kind": "task",
 		"latestVersion": {
 			"id": 3,
 			"version": "0.1",
@@ -135,7 +135,7 @@
 			"id": 1,
 			"type": "official"
 		},
-		"type": "task",
+		"kind": "task",
 		"latestVersion": {
 			"id": 7,
 			"version": "0.1",

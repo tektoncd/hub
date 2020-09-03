@@ -55,8 +55,8 @@ type ResourceView struct {
 	Name *string
 	// Type of catalog to which resource belongs
 	Catalog *CatalogView
-	// Type of resource
-	Type *string
+	// Kind of resource
+	Kind *string
 	// Latest version of resource
 	LatestVersion *VersionView
 	// Tags related to resource
@@ -121,7 +121,7 @@ var (
 			"id",
 			"name",
 			"catalog",
-			"type",
+			"kind",
 			"tags",
 			"rating",
 		},
@@ -129,7 +129,7 @@ var (
 			"id",
 			"name",
 			"catalog",
-			"type",
+			"kind",
 			"latestVersion",
 			"tags",
 			"rating",
@@ -138,7 +138,7 @@ var (
 			"id",
 			"name",
 			"catalog",
-			"type",
+			"kind",
 			"latestVersion",
 			"tags",
 			"rating",
@@ -195,7 +195,7 @@ var (
 			"id",
 			"name",
 			"catalog",
-			"type",
+			"kind",
 			"tags",
 			"rating",
 		},
@@ -203,7 +203,7 @@ var (
 			"id",
 			"name",
 			"catalog",
-			"type",
+			"kind",
 			"latestVersion",
 			"tags",
 			"rating",
@@ -212,7 +212,7 @@ var (
 			"id",
 			"name",
 			"catalog",
-			"type",
+			"kind",
 			"latestVersion",
 			"tags",
 			"rating",
@@ -328,8 +328,8 @@ func ValidateResourceViewInfo(result *ResourceView) (err error) {
 	if result.Catalog == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("catalog", "result"))
 	}
-	if result.Type == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("type", "result"))
+	if result.Kind == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "result"))
 	}
 	if result.Tags == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "result"))
@@ -364,8 +364,8 @@ func ValidateResourceViewWithoutVersion(result *ResourceView) (err error) {
 	if result.Catalog == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("catalog", "result"))
 	}
-	if result.Type == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("type", "result"))
+	if result.Kind == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "result"))
 	}
 	if result.Tags == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "result"))
@@ -405,8 +405,8 @@ func ValidateResourceView(result *ResourceView) (err error) {
 	if result.Catalog == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("catalog", "result"))
 	}
-	if result.Type == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("type", "result"))
+	if result.Kind == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "result"))
 	}
 	if result.Tags == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "result"))

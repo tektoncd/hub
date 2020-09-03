@@ -26,9 +26,9 @@ type VersionsByIDResponseBody struct {
 	Versions []*VersionResponseBodyMin `form:"versions" json:"versions" xml:"versions"`
 }
 
-// ByTypeNameVersionResponseBody is the type of the "resource" service
-// "ByTypeNameVersion" endpoint HTTP response body.
-type ByTypeNameVersionResponseBody struct {
+// ByKindNameVersionResponseBody is the type of the "resource" service
+// "ByKindNameVersion" endpoint HTTP response body.
+type ByKindNameVersionResponseBody struct {
 	// ID is the unique id of resource's version
 	ID uint `form:"id" json:"id" xml:"id"`
 	// Version of resource
@@ -81,8 +81,8 @@ type ByIDResponseBody struct {
 	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog to which resource belongs
 	Catalog *CatalogResponseBody `form:"catalog" json:"catalog" xml:"catalog"`
-	// Type of resource
-	Type string `form:"type" json:"type" xml:"type"`
+	// Kind of resource
+	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Latest version of resource
 	LatestVersion *VersionResponseBodyWithoutResource `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
 	// Tags related to resource
@@ -183,10 +183,10 @@ type VersionsByIDNotFoundResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
-// ByTypeNameVersionInternalErrorResponseBody is the type of the "resource"
-// service "ByTypeNameVersion" endpoint HTTP response body for the
+// ByKindNameVersionInternalErrorResponseBody is the type of the "resource"
+// service "ByKindNameVersion" endpoint HTTP response body for the
 // "internal-error" error.
-type ByTypeNameVersionInternalErrorResponseBody struct {
+type ByKindNameVersionInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -202,9 +202,9 @@ type ByTypeNameVersionInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
-// ByTypeNameVersionNotFoundResponseBody is the type of the "resource" service
-// "ByTypeNameVersion" endpoint HTTP response body for the "not-found" error.
-type ByTypeNameVersionNotFoundResponseBody struct {
+// ByKindNameVersionNotFoundResponseBody is the type of the "resource" service
+// "ByKindNameVersion" endpoint HTTP response body for the "not-found" error.
+type ByKindNameVersionNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -256,9 +256,9 @@ type ByVersionIDNotFoundResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
-// ByTypeNameInternalErrorResponseBody is the type of the "resource" service
-// "ByTypeName" endpoint HTTP response body for the "internal-error" error.
-type ByTypeNameInternalErrorResponseBody struct {
+// ByKindNameInternalErrorResponseBody is the type of the "resource" service
+// "ByKindName" endpoint HTTP response body for the "internal-error" error.
+type ByKindNameInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -274,9 +274,9 @@ type ByTypeNameInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
-// ByTypeNameNotFoundResponseBody is the type of the "resource" service
-// "ByTypeName" endpoint HTTP response body for the "not-found" error.
-type ByTypeNameNotFoundResponseBody struct {
+// ByKindNameNotFoundResponseBody is the type of the "resource" service
+// "ByKindName" endpoint HTTP response body for the "not-found" error.
+type ByKindNameNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -337,8 +337,8 @@ type ResourceResponseWithoutVersion struct {
 	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog to which resource belongs
 	Catalog *CatalogResponse `form:"catalog" json:"catalog" xml:"catalog"`
-	// Type of resource
-	Type string `form:"type" json:"type" xml:"type"`
+	// Kind of resource
+	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Latest version of resource
 	LatestVersion *VersionResponseWithoutResource `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
 	// Tags related to resource
@@ -404,8 +404,8 @@ type ResourceResponseBodyInfo struct {
 	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog to which resource belongs
 	Catalog *CatalogResponseBody `form:"catalog" json:"catalog" xml:"catalog"`
-	// Type of resource
-	Type string `form:"type" json:"type" xml:"type"`
+	// Kind of resource
+	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Tags related to resource
 	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
 	// Rating of resource
@@ -483,10 +483,10 @@ func NewVersionsByIDResponseBody(res *resourceviews.VersionsView) *VersionsByIDR
 	return body
 }
 
-// NewByTypeNameVersionResponseBody builds the HTTP response body from the
-// result of the "ByTypeNameVersion" endpoint of the "resource" service.
-func NewByTypeNameVersionResponseBody(res *resourceviews.VersionView) *ByTypeNameVersionResponseBody {
-	body := &ByTypeNameVersionResponseBody{
+// NewByKindNameVersionResponseBody builds the HTTP response body from the
+// result of the "ByKindNameVersion" endpoint of the "resource" service.
+func NewByKindNameVersionResponseBody(res *resourceviews.VersionView) *ByKindNameVersionResponseBody {
+	body := &ByKindNameVersionResponseBody{
 		ID:                  *res.ID,
 		Version:             *res.Version,
 		DisplayName:         *res.DisplayName,
@@ -527,7 +527,7 @@ func NewByIDResponseBody(res *resourceviews.ResourceView) *ByIDResponseBody {
 	body := &ByIDResponseBody{
 		ID:     *res.ID,
 		Name:   *res.Name,
-		Type:   *res.Type,
+		Kind:   *res.Kind,
 		Rating: *res.Rating,
 	}
 	if res.Catalog != nil {
@@ -621,11 +621,11 @@ func NewVersionsByIDNotFoundResponseBody(res *goa.ServiceError) *VersionsByIDNot
 	return body
 }
 
-// NewByTypeNameVersionInternalErrorResponseBody builds the HTTP response body
-// from the result of the "ByTypeNameVersion" endpoint of the "resource"
+// NewByKindNameVersionInternalErrorResponseBody builds the HTTP response body
+// from the result of the "ByKindNameVersion" endpoint of the "resource"
 // service.
-func NewByTypeNameVersionInternalErrorResponseBody(res *goa.ServiceError) *ByTypeNameVersionInternalErrorResponseBody {
-	body := &ByTypeNameVersionInternalErrorResponseBody{
+func NewByKindNameVersionInternalErrorResponseBody(res *goa.ServiceError) *ByKindNameVersionInternalErrorResponseBody {
+	body := &ByKindNameVersionInternalErrorResponseBody{
 		Name:      res.Name,
 		ID:        res.ID,
 		Message:   res.Message,
@@ -636,10 +636,10 @@ func NewByTypeNameVersionInternalErrorResponseBody(res *goa.ServiceError) *ByTyp
 	return body
 }
 
-// NewByTypeNameVersionNotFoundResponseBody builds the HTTP response body from
-// the result of the "ByTypeNameVersion" endpoint of the "resource" service.
-func NewByTypeNameVersionNotFoundResponseBody(res *goa.ServiceError) *ByTypeNameVersionNotFoundResponseBody {
-	body := &ByTypeNameVersionNotFoundResponseBody{
+// NewByKindNameVersionNotFoundResponseBody builds the HTTP response body from
+// the result of the "ByKindNameVersion" endpoint of the "resource" service.
+func NewByKindNameVersionNotFoundResponseBody(res *goa.ServiceError) *ByKindNameVersionNotFoundResponseBody {
+	body := &ByKindNameVersionNotFoundResponseBody{
 		Name:      res.Name,
 		ID:        res.ID,
 		Message:   res.Message,
@@ -678,10 +678,10 @@ func NewByVersionIDNotFoundResponseBody(res *goa.ServiceError) *ByVersionIDNotFo
 	return body
 }
 
-// NewByTypeNameInternalErrorResponseBody builds the HTTP response body from
-// the result of the "ByTypeName" endpoint of the "resource" service.
-func NewByTypeNameInternalErrorResponseBody(res *goa.ServiceError) *ByTypeNameInternalErrorResponseBody {
-	body := &ByTypeNameInternalErrorResponseBody{
+// NewByKindNameInternalErrorResponseBody builds the HTTP response body from
+// the result of the "ByKindName" endpoint of the "resource" service.
+func NewByKindNameInternalErrorResponseBody(res *goa.ServiceError) *ByKindNameInternalErrorResponseBody {
+	body := &ByKindNameInternalErrorResponseBody{
 		Name:      res.Name,
 		ID:        res.ID,
 		Message:   res.Message,
@@ -692,10 +692,10 @@ func NewByTypeNameInternalErrorResponseBody(res *goa.ServiceError) *ByTypeNameIn
 	return body
 }
 
-// NewByTypeNameNotFoundResponseBody builds the HTTP response body from the
-// result of the "ByTypeName" endpoint of the "resource" service.
-func NewByTypeNameNotFoundResponseBody(res *goa.ServiceError) *ByTypeNameNotFoundResponseBody {
-	body := &ByTypeNameNotFoundResponseBody{
+// NewByKindNameNotFoundResponseBody builds the HTTP response body from the
+// result of the "ByKindName" endpoint of the "resource" service.
+func NewByKindNameNotFoundResponseBody(res *goa.ServiceError) *ByKindNameNotFoundResponseBody {
+	body := &ByKindNameNotFoundResponseBody{
 		Name:      res.Name,
 		ID:        res.ID,
 		Message:   res.Message,
@@ -735,10 +735,10 @@ func NewByIDNotFoundResponseBody(res *goa.ServiceError) *ByIDNotFoundResponseBod
 }
 
 // NewQueryPayload builds a resource service Query endpoint payload.
-func NewQueryPayload(name string, type_ string, limit uint) *resource.QueryPayload {
+func NewQueryPayload(name string, kind string, limit uint) *resource.QueryPayload {
 	v := &resource.QueryPayload{}
 	v.Name = name
-	v.Type = type_
+	v.Kind = kind
 	v.Limit = limit
 
 	return v
@@ -761,11 +761,11 @@ func NewVersionsByIDPayload(id uint) *resource.VersionsByIDPayload {
 	return v
 }
 
-// NewByTypeNameVersionPayload builds a resource service ByTypeNameVersion
+// NewByKindNameVersionPayload builds a resource service ByKindNameVersion
 // endpoint payload.
-func NewByTypeNameVersionPayload(type_ string, name string, version string) *resource.ByTypeNameVersionPayload {
-	v := &resource.ByTypeNameVersionPayload{}
-	v.Type = type_
+func NewByKindNameVersionPayload(kind string, name string, version string) *resource.ByKindNameVersionPayload {
+	v := &resource.ByKindNameVersionPayload{}
+	v.Kind = kind
 	v.Name = name
 	v.Version = version
 
@@ -780,10 +780,10 @@ func NewByVersionIDPayload(versionID uint) *resource.ByVersionIDPayload {
 	return v
 }
 
-// NewByTypeNamePayload builds a resource service ByTypeName endpoint payload.
-func NewByTypeNamePayload(type_ string, name string) *resource.ByTypeNamePayload {
-	v := &resource.ByTypeNamePayload{}
-	v.Type = type_
+// NewByKindNamePayload builds a resource service ByKindName endpoint payload.
+func NewByKindNamePayload(kind string, name string) *resource.ByKindNamePayload {
+	v := &resource.ByKindNamePayload{}
+	v.Kind = kind
 	v.Name = name
 
 	return v

@@ -23,9 +23,9 @@ type Server struct {
 	Query             http.Handler
 	List              http.Handler
 	VersionsByID      http.Handler
-	ByTypeNameVersion http.Handler
+	ByKindNameVersion http.Handler
 	ByVersionID       http.Handler
-	ByTypeName        http.Handler
+	ByKindName        http.Handler
 	ByID              http.Handler
 	CORS              http.Handler
 }
@@ -66,24 +66,24 @@ func New(
 			{"Query", "GET", "/query"},
 			{"List", "GET", "/resources"},
 			{"VersionsByID", "GET", "/resource/{id}/versions"},
-			{"ByTypeNameVersion", "GET", "/resource/{type}/{name}/{version}"},
+			{"ByKindNameVersion", "GET", "/resource/{kind}/{name}/{version}"},
 			{"ByVersionID", "GET", "/resource/version/{versionID}"},
-			{"ByTypeName", "GET", "/resource/{type}/{name}"},
+			{"ByKindName", "GET", "/resource/{kind}/{name}"},
 			{"ByID", "GET", "/resource/{id}"},
 			{"CORS", "OPTIONS", "/query"},
 			{"CORS", "OPTIONS", "/resources"},
 			{"CORS", "OPTIONS", "/resource/{id}/versions"},
-			{"CORS", "OPTIONS", "/resource/{type}/{name}/{version}"},
+			{"CORS", "OPTIONS", "/resource/{kind}/{name}/{version}"},
 			{"CORS", "OPTIONS", "/resource/version/{versionID}"},
-			{"CORS", "OPTIONS", "/resource/{type}/{name}"},
+			{"CORS", "OPTIONS", "/resource/{kind}/{name}"},
 			{"CORS", "OPTIONS", "/resource/{id}"},
 		},
 		Query:             NewQueryHandler(e.Query, mux, decoder, encoder, errhandler, formatter),
 		List:              NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
 		VersionsByID:      NewVersionsByIDHandler(e.VersionsByID, mux, decoder, encoder, errhandler, formatter),
-		ByTypeNameVersion: NewByTypeNameVersionHandler(e.ByTypeNameVersion, mux, decoder, encoder, errhandler, formatter),
+		ByKindNameVersion: NewByKindNameVersionHandler(e.ByKindNameVersion, mux, decoder, encoder, errhandler, formatter),
 		ByVersionID:       NewByVersionIDHandler(e.ByVersionID, mux, decoder, encoder, errhandler, formatter),
-		ByTypeName:        NewByTypeNameHandler(e.ByTypeName, mux, decoder, encoder, errhandler, formatter),
+		ByKindName:        NewByKindNameHandler(e.ByKindName, mux, decoder, encoder, errhandler, formatter),
 		ByID:              NewByIDHandler(e.ByID, mux, decoder, encoder, errhandler, formatter),
 		CORS:              NewCORSHandler(),
 	}
@@ -97,9 +97,9 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.Query = m(s.Query)
 	s.List = m(s.List)
 	s.VersionsByID = m(s.VersionsByID)
-	s.ByTypeNameVersion = m(s.ByTypeNameVersion)
+	s.ByKindNameVersion = m(s.ByKindNameVersion)
 	s.ByVersionID = m(s.ByVersionID)
-	s.ByTypeName = m(s.ByTypeName)
+	s.ByKindName = m(s.ByKindName)
 	s.ByID = m(s.ByID)
 	s.CORS = m(s.CORS)
 }
@@ -109,9 +109,9 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountQueryHandler(mux, h.Query)
 	MountListHandler(mux, h.List)
 	MountVersionsByIDHandler(mux, h.VersionsByID)
-	MountByTypeNameVersionHandler(mux, h.ByTypeNameVersion)
+	MountByKindNameVersionHandler(mux, h.ByKindNameVersion)
 	MountByVersionIDHandler(mux, h.ByVersionID)
-	MountByTypeNameHandler(mux, h.ByTypeName)
+	MountByKindNameHandler(mux, h.ByKindName)
 	MountByIDHandler(mux, h.ByID)
 	MountCORSHandler(mux, h.CORS)
 }
@@ -269,21 +269,21 @@ func NewVersionsByIDHandler(
 	})
 }
 
-// MountByTypeNameVersionHandler configures the mux to serve the "resource"
-// service "ByTypeNameVersion" endpoint.
-func MountByTypeNameVersionHandler(mux goahttp.Muxer, h http.Handler) {
+// MountByKindNameVersionHandler configures the mux to serve the "resource"
+// service "ByKindNameVersion" endpoint.
+func MountByKindNameVersionHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := handleResourceOrigin(h).(http.HandlerFunc)
 	if !ok {
 		f = func(w http.ResponseWriter, r *http.Request) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/resource/{type}/{name}/{version}", f)
+	mux.Handle("GET", "/resource/{kind}/{name}/{version}", f)
 }
 
-// NewByTypeNameVersionHandler creates a HTTP handler which loads the HTTP
-// request and calls the "resource" service "ByTypeNameVersion" endpoint.
-func NewByTypeNameVersionHandler(
+// NewByKindNameVersionHandler creates a HTTP handler which loads the HTTP
+// request and calls the "resource" service "ByKindNameVersion" endpoint.
+func NewByKindNameVersionHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
 	decoder func(*http.Request) goahttp.Decoder,
@@ -292,13 +292,13 @@ func NewByTypeNameVersionHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
-		decodeRequest  = DecodeByTypeNameVersionRequest(mux, decoder)
-		encodeResponse = EncodeByTypeNameVersionResponse(encoder)
-		encodeError    = EncodeByTypeNameVersionError(encoder, formatter)
+		decodeRequest  = DecodeByKindNameVersionRequest(mux, decoder)
+		encodeResponse = EncodeByKindNameVersionResponse(encoder)
+		encodeError    = EncodeByKindNameVersionError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "ByTypeNameVersion")
+		ctx = context.WithValue(ctx, goa.MethodKey, "ByKindNameVersion")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "resource")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -371,21 +371,21 @@ func NewByVersionIDHandler(
 	})
 }
 
-// MountByTypeNameHandler configures the mux to serve the "resource" service
-// "ByTypeName" endpoint.
-func MountByTypeNameHandler(mux goahttp.Muxer, h http.Handler) {
+// MountByKindNameHandler configures the mux to serve the "resource" service
+// "ByKindName" endpoint.
+func MountByKindNameHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := handleResourceOrigin(h).(http.HandlerFunc)
 	if !ok {
 		f = func(w http.ResponseWriter, r *http.Request) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/resource/{type}/{name}", f)
+	mux.Handle("GET", "/resource/{kind}/{name}", f)
 }
 
-// NewByTypeNameHandler creates a HTTP handler which loads the HTTP request and
-// calls the "resource" service "ByTypeName" endpoint.
-func NewByTypeNameHandler(
+// NewByKindNameHandler creates a HTTP handler which loads the HTTP request and
+// calls the "resource" service "ByKindName" endpoint.
+func NewByKindNameHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
 	decoder func(*http.Request) goahttp.Decoder,
@@ -394,13 +394,13 @@ func NewByTypeNameHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
-		decodeRequest  = DecodeByTypeNameRequest(mux, decoder)
-		encodeResponse = EncodeByTypeNameResponse(encoder)
-		encodeError    = EncodeByTypeNameError(encoder, formatter)
+		decodeRequest  = DecodeByKindNameRequest(mux, decoder)
+		encodeResponse = EncodeByKindNameResponse(encoder)
+		encodeError    = EncodeByKindNameError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "ByTypeName")
+		ctx = context.WithValue(ctx, goa.MethodKey, "ByKindName")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "resource")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -486,9 +486,9 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	mux.Handle("OPTIONS", "/query", f)
 	mux.Handle("OPTIONS", "/resources", f)
 	mux.Handle("OPTIONS", "/resource/{id}/versions", f)
-	mux.Handle("OPTIONS", "/resource/{type}/{name}/{version}", f)
+	mux.Handle("OPTIONS", "/resource/{kind}/{name}/{version}", f)
 	mux.Handle("OPTIONS", "/resource/version/{versionID}", f)
-	mux.Handle("OPTIONS", "/resource/{type}/{name}", f)
+	mux.Handle("OPTIONS", "/resource/{kind}/{name}", f)
 	mux.Handle("OPTIONS", "/resource/{id}", f)
 }
 
