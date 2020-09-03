@@ -1,6 +1,17 @@
-# Development <!-- TOC omit:true -->
+# Development 
 
-[toc]
+- [Getting Started](#getting-started)
+- [Checkout repository](#checkout-your-fork) 
+- [Requirements](#requirements)
+- [API Service](#api-service)
+  * [Running Database](#running-database)
+  * [Running Database Migration](#database-migration)
+  * [Adding GitHub OAuth Configuration](#adding-github-oAuth-configuration)
+  * [Running API Service](#running-api-service)
+  * [Running Tests](#running-tests) 
+  * [Creating JWT for testing](#creating-jwt-for-testing)
+  * [API Documentation](#api-documentation)
+
 
 ## Getting Started
 
@@ -31,24 +42,20 @@ Adding the upstream remote sets you up nicely for regularly [syncing your fork][
 You must install these tools:
 
 1. [`go`][install-go]: The language hub apis are built in.
-2. [`goa`][install-goa]: Framework for api service
-3. [`git`][install-git]: For source control
+1. [`git`][install-git]: For source control
 
 You may need to install more tools depending on the way you want to run the hub.
 
 
-## Running On Local Machine
-
-For running on local machine you need postgresql database.
-
-Two ways to run postgresql database:
-- [Install postgresql][install-pg]
-- Run a postgresql container using [docker][install-docker] / [podman][install-podman]
-
+## API Service
 
 ### Running database
 
-- If you have installed postgresql locally, you need to create a `hub` database.
+Two ways to run postgresql database:
+- [Install postgresql][install-pg] on your local machine, or
+- Run a postgresql container using [docker][install-docker] / [podman][install-podman]
+
+If you have installed postgresql locally, you need to create a `hub` database.
 
   **NOTE:** Use the same configuration mentioned in `.env.dev` or
   update `.env.dev` with the configuration you used. The api service
@@ -71,9 +78,9 @@ Two ways to run postgresql database:
   ```
 
 
-### Populating Database
+### Database Migration
 
-Once the database is up and running, you can run migration to create tables and populate the database.
+Once the database is up and running, you can run migration to create tables.
 
 Run the following command to run migration
 
@@ -86,149 +93,89 @@ Wait until the migration completes and logs to show
   > DB initialisation successful !!
 
 
+### Adding GitHub OAuth Configuration
+
+Create a GitHub OAuth. You can find the steps to create it [here][gh-oauth]. 
+
+Use `http://localhost:8080` as the `Homepage URL` and `Authorization callback URL`.
+
+After creation, add the OAuth Client ID as `GH_CLIENT_ID` and Client Secret as `GH_CLIENT_SECRET` in [.env.dev][env-dev].
+
+For `JWT_SIGNING_KEY`, you can use any random word.
+
 ### Running API Service
 
 Once the database is setup and the migration has been run, you can run api service by
 
 ```bash
-go run ./cmd/hub
+go run ./cmd/api
 ```
 
 ### Running tests
 
 To run the tests, we need a test db.
-
 - If you have installed postgresql, create a `hub_test` database.
 - If you are running a container, create `hub_test` database in the same container.
 
-  ```bash
+```bash
   source .env.dev
 
   docker exec -it hub bash -c \
     "PGPASSWORD=$POSTGRES_PASSWORD \
      psql -h localhost -p 5432 -U postgres -c 'create database hub_test;'"
-  ```
+```
 
 Once the `hub_test` database is created, you can run the test using following command:
 
 ```bash
-  go test  -count=1 -v ./...
+  go test -p 1 -count=1 -v ./pkg/...
+```
+
+To re-generate the golden files use the below command
+This will run `go test a/package -test.update-golden=true` on all packages that are importing `gotest.tools/v3/golden`
+
+```bash
+go test $(go list -f '{{ .ImportPath }} {{ .TestImports }}' ./... | grep gotest.tools/v3/golden | awk '{print $1}' | tr '\n' ' ') -test.update-golden=true
 ```
 
 **NOTE:** `tests` use the database configurations from [test/config/env.test][env-test-file]
 
----
+### Creating JWT for testing
 
-## Running On Kubernetes Cluster
+To create a JWT, create a HTML file adding below code
+```html
+<!DOCTYPE html>
+<html>
 
-### Prerequisites:
+<body>
+  <a href="https://github.com/login/oauth/authorize?client_id=<Add Client ID here>">
+    Login with github
+  </a>
+</body>
 
-- Kubernetes Cluster:
-  - You can run a cluster on your local machine using [CRC][install-crc], [Minikube][install-minikube] or [kind][install-kind]
+</html>
+````
+Add your OAuth Client ID from [.env.dev][env-dev] in HTML file in place of `<Add Client ID here>` and Save it.
 
-- Depending on the cluster you have, install the command line tool:
+Open the HTML file, click on `Login with github` It will redirect you to GitHub. Once you authorize, it will redirect you to url localhost.
 
-  - [`kubectl`][install-kubectl]: For interacting with cluster.
-  - [`oc`][install-oc]: For interacting with OpenShift cluster.
-  - [`ko`][install-ko]: tool for building and deploying Golang applications to Kubernetes.
+for ex. `http://localhost:8080/?code=32d4a0b4eb6e9fbea731`
 
-### Deploying API and DB Service
+Use the `code` from url in `/auth/login` API. It will create a user in db and return a JWT. 
 
-Export `KO_DOCKER_REPO` for `ko` to publish image to. E.g.
+#### JWT with Additional Scopes:
 
-```bash
-export KO_DOCKER_REPO=quay.io/<username>
-```
+By default, the JWT has only defaut scopes. If you need additional scopes in your JWT then add your GitHub username with required scopes in your local [config.yaml][config-yaml]
 
-Log into the registry used in `KO_DOCKER_REPO` so that `ko` gets
-access to push the image to the registry.
+And repeat the login process and you will have additonal scopes in JWT.
 
-Make sure you are logged into the cluster and you are in the
-`hub/api` directory before running the following command
+### API Documentation
 
-```bash
-ko apply -f config/
-```
+API documentation is generated by goa in file [`gen/http/openapi.yaml`][swagger-doc].
 
-The command above will create an image and push it to registry pointed by  `KO_DOCKER_REPO` and then deploy the `api` and `db` container on the cluster.
+Also, you can call the API `/swagger/swagger.json` to get the documentaion.
 
-**NOTE:** Ensure that the image is **publicly** available otherwise deployment will fail. The pod status will give `Error: ImagePullBackOff`
-
-Watch the pods until both of them are running.
-```
-kubectl get pods -o wide -w
-```
-
-To create tables and to populate, we need to run the migration. Run the following command:
-
-```
-ko apply -f config/db-migration/14-db-migration.yaml
-```
-
-The command above will create a migration image, push to registry pointed by `KO_DOCKER_REPO` and run a `job` that performs the migration.
-
-Check the logs using
-
-```bash
-kubectl logs job/db-migration
-```
-
-Wait until the migration log shows
-
-> DB initialisation successful !!
-
-### Expose API service
-
-To expose the api service to be accessible outside cluster, run the following command based the `k8s` cluster you are using:
-
-#### OpenShift
-
-```bash
-oc apply -f config/openshift/
-```
-This will expose the api service as a `NodePort` service and create a `route` that can be used to access the api.
-
-you can get the route to api service using
-
-```bash
-oc get routes api --template='https://{{ .spec.host }} '
-```
-
-#### GKE
-
-```bash
-kubectl apply -f  config/gke/21-api-service.yaml
-```
-
-This will expose the deployment as `LoadBalancer` service. You can access the api service using `LoadBalancer Ingress` and `Port`.
-
-```bash
-kubectl describe svc api-load
-```
-Use the `LoadBalancerIngress:Port` eg. `http://35.223.169.99:8000`
-
-
-#### Test API Service
-
-Run `curl http://<ip>:port/categories` api to make sure
-everything is working fine.
-
-
-#### Redeploy API Service
-
-**To redeploy api service after changes run the following command:**
-
-```bash
-ko apply -f config/20-api-deployment.yaml
-```
-
-Above command will create a new image from updated code, push it to registry and update the deployment.
-
-**Any changes to database should be run as a migration, Once you write a migration apply the below command:**
-```
-ko apply -f config/db-migration/14-db-migration.yaml
-```
-Above command will create a new image of db migration, push it to registry and run a job.
+You can paste file content or API response in [swagger client][swagger].
 
 
 [join-github]:https://github.com/join
@@ -241,10 +188,9 @@ Above command will create a new image of db migration, push it to registry and r
 [install-pg]: https://www.postgresql.org/docs/12/tutorial-install.html
 [install-docker]: https://docs.docker.com/engine/install/
 [install-podman]: https://podman.io/getting-started/installation.html
-[install-crc]:https://cloud.redhat.com/openshift/install/crc/installer-provisioned
-[install-minikube]:https://kubernetes.io/docs/tasks/tools/install-minikube/
-[install-kubectl]:https://kubernetes.io/docs/tasks/tools/install-kubectl/
-[install-oc]:https://docs.openshift.com/container-platform/4.2/cli_reference/openshift_cli/getting-started-cli.html
-[install-ko]:https://github.com/google/ko
-[install-kind]:https://kind.sigs.k8s.io/docs/user/quick-start/
+[env-dev]:https://github.com/tektoncd/hub/blob/master/api/.env.dev
 [env-test-file]: https://github.com/tektoncd/hub/blob/master/api/test/config/env.test
+[gh-oauth]:https://docs.github.com/en/developers/apps/creating-an-oauth-app
+[config-yaml]:https://github.com/tektoncd/hub/blob/master/config.yaml
+[swagger]:https://editor.swagger.io
+[swagger-doc]:https://github.com/tektoncd/hub/blob/master/api/gen/http/openapi.yaml
