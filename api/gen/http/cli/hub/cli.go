@@ -14,6 +14,7 @@ import (
 	"os"
 
 	authc "github.com/tektoncd/hub/api/gen/http/auth/client"
+	catalogc "github.com/tektoncd/hub/api/gen/http/catalog/client"
 	categoryc "github.com/tektoncd/hub/api/gen/http/category/client"
 	ratingc "github.com/tektoncd/hub/api/gen/http/rating/client"
 	resourcec "github.com/tektoncd/hub/api/gen/http/resource/client"
@@ -29,9 +30,10 @@ import (
 func UsageCommands() string {
 	return `category list
 auth authenticate
+catalog refresh
 status status
 resource (query|list|versions-by-id|by-kind-name-version|by-version-id|by-kind-name|by-id)
-rating get
+rating (get|update)
 `
 }
 
@@ -39,9 +41,9 @@ rating get
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
 		os.Args[0] + ` auth authenticate --code "Omnis quas deserunt nostrum assumenda."` + "\n" +
+		os.Args[0] + ` catalog refresh` + "\n" +
 		os.Args[0] + ` status status` + "\n" +
-		os.Args[0] + ` resource query --name "Quia nihil officia itaque." --kind "" --limit 10573978620324901534` + "\n" +
-		os.Args[0] + ` rating get --id 14236020767980603451 --token "Quo velit vitae."` + "\n" +
+		os.Args[0] + ` resource query --name "Minima autem ut est error eaque." --kind "task" --limit 2583862062577786198` + "\n" +
 		""
 }
 
@@ -63,6 +65,10 @@ func ParseEndpoint(
 
 		authAuthenticateFlags    = flag.NewFlagSet("authenticate", flag.ExitOnError)
 		authAuthenticateCodeFlag = authAuthenticateFlags.String("code", "REQUIRED", "")
+
+		catalogFlags = flag.NewFlagSet("catalog", flag.ContinueOnError)
+
+		catalogRefreshFlags = flag.NewFlagSet("refresh", flag.ExitOnError)
 
 		statusFlags = flag.NewFlagSet("status", flag.ContinueOnError)
 
@@ -113,6 +119,9 @@ func ParseEndpoint(
 	authFlags.Usage = authUsage
 	authAuthenticateFlags.Usage = authAuthenticateUsage
 
+	catalogFlags.Usage = catalogUsage
+	catalogRefreshFlags.Usage = catalogRefreshUsage
+
 	statusFlags.Usage = statusUsage
 	statusStatusFlags.Usage = statusStatusUsage
 
@@ -148,6 +157,8 @@ func ParseEndpoint(
 			svcf = categoryFlags
 		case "auth":
 			svcf = authFlags
+		case "catalog":
+			svcf = catalogFlags
 		case "status":
 			svcf = statusFlags
 		case "resource":
@@ -180,6 +191,13 @@ func ParseEndpoint(
 			switch epn {
 			case "authenticate":
 				epf = authAuthenticateFlags
+
+			}
+
+		case "catalog":
+			switch epn {
+			case "refresh":
+				epf = catalogRefreshFlags
 
 			}
 
@@ -258,6 +276,13 @@ func ParseEndpoint(
 			case "authenticate":
 				endpoint = c.Authenticate()
 				data, err = authc.BuildAuthenticatePayload(*authAuthenticateCodeFlag)
+			}
+		case "catalog":
+			c := catalogc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "refresh":
+				endpoint = c.Refresh()
+				data = nil
 			}
 		case "status":
 			c := statusc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -350,10 +375,33 @@ func authAuthenticateUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] auth authenticate -code STRING
 
 Authenticates users against GitHub OAuth
-    -code STRING:
+    -code STRING: 
 
 Example:
     `+os.Args[0]+` auth authenticate --code "Omnis quas deserunt nostrum assumenda."
+`, os.Args[0])
+}
+
+// catalogUsage displays the usage of the catalog command and its subcommands.
+func catalogUsage() {
+	fmt.Fprintf(os.Stderr, `The Catalog Service exposes endpoints to refresh catalog
+Usage:
+    %s [globalflags] catalog COMMAND [flags]
+
+COMMAND:
+    refresh: Refresh the catalog for new resources
+
+Additional help:
+    %s catalog COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func catalogRefreshUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] catalog refresh
+
+Refresh the catalog for new resources
+
+Example:
+    `+os.Args[0]+` catalog refresh
 `, os.Args[0])
 }
 
@@ -403,12 +451,12 @@ func resourceQueryUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -kind STRING -limit UINT
 
 Find resources by a combination of name, kind
-    -name STRING:
-    -kind STRING:
-    -limit UINT:
+    -name STRING: 
+    -kind STRING: 
+    -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Quia nihil officia itaque." --kind "" --limit 10573978620324901534
+    `+os.Args[0]+` resource query --name "Minima autem ut est error eaque." --kind "task" --limit 2583862062577786198
 `, os.Args[0])
 }
 
@@ -416,10 +464,10 @@ func resourceListUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] resource list -limit UINT
 
 List all resources sorted by rating and name
-    -limit UINT:
+    -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource list --limit 312993529425355973
+    `+os.Args[0]+` resource list --limit 2340774708918288231
 `, os.Args[0])
 }
 
@@ -430,7 +478,7 @@ Find all versions of a resource by its id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource versions-by-id --id 10379275056117495825
+    `+os.Args[0]+` resource versions-by-id --id 1553423944738749189
 `, os.Args[0])
 }
 
@@ -443,7 +491,7 @@ Find resource using name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-kind-name-version --kind "task" --name "Modi facere cumque omnis non." --version "Aut quos distinctio ipsam."
+    `+os.Args[0]+` resource by-kind-name-version --kind "task" --name "Eum placeat voluptas et consequuntur." --version "Et enim ut rerum repellat."
 `, os.Args[0])
 }
 
@@ -454,7 +502,7 @@ Find a resource using its version's id
     -version-id UINT: Version ID of a resource's version
 
 Example:
-    `+os.Args[0]+` resource by-version-id --version-id 13680623773748373161
+    `+os.Args[0]+` resource by-version-id --version-id 8492161670635965626
 `, os.Args[0])
 }
 
@@ -466,7 +514,7 @@ Find resources using name and kind
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-kind-name --kind "pipeline" --name "Fugiat earum ut sunt est ea."
+    `+os.Args[0]+` resource by-kind-name --kind "task" --name "Ipsum deleniti."
 `, os.Args[0])
 }
 
@@ -477,7 +525,7 @@ Find a resource using it's id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource by-id --id 12150409255782392785
+    `+os.Args[0]+` resource by-id --id 9069823556065941305
 `, os.Args[0])
 }
 
@@ -500,10 +548,10 @@ func ratingGetUsage() {
 
 Find user's rating for a resource
     -id UINT: ID of a resource
-    -token STRING:
+    -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 1029125940089474859 --token "Reprehenderit libero soluta sapiente deleniti voluptatem distinctio."
+    `+os.Args[0]+` rating get --id 5654750039892505354 --token "Earum expedita."
 `, os.Args[0])
 }
 
@@ -511,13 +559,13 @@ func ratingUpdateUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] rating update -body JSON -id UINT -token STRING
 
 Update user's rating for a resource
-    -body JSON:
+    -body JSON: 
     -id UINT: ID of a resource
-    -token STRING:
+    -token STRING: 
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 3
-   }' --id 3398235971556683985 --token "Nemo sint est omnis."
+      "rating": 0
+   }' --id 8223604650900295604 --token "Tempora omnis et nihil aut quo quidem."
 `, os.Args[0])
 }

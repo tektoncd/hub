@@ -29,8 +29,10 @@ import (
 	"goa.design/goa/v3/middleware"
 
 	auth "github.com/tektoncd/hub/api/gen/auth"
+	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	category "github.com/tektoncd/hub/api/gen/category"
 	authsvr "github.com/tektoncd/hub/api/gen/http/auth/server"
+	catalogsvr "github.com/tektoncd/hub/api/gen/http/catalog/server"
 	categorysvr "github.com/tektoncd/hub/api/gen/http/category/server"
 	ratingsvr "github.com/tektoncd/hub/api/gen/http/rating/server"
 	resourcesvr "github.com/tektoncd/hub/api/gen/http/resource/server"
@@ -45,6 +47,7 @@ import (
 // URL. It shuts down the server if any error is received in the error channel.
 func handleHTTPServer(ctx context.Context, u *url.URL, wg *sync.WaitGroup, errc chan error, debug bool,
 	authEndpoints *auth.Endpoints,
+	catalogEndpoints *catalog.Endpoints,
 	categoryEndpoints *category.Endpoints,
 	ratingEndpoints *rating.Endpoints,
 	resourceEndpoints *resource.Endpoints,
@@ -73,6 +76,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, wg *sync.WaitGroup, errc 
 	// responses.
 	var (
 		authServer     *authsvr.Server
+		catalogServer  *catalogsvr.Server
 		categoryServer *categorysvr.Server
 		ratingServer   *ratingsvr.Server
 		resourceServer *resourcesvr.Server
@@ -82,6 +86,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, wg *sync.WaitGroup, errc 
 	{
 		eh := errorHandler(logger)
 		authServer = authsvr.New(authEndpoints, mux, dec, enc, eh, nil)
+		catalogServer = catalogsvr.New(catalogEndpoints, mux, dec, enc, eh, nil)
 		categoryServer = categorysvr.New(categoryEndpoints, mux, dec, enc, eh, nil)
 		ratingServer = ratingsvr.New(ratingEndpoints, mux, dec, enc, eh, nil)
 		resourceServer = resourcesvr.New(resourceEndpoints, mux, dec, enc, eh, nil)
@@ -91,6 +96,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, wg *sync.WaitGroup, errc 
 		if debug {
 			servers := goahttp.Servers{
 				authServer,
+				catalogServer,
 				categoryServer,
 				ratingServer,
 				resourceServer,
@@ -102,6 +108,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, wg *sync.WaitGroup, errc 
 	}
 	// Configure the mux.
 	authsvr.Mount(mux, authServer)
+	catalogsvr.Mount(mux, catalogServer)
 	categorysvr.Mount(mux, categoryServer)
 	ratingsvr.Mount(mux, ratingServer)
 	resourcesvr.Mount(mux, resourceServer)
@@ -119,6 +126,9 @@ func handleHTTPServer(ctx context.Context, u *url.URL, wg *sync.WaitGroup, errc 
 	// configure the server as required by your service.
 	srv := &http.Server{Addr: u.Host, Handler: handler}
 	for _, m := range authServer.Mounts {
+		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range catalogServer.Mounts {
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range categoryServer.Mounts {

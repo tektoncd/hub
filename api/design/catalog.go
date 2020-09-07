@@ -16,33 +16,22 @@ package design
 
 import (
 	. "goa.design/goa/v3/dsl"
-	cors "goa.design/plugins/v3/cors/dsl"
 )
 
-var _ = API("hub", func() {
-	Title("Tekton Hub")
-	Description("HTTP services for managing Tekton Hub")
-	Version("0.1")
-	Meta("swagger:example", "false")
-	Server("hub", func() {
-		Host("production", func() {
-			URI("http://api.hub.tekton.dev")
+var _ = Service("catalog", func() {
+	Description("The Catalog Service exposes endpoints to refresh catalog")
+
+	Error("internal-error", ErrorResult, "Internal Server Error")
+
+	Method("Refresh", func() {
+		Description("Refresh the catalog for new resources")
+
+		HTTP(func() {
+			POST("/catalog/refresh")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
 		})
-
-		Services(
-			"auth",
-			"catalog",
-			"category",
-			"rating",
-			"resource",
-			"status",
-			"swagger",
-		)
 	})
 
-	// TODO: restrict CORS origin | https://github.com/tektoncd/hub/issues/26
-	cors.Origin("*", func() {
-		cors.Headers("Content-Type")
-		cors.Methods("GET", "POST", "PUT")
-	})
 })

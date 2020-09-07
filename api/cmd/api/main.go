@@ -27,6 +27,7 @@ import (
 	"go.uber.org/zap"
 
 	auth "github.com/tektoncd/hub/api/gen/auth"
+	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	category "github.com/tektoncd/hub/api/gen/category"
 	rating "github.com/tektoncd/hub/api/gen/rating"
 	resource "github.com/tektoncd/hub/api/gen/resource"
@@ -34,6 +35,7 @@ import (
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/initializer"
 	authsvc "github.com/tektoncd/hub/api/pkg/service/auth"
+	catalogsvc "github.com/tektoncd/hub/api/pkg/service/catalog"
 	categorysvc "github.com/tektoncd/hub/api/pkg/service/category"
 	ratingsvc "github.com/tektoncd/hub/api/pkg/service/rating"
 	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
@@ -77,6 +79,7 @@ func main() {
 	// Initialize the services.
 	var (
 		authSvc     auth.Service
+		catalogSvc  catalog.Service
 		categorySvc category.Service
 		ratingSvc   rating.Service
 		resourceSvc resource.Service
@@ -84,6 +87,7 @@ func main() {
 	)
 	{
 		authSvc = authsvc.New(api)
+		catalogSvc = catalogsvc.New(api)
 		categorySvc = categorysvc.New(api)
 		ratingSvc = ratingsvc.New(api)
 		resourceSvc = resourcesvc.New(api)
@@ -94,6 +98,7 @@ func main() {
 	// potentially running in different processes.
 	var (
 		authEndpoints     *auth.Endpoints
+		catalogEndpoints  *catalog.Endpoints
 		categoryEndpoints *category.Endpoints
 		ratingEndpoints   *rating.Endpoints
 		resourceEndpoints *resource.Endpoints
@@ -101,6 +106,7 @@ func main() {
 	)
 	{
 		authEndpoints = auth.NewEndpoints(authSvc)
+		catalogEndpoints = catalog.NewEndpoints(catalogSvc)
 		categoryEndpoints = category.NewEndpoints(categorySvc)
 		ratingEndpoints = rating.NewEndpoints(ratingSvc)
 		resourceEndpoints = resource.NewEndpoints(resourceSvc)
@@ -146,7 +152,12 @@ func main() {
 			}
 			handleHTTPServer(
 				ctx, u, &wg, errc, *dbgF,
-				authEndpoints, categoryEndpoints, ratingEndpoints, resourceEndpoints, statusEndpoints,
+				authEndpoints,
+				catalogEndpoints,
+				categoryEndpoints,
+				ratingEndpoints,
+				resourceEndpoints,
+				statusEndpoints,
 				logger,
 			)
 		}
