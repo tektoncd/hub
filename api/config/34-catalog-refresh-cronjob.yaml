@@ -21,6 +21,9 @@ spec:
                     secretKeyRef:
                       name: catalog-refresh
                       key: HUB_TOKEN
-              args:
-                ["-i", "-X", "PUT", "-H", "Authorization:$(HUB_TOKEN)", "api:8000/catalog/refresh"]
+              args: [
+                "-i", "-X", "POST",
+                "-H", "Authorization:$(HUB_TOKEN)",
+                "api:8000/catalog/refresh"
+              ]
           restartPolicy: OnFailure

@@ -12,46 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: api
+  name: db-migration
   namespace: tekton-hub
   labels:
-    app: api
+    app: db
 spec:
-  selector:
-    matchLabels:
-      app: api
-  replicas: 1
   template:
-    metadata:
-      labels:
-        app: api
     spec:
       containers:
-        - name: api
-          image: ko://github.com/tektoncd/hub/api/cmd/api
-          ports:
-            - containerPort: 8000
-          readinessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /
-              port: 8000
-              scheme: HTTP
-            periodSeconds: 5
-            successThreshold: 1
-            timeoutSeconds: 1
-          livenessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /
-              port: 8000
-              scheme: HTTP
-            periodSeconds: 5
-            successThreshold: 1
-            timeoutSeconds: 1
+        - name: db-migration
+          image: ko://github.com/tektoncd/hub/api/cmd/db
           env:
             - name: POSTGRES_HOST
               value: db
@@ -75,8 +48,5 @@ spec:
                 secretKeyRef:
                   name: db
                   key: POSTGRES_PASSWORD
-            - name: CONFIG_FILE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: api
-                  key: CONFIG_FILE_URL
+      restartPolicy: Never
+  backoffLimit: 3

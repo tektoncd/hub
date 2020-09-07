@@ -1,0 +1,2 @@
+baseImageOverrides:
+  github.com/tektoncd/hub/api/cmd/api: quay.io/tekton-hub/go-base:latest
