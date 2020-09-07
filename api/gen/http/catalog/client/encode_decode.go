@@ -14,6 +14,8 @@ import (
 	"net/http"
 	"net/url"
 
+	catalog "github.com/tektoncd/hub/api/gen/catalog"
+	catalogviews "github.com/tektoncd/hub/api/gen/catalog/views"
 	goahttp "goa.design/goa/v3/http"
 )
 
@@ -30,6 +32,22 @@ func (c *Client) BuildRefreshRequest(ctx context.Context, v interface{}) (*http.
 	}
 
 	return req, nil
+}
+
+// EncodeRefreshRequest returns an encoder for requests sent to the catalog
+// Refresh server.
+func EncodeRefreshRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*catalog.RefreshPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("catalog", "Refresh", "*catalog.RefreshPayload", v)
+		}
+		body := NewRefreshRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("catalog", "Refresh", err)
+		}
+		return nil
+	}
 }
 
 // DecodeRefreshResponse returns a decoder for responses returned by the
@@ -54,7 +72,22 @@ func DecodeRefreshResponse(decoder func(*http.Response) goahttp.Decoder, restore
 		}
 		switch resp.StatusCode {
 		case http.StatusOK:
-			return nil, nil
+			var (
+				body RefreshResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("catalog", "Refresh", err)
+			}
+			p := NewRefreshJobOK(&body)
+			view := "default"
+			vres := &catalogviews.Job{Projected: p, View: view}
+			if err = catalogviews.ValidateJob(vres); err != nil {
+				return nil, goahttp.ErrValidationError("catalog", "Refresh", err)
+			}
+			res := catalog.NewJob(vres)
+			return res, nil
 		case http.StatusInternalServerError:
 			var (
 				body RefreshInternalErrorResponseBody

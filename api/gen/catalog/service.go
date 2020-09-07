@@ -10,13 +10,14 @@ package catalog
 import (
 	"context"
 
+	catalogviews "github.com/tektoncd/hub/api/gen/catalog/views"
 	goa "goa.design/goa/v3/pkg"
 )
 
-// The Catalog Service exposes endpoints to refresh catalog
+// The Catalog Service exposes endpoints to interact with catalogs
 type Service interface {
-	// Refresh the catalog for new resources
-	Refresh(context.Context) (err error)
+	// Refresh a catalog by its org and name
+	Refresh(context.Context, *RefreshPayload) (res *Job, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -29,6 +30,22 @@ const ServiceName = "catalog"
 // MethodKey key.
 var MethodNames = [1]string{"Refresh"}
 
+// RefreshPayload is the payload type of the catalog service Refresh method.
+type RefreshPayload struct {
+	// Name of Organization the Catalog is in
+	Org *string
+	// Name of Catalog
+	Name *string
+}
+
+// Job is the result type of the catalog service Refresh method.
+type Job struct {
+	// id of the job
+	ID uint
+	// status of the job
+	Status string
+}
+
 // MakeInternalError builds a goa.ServiceError from an error.
 func MakeInternalError(err error) *goa.ServiceError {
 	return &goa.ServiceError{
@@ -36,4 +53,47 @@ func MakeInternalError(err error) *goa.ServiceError {
 		ID:      goa.NewErrorID(),
 		Message: err.Error(),
 	}
+}
+
+// MakeNotFound builds a goa.ServiceError from an error.
+func MakeNotFound(err error) *goa.ServiceError {
+	return &goa.ServiceError{
+		Name:    "not-found",
+		ID:      goa.NewErrorID(),
+		Message: err.Error(),
+	}
+}
+
+// NewJob initializes result type Job from viewed result type Job.
+func NewJob(vres *catalogviews.Job) *Job {
+	return newJob(vres.Projected)
+}
+
+// NewViewedJob initializes viewed result type Job from result type Job using
+// the given view.
+func NewViewedJob(res *Job, view string) *catalogviews.Job {
+	p := newJobView(res)
+	return &catalogviews.Job{Projected: p, View: "default"}
+}
+
+// newJob converts projected type Job to service type Job.
+func newJob(vres *catalogviews.JobView) *Job {
+	res := &Job{}
+	if vres.ID != nil {
+		res.ID = *vres.ID
+	}
+	if vres.Status != nil {
+		res.Status = *vres.Status
+	}
+	return res
+}
+
+// newJobView projects result type Job to projected type JobView using the
+// "default" view.
+func newJobView(res *Job) *catalogviews.JobView {
+	vres := &catalogviews.JobView{
+		ID:     &res.ID,
+		Status: &res.Status,
+	}
+	return vres
 }

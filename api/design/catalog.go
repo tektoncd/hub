@@ -19,15 +19,28 @@ import (
 )
 
 var _ = Service("catalog", func() {
-	Description("The Catalog Service exposes endpoints to refresh catalog")
+	Description("The Catalog Service exposes endpoints to interact with catalogs")
 
 	Error("internal-error", ErrorResult, "Internal Server Error")
+	Error("not-found", ErrorResult, "Resource Not Found Error")
 
 	Method("Refresh", func() {
-		Description("Refresh the catalog for new resources")
+		Description("Refresh a catalog by its org and name")
+		//Security(JWTAuth, func() {
+		//Scope("rating:read")
+		//})
+
+		Payload(func() {
+			//Token("token", String, "JWT")
+			Attribute("org", String, "Name of Organization the Catalog is in")
+			Attribute("name", String, "Name of Catalog")
+		})
+
+		Result(Job)
 
 		HTTP(func() {
 			POST("/catalog/refresh")
+			//Header("token:Authorization")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
