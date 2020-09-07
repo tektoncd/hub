@@ -34,6 +34,12 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 // "Refresh" of service "catalog".
 func NewRefreshEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		return nil, s.Refresh(ctx)
+		p := req.(*RefreshPayload)
+		res, err := s.Refresh(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedJob(res, "default")
+		return vres, nil
 	}
 }

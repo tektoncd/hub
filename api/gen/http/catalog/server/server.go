@@ -103,6 +103,7 @@ func NewRefreshHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
+		decodeRequest  = DecodeRefreshRequest(mux, decoder)
 		encodeResponse = EncodeRefreshResponse(encoder)
 		encodeError    = EncodeRefreshError(encoder, formatter)
 	)
@@ -110,8 +111,14 @@ func NewRefreshHandler(
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "Refresh")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "catalog")
-		var err error
-		res, err := endpoint(ctx, nil)
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
 		if err != nil {
 			if err := encodeError(ctx, w, err); err != nil {
 				errhandler(ctx, w, err)

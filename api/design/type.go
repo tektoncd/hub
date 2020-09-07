@@ -236,6 +236,13 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 	Required("id", "name", "catalog", "kind", "latestVersion", "tags", "rating", "versions")
 })
 
+var Job = ResultType("application/vnd.hub.job", "Job", func() {
+	Description("The Job type describes a ")
+	Attribute("id", UInt, "id of the job")
+	Attribute("status", String, "status of the job")
+	Required("id", "status")
+})
+
 var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {
 	Description("The Versions type describes response for versions by resource id API.")
 

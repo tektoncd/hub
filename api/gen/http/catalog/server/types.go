@@ -8,8 +8,28 @@
 package server
 
 import (
+	catalog "github.com/tektoncd/hub/api/gen/catalog"
+	catalogviews "github.com/tektoncd/hub/api/gen/catalog/views"
 	goa "goa.design/goa/v3/pkg"
 )
+
+// RefreshRequestBody is the type of the "catalog" service "Refresh" endpoint
+// HTTP request body.
+type RefreshRequestBody struct {
+	// Name of Organization the Catalog is in
+	Org *string `form:"org,omitempty" json:"org,omitempty" xml:"org,omitempty"`
+	// Name of Catalog
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
+// RefreshResponseBody is the type of the "catalog" service "Refresh" endpoint
+// HTTP response body.
+type RefreshResponseBody struct {
+	// id of the job
+	ID uint `form:"id" json:"id" xml:"id"`
+	// status of the job
+	Status string `form:"status" json:"status" xml:"status"`
+}
 
 // RefreshInternalErrorResponseBody is the type of the "catalog" service
 // "Refresh" endpoint HTTP response body for the "internal-error" error.
@@ -29,6 +49,16 @@ type RefreshInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// NewRefreshResponseBody builds the HTTP response body from the result of the
+// "Refresh" endpoint of the "catalog" service.
+func NewRefreshResponseBody(res *catalogviews.JobView) *RefreshResponseBody {
+	body := &RefreshResponseBody{
+		ID:     *res.ID,
+		Status: *res.Status,
+	}
+	return body
+}
+
 // NewRefreshInternalErrorResponseBody builds the HTTP response body from the
 // result of the "Refresh" endpoint of the "catalog" service.
 func NewRefreshInternalErrorResponseBody(res *goa.ServiceError) *RefreshInternalErrorResponseBody {
@@ -41,4 +71,14 @@ func NewRefreshInternalErrorResponseBody(res *goa.ServiceError) *RefreshInternal
 		Fault:     res.Fault,
 	}
 	return body
+}
+
+// NewRefreshPayload builds a catalog service Refresh endpoint payload.
+func NewRefreshPayload(body *RefreshRequestBody) *catalog.RefreshPayload {
+	v := &catalog.RefreshPayload{
+		Org:  body.Org,
+		Name: body.Name,
+	}
+
+	return v
 }

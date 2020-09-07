@@ -9,8 +9,10 @@ package server
 
 import (
 	"context"
+	"io"
 	"net/http"
 
+	catalogviews "github.com/tektoncd/hub/api/gen/catalog/views"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -19,8 +21,32 @@ import (
 // catalog Refresh endpoint.
 func EncodeRefreshResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*catalogviews.Job)
+		enc := encoder(ctx, w)
+		body := NewRefreshResponseBody(res.Projected)
 		w.WriteHeader(http.StatusOK)
-		return nil
+		return enc.Encode(body)
+	}
+}
+
+// DecodeRefreshRequest returns a decoder for requests sent to the catalog
+// Refresh endpoint.
+func DecodeRefreshRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body RefreshRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		payload := NewRefreshPayload(&body)
+
+		return payload, nil
 	}
 }
 

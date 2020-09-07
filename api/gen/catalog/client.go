@@ -26,7 +26,11 @@ func NewClient(refresh goa.Endpoint) *Client {
 }
 
 // Refresh calls the "Refresh" endpoint of the "catalog" service.
-func (c *Client) Refresh(ctx context.Context) (err error) {
-	_, err = c.RefreshEndpoint(ctx, nil)
-	return
+func (c *Client) Refresh(ctx context.Context, p *RefreshPayload) (res *Job, err error) {
+	var ires interface{}
+	ires, err = c.RefreshEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*Job), nil
 }

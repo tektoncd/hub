@@ -58,10 +58,15 @@ func NewClient(
 // Refresh server.
 func (c *Client) Refresh() goa.Endpoint {
 	var (
+		encodeRequest  = EncodeRefreshRequest(c.encoder)
 		decodeResponse = DecodeRefreshResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
 		req, err := c.BuildRefreshRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
 		if err != nil {
 			return nil, err
 		}

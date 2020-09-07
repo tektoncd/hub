@@ -30,8 +30,8 @@ import (
 func UsageCommands() string {
 	return `category list
 auth authenticate
-catalog refresh
 status status
+catalog refresh
 resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
 rating (get|update)
 `
@@ -40,18 +40,20 @@ rating (get|update)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` auth authenticate --code "Rerum non iure modi facere cumque omnis."` + "\n" +
-		os.Args[0] + ` catalog refresh` + "\n" +
+		os.Args[0] + ` auth authenticate --code "Non iure modi."` + "\n" +
 		os.Args[0] + ` status status` + "\n" +
-		os.Args[0] + ` resource query --name "Aut eos qui fugiat." --kinds '[
-      "Sunt est.",
-      "Reiciendis pariatur quasi illo voluptate corrupti.",
-      "Aut beatae reiciendis accusantium.",
-      "Qui ipsum deleniti corrupti non quo velit."
+		os.Args[0] + ` catalog refresh --body '{
+      "name": "Voluptas et enim.",
+      "org": "Voluptas et."
+   }'` + "\n" +
+		os.Args[0] + ` resource query --name "Voluptate corrupti omnis." --kinds '[
+      "Reiciendis accusantium distinctio.",
+      "Ipsum deleniti.",
+      "Non quo velit vitae aut porro."
    ]' --tags '[
-      "Porro nulla sunt omnis molestiae.",
-      "Animi sit nulla.",
-      "Incidunt earum expedita velit magni reprehenderit libero.",
+      "Omnis molestiae eligendi.",
+      "Sit nulla omnis incidunt.",
+      "Expedita velit magni reprehenderit libero.",
       "Sapiente deleniti voluptatem."
    ]' --limit 6016444568866455394 --match "exact"` + "\n" +
 		""
@@ -76,13 +78,14 @@ func ParseEndpoint(
 		authAuthenticateFlags    = flag.NewFlagSet("authenticate", flag.ExitOnError)
 		authAuthenticateCodeFlag = authAuthenticateFlags.String("code", "REQUIRED", "")
 
-		catalogFlags = flag.NewFlagSet("catalog", flag.ContinueOnError)
-
-		catalogRefreshFlags = flag.NewFlagSet("refresh", flag.ExitOnError)
-
 		statusFlags = flag.NewFlagSet("status", flag.ContinueOnError)
 
 		statusStatusFlags = flag.NewFlagSet("status", flag.ExitOnError)
+
+		catalogFlags = flag.NewFlagSet("catalog", flag.ContinueOnError)
+
+		catalogRefreshFlags    = flag.NewFlagSet("refresh", flag.ExitOnError)
+		catalogRefreshBodyFlag = catalogRefreshFlags.String("body", "REQUIRED", "")
 
 		resourceFlags = flag.NewFlagSet("resource", flag.ContinueOnError)
 
@@ -133,11 +136,11 @@ func ParseEndpoint(
 	authFlags.Usage = authUsage
 	authAuthenticateFlags.Usage = authAuthenticateUsage
 
-	catalogFlags.Usage = catalogUsage
-	catalogRefreshFlags.Usage = catalogRefreshUsage
-
 	statusFlags.Usage = statusUsage
 	statusStatusFlags.Usage = statusStatusUsage
+
+	catalogFlags.Usage = catalogUsage
+	catalogRefreshFlags.Usage = catalogRefreshUsage
 
 	resourceFlags.Usage = resourceUsage
 	resourceQueryFlags.Usage = resourceQueryUsage
@@ -171,10 +174,10 @@ func ParseEndpoint(
 			svcf = categoryFlags
 		case "auth":
 			svcf = authFlags
-		case "catalog":
-			svcf = catalogFlags
 		case "status":
 			svcf = statusFlags
+		case "catalog":
+			svcf = catalogFlags
 		case "resource":
 			svcf = resourceFlags
 		case "rating":
@@ -208,17 +211,17 @@ func ParseEndpoint(
 
 			}
 
-		case "catalog":
-			switch epn {
-			case "refresh":
-				epf = catalogRefreshFlags
-
-			}
-
 		case "status":
 			switch epn {
 			case "status":
 				epf = statusStatusFlags
+
+			}
+
+		case "catalog":
+			switch epn {
+			case "refresh":
+				epf = catalogRefreshFlags
 
 			}
 
@@ -291,19 +294,19 @@ func ParseEndpoint(
 				endpoint = c.Authenticate()
 				data, err = authc.BuildAuthenticatePayload(*authAuthenticateCodeFlag)
 			}
-		case "catalog":
-			c := catalogc.NewClient(scheme, host, doer, enc, dec, restore)
-			switch epn {
-			case "refresh":
-				endpoint = c.Refresh()
-				data = nil
-			}
 		case "status":
 			c := statusc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
 			case "status":
 				endpoint = c.Status()
 				data = nil
+			}
+		case "catalog":
+			c := catalogc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "refresh":
+				endpoint = c.Refresh()
+				data, err = catalogc.BuildRefreshPayload(*catalogRefreshBodyFlag)
 			}
 		case "resource":
 			c := resourcec.NewClient(scheme, host, doer, enc, dec, restore)
@@ -392,30 +395,7 @@ Authenticates users against GitHub OAuth
     -code STRING: 
 
 Example:
-    `+os.Args[0]+` auth authenticate --code "Rerum non iure modi facere cumque omnis."
-`, os.Args[0])
-}
-
-// catalogUsage displays the usage of the catalog command and its subcommands.
-func catalogUsage() {
-	fmt.Fprintf(os.Stderr, `The Catalog Service exposes endpoints to refresh catalog
-Usage:
-    %s [globalflags] catalog COMMAND [flags]
-
-COMMAND:
-    refresh: Refresh the catalog for new resources
-
-Additional help:
-    %s catalog COMMAND --help
-`, os.Args[0], os.Args[0])
-}
-func catalogRefreshUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] catalog refresh
-
-Refresh the catalog for new resources
-
-Example:
-    `+os.Args[0]+` catalog refresh
+    `+os.Args[0]+` auth authenticate --code "Non iure modi."
 `, os.Args[0])
 }
 
@@ -439,6 +419,33 @@ Return status 'ok' when the server has started successfully
 
 Example:
     `+os.Args[0]+` status status
+`, os.Args[0])
+}
+
+// catalogUsage displays the usage of the catalog command and its subcommands.
+func catalogUsage() {
+	fmt.Fprintf(os.Stderr, `The Catalog Service exposes endpoints to interact with catalogs
+Usage:
+    %s [globalflags] catalog COMMAND [flags]
+
+COMMAND:
+    refresh: Refresh a catalog by its org and name
+
+Additional help:
+    %s catalog COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func catalogRefreshUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] catalog refresh -body JSON
+
+Refresh a catalog by its org and name
+    -body JSON: 
+
+Example:
+    `+os.Args[0]+` catalog refresh --body '{
+      "name": "Voluptas et enim.",
+      "org": "Voluptas et."
+   }'
 `, os.Args[0])
 }
 
@@ -472,15 +479,14 @@ Find resources by a combination of name, kind and tags
     -match STRING: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Aut eos qui fugiat." --kinds '[
-      "Sunt est.",
-      "Reiciendis pariatur quasi illo voluptate corrupti.",
-      "Aut beatae reiciendis accusantium.",
-      "Qui ipsum deleniti corrupti non quo velit."
+    `+os.Args[0]+` resource query --name "Voluptate corrupti omnis." --kinds '[
+      "Reiciendis accusantium distinctio.",
+      "Ipsum deleniti.",
+      "Non quo velit vitae aut porro."
    ]' --tags '[
-      "Porro nulla sunt omnis molestiae.",
-      "Animi sit nulla.",
-      "Incidunt earum expedita velit magni reprehenderit libero.",
+      "Omnis molestiae eligendi.",
+      "Sit nulla omnis incidunt.",
+      "Expedita velit magni reprehenderit libero.",
       "Sapiente deleniti voluptatem."
    ]' --limit 6016444568866455394 --match "exact"
 `, os.Args[0])

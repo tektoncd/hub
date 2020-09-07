@@ -15,6 +15,8 @@
 package model
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -41,6 +43,7 @@ type (
 		URL        string `gorm:"not null;default:null"`
 		Revision   string `gorm:"not null;default:null"`
 		ContextDir string
+		SHA        string
 		Resources  []Resource
 	}
 
@@ -64,6 +67,7 @@ type (
 		MinPipelinesVersion string `gorm:"not null;default:null"`
 		Resource            Resource
 		ResourceID          uint
+		ModifiedAt          time.Time
 	}
 
 	ResourceTag struct {

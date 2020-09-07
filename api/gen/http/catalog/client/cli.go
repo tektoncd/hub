@@ -6,3 +6,29 @@
 // $ goa gen github.com/tektoncd/hub/api/design
 
 package client
+
+import (
+	"encoding/json"
+	"fmt"
+
+	catalog "github.com/tektoncd/hub/api/gen/catalog"
+)
+
+// BuildRefreshPayload builds the payload for the catalog Refresh endpoint from
+// CLI flags.
+func BuildRefreshPayload(catalogRefreshBody string) (*catalog.RefreshPayload, error) {
+	var err error
+	var body RefreshRequestBody
+	{
+		err = json.Unmarshal([]byte(catalogRefreshBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"name\": \"Voluptas et enim.\",\n      \"org\": \"Voluptas et.\"\n   }'")
+		}
+	}
+	v := &catalog.RefreshPayload{
+		Org:  body.Org,
+		Name: body.Name,
+	}
+
+	return v, nil
+}
