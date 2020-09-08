@@ -41,11 +41,11 @@ const tokenWithInvalidScope = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
 	"SEBQUE9aG8zHDuyAlV5R20h63-TBQjlDEyXxdPmCIX4"
 
 func GetChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	validate := &auth.Validator{DB: tc.DB(), JWTKey: tc.JWTSigningKey()}
+	service := auth.NewService(tc.APIConfig, tc.JWTSigningKey())
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewGetHandler,
 		server.MountGetHandler,
-		rating.NewGetEndpoint(New(tc), validate.JWTAuth))
+		rating.NewGetEndpoint(New(tc), service.JWTAuth))
 	return checker
 }
 
@@ -145,11 +145,11 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 }
 
 func UpdateChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	validate := &auth.Validator{DB: tc.DB(), JWTKey: tc.JWTSigningKey()}
+	service := auth.NewService(tc.APIConfig, tc.JWTSigningKey())
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewUpdateHandler,
 		server.MountUpdateHandler,
-		rating.NewUpdateEndpoint(New(tc), validate.JWTAuth))
+		rating.NewUpdateEndpoint(New(tc), service.JWTAuth))
 	return checker
 }
 

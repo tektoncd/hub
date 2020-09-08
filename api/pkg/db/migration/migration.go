@@ -16,9 +16,9 @@ package migration
 
 import (
 	"github.com/jinzhu/gorm"
-	"go.uber.org/zap"
 	"gopkg.in/gormigrate.v1"
 
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 )
@@ -26,7 +26,7 @@ import (
 // Migrate create tables and populates master tables
 func Migrate(api *app.APIBase) error {
 
-	log := api.Logger()
+	log := api.Logger("migration")
 
 	// NOTE: when writing a migration for a new table, add the same in InitSchema
 	migration := gormigrate.New(
@@ -92,7 +92,7 @@ func Migrate(api *app.APIBase) error {
 	return nil
 }
 
-func fkey(log *zap.SugaredLogger, db *gorm.DB, model interface{}, args ...string) error {
+func fkey(log *log.Logger, db *gorm.DB, model interface{}, args ...string) error {
 	for i := 0; i < len(args); i += 2 {
 		col := args[i]
 		table := args[i+1]

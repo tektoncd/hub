@@ -30,12 +30,15 @@ import (
 
 	// Blank for package side effect: loads postgres drivers
 	_ "github.com/lib/pq"
+
+	"github.com/tektoncd/hub/api/gen/log"
 )
 
 // BaseConfig defines methods on APIBase
 type BaseConfig interface {
 	Environment() EnvMode
-	Logger() *zap.SugaredLogger
+	Service(name string) Service
+	Logger(service string) *log.Logger
 	DB() *gorm.DB
 	Data() *Data
 	Cleanup()
@@ -46,7 +49,7 @@ type APIBase struct {
 	mode   EnvMode
 	dbConf *Database
 	db     *gorm.DB
-	logger *zap.SugaredLogger
+	logger *log.Logger
 	data   Data
 }
 
@@ -112,9 +115,22 @@ func (ab *APIBase) DB() *gorm.DB {
 	return ab.db
 }
 
-// Logger returns suggared logger object
-func (ab *APIBase) Logger() *zap.SugaredLogger {
-	return ab.logger
+// Logger returns log.Logger appended with service name
+func (ab *APIBase) Logger(service string) *log.Logger {
+	return &log.Logger{
+		SugaredLogger: ab.logger.With(zap.String("service", service)),
+	}
+}
+
+// Service creates a base service object
+func (ab *APIBase) Service(name string) Service {
+	l := &log.Logger{
+		SugaredLogger: ab.logger.With(zap.String("service", name)),
+	}
+	return &BaseService{
+		logger: l,
+		db:     ab.DB(),
+	}
 }
 
 // Data returns Data object which consist app data from config file
@@ -190,15 +206,18 @@ func APIBaseFromEnvFile(file string) (*APIBase, error) {
 	viper.AutomaticEnv()
 
 	mode := Environment()
+
 	var err error
-	var log *zap.SugaredLogger
-	if log, err = initLogger(mode); err != nil {
+	var l *log.Logger
+	if l, err = initLogger(mode); err != nil {
 		return nil, err
 	}
 
-	log.With("name", "app").Infof("in %q mode ", mode)
+	ac := &APIBase{mode: mode, logger: l}
+	log := ac.logger.With("app", "hub")
 
-	ac := &APIBase{mode: mode, logger: log}
+	log.Infof("in %q mode ", mode)
+
 	if ac.dbConf, err = initDB(); err != nil {
 		log.Errorf("failed to obtain database configuration: %v", err)
 		return nil, err
@@ -274,26 +293,25 @@ func initDB() (*Database, error) {
 	return db, nil
 }
 
-// initLogger returns a instance of SugaredLogger depending on the EnvMode
-func initLogger(mode EnvMode) (*zap.SugaredLogger, error) {
+// initLogger returns a instance of log.Logger depending on the EnvMode
+func initLogger(mode EnvMode) (*log.Logger, error) {
 
-	var log *zap.Logger
+	var l *zap.Logger
 	var err error
 
 	switch mode {
 	case Production:
-		log, err = zap.NewProduction()
-
+		l, err = zap.NewProduction()
 	default:
 		config := zap.NewDevelopmentConfig()
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
-		log, err = config.Build()
+		l, err = config.Build()
 	}
 
 	if err != nil {
 		return nil, err
 	}
-	return log.Sugar(), nil
+	return &log.Logger{SugaredLogger: l.Sugar()}, nil
 }
 
 // configFileURL will look for CONFIG_FILE_URL to be defined among

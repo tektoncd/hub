@@ -24,10 +24,9 @@ import (
 	"strings"
 	"sync"
 
-	"go.uber.org/zap"
-
 	auth "github.com/tektoncd/hub/api/gen/auth"
 	category "github.com/tektoncd/hub/api/gen/category"
+	"github.com/tektoncd/hub/api/gen/log"
 	rating "github.com/tektoncd/hub/api/gen/rating"
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	status "github.com/tektoncd/hub/api/gen/status"
@@ -54,7 +53,7 @@ func main() {
 
 	var (
 		api    app.Config
-		logger *zap.SugaredLogger
+		logger *log.Logger
 		err    error
 	)
 	{
@@ -64,12 +63,12 @@ func main() {
 			os.Exit(1)
 		}
 		api.DB().LogMode(true)
-		logger = api.Logger()
+		logger = api.Logger("main")
 		defer api.Cleanup()
 	}
 
 	// Populate Tables
-	initializer := initializer.New(api)
+	initializer := initializer.New(context.Background(), api)
 	if err := initializer.Run(); err != nil {
 		logger.Fatalf("Failed to populate table: %v", err)
 	}
@@ -145,9 +144,13 @@ func main() {
 				u.Host += ":80"
 			}
 			handleHTTPServer(
-				ctx, u, &wg, errc, *dbgF,
-				authEndpoints, categoryEndpoints, ratingEndpoints, resourceEndpoints, statusEndpoints,
-				logger,
+				ctx, u,
+				authEndpoints,
+				categoryEndpoints,
+				ratingEndpoints,
+				resourceEndpoints,
+				statusEndpoints,
+				&wg, errc, api.Logger("http"), *dbgF,
 			)
 		}
 

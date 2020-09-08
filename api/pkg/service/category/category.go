@@ -20,15 +20,13 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/tektoncd/hub/api/pkg/db/model"
-	"go.uber.org/zap"
 
 	"github.com/tektoncd/hub/api/gen/category"
 	"github.com/tektoncd/hub/api/pkg/app"
 )
 
 type service struct {
-	logger *zap.SugaredLogger
-	db     *gorm.DB
+	app.Service
 }
 
 var (
@@ -37,18 +35,22 @@ var (
 
 // New returns the category service implementation.
 func New(api app.BaseConfig) category.Service {
-	return &service{api.Logger(), api.DB()}
+	return &service{api.Service("category")}
 }
 
 // List all categories along with their tags sorted by name
 func (s *service) List(ctx context.Context) (res []*category.Category, err error) {
+
+	log := s.Logger(ctx)
+	db := s.DB(ctx)
+
 	var all []model.Category
-	if err := s.db.Order("name").
+	if err := db.Order("name").
 		Preload("Tags", func(db *gorm.DB) *gorm.DB {
 			return db.Order("tags.name ASC")
 		}).
 		Find(&all).Error; err != nil {
-		s.logger.Error(err)
+		log.Error(err)
 		return nil, fetchError
 	}
 

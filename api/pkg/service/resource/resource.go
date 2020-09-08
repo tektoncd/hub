@@ -20,16 +20,20 @@ import (
 	"strings"
 
 	"github.com/jinzhu/gorm"
-	"go.uber.org/zap"
 
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 )
 
 type service struct {
-	logger *zap.SugaredLogger
-	db     *gorm.DB
+	app.Service
+}
+
+type request struct {
+	db  *gorm.DB
+	log *log.Logger
 }
 
 var replaceGHtoRaw = strings.NewReplacer("github.com", "raw.githubusercontent.com", "/tree/", "/")
@@ -42,44 +46,61 @@ var (
 
 // New returns the resource service implementation.
 func New(api app.BaseConfig) resource.Service {
-	return &service{api.Logger(), api.DB()}
+	return &service{api.Service("resource")}
 }
 
 // Find resources based on name, kind or both
 func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (res resource.ResourceCollection, err error) {
+
+	db := s.DB(ctx)
 
 	// DISTINCT(resources.id) and resources.id is required as the
 	// INNER JOIN of tags and resources returns duplicate records of
 	// resources as a resource may have multiple tags, thus we have to
 	// find DISTINCT on resource.id
 
-	q := s.db.Select("DISTINCT(resources.id), resources.*").Scopes(
+	q := db.Select("DISTINCT(resources.id), resources.*").Scopes(
 		filterByTags(p.Tags),
 		filterByKinds(p.Kinds),
 		filterResourceName(p.Match, p.Name),
 		withResourceDetails,
 	).Limit(p.Limit)
 
-	return s.resourcesForQuery(q)
+	req := request{
+		db:  q,
+		log: s.Logger(ctx),
+	}
+
+	return req.resourcesForQuery()
 }
 
 // List all resources sorted by rating and name
 func (s *service) List(ctx context.Context, p *resource.ListPayload) (res resource.ResourceCollection, err error) {
 
-	q := s.db.Scopes(withResourceDetails).
+	db := s.DB(ctx)
+
+	q := db.Scopes(withResourceDetails).
 		Limit(p.Limit)
 
-	return s.resourcesForQuery(q)
+	req := request{
+		db:  q,
+		log: s.Logger(ctx),
+	}
+
+	return req.resourcesForQuery()
 }
 
 // VersionsByID returns all versions of a resource given its resource id
 func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayload) (res *resource.Versions, err error) {
 
-	q := s.db.Scopes(orderByVersion, filterByResourceID(p.ID))
+	log := s.Logger(ctx)
+	db := s.DB(ctx)
+
+	q := db.Scopes(orderByVersion, filterByResourceID(p.ID))
 
 	var all []model.ResourceVersion
 	if err := q.Find(&all).Error; err != nil {
-		s.logger.Error(err)
+		log.Error(err)
 		return nil, fetchError
 	}
 
@@ -98,7 +119,10 @@ func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayl
 
 func (s *service) ByKindNameVersion(ctx context.Context, p *resource.ByKindNameVersionPayload) (res *resource.Version, err error) {
 
-	q := s.db.Scopes(
+	log := s.Logger(ctx)
+	db := s.DB(ctx)
+
+	q := db.Scopes(
 		withVersionInfo(p.Version),
 		filterByKind(p.Kind),
 		// missing a test : there must be 2 resources one containing, other exact
@@ -115,7 +139,7 @@ func (s *service) ByKindNameVersion(ctx context.Context, p *resource.ByKindNameV
 	case count == 0:
 		return nil, notFoundError
 	default:
-		s.logger.Warnf("expected to find one version but found %d", count)
+		log.Warnf("expected to find one version but found %d", count)
 		r.Versions = []model.ResourceVersion{r.Versions[0]}
 		return versionInfoFromResource(r), nil
 	}
@@ -124,7 +148,9 @@ func (s *service) ByKindNameVersion(ctx context.Context, p *resource.ByKindNameV
 // find a resource using its version's id
 func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayload) (res *resource.Version, err error) {
 
-	q := s.db.Scopes(withResourceVersionDetails, filterByVersionID(p.VersionID))
+	db := s.DB(ctx)
+
+	q := db.Scopes(withResourceVersionDetails, filterByVersionID(p.VersionID))
 
 	var v model.ResourceVersion
 	if err := findOne(q, &v); err != nil {
@@ -137,19 +163,28 @@ func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayloa
 // find resources using name and kind
 func (s *service) ByKindName(ctx context.Context, p *resource.ByKindNamePayload) (res resource.ResourceCollection, err error) {
 
-	q := s.db.Scopes(
+	db := s.DB(ctx)
+
+	q := db.Scopes(
 		withResourceDetails,
 		filterByKind(p.Kind),
 		// missing test
 		filterResourceName("exact", p.Name))
 
-	return s.resourcesForQuery(q)
+	req := request{
+		db:  q,
+		log: s.Logger(ctx),
+	}
+
+	return req.resourcesForQuery()
 }
 
 // Find a resource using it's id
 func (s *service) ByID(ctx context.Context, p *resource.ByIDPayload) (res *resource.Resource, err error) {
 
-	q := s.db.Scopes(withResourceDetails,
+	db := s.DB(ctx)
+
+	q := db.Scopes(withResourceDetails,
 		filterByID(p.ID))
 
 	var r model.Resource
@@ -166,11 +201,11 @@ func (s *service) ByID(ctx context.Context, p *resource.ByIDPayload) (res *resou
 	return res, nil
 }
 
-func (s *service) resourcesForQuery(q *gorm.DB) (resource.ResourceCollection, error) {
+func (r *request) resourcesForQuery() (resource.ResourceCollection, error) {
 
 	var rs []model.Resource
-	if err := q.Find(&rs).Error; err != nil {
-		s.logger.Error(err)
+	if err := r.db.Find(&rs).Error; err != nil {
+		r.log.Error(err)
 		return nil, fetchError
 	}
 

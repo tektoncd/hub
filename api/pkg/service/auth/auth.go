@@ -21,20 +21,25 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/go-github/github"
 	"github.com/jinzhu/gorm"
-	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 
 	"github.com/tektoncd/hub/api/gen/auth"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/token"
 )
 
 type service struct {
-	api           app.Config
-	logger        *zap.SugaredLogger
+	app.Service
+	api app.Config
+}
+
+type request struct {
 	db            *gorm.DB
+	log           *log.Logger
 	oauth         *oauth2.Config
+	defaultScopes []string
 	jwtSigningKey string
 }
 
@@ -45,35 +50,51 @@ var (
 
 // New returns the auth service implementation.
 func New(api app.Config) auth.Service {
-	return &service{api, api.Logger(), api.DB(), api.OAuthConfig(), api.JWTSigningKey()}
+	return &service{
+		Service: api.Service("auth"),
+		api:     api,
+	}
 }
 
 // Authenticates users against GitHub OAuth
-func (s *service) Authenticate(ctx context.Context, p *auth.AuthenticatePayload) (res *auth.AuthenticateResult, err error) {
+func (s *service) Authenticate(ctx context.Context, p *auth.AuthenticatePayload) (*auth.AuthenticateResult, error) {
+
+	req := request{
+		db:            s.DB(ctx),
+		log:           s.Logger(ctx),
+		oauth:         s.api.OAuthConfig(),
+		defaultScopes: s.api.Data().Default.Scopes,
+		jwtSigningKey: s.api.JWTSigningKey(),
+	}
+
+	return req.authenticate(p.Code)
+}
+
+func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
 
 	// gets access_token for user using authorization_code
-	token, err := s.oauth.Exchange(oauth2.NoContext, p.Code)
+	token, err := r.oauth.Exchange(oauth2.NoContext, code)
 	if err != nil {
 		return nil, invalidCode
 	}
 
 	// gets user details from github using the access_token
-	oauthClient := s.oauth.Client(oauth2.NoContext, token)
+	oauthClient := r.oauth.Client(oauth2.NoContext, token)
 	ghClient := github.NewClient(oauthClient)
 	ghUser, _, err := ghClient.Users.Get(oauth2.NoContext, "")
 	if err != nil {
-		s.logger.Error(err)
+		r.log.Error(err)
 		return nil, internalError
 	}
 
 	// adds user in db if not exist
-	user, err := s.addUser(ghUser)
+	user, err := r.addUser(ghUser)
 	if err != nil {
 		return nil, err
 	}
 
 	// creates jwt using user details
-	jwt, err := s.createJWT(user)
+	jwt, err := r.createJWT(user)
 	if err != nil {
 		return nil, err
 	}
@@ -81,34 +102,34 @@ func (s *service) Authenticate(ctx context.Context, p *auth.AuthenticatePayload)
 	return &auth.AuthenticateResult{Token: jwt}, nil
 }
 
-func (s *service) addUser(user *github.User) (*model.User, error) {
+func (r *request) addUser(user *github.User) (*model.User, error) {
 
-	q := s.db.Model(&model.User{}).Where(&model.User{GithubLogin: user.GetLogin()})
+	q := r.db.Model(&model.User{}).Where(&model.User{GithubLogin: user.GetLogin()})
 
 	newUser := &model.User{
 		GithubName:  user.GetName(),
 		GithubLogin: user.GetLogin(),
 	}
 	if err := q.FirstOrCreate(newUser).Error; err != nil {
-		s.logger.Error(err)
+		r.log.Error(err)
 		return nil, internalError
 	}
 
 	return newUser, nil
 }
 
-func (s *service) createJWT(user *model.User) (string, error) {
+func (r *request) createJWT(user *model.User) (string, error) {
 
 	claim := jwt.MapClaims{
 		"id":     user.ID,
 		"login":  user.GithubLogin,
 		"name":   user.GithubName,
-		"scopes": s.api.Data().Default.Scopes,
+		"scopes": r.defaultScopes,
 	}
 
-	token, err := token.Create(claim, s.jwtSigningKey)
+	token, err := token.Create(claim, r.jwtSigningKey)
 	if err != nil {
-		s.logger.Error(err)
+		r.log.Error(err)
 		return "", internalError
 	}
 

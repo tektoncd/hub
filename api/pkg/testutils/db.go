@@ -38,7 +38,7 @@ func LoadFixtures(t *testing.T, dir string) {
 // applyMigration creates tables in test db
 func applyMigration() error {
 	tc := Config()
-	logger := tc.Logger()
+	logger := tc.Logger("test")
 	if err := migration.Migrate(tc.APIBase); err != nil {
 		logger.Errorf("DB initialisation failed !!")
 		return err

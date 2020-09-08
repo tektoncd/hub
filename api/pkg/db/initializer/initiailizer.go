@@ -1,11 +1,12 @@
 package initializer
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/jinzhu/gorm"
-	"go.uber.org/zap"
 
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 )
@@ -13,17 +14,20 @@ import (
 // Initializer defines the configuration required for initailizer
 // to populate the tables
 type Initializer struct {
-	log  *zap.SugaredLogger
+	app.Service
 	db   *gorm.DB
+	log  *log.Logger
 	data *app.Data
 }
 
 // New returns the Initializer implementation.
-func New(api app.BaseConfig) *Initializer {
+func New(ctx context.Context, api app.BaseConfig) *Initializer {
+	service := api.Service("initiailizer")
 	return &Initializer{
-		log:  api.Logger().With("component", "initiailizer"),
-		db:   api.DB(),
-		data: api.Data(),
+		Service: service,
+		db:      service.DB(ctx),
+		log:     service.Logger(ctx),
+		data:    api.Data(),
 	}
 }
 
@@ -50,7 +54,7 @@ func (i *Initializer) addCategories() error {
 
 	for _, c := range i.data.Categories {
 		cat := &model.Category{Name: c.Name}
-		if err := i.db.Where(cat).FirstOrCreate(cat).
+		if err := db.Where(cat).FirstOrCreate(cat).
 			Error; err != nil {
 			i.log.Error(err)
 			return err
