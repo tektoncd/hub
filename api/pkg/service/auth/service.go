@@ -20,10 +20,10 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
-	"go.uber.org/zap"
 	"goa.design/goa/v3/security"
 
 	"github.com/tektoncd/hub/api/gen/auth"
+	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/token"
 )
@@ -39,16 +39,22 @@ var (
 	scopesError = auth.MakeInvalidScopes(fmt.Errorf("user not authorized"))
 )
 
-type Validator struct {
-	DB     *gorm.DB
-	Logger *zap.SugaredLogger
-	JWTKey string
+type Service struct {
+	app.Service
+	signingKey string
+}
+
+func NewService(api app.Config, name string) *Service {
+	return &Service{
+		Service:    api.Service(name),
+		signingKey: api.JWTSigningKey(),
+	}
 }
 
 // JWTAuth implements the authorization logic for services for the "jwt" security scheme.
-func (v *Validator) JWTAuth(ctx context.Context, jwt string, scheme *security.JWTScheme) (context.Context, error) {
+func (s *Service) JWTAuth(ctx context.Context, jwt string, scheme *security.JWTScheme) (context.Context, error) {
 
-	claims, err := token.Verify(jwt, v.JWTKey)
+	claims, err := token.Verify(jwt, s.signingKey)
 	if err != nil {
 		return ctx, tokenError
 	}
@@ -66,16 +72,19 @@ func (v *Validator) JWTAuth(ctx context.Context, jwt string, scheme *security.JW
 	return WithUserID(ctx, uint(userID)), nil
 }
 
-// UserFromContext fetch user id from the passed context verfies if it exists in db
+// User fetch user id from the passed context verfies if it exists in db
 // returns the User object
-func (v *Validator) UserFromContext(ctx context.Context) (*model.User, error) {
+func (s *Service) User(ctx context.Context) (*model.User, error) {
+
 	userID := UserID(ctx)
-	log := v.Logger.With("user-id", userID)
+
+	log := s.LoggerWith(ctx, "user-id", userID)
+	db := s.DB(ctx)
 
 	var user model.User
-	if err := v.DB.First(&user, userID).Error; err != nil {
+	if err := db.First(&user, userID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			log.Warnf("user not found for token %s", err.Error())
+			log.Warnf("user not found for token: %s", err.Error())
 			return nil, tokenError
 		}
 

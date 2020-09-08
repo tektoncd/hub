@@ -16,13 +16,13 @@ package migration
 
 import (
 	"github.com/jinzhu/gorm"
-	"go.uber.org/zap"
 	"gopkg.in/gormigrate.v1"
 
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 )
 
-func addMinimumPipelineVersionToResourceVersion(log *zap.SugaredLogger) *gormigrate.Migration {
+func addMinimumPipelineVersionToResourceVersion(log *log.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
 		ID: "202006091100",

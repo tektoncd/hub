@@ -16,11 +16,12 @@ package migration
 
 import (
 	"github.com/jinzhu/gorm"
-	"go.uber.org/zap"
 	"gopkg.in/gormigrate.v1"
+
+	"github.com/tektoncd/hub/api/gen/log"
 )
 
-func addNotNullToResourceAndResourceVersion(log *zap.SugaredLogger) *gormigrate.Migration {
+func addNotNullToResourceAndResourceVersion(log *log.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
 		ID: "202008121043_add_not_null_constraint_to_resource_and_resource_version",

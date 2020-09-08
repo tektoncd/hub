@@ -17,6 +17,9 @@ package design
 import (
 	. "goa.design/goa/v3/dsl"
 	cors "goa.design/plugins/v3/cors/dsl"
+
+	// Enables the zaplogger plugin
+	_ "goa.design/plugins/v3/zaplogger"
 )
 
 var _ = API("hub", func() {
