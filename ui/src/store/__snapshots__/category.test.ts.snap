@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Store functions can create a store 1`] = `
+Object {
+  "err": "",
+  "isLoading": false,
+  "list": Array [
+    Object {
+      "id": 1,
+      "name": "Build Tools",
+      "selected": false,
+      "tags": Array [
+        Object {
+          "id": 1,
+          "name": "build-tool",
+        },
+      ],
+    },
+    Object {
+      "id": 2,
+      "name": "CLI",
+      "selected": false,
+      "tags": Array [
+        Object {
+          "id": 2,
+          "name": "cli",
+        },
+      ],
+    },
+    Object {
+      "id": 3,
+      "name": "Cloud",
+      "selected": false,
+      "tags": Array [
+        Object {
+          "id": 4,
+          "name": "aws",
+        },
+        Object {
+          "id": 5,
+          "name": "azure",
+        },
+        Object {
+          "id": 6,
+          "name": "cloud",
+        },
+        Object {
+          "id": 3,
+          "name": "gcp",
+        },
+      ],
+    },
+    Object {
+      "id": 4,
+      "name": "Deploy",
+      "selected": false,
+      "tags": Array [
+        Object {
+          "id": 7,
+          "name": "deploy",
+        },
+      ],
+    },
+    Object {
+      "id": 5,
+      "name": "Image Build",
+      "selected": false,
+      "tags": Array [
+        Object {
+          "id": 8,
+          "name": "image-build",
+        },
+      ],
+    },
+  ],
+}
+`;

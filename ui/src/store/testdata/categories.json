@@ -1,0 +1,66 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Build Tools",
+      "tags": [
+        {
+          "id": 1,
+          "name": "build-tool"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "CLI",
+      "tags": [
+        {
+          "id": 2,
+          "name": "cli"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Cloud",
+      "tags": [
+        {
+          "id": 4,
+          "name": "aws"
+        },
+        {
+          "id": 5,
+          "name": "azure"
+        },
+        {
+          "id": 6,
+          "name": "cloud"
+        },
+        {
+          "id": 3,
+          "name": "gcp"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Deploy",
+      "tags": [
+        {
+          "id": 7,
+          "name": "deploy"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Image Build",
+      "tags": [
+        {
+          "id": 8,
+          "name": "image-build"
+        }
+      ]
+    }
+  ]
+}
