@@ -25,17 +25,20 @@ var _ = Service("resource", func() {
 	Error("not-found", ErrorResult, "Resource Not Found Error")
 
 	Method("Query", func() {
-		Description("Find resources by a combination of name, kind")
+		Description("Find resources by a combination of name, kind and tags")
 		Payload(func() {
 			Attribute("name", String, "Name of resource", func() {
 				Default("")
 			})
-			Attribute("kind", String, "Kind of resource", func() {
-				Enum("task", "pipeline", "")
-				Default("")
-			})
+			Attribute("kinds", ArrayOf(String), "Kinds of resource to filter by")
+			Attribute("tags", ArrayOf(String), "Tags associated with a resource to filter by")
 			Attribute("limit", UInt, "Maximum number of resources to be returned", func() {
 				Default(100)
+			})
+
+			Attribute("match", String, "Strategy used to find matching resources", func() {
+				Enum("exact", "contains")
+				Default("contains")
 			})
 		})
 		Result(CollectionOf(Resource), func() {
@@ -45,8 +48,10 @@ var _ = Service("resource", func() {
 		HTTP(func() {
 			GET("/query")
 			Param("name")
-			Param("kind")
+			Param("kinds")
+			Param("tags")
 			Param("limit")
+			Param("match")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)

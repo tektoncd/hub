@@ -31,17 +31,27 @@ func UsageCommands() string {
 auth authenticate
 status status
 resource (query|list|versions-by-id|by-kind-name-version|by-version-id|by-kind-name|by-id)
-rating get
+rating (get|update)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` auth authenticate --code "Omnis quas deserunt nostrum assumenda."` + "\n" +
+		os.Args[0] + ` auth authenticate --code "Autem ut est error eaque."` + "\n" +
 		os.Args[0] + ` status status` + "\n" +
-		os.Args[0] + ` resource query --name "Quia nihil officia itaque." --kind "" --limit 10573978620324901534` + "\n" +
-		os.Args[0] + ` rating get --id 14236020767980603451 --token "Quo velit vitae."` + "\n" +
+		os.Args[0] + ` resource query --name "Cumque omnis non." --kinds '[
+      "Quos distinctio ipsam eos.",
+      "Magnam illum ut nihil eum placeat.",
+      "Et consequuntur voluptas et enim ut rerum.",
+      "Aut eos qui fugiat."
+   ]' --tags '[
+      "Sunt est.",
+      "Reiciendis pariatur quasi illo voluptate corrupti.",
+      "Aut beatae reiciendis accusantium.",
+      "Qui ipsum deleniti corrupti non quo velit."
+   ]' --limit 17876575713650742907 --match "contains"` + "\n" +
+		os.Args[0] + ` rating get --id 3376298804373115607 --token "Placeat facere."` + "\n" +
 		""
 }
 
@@ -72,8 +82,10 @@ func ParseEndpoint(
 
 		resourceQueryFlags     = flag.NewFlagSet("query", flag.ExitOnError)
 		resourceQueryNameFlag  = resourceQueryFlags.String("name", "", "")
-		resourceQueryKindFlag  = resourceQueryFlags.String("kind", "", "")
+		resourceQueryKindsFlag = resourceQueryFlags.String("kinds", "", "")
+		resourceQueryTagsFlag  = resourceQueryFlags.String("tags", "", "")
 		resourceQueryLimitFlag = resourceQueryFlags.String("limit", "100", "")
+		resourceQueryMatchFlag = resourceQueryFlags.String("match", "contains", "")
 
 		resourceListFlags     = flag.NewFlagSet("list", flag.ExitOnError)
 		resourceListLimitFlag = resourceListFlags.String("limit", "100", "")
@@ -271,7 +283,7 @@ func ParseEndpoint(
 			switch epn {
 			case "query":
 				endpoint = c.Query()
-				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryKindFlag, *resourceQueryLimitFlag)
+				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryKindsFlag, *resourceQueryTagsFlag, *resourceQueryLimitFlag, *resourceQueryMatchFlag)
 			case "list":
 				endpoint = c.List()
 				data, err = resourcec.BuildListPayload(*resourceListLimitFlag)
@@ -350,10 +362,10 @@ func authAuthenticateUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] auth authenticate -code STRING
 
 Authenticates users against GitHub OAuth
-    -code STRING:
+    -code STRING: 
 
 Example:
-    `+os.Args[0]+` auth authenticate --code "Omnis quas deserunt nostrum assumenda."
+    `+os.Args[0]+` auth authenticate --code "Autem ut est error eaque."
 `, os.Args[0])
 }
 
@@ -387,7 +399,7 @@ Usage:
     %s [globalflags] resource COMMAND [flags]
 
 COMMAND:
-    query: Find resources by a combination of name, kind
+    query: Find resources by a combination of name, kind and tags
     list: List all resources sorted by rating and name
     versions-by-id: Find all versions of a resource by its id
     by-kind-name-version: Find resource using name, kind and version of resource
@@ -400,15 +412,27 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func resourceQueryUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -kind STRING -limit UINT
+	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -kinds JSON -tags JSON -limit UINT -match STRING
 
-Find resources by a combination of name, kind
-    -name STRING:
-    -kind STRING:
-    -limit UINT:
+Find resources by a combination of name, kind and tags
+    -name STRING: 
+    -kinds JSON: 
+    -tags JSON: 
+    -limit UINT: 
+    -match STRING: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Quia nihil officia itaque." --kind "" --limit 10573978620324901534
+    `+os.Args[0]+` resource query --name "Cumque omnis non." --kinds '[
+      "Quos distinctio ipsam eos.",
+      "Magnam illum ut nihil eum placeat.",
+      "Et consequuntur voluptas et enim ut rerum.",
+      "Aut eos qui fugiat."
+   ]' --tags '[
+      "Sunt est.",
+      "Reiciendis pariatur quasi illo voluptate corrupti.",
+      "Aut beatae reiciendis accusantium.",
+      "Qui ipsum deleniti corrupti non quo velit."
+   ]' --limit 17876575713650742907 --match "contains"
 `, os.Args[0])
 }
 
@@ -416,10 +440,10 @@ func resourceListUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] resource list -limit UINT
 
 List all resources sorted by rating and name
-    -limit UINT:
+    -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource list --limit 312993529425355973
+    `+os.Args[0]+` resource list --limit 8773123889721374510
 `, os.Args[0])
 }
 
@@ -430,7 +454,7 @@ Find all versions of a resource by its id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource versions-by-id --id 10379275056117495825
+    `+os.Args[0]+` resource versions-by-id --id 16313197953130531523
 `, os.Args[0])
 }
 
@@ -443,7 +467,7 @@ Find resource using name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-kind-name-version --kind "task" --name "Modi facere cumque omnis non." --version "Aut quos distinctio ipsam."
+    `+os.Args[0]+` resource by-kind-name-version --kind "task" --name "Tempora omnis et nihil aut quo quidem." --version "Qui nemo sint est."
 `, os.Args[0])
 }
 
@@ -454,7 +478,7 @@ Find a resource using its version's id
     -version-id UINT: Version ID of a resource's version
 
 Example:
-    `+os.Args[0]+` resource by-version-id --version-id 13680623773748373161
+    `+os.Args[0]+` resource by-version-id --version-id 5020310314104480935
 `, os.Args[0])
 }
 
@@ -466,7 +490,7 @@ Find resources using name and kind
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-kind-name --kind "pipeline" --name "Fugiat earum ut sunt est ea."
+    `+os.Args[0]+` resource by-kind-name --kind "pipeline" --name "Qui alias repudiandae enim ratione."
 `, os.Args[0])
 }
 
@@ -477,7 +501,7 @@ Find a resource using it's id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource by-id --id 12150409255782392785
+    `+os.Args[0]+` resource by-id --id 2593919908674814193
 `, os.Args[0])
 }
 
@@ -500,10 +524,10 @@ func ratingGetUsage() {
 
 Find user's rating for a resource
     -id UINT: ID of a resource
-    -token STRING:
+    -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 1029125940089474859 --token "Reprehenderit libero soluta sapiente deleniti voluptatem distinctio."
+    `+os.Args[0]+` rating get --id 3376298804373115607 --token "Placeat facere."
 `, os.Args[0])
 }
 
@@ -511,13 +535,13 @@ func ratingUpdateUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] rating update -body JSON -id UINT -token STRING
 
 Update user's rating for a resource
-    -body JSON:
+    -body JSON: 
     -id UINT: ID of a resource
-    -token STRING:
+    -token STRING: 
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 3
-   }' --id 3398235971556683985 --token "Nemo sint est omnis."
+      "rating": 0
+   }' --id 7378417340401583056 --token "Accusamus et."
 `, os.Args[0])
 }

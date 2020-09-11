@@ -1,0 +1,58 @@
+[
+	{
+		"id": 2,
+		"name": "build-pipeline",
+		"catalog": {
+			"id": 1,
+			"type": "official"
+		},
+		"kind": "pipeline",
+		"latestVersion": {
+			"id": 4,
+			"version": "0.2",
+			"displayName": "Build",
+			"description": "Desc2",
+			"minPipelinesVersion": "0.12.1",
+			"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/build/0.2/build.yaml",
+			"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/build/0.2/build.yaml",
+			"updatedAt": "2016-01-01 12:30:12 +0000 UTC"
+		},
+		"tags": [
+			{
+				"id": 4,
+				"name": "atag"
+			},
+			{
+				"id": 1,
+				"name": "ztag"
+			}
+		],
+		"rating": 4.4
+	},
+	{
+		"id": 4,
+		"name": "buildah",
+		"catalog": {
+			"id": 1,
+			"type": "official"
+		},
+		"kind": "task",
+		"latestVersion": {
+			"id": 7,
+			"version": "0.1",
+			"displayName": "Buildah",
+			"description": "Desc4",
+			"minPipelinesVersion": "0.12.1",
+			"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/buildah/0.1/buildah.yaml",
+			"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/buildah/0.1/buildah.yaml",
+			"updatedAt": "2016-01-01 12:30:12 +0000 UTC"
+		},
+		"tags": [
+			{
+				"id": 1,
+				"name": "ztag"
+			}
+		],
+		"rating": 1.3
+	}
+]

@@ -16,7 +16,7 @@ import (
 
 // The resource service provides details about all kind of resources
 type Service interface {
-	// Find resources by a combination of name, kind
+	// Find resources by a combination of name, kind and tags
 	Query(context.Context, *QueryPayload) (res ResourceCollection, err error)
 	// List all resources sorted by rating and name
 	List(context.Context, *ListPayload) (res ResourceCollection, err error)
@@ -46,10 +46,14 @@ var MethodNames = [7]string{"Query", "List", "VersionsByID", "ByKindNameVersion"
 type QueryPayload struct {
 	// Name of resource
 	Name string
-	// Kind of resource
-	Kind string
+	// Kinds of resource to filter by
+	Kinds []string
+	// Tags associated with a resource to filter by
+	Tags []string
 	// Maximum number of resources to be returned
 	Limit uint
+	// Strategy used to find matching resources
+	Match string
 }
 
 // ResourceCollection is the result type of the resource service Query method.

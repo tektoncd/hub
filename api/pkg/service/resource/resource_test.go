@@ -29,7 +29,7 @@ func TestQuery_DefaultLimit(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.QueryPayload{Name: "", Kind: "", Limit: 100}
+	payload := &resource.QueryPayload{Name: "", Kinds: []string{}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
 	assert.Equal(t, 6, len(all))
@@ -40,7 +40,7 @@ func TestQuery_ByLimit(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.QueryPayload{Name: "", Kind: "", Limit: 2}
+	payload := &resource.QueryPayload{Name: "", Limit: 2}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(all))
@@ -52,7 +52,7 @@ func TestQuery_ByName(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.QueryPayload{Name: "tekton", Kind: "", Limit: 100}
+	payload := &resource.QueryPayload{Name: "tekton", Kinds: []string{}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(all))
@@ -64,7 +64,7 @@ func TestQuery_ByPartialName(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.QueryPayload{Name: "build", Kind: "", Limit: 100}
+	payload := &resource.QueryPayload{Name: "build", Kinds: []string{}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(all))
@@ -75,7 +75,29 @@ func TestQuery_ByKind(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.QueryPayload{Name: "", Kind: "pipeline", Limit: 100}
+	payload := &resource.QueryPayload{Name: "", Kinds: []string{"pipeline"}, Limit: 100}
+	all, err := resourceSvc.Query(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(all))
+}
+
+func TestQuery_ByMultipleKinds(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.QueryPayload{Name: "", Kinds: []string{"task", "pipeline"}, Limit: 100}
+	all, err := resourceSvc.Query(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, 6, len(all))
+}
+
+func TestQuery_ByTags(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.QueryPayload{Name: "", Kinds: []string{}, Tags: []string{"atag"}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(all))
@@ -86,11 +108,44 @@ func TestQuery_ByNameAndKind(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.QueryPayload{Name: "build", Kind: "pipeline", Limit: 100}
+	payload := &resource.QueryPayload{Name: "build", Kinds: []string{"pipeline"}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(all))
 	assert.Equal(t, "build-pipeline", all[0].Name)
+}
+
+func TestQuery_ByNameTagsAndMultipleType(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.QueryPayload{Name: "build", Kinds: []string{"task", "pipeline"}, Tags: []string{"atag", "ztag"}, Match: "contains", Limit: 100}
+	all, err := resourceSvc.Query(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(all))
+}
+
+func TestQuery_ByExactNameAndMultipleType(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.QueryPayload{Name: "buildah", Kinds: []string{"task", "pipeline"}, Match: "exact", Limit: 100}
+	all, err := resourceSvc.Query(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(all))
+}
+
+func TestQuery_ExactNameNotFoundError(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.QueryPayload{Name: "build", Kinds: []string{}, Match: "exact", Limit: 100}
+	_, err := resourceSvc.Query(context.Background(), payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Resource not found")
 }
 
 func TestQuery_NotFoundError(t *testing.T) {
@@ -98,7 +153,7 @@ func TestQuery_NotFoundError(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.QueryPayload{Name: "foo", Kind: "", Limit: 100}
+	payload := &resource.QueryPayload{Name: "foo", Kinds: []string{}, Limit: 100}
 	_, err := resourceSvc.Query(context.Background(), payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Resource not found")
