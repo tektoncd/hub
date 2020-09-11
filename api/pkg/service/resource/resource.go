@@ -32,7 +32,7 @@ type service struct {
 	db     *gorm.DB
 }
 
-var replaceStrings = strings.NewReplacer("github.com", "raw.githubusercontent.com", "/tree/", "/")
+var replaceGHtoRaw = strings.NewReplacer("github.com", "raw.githubusercontent.com", "/tree/", "/")
 
 // Errors
 var (
@@ -48,10 +48,16 @@ func New(api app.BaseConfig) resource.Service {
 // Find resources based on name, kind or both
 func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (res resource.ResourceCollection, err error) {
 
-	q := s.db.Scopes(
+	// DISTINCT(resources.id) and resources.id is required as the
+	// INNER JOIN of tags and resources returns duplicate records of
+	// resources as a resource may have multiple tags, thus we have to
+	// find DISTINCT on resource.id
+
+	q := s.db.Select("DISTINCT(resources.id), resources.*").Scopes(
+		filterByTags(p.Tags),
+		filterByKinds(p.Kinds),
+		filterResourceName(p.Match, p.Name),
 		withResourceDetails,
-		filterByKind(p.Kind),
-		matchesName(p.Name),
 	).Limit(p.Limit)
 
 	return s.resourcesForQuery(q)
@@ -95,7 +101,8 @@ func (s *service) ByKindNameVersion(ctx context.Context, p *resource.ByKindNameV
 	q := s.db.Scopes(
 		withVersionInfo(p.Version),
 		filterByKind(p.Kind),
-		filterByName(p.Name))
+		// missing a test : there must be 2 resources one containing, other exact
+		filterResourceName("exact", p.Name))
 
 	var r model.Resource
 	if err := findOne(q, &r); err != nil {
@@ -133,7 +140,8 @@ func (s *service) ByKindName(ctx context.Context, p *resource.ByKindNamePayload)
 	q := s.db.Scopes(
 		withResourceDetails,
 		filterByKind(p.Kind),
-		filterByName(p.Name))
+		// missing test
+		filterResourceName("exact", p.Name))
 
 	return s.resourcesForQuery(q)
 }
@@ -198,7 +206,7 @@ func initResource(r model.Resource) *resource.Resource {
 		DisplayName:         lv.DisplayName,
 		MinPipelinesVersion: lv.MinPipelinesVersion,
 		WebURL:              lv.URL,
-		RawURL:              replaceStrings.Replace(lv.URL),
+		RawURL:              replaceGHtoRaw.Replace(lv.URL),
 		UpdatedAt:           lv.UpdatedAt.UTC().String(),
 	}
 	for _, tag := range r.Tags {
@@ -225,7 +233,7 @@ func minVersionInfo(r model.ResourceVersion) *resource.Version {
 
 	res := tinyVersionInfo(r)
 	res.WebURL = r.URL
-	res.RawURL = replaceStrings.Replace(r.URL)
+	res.RawURL = replaceGHtoRaw.Replace(r.URL)
 
 	return res
 }
@@ -259,7 +267,7 @@ func versionInfoFromResource(r model.Resource) *resource.Version {
 		DisplayName:         v.DisplayName,
 		MinPipelinesVersion: v.MinPipelinesVersion,
 		WebURL:              v.URL,
-		RawURL:              replaceStrings.Replace(v.URL),
+		RawURL:              replaceGHtoRaw.Replace(v.URL),
 		UpdatedAt:           v.UpdatedAt.UTC().String(),
 		Resource:            res,
 	}
@@ -285,7 +293,7 @@ func withCatalogAndTags(db *gorm.DB) *gorm.DB {
 // withResourceDetails defines a gorm scope to include all details of resource.
 func withResourceDetails(db *gorm.DB) *gorm.DB {
 	return db.
-		Order("rating DESC, name").
+		Order("rating DESC, resources.name").
 		Scopes(withCatalogAndTags).
 		Preload("Versions", orderByVersion)
 }
@@ -346,6 +354,31 @@ func filterByKind(t string) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+func filterByKinds(t []string) func(db *gorm.DB) *gorm.DB {
+	if len(t) == 0 {
+		return noop
+	}
+
+	return func(db *gorm.DB) *gorm.DB {
+		t = lower(t)
+		return db.Where("LOWER(kind) IN (?)", t)
+	}
+}
+
+func filterByTags(tags []string) func(db *gorm.DB) *gorm.DB {
+	if tags == nil {
+		return noop
+	}
+
+	tags = lower(tags)
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Model(&model.Resource{}).
+			Joins("JOIN resource_tags as rt on rt.resource_id = resources.id").
+			Joins("JOIN tags on tags.id = rt.tag_id").
+			Where("lower(tags.name) in (?)", tags)
+	}
+}
+
 func filterByResourceID(id uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("resource_id = ?", id)
@@ -358,28 +391,32 @@ func filterByVersionID(versionID uint) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func filterByName(name string) func(db *gorm.DB) *gorm.DB {
+func filterResourceName(match, name string) func(db *gorm.DB) *gorm.DB {
 	if name == "" {
 		return noop
 	}
-
 	name = strings.ToLower(name)
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("LOWER(name) = ?", name)
-	}
-}
-
-func matchesName(name string) func(db *gorm.DB) *gorm.DB {
-	if name == "" {
-		return noop
-	}
-
-	likeName := "%" + strings.ToLower(name) + "%"
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("LOWER(name) LIKE ?", likeName)
+	switch match {
+	case "exact":
+		return func(db *gorm.DB) *gorm.DB {
+			return db.Where("LOWER(resources.name) = ?", name)
+		}
+	default:
+		likeName := "%" + name + "%"
+		return func(db *gorm.DB) *gorm.DB {
+			return db.Where("LOWER(resources.name) LIKE ?", likeName)
+		}
 	}
 }
 
 func noop(db *gorm.DB) *gorm.DB {
 	return db
+}
+
+// This function lowercase all the elements of an array
+func lower(t []string) []string {
+	for i := range t {
+		t[i] = strings.ToLower(t[i])
+	}
+	return t
 }
