@@ -22,7 +22,7 @@ func BuildRefreshPayload(catalogRefreshBody string) (*catalog.RefreshPayload, er
 	{
 		err = json.Unmarshal([]byte(catalogRefreshBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"name\": \"Voluptas et enim.\",\n      \"org\": \"Voluptas et.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"name\": \"Sit nulla omnis incidunt.\",\n      \"org\": \"Aut porro nulla sunt omnis molestiae eligendi.\"\n   }'")
 		}
 	}
 	v := &catalog.RefreshPayload{
