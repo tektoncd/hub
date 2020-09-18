@@ -38,8 +38,8 @@ paths:
         schema:
           type: string
           description: OAuth Authorization code of User
-          example: Incidunt neque.
-        example: Reiciendis hic molestiae beatae dicta itaque.
+          example: Et aliquid qui omnis rem.
+        example: Non dolore corrupti sapiente commodi.
       responses:
         "200":
           description: ""
@@ -48,7 +48,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticateResponseBody'
               example:
-                token: Cumque omnis non.
+                token: Voluptate corrupti omnis.
         "400":
           description: ""
           content:
@@ -56,11 +56,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
+                temporary: true
                 timeout: true
         "401":
           description: ""
@@ -69,12 +69,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: false
+                timeout: true
         "403":
           description: ""
           content:
@@ -82,12 +82,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -99,8 +99,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
+                temporary: false
+                timeout: true
   /catalog/refresh:
     post:
       tags:
@@ -115,8 +115,8 @@ paths:
             schema:
               $ref: '#/components/schemas/RefreshRequestBody'
             example:
-              name: Voluptas et enim.
-              org: Voluptas et.
+              name: Sit nulla omnis incidunt.
+              org: Aut porro nulla sunt omnis molestiae eligendi.
       responses:
         "200":
           description: ""
@@ -125,8 +125,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Job'
               example:
-                id: 3519426768215004667
-                status: Fugiat earum ut sunt est ea.
+                id: 1936946499459821130
+                status: Sapiente deleniti voluptatem.
         "500":
           description: ""
           content:
@@ -134,11 +134,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
+                temporary: true
                 timeout: true
   /categories:
     get:
@@ -178,6 +178,13 @@ paths:
                     name: image-build
                   - id: 2
                     name: kaniko
+                - id: 1
+                  name: Image Builder
+                  tags:
+                  - id: 1
+                    name: image-build
+                  - id: 2
+                    name: kaniko
               example:
               - id: 1
                 name: Image Builder
@@ -200,12 +207,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: false
+                timeout: true
   /query:
     get:
       tags:
@@ -222,8 +229,8 @@ paths:
           type: string
           description: Name of resource
           default: ""
-          example: Reiciendis aut repellat veritatis.
-        example: Accusantium nulla ea rem aperiam.
+          example: Vero reiciendis est corporis.
+        example: Architecto nisi consequatur aut ab ea.
       - name: kinds
         in: query
         description: Kinds of resource to filter by
@@ -232,16 +239,15 @@ paths:
           type: array
           items:
             type: string
-            example: Sapiente labore.
+            example: Voluptatem ratione.
           description: Kinds of resource to filter by
           example:
-          - Sequi officiis mollitia.
-          - Laudantium quidem amet suscipit fuga nam.
-          - Eveniet qui sint omnis consequatur omnis.
+          - Vero aperiam.
+          - Enim corrupti consequatur.
         example:
-        - Sed voluptas animi molestiae nam quas.
-        - Optio accusamus ut.
-        - Sapiente modi occaecati.
+        - Tenetur qui in.
+        - Quo laborum.
+        - Quia assumenda distinctio sunt voluptatem quas aut.
       - name: tags
         in: query
         description: Tags associated with a resource to filter by
@@ -250,15 +256,16 @@ paths:
           type: array
           items:
             type: string
-            example: Ducimus ab natus autem.
+            example: Nihil placeat non.
           description: Tags associated with a resource to filter by
           example:
-          - Porro placeat.
-          - Et at.
-          - Aperiam tempore animi iure eum et et.
+          - Eius illo eligendi rerum harum eos.
+          - Et nulla nam repellendus.
+          - Quisquam quasi quo voluptas voluptatem.
+          - Molestias eaque impedit aut dignissimos explicabo voluptates.
         example:
-        - Corrupti atque odit expedita sit repellendus.
-        - Consequatur numquam id aut illum ut rerum.
+        - Illo consectetur modi incidunt eum reprehenderit.
+        - Ut velit qui vel voluptatum dolores.
       - name: limit
         in: query
         description: Maximum number of resources to be returned
@@ -267,8 +274,8 @@ paths:
           type: integer
           description: Maximum number of resources to be returned
           default: 100
-          example: 14381081816862842907
-        example: 7332083124145255046
+          example: 16330986589077157481
+        example: 6562096128660937011
       - name: match
         in: query
         description: Strategy used to find matching resources
@@ -277,7 +284,7 @@ paths:
           type: string
           description: Strategy used to find matching resources
           default: contains
-          example: contains
+          example: exact
           enum:
           - exact
           - contains
@@ -354,12 +361,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -367,12 +374,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
+                temporary: true
+                timeout: false
   /resource/{catalog}/{kind}/{name}:
     get:
       tags:
@@ -388,8 +395,8 @@ paths:
         schema:
           type: string
           description: name of catalog
-          example: Et aspernatur eos dolores adipisci.
-        example: Neque commodi necessitatibus.
+          example: Quaerat nesciunt.
+        example: Unde dicta voluptatem excepturi.
       - name: kind
         in: path
         description: kind of resource
@@ -397,7 +404,7 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: task
+          example: pipeline
           enum:
           - task
           - pipeline
@@ -409,8 +416,8 @@ paths:
         schema:
           type: string
           description: Name of resource
-          example: Minima quia qui.
-        example: Id asperiores aut et.
+          example: Iusto quis eaque illo sint.
+        example: Facilis non dolorem officia.
       responses:
         "200":
           description: ""
@@ -517,8 +524,8 @@ paths:
         schema:
           type: string
           description: name of catalog
-          example: Accusantium fugiat alias ipsa dolore eveniet.
-        example: Mollitia alias perferendis et iusto.
+          example: Neque vitae neque non placeat sunt.
+        example: Deserunt laboriosam minus.
       - name: kind
         in: path
         description: kind of resource
@@ -526,11 +533,11 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: task
+          example: pipeline
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: name of resource
@@ -538,8 +545,8 @@ paths:
         schema:
           type: string
           description: name of resource
-          example: Laborum aliquam possimus tempore non.
-        example: Voluptatibus voluptatem voluptates sint est officia.
+          example: Praesentium expedita aut eos doloremque fugit ducimus.
+        example: Deleniti quam quis eos amet eaque culpa.
       - name: version
         in: path
         description: version of resource
@@ -547,8 +554,8 @@ paths:
         schema:
           type: string
           description: version of resource
-          example: Omnis officia ratione aut quia.
-        example: Ipsum aperiam nam numquam rerum nam.
+          example: Assumenda ea ut eaque.
+        example: Voluptas dolorem eius quis cumque doloremque.
       responses:
         "200":
           description: ""
@@ -587,7 +594,7 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
+                temporary: true
                 timeout: true
         "500":
           description: ""
@@ -596,11 +603,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
+                temporary: true
                 timeout: true
   /resource/{id}:
     get:
@@ -617,8 +624,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 16914788496001367804
-        example: 376537852502903283
+          example: 11163992137535361208
+        example: 12279288867262649736
       responses:
         "200":
           description: ""
@@ -658,12 +665,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
+                temporary: false
+                timeout: false
         "500":
           description: ""
           content:
@@ -671,12 +678,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: true
+                timeout: false
   /resource/{id}/rating:
     get:
       tags:
@@ -692,8 +699,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 2894540398192059890
-        example: 8698878814050896741
+          example: 1286850277502551308
+        example: 6004493435677132259
       responses:
         "200":
           description: ""
@@ -702,7 +709,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetResponseBody'
               example:
-                rating: 8243725567479150691
+                rating: 4788780110808335304
         "401":
           description: ""
           content:
@@ -710,12 +717,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
+                temporary: false
+                timeout: true
         "403":
           description: ""
           content:
@@ -728,7 +735,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: true
+                timeout: false
         "404":
           description: ""
           content:
@@ -741,7 +748,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: false
+                timeout: true
         "500":
           description: ""
           content:
@@ -753,12 +760,13 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
+                temporary: false
                 timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
         - rating:write
+        - agent:create
     put:
       tags:
       - rating
@@ -773,8 +781,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 1658287993585809301
-        example: 9359019247570098287
+          example: 16439552623283053600
+        example: 11184332997167704676
       requestBody:
         required: true
         content:
@@ -822,12 +830,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: false
+                timeout: true
         "500":
           description: ""
           content:
@@ -835,16 +843,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
+                temporary: false
+                timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
         - rating:write
+        - agent:create
   /resource/{id}/versions:
     get:
       tags:
@@ -860,8 +869,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 9030580309542282086
-        example: 17404271294733310793
+          example: 11784999309557349575
+        example: 11574888759590897172
       responses:
         "200":
           description: ""
@@ -891,11 +900,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
+                temporary: false
                 timeout: false
         "500":
           description: ""
@@ -908,7 +917,7 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
+                temporary: false
                 timeout: false
   /resource/version/{versionID}:
     get:
@@ -925,8 +934,8 @@ paths:
         schema:
           type: integer
           description: Version ID of a resource's version
-          example: 8677512089828243681
-        example: 11896670643984764718
+          example: 14789904769841816398
+        example: 17863949672902663651
       responses:
         "200":
           description: ""
@@ -961,7 +970,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
@@ -978,7 +987,7 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
+                temporary: false
                 timeout: false
   /resources:
     get:
@@ -996,8 +1005,8 @@ paths:
           type: integer
           description: Maximum number of resources to be returned
           default: 100
-          example: 7027495399998000197
-        example: 10579553497869499435
+          example: 3979274282240288014
+        example: 11028379413051177082
       responses:
         "200":
           description: ""
@@ -1070,12 +1079,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: true
+                timeout: false
   /swagger/swagger.json:
     get:
       tags:
@@ -1086,6 +1095,90 @@ paths:
       responses:
         "200":
           description: File downloaded
+  /system/user/agent:
+    put:
+      tags:
+      - admin
+      summary: UpdateAgent admin
+      description: Create or Update an agent user with required scopes
+      operationId: admin#UpdateAgent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAgentRequestBody'
+            example:
+              name: Velit itaque dolores dolor esse.
+              scopes:
+              - Aliquid praesentium saepe sed optio ab.
+              - Est magnam eveniet nihil et beatae.
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticateResponseBody'
+              example:
+                token: Numquam eaque sunt voluptas eius non illo.
+        "400":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: true
+                timeout: true
+        "401":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: true
+                timeout: false
+        "403":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: false
+        "500":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: true
+      security:
+      - jwt_header_Authorization:
+        - rating:read
+        - rating:write
+        - agent:create
 components:
   schemas:
     AuthenticateResponseBody:
@@ -1094,9 +1187,9 @@ components:
         token:
           type: string
           description: JWT
-          example: Et non nobis.
+          example: Officia quo.
       example:
-        token: Iusto quis labore reprehenderit ut.
+        token: Officia ratione aut quia eos.
       required:
       - token
     ByCatalogKindNameVersionResponseBody:
@@ -1328,18 +1421,18 @@ components:
         temporary:
           type: boolean
           description: Is the error temporary?
-          example: false
+          example: true
         timeout:
           type: boolean
           description: Is the error a timeout?
-          example: false
+          example: true
       description: Internal Server Error
       example:
         fault: false
         id: 123abc
         message: parameter 'p' must be an integer
         name: bad_request
-        temporary: false
+        temporary: true
         timeout: false
       required:
       - name
@@ -1354,10 +1447,10 @@ components:
         rating:
           type: integer
           description: User rating for resource
-          example: 4978336251946820652
+          example: 3450911048670313099
           format: int64
       example:
-        rating: 1734351638575098034
+        rating: 3098334050706284051
       required:
       - rating
     Job:
@@ -1366,14 +1459,14 @@ components:
         id:
           type: integer
           description: id of the job
-          example: 5989974475741049172
+          example: 1487680364023662723
         status:
           type: string
           description: status of the job
-          example: Et qui nam.
+          example: Aut et est.
       example:
-        id: 10906583923100674940
-        status: Enim sint tempora.
+        id: 376537852502903283
+        status: Quia blanditiis nam dolorem eos.
       required:
       - id
       - status
@@ -1383,14 +1476,14 @@ components:
         name:
           type: string
           description: Name of Catalog
-          example: Maxime voluptas.
+          example: Voluptatem qui et aspernatur eos.
         org:
           type: string
           description: Name of Organization the Catalog is in
-          example: Vero vel error nisi quam inventore et.
+          example: Aperiam nam numquam rerum nam.
       example:
-        name: Nam quia incidunt accusamus dolor non eum.
-        org: Velit sed sapiente libero sit id.
+        name: Quo dolorum minima quia qui ullam.
+        org: Adipisci vel neque commodi necessitatibus.
     Resource:
       type: object
       properties:
@@ -1671,17 +1764,42 @@ components:
       required:
       - id
       - name
+    UpdateAgentRequestBody:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of Agent
+          example: Et nesciunt et temporibus ut officia quis.
+        scopes:
+          type: array
+          items:
+            type: string
+            example: Rerum perspiciatis.
+          description: Scopes required for Agent
+          example:
+          - Quae vel et.
+          - Omnis quaerat.
+          - Nulla fugiat.
+      example:
+        name: Animi neque est voluptatem id rerum reprehenderit.
+        scopes:
+        - Et ut quas mollitia.
+        - Delectus sunt.
+      required:
+      - name
+      - scopes
     UpdateRequestBody:
       type: object
       properties:
         rating:
           type: integer
           description: User rating for resource
-          example: 0
+          example: 4
           minimum: 0
           maximum: 5
       example:
-        rating: 4
+        rating: 2
       required:
       - rating
     Version:

@@ -24,6 +24,7 @@ import (
 	"strings"
 	"sync"
 
+	admin "github.com/tektoncd/hub/api/gen/admin"
 	auth "github.com/tektoncd/hub/api/gen/auth"
 	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	category "github.com/tektoncd/hub/api/gen/category"
@@ -33,6 +34,7 @@ import (
 	status "github.com/tektoncd/hub/api/gen/status"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/initializer"
+	adminsvc "github.com/tektoncd/hub/api/pkg/service/admin"
 	authsvc "github.com/tektoncd/hub/api/pkg/service/auth"
 	catalogsvc "github.com/tektoncd/hub/api/pkg/service/catalog"
 	categorysvc "github.com/tektoncd/hub/api/pkg/service/category"
@@ -77,6 +79,7 @@ func main() {
 
 	// Initialize the services.
 	var (
+		adminSvc    admin.Service
 		authSvc     auth.Service
 		catalogSvc  catalog.Service
 		categorySvc category.Service
@@ -85,6 +88,7 @@ func main() {
 		statusSvc   status.Service
 	)
 	{
+		adminSvc = adminsvc.New(api)
 		authSvc = authsvc.New(api)
 		catalogSvc = catalogsvc.New(api)
 		categorySvc = categorysvc.New(api)
@@ -96,6 +100,7 @@ func main() {
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
+		adminEndpoints    *admin.Endpoints
 		authEndpoints     *auth.Endpoints
 		catalogEndpoints  *catalog.Endpoints
 		categoryEndpoints *category.Endpoints
@@ -104,6 +109,7 @@ func main() {
 		statusEndpoints   *status.Endpoints
 	)
 	{
+		adminEndpoints = admin.NewEndpoints(adminSvc)
 		authEndpoints = auth.NewEndpoints(authSvc)
 		catalogEndpoints = catalog.NewEndpoints(catalogSvc)
 		categoryEndpoints = category.NewEndpoints(categorySvc)
@@ -151,6 +157,7 @@ func main() {
 			}
 			handleHTTPServer(
 				ctx, u,
+				adminEndpoints,
 				authEndpoints,
 				catalogEndpoints,
 				categoryEndpoints,

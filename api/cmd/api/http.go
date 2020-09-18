@@ -26,9 +26,11 @@ import (
 	httpmdlwr "goa.design/goa/v3/http/middleware"
 	"goa.design/goa/v3/middleware"
 
+	admin "github.com/tektoncd/hub/api/gen/admin"
 	auth "github.com/tektoncd/hub/api/gen/auth"
 	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	category "github.com/tektoncd/hub/api/gen/category"
+	adminsvr "github.com/tektoncd/hub/api/gen/http/admin/server"
 	authsvr "github.com/tektoncd/hub/api/gen/http/auth/server"
 	catalogsvr "github.com/tektoncd/hub/api/gen/http/catalog/server"
 	categorysvr "github.com/tektoncd/hub/api/gen/http/category/server"
@@ -46,6 +48,7 @@ import (
 // URL. It shuts down the server if any error is received in the error channel.
 func handleHTTPServer(
 	ctx context.Context, u *url.URL,
+	adminEndpoints *admin.Endpoints,
 	authEndpoints *auth.Endpoints,
 	catalogEndpoints *catalog.Endpoints,
 	categoryEndpoints *category.Endpoints,
@@ -83,6 +86,7 @@ func handleHTTPServer(
 	// the service input and output data structures to HTTP requests and
 	// responses.
 	var (
+		adminServer    *adminsvr.Server
 		authServer     *authsvr.Server
 		catalogServer  *catalogsvr.Server
 		categoryServer *categorysvr.Server
@@ -93,6 +97,7 @@ func handleHTTPServer(
 	)
 	{
 		eh := errorHandler(logger)
+		adminServer = adminsvr.New(adminEndpoints, mux, dec, enc, eh, nil)
 		authServer = authsvr.New(authEndpoints, mux, dec, enc, eh, nil)
 		catalogServer = catalogsvr.New(catalogEndpoints, mux, dec, enc, eh, nil)
 		categoryServer = categorysvr.New(categoryEndpoints, mux, dec, enc, eh, nil)
@@ -103,6 +108,7 @@ func handleHTTPServer(
 
 		if debug {
 			servers := goahttp.Servers{
+				adminServer,
 				authServer,
 				catalogServer,
 				categoryServer,
@@ -115,6 +121,7 @@ func handleHTTPServer(
 		}
 	}
 	// Configure the mux.
+	adminsvr.Mount(mux, adminServer)
 	authsvr.Mount(mux, authServer)
 	catalogsvr.Mount(mux, catalogServer)
 	categorysvr.Mount(mux, categoryServer)
@@ -134,6 +141,9 @@ func handleHTTPServer(
 	// Start HTTP server using default configuration, change the code to
 	// configure the server as required by your service.
 	srv := &http.Server{Addr: u.Host, Handler: handler}
+	for _, m := range adminServer.Mounts {
+		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
 	for _, m := range authServer.Mounts {
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
