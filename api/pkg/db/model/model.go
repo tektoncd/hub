@@ -77,8 +77,16 @@ type (
 
 	User struct {
 		gorm.Model
+		Name        string
 		GithubLogin string
 		GithubName  string
+		Type        UserType
+		Scopes      []*Scope `gorm:"many2many:user_scopes;"`
+	}
+
+	Scope struct {
+		gorm.Model
+		Name string `gorm:"not null;unique"`
 	}
 
 	UserResourceRating struct {
@@ -89,4 +97,17 @@ type (
 		ResourceID uint
 		Rating     uint `gorm:"not null;default:null"`
 	}
+
+	UserScope struct {
+		UserID  uint
+		ScopeID uint
+	}
+)
+
+type UserType string
+
+// Types of Users
+const (
+	NormalUserType UserType = "user"
+	AgentUserType  UserType = "agent"
 )

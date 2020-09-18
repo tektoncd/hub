@@ -113,3 +113,32 @@ func TestLogin_InvalidCode(t *testing.T) {
 	assert.EqualError(t, err, "invalid authorization code")
 	assert.Equal(t, gock.IsDone(), true)
 }
+
+func TestLogin_UserWithExtraScope(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	defer gock.Off()
+
+	gock.New("https://github.com").
+		Post("/login/oauth/access_token").
+		Reply(200).
+		JSON(map[string]string{
+			"access_token": "foo-token",
+		})
+
+	gock.New("https://api.github.com").
+		Get("/user").
+		Reply(200).
+		JSON(map[string]string{
+			"login": "foo",
+			"name":  "foo-bar",
+		})
+
+	authSvc := New(tc)
+	payload := &auth.AuthenticatePayload{Code: "foo-test"}
+	res, err := authSvc.Authenticate(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, validTokenWithExtraScope, res.Token)
+	assert.Equal(t, gock.IsDone(), true)
+}
