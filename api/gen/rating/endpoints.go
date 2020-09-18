@@ -44,7 +44,7 @@ func NewGetEndpoint(s Service, authJWTFn security.AuthJWTFunc) goa.Endpoint {
 		var err error
 		sc := security.JWTScheme{
 			Name:           "jwt",
-			Scopes:         []string{"rating:read", "rating:write"},
+			Scopes:         []string{"rating:read", "rating:write", "agent:create"},
 			RequiredScopes: []string{"rating:read"},
 		}
 		ctx, err = authJWTFn(ctx, p.Token, &sc)
@@ -63,7 +63,7 @@ func NewUpdateEndpoint(s Service, authJWTFn security.AuthJWTFunc) goa.Endpoint {
 		var err error
 		sc := security.JWTScheme{
 			Name:           "jwt",
-			Scopes:         []string{"rating:read", "rating:write"},
+			Scopes:         []string{"rating:read", "rating:write", "agent:create"},
 			RequiredScopes: []string{"rating:write"},
 		}
 		ctx, err = authJWTFn(ctx, p.Token, &sc)
