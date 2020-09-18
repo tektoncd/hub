@@ -125,7 +125,6 @@ func (s *service) ByKindNameVersion(ctx context.Context, p *resource.ByKindNameV
 	q := db.Scopes(
 		withVersionInfo(p.Version),
 		filterByKind(p.Kind),
-		// missing a test : there must be 2 resources one containing, other exact
 		filterResourceName("exact", p.Name))
 
 	var r model.Resource
@@ -168,7 +167,6 @@ func (s *service) ByKindName(ctx context.Context, p *resource.ByKindNamePayload)
 	q := db.Scopes(
 		withResourceDetails,
 		filterByKind(p.Kind),
-		// missing test
 		filterResourceName("exact", p.Name))
 
 	req := request{

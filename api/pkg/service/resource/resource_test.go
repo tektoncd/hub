@@ -32,7 +32,7 @@ func TestQuery_DefaultLimit(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "", Kinds: []string{}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 6, len(all))
+	assert.Equal(t, 7, len(all))
 }
 
 func TestQuery_ByLimit(t *testing.T) {
@@ -89,7 +89,7 @@ func TestQuery_ByMultipleKinds(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "", Kinds: []string{"task", "pipeline"}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 6, len(all))
+	assert.Equal(t, 7, len(all))
 }
 
 func TestQuery_ByTags(t *testing.T) {

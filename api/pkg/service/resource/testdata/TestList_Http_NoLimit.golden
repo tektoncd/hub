@@ -52,6 +52,32 @@
 		"rating": 5
 	},
 	{
+		"id": 7,
+		"name": "tkn-hub",
+		"catalog": {
+			"id": 1,
+			"type": "official"
+		},
+		"kind": "task",
+		"latestVersion": {
+			"id": 10,
+			"version": "0.1",
+			"displayName": "Tkn Hub",
+			"description": "Desc7",
+			"minPipelinesVersion": "0.12.1",
+			"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog-community/master/task/tkn-hub/0.1/tkn-hub.yaml",
+			"webURL": "https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-hub/0.1/tkn-hub.yaml",
+			"updatedAt": "2016-01-01 12:30:12 +0000 UTC"
+		},
+		"tags": [
+			{
+				"id": 2,
+				"name": "rtag"
+			}
+		],
+		"rating": 5
+	},
+	{
 		"id": 2,
 		"name": "build-pipeline",
 		"catalog": {
