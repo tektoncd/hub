@@ -93,8 +93,14 @@ func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
 		return nil, err
 	}
 
+	// gets user scopes to add in jwt
+	scopes, err := r.userScopes(user)
+	if err != nil {
+		return nil, err
+	}
+
 	// creates jwt using user details
-	jwt, err := r.createJWT(user)
+	jwt, err := r.createJWT(user, scopes)
 	if err != nil {
 		return nil, err
 	}
@@ -109,6 +115,7 @@ func (r *request) addUser(user *github.User) (*model.User, error) {
 	newUser := &model.User{
 		GithubName:  user.GetName(),
 		GithubLogin: user.GetLogin(),
+		Type:        model.NormalUserType,
 	}
 	if err := q.FirstOrCreate(newUser).Error; err != nil {
 		r.log.Error(err)
@@ -118,13 +125,32 @@ func (r *request) addUser(user *github.User) (*model.User, error) {
 	return newUser, nil
 }
 
-func (r *request) createJWT(user *model.User) (string, error) {
+func (r *request) userScopes(user *model.User) ([]string, error) {
+
+	var userScopes []string = r.defaultScopes
+
+	q := r.db.Preload("Scopes").Where(&model.User{GithubLogin: user.GithubLogin})
+
+	dbUser := &model.User{}
+	if err := q.Find(dbUser).Error; err != nil {
+		r.log.Error(err)
+		return nil, internalError
+	}
+
+	for _, s := range dbUser.Scopes {
+		userScopes = append(userScopes, s.Name)
+	}
+
+	return userScopes, nil
+}
+
+func (r *request) createJWT(user *model.User, scopes []string) (string, error) {
 
 	claim := jwt.MapClaims{
 		"id":     user.ID,
 		"login":  user.GithubLogin,
 		"name":   user.GithubName,
-		"scopes": r.defaultScopes,
+		"scopes": scopes,
 	}
 
 	token, err := token.Create(claim, r.jwtSigningKey)

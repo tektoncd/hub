@@ -12,22 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- id: 11
-  github_name: foo-bar
-  github_login: foo
-  type: user
-  created_at: 2016-01-01 12:30:12 UTC
-  updated_at: 2016-01-01 12:30:12 UTC
+- user_id: 11
+  scope_id: 2
 
-- id: 21
-  github_name: abc-def
-  github_login: abc
-  type: user
-  created_at: 2016-01-01 12:30:12 UTC
-  updated_at: 2016-01-01 12:30:12 UTC
-
-- id: 31
-  name: agent-001
-  type: agent
-  created_at: 2016-01-01 12:30:12 UTC
-  updated_at: 2016-01-01 12:30:12 UTC
+- user_id: 31
+  scope_id: 1
