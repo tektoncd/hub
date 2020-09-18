@@ -62,7 +62,6 @@
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
 
-
 - id: 6
   version: 0.1.1
   display_name: Tekton CLI
@@ -100,5 +99,15 @@
   min_pipelines_version: 0.12.1
   url: https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/img/0.1/img.yaml
   resource_id: 6
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+
+- id: 10
+  version: 0.1
+  display_name: Tkn Hub
+  description: Desc7
+  min_pipelines_version: 0.12.1
+  url: https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-hub/0.1/tkn-hub.yaml
+  resource_id: 7
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC

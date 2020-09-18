@@ -292,7 +292,7 @@ func TestByKindNameVersion_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByKindNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/task/tekton/0.1.1").Check().
+	ByKindNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/task/tkn/0.1").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
