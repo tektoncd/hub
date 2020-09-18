@@ -3,6 +3,7 @@ package initializer
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/jinzhu/gorm"
 
@@ -38,6 +39,9 @@ func (i *Initializer) Run() error {
 		return err
 	}
 	if err := i.addCatalogs(); err != nil {
+		return err
+	}
+	if err := i.addUsers(); err != nil {
 		return err
 	}
 	return nil
@@ -95,6 +99,62 @@ func (i *Initializer) addCatalogs() error {
 			i.log.Error(err)
 			return err
 		}
+	}
+	return nil
+}
+
+func (i *Initializer) addUsers() error {
+
+	db := i.db
+
+	// Checks if tables exists
+	if !db.HasTable(&model.User{}) || !db.HasTable(model.Scope{}) {
+		return fmt.Errorf("user or scope table not found")
+	}
+
+	for _, s := range i.data.Scopes {
+
+		// Check if scopes exist
+		q := db.Where(&model.Scope{Name: s.Name})
+
+		scope := &model.Scope{}
+		if err := q.First(&scope).Error; err != nil {
+
+			// If scope does not exist then return
+			if gorm.IsRecordNotFoundError(err) {
+				i.log.Errorf("scope (%s) does not exist: %s", s.Name, err)
+				return fmt.Errorf("invalid-scope")
+			}
+			i.log.Error(err)
+			return err
+		}
+
+		for _, userID := range s.Users {
+
+			// Checks if user exists
+			q := db.Where("LOWER(github_login) = ?", strings.ToLower(userID))
+
+			user := &model.User{}
+			if err := q.First(&user).Error; err != nil {
+				// If user not found then log and continue
+				if gorm.IsRecordNotFoundError(err) {
+					i.log.Errorf("user %s not found: %s", userID, err)
+					continue
+				}
+				i.log.Error(err)
+				return err
+			}
+
+			// Add scopes for user if not added already
+			us := model.UserScope{UserID: user.ID, ScopeID: scope.ID}
+			q = db.Model(&model.UserScope{}).Where(&us)
+
+			if err := q.FirstOrCreate(&us).Error; err != nil {
+				i.log.Error(err)
+				return err
+			}
+		}
+
 	}
 	return nil
 }

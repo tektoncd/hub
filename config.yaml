@@ -37,6 +37,10 @@ catalogs:
     url: https://github.com/tektoncd/catalog
     revision: master
 
+scopes:
+  - name: agent:create
+    users: [pratap0007, puneetpunamiya, sm43, sthaha, vdemeester]
+
 default:
   scopes:
     - rating:read

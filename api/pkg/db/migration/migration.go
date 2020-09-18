@@ -49,6 +49,7 @@ func Migrate(api *app.APIBase) error {
 			&model.User{},
 			&model.UserResourceRating{},
 			&model.SyncJob{},
+			&model.Scope{},
 		).Error; err != nil {
 			log.Error(err)
 			return err
@@ -81,7 +82,20 @@ func Migrate(api *app.APIBase) error {
 			return err
 		}
 
+		if err := fkey(log, db, model.UserScope{},
+			"user_id", "users",
+			"scope_id", "scopes"); err != nil {
+			return err
+		}
+
 		log.Info("Schema initialised successfully !!")
+
+		if err := addScopes(log, db); err != nil {
+			log.Error(err)
+			return err
+		}
+
+		log.Info("Scopes added successfully !!")
 
 		return nil
 	})
@@ -105,5 +119,20 @@ func fkey(log *log.Logger, db *gorm.DB, model interface{}, args ...string) error
 			return err
 		}
 	}
+	return nil
+}
+
+func addScopes(log *log.Logger, db *gorm.DB) error {
+
+	scopes := []string{"agent:create"}
+
+	for _, s := range scopes {
+		sc := &model.Scope{Name: s}
+		if err := db.Create(sc).Error; err != nil {
+			log.Error(err)
+			return err
+		}
+	}
+
 	return nil
 }
