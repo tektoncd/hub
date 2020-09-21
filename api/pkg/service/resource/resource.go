@@ -117,13 +117,15 @@ func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayl
 	return res, nil
 }
 
-func (s *service) ByKindNameVersion(ctx context.Context, p *resource.ByKindNameVersionPayload) (res *resource.Version, err error) {
+// find resource using name of catalog & name, kind and version of resource
+func (s *service) ByCatalogKindNameVersion(ctx context.Context, p *resource.ByCatalogKindNameVersionPayload) (res *resource.Version, err error) {
 
 	log := s.Logger(ctx)
 	db := s.DB(ctx)
 
 	q := db.Scopes(
 		withVersionInfo(p.Version),
+		filterByCatalog(p.Catalog),
 		filterByKind(p.Kind),
 		filterResourceName("exact", p.Name))
 
@@ -226,6 +228,7 @@ func initResource(r model.Resource) *resource.Resource {
 	res.Name = r.Name
 	res.Catalog = &resource.Catalog{
 		ID:   r.Catalog.ID,
+		Name: r.Catalog.Name,
 		Type: r.Catalog.Type,
 	}
 	res.Kind = r.Kind
@@ -288,6 +291,7 @@ func versionInfoFromResource(r model.Resource) *resource.Version {
 		Tags:   tags,
 		Catalog: &resource.Catalog{
 			ID:   r.Catalog.ID,
+			Name: r.Catalog.Name,
 			Type: r.Catalog.Type,
 		},
 	}
@@ -373,6 +377,14 @@ func findOne(db *gorm.DB, result interface{}) error {
 func filterByID(id uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("id = ?", id)
+	}
+}
+
+func filterByCatalog(catalog string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Model(&model.Resource{}).
+			Joins("JOIN catalogs as c on c.id = resources.catalog_id").
+			Where("lower(c.name) = ?", strings.ToLower(catalog))
 	}
 }
 

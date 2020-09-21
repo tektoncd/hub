@@ -31,7 +31,7 @@ categories:
     tags: [test]
 
 catalogs:
-  - name: catalog
+  - name: tekton
     org: tektoncd
     type: community
     url: https://github.com/tektoncd/catalog

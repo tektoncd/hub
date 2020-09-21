@@ -194,35 +194,46 @@ func TestVersionsByID_NotFoundError(t *testing.T) {
 	assert.EqualError(t, err, "Resource not found")
 }
 
-func TestByKindNameVersion(t *testing.T) {
+func TestByCatalogKindNameVersion(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.ByKindNameVersionPayload{Kind: "task", Name: "tkn", Version: "0.1"}
-	res, err := resourceSvc.ByKindNameVersion(context.Background(), payload)
+	payload := &resource.ByCatalogKindNameVersionPayload{Catalog: "catalog-official", Kind: "task", Name: "tkn", Version: "0.1"}
+	res, err := resourceSvc.ByCatalogKindNameVersion(context.Background(), payload)
 	assert.NoError(t, err)
 	assert.Equal(t, "0.1", res.Version)
 }
 
-func TestByKindNameVersion_NoResourceWithName(t *testing.T) {
+func TestByCatalogKindNameVersion_NoResourceWithName(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.ByKindNameVersionPayload{Kind: "task", Name: "foo", Version: "0.1"}
-	_, err := resourceSvc.ByKindNameVersion(context.Background(), payload)
+	payload := &resource.ByCatalogKindNameVersionPayload{Catalog: "catalog-official", Kind: "task", Name: "foo", Version: "0.1"}
+	_, err := resourceSvc.ByCatalogKindNameVersion(context.Background(), payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Resource not found")
 }
 
-func TestByKindNameVersion_ResourceVersionNotFound(t *testing.T) {
+func TestByCatalogKindNameVersion_NoCatalogWithName(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.ByKindNameVersionPayload{Kind: "task", Name: "tekton", Version: "0.9"}
-	_, err := resourceSvc.ByKindNameVersion(context.Background(), payload)
+	payload := &resource.ByCatalogKindNameVersionPayload{Catalog: "Abc", Kind: "task", Name: "foo", Version: "0.1"}
+	_, err := resourceSvc.ByCatalogKindNameVersion(context.Background(), payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Resource not found")
+}
+
+func TestByCatalogKindNameVersion_ResourceVersionNotFound(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByCatalogKindNameVersionPayload{Catalog: "catalog-official", Kind: "task", Name: "tekton", Version: "0.9"}
+	_, err := resourceSvc.ByCatalogKindNameVersion(context.Background(), payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Resource not found")
 }

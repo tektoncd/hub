@@ -265,23 +265,24 @@ func EncodeVersionsByIDError(encoder func(context.Context, http.ResponseWriter) 
 	}
 }
 
-// EncodeByKindNameVersionResponse returns an encoder for responses returned by
-// the resource ByKindNameVersion endpoint.
-func EncodeByKindNameVersionResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeByCatalogKindNameVersionResponse returns an encoder for responses
+// returned by the resource ByCatalogKindNameVersion endpoint.
+func EncodeByCatalogKindNameVersionResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(*resourceviews.Version)
 		enc := encoder(ctx, w)
-		body := NewByKindNameVersionResponseBody(res.Projected)
+		body := NewByCatalogKindNameVersionResponseBody(res.Projected)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
 }
 
-// DecodeByKindNameVersionRequest returns a decoder for requests sent to the
-// resource ByKindNameVersion endpoint.
-func DecodeByKindNameVersionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+// DecodeByCatalogKindNameVersionRequest returns a decoder for requests sent to
+// the resource ByCatalogKindNameVersion endpoint.
+func DecodeByCatalogKindNameVersionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
+			catalog string
 			kind    string
 			name    string
 			version string
@@ -289,6 +290,7 @@ func DecodeByKindNameVersionRequest(mux goahttp.Muxer, decoder func(*http.Reques
 
 			params = mux.Vars(r)
 		)
+		catalog = params["catalog"]
 		kind = params["kind"]
 		if !(kind == "task" || kind == "pipeline") {
 			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
@@ -298,15 +300,15 @@ func DecodeByKindNameVersionRequest(mux goahttp.Muxer, decoder func(*http.Reques
 		if err != nil {
 			return nil, err
 		}
-		payload := NewByKindNameVersionPayload(kind, name, version)
+		payload := NewByCatalogKindNameVersionPayload(catalog, kind, name, version)
 
 		return payload, nil
 	}
 }
 
-// EncodeByKindNameVersionError returns an encoder for errors returned by the
-// ByKindNameVersion resource endpoint.
-func EncodeByKindNameVersionError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+// EncodeByCatalogKindNameVersionError returns an encoder for errors returned
+// by the ByCatalogKindNameVersion resource endpoint.
+func EncodeByCatalogKindNameVersionError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
 	encodeError := goahttp.ErrorEncoder(encoder, formatter)
 	return func(ctx context.Context, w http.ResponseWriter, v error) error {
 		en, ok := v.(ErrorNamer)
@@ -321,7 +323,7 @@ func EncodeByKindNameVersionError(encoder func(context.Context, http.ResponseWri
 			if formatter != nil {
 				body = formatter(res)
 			} else {
-				body = NewByKindNameVersionInternalErrorResponseBody(res)
+				body = NewByCatalogKindNameVersionInternalErrorResponseBody(res)
 			}
 			w.Header().Set("goa-error", "internal-error")
 			w.WriteHeader(http.StatusInternalServerError)
@@ -333,7 +335,7 @@ func EncodeByKindNameVersionError(encoder func(context.Context, http.ResponseWri
 			if formatter != nil {
 				body = formatter(res)
 			} else {
-				body = NewByKindNameVersionNotFoundResponseBody(res)
+				body = NewByCatalogKindNameVersionNotFoundResponseBody(res)
 			}
 			w.Header().Set("goa-error", "not-found")
 			w.WriteHeader(http.StatusNotFound)
@@ -610,6 +612,7 @@ func marshalResourceviewsResourceViewToResourceResponseWithoutVersion(v *resourc
 func marshalResourceviewsCatalogViewToCatalogResponse(v *resourceviews.CatalogView) *CatalogResponse {
 	res := &CatalogResponse{
 		ID:   *v.ID,
+		Name: *v.Name,
 		Type: *v.Type,
 	}
 
@@ -686,6 +689,7 @@ func marshalResourceviewsResourceViewToResourceResponseBodyInfo(v *resourceviews
 func marshalResourceviewsCatalogViewToCatalogResponseBody(v *resourceviews.CatalogView) *CatalogResponseBody {
 	res := &CatalogResponseBody{
 		ID:   *v.ID,
+		Name: *v.Name,
 		Type: *v.Type,
 	}
 

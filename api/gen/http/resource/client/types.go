@@ -29,9 +29,9 @@ type VersionsByIDResponseBody struct {
 	Versions []*VersionResponseBody `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
 }
 
-// ByKindNameVersionResponseBody is the type of the "resource" service
-// "ByKindNameVersion" endpoint HTTP response body.
-type ByKindNameVersionResponseBody struct {
+// ByCatalogKindNameVersionResponseBody is the type of the "resource" service
+// "ByCatalogKindNameVersion" endpoint HTTP response body.
+type ByCatalogKindNameVersionResponseBody struct {
 	// ID is the unique id of resource's version
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Version of resource
@@ -190,10 +190,10 @@ type VersionsByIDNotFoundResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
-// ByKindNameVersionInternalErrorResponseBody is the type of the "resource"
-// service "ByKindNameVersion" endpoint HTTP response body for the
-// "internal-error" error.
-type ByKindNameVersionInternalErrorResponseBody struct {
+// ByCatalogKindNameVersionInternalErrorResponseBody is the type of the
+// "resource" service "ByCatalogKindNameVersion" endpoint HTTP response body
+// for the "internal-error" error.
+type ByCatalogKindNameVersionInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -209,9 +209,10 @@ type ByKindNameVersionInternalErrorResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
-// ByKindNameVersionNotFoundResponseBody is the type of the "resource" service
-// "ByKindNameVersion" endpoint HTTP response body for the "not-found" error.
-type ByKindNameVersionNotFoundResponseBody struct {
+// ByCatalogKindNameVersionNotFoundResponseBody is the type of the "resource"
+// service "ByCatalogKindNameVersion" endpoint HTTP response body for the
+// "not-found" error.
+type ByCatalogKindNameVersionNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -359,6 +360,8 @@ type ResourceResponse struct {
 type CatalogResponse struct {
 	// ID is the unique id of the catalog
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name of catalog
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Type of catalog
 	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
 }
@@ -439,6 +442,8 @@ type ResourceResponseBody struct {
 type CatalogResponseBody struct {
 	// ID is the unique id of the catalog
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name of catalog
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Type of catalog
 	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
 }
@@ -558,9 +563,9 @@ func NewVersionsByIDNotFound(body *VersionsByIDNotFoundResponseBody) *goa.Servic
 	return v
 }
 
-// NewByKindNameVersionVersionOK builds a "resource" service
-// "ByKindNameVersion" endpoint result from a HTTP "OK" response.
-func NewByKindNameVersionVersionOK(body *ByKindNameVersionResponseBody) *resourceviews.VersionView {
+// NewByCatalogKindNameVersionVersionOK builds a "resource" service
+// "ByCatalogKindNameVersion" endpoint result from a HTTP "OK" response.
+func NewByCatalogKindNameVersionVersionOK(body *ByCatalogKindNameVersionResponseBody) *resourceviews.VersionView {
 	v := &resourceviews.VersionView{
 		ID:                  body.ID,
 		Version:             body.Version,
@@ -576,9 +581,9 @@ func NewByKindNameVersionVersionOK(body *ByKindNameVersionResponseBody) *resourc
 	return v
 }
 
-// NewByKindNameVersionInternalError builds a resource service
-// ByKindNameVersion endpoint internal-error error.
-func NewByKindNameVersionInternalError(body *ByKindNameVersionInternalErrorResponseBody) *goa.ServiceError {
+// NewByCatalogKindNameVersionInternalError builds a resource service
+// ByCatalogKindNameVersion endpoint internal-error error.
+func NewByCatalogKindNameVersionInternalError(body *ByCatalogKindNameVersionInternalErrorResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -591,9 +596,9 @@ func NewByKindNameVersionInternalError(body *ByKindNameVersionInternalErrorRespo
 	return v
 }
 
-// NewByKindNameVersionNotFound builds a resource service ByKindNameVersion
-// endpoint not-found error.
-func NewByKindNameVersionNotFound(body *ByKindNameVersionNotFoundResponseBody) *goa.ServiceError {
+// NewByCatalogKindNameVersionNotFound builds a resource service
+// ByCatalogKindNameVersion endpoint not-found error.
+func NewByCatalogKindNameVersionNotFound(body *ByCatalogKindNameVersionNotFoundResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -866,9 +871,9 @@ func ValidateVersionsByIDNotFoundResponseBody(body *VersionsByIDNotFoundResponse
 	return
 }
 
-// ValidateByKindNameVersionInternalErrorResponseBody runs the validations
-// defined on ByKindNameVersion_internal-error_Response_Body
-func ValidateByKindNameVersionInternalErrorResponseBody(body *ByKindNameVersionInternalErrorResponseBody) (err error) {
+// ValidateByCatalogKindNameVersionInternalErrorResponseBody runs the
+// validations defined on ByCatalogKindNameVersion_internal-error_Response_Body
+func ValidateByCatalogKindNameVersionInternalErrorResponseBody(body *ByCatalogKindNameVersionInternalErrorResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -890,9 +895,9 @@ func ValidateByKindNameVersionInternalErrorResponseBody(body *ByKindNameVersionI
 	return
 }
 
-// ValidateByKindNameVersionNotFoundResponseBody runs the validations defined
-// on ByKindNameVersion_not-found_Response_Body
-func ValidateByKindNameVersionNotFoundResponseBody(body *ByKindNameVersionNotFoundResponseBody) (err error) {
+// ValidateByCatalogKindNameVersionNotFoundResponseBody runs the validations
+// defined on ByCatalogKindNameVersion_not-found_Response_Body
+func ValidateByCatalogKindNameVersionNotFoundResponseBody(body *ByCatalogKindNameVersionNotFoundResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -1116,6 +1121,9 @@ func ValidateCatalogResponse(body *CatalogResponse) (err error) {
 	if body.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
 	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
 	if body.Type == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("type", "body"))
 	}
@@ -1290,6 +1298,9 @@ func ValidateResourceResponseBody(body *ResourceResponseBody) (err error) {
 func ValidateCatalogResponseBody(body *CatalogResponseBody) (err error) {
 	if body.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
 	if body.Type == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("type", "body"))
