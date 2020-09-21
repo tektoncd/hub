@@ -27,9 +27,9 @@ type Client struct {
 	// VersionsByID endpoint.
 	VersionsByIDDoer goahttp.Doer
 
-	// ByKindNameVersion Doer is the HTTP client used to make requests to the
-	// ByKindNameVersion endpoint.
-	ByKindNameVersionDoer goahttp.Doer
+	// ByCatalogKindNameVersion Doer is the HTTP client used to make requests to
+	// the ByCatalogKindNameVersion endpoint.
+	ByCatalogKindNameVersionDoer goahttp.Doer
 
 	// ByVersionID Doer is the HTTP client used to make requests to the ByVersionId
 	// endpoint.
@@ -65,19 +65,19 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		QueryDoer:             doer,
-		ListDoer:              doer,
-		VersionsByIDDoer:      doer,
-		ByKindNameVersionDoer: doer,
-		ByVersionIDDoer:       doer,
-		ByKindNameDoer:        doer,
-		ByIDDoer:              doer,
-		CORSDoer:              doer,
-		RestoreResponseBody:   restoreBody,
-		scheme:                scheme,
-		host:                  host,
-		decoder:               dec,
-		encoder:               enc,
+		QueryDoer:                    doer,
+		ListDoer:                     doer,
+		VersionsByIDDoer:             doer,
+		ByCatalogKindNameVersionDoer: doer,
+		ByVersionIDDoer:              doer,
+		ByKindNameDoer:               doer,
+		ByIDDoer:                     doer,
+		CORSDoer:                     doer,
+		RestoreResponseBody:          restoreBody,
+		scheme:                       scheme,
+		host:                         host,
+		decoder:                      dec,
+		encoder:                      enc,
 	}
 }
 
@@ -148,20 +148,20 @@ func (c *Client) VersionsByID() goa.Endpoint {
 	}
 }
 
-// ByKindNameVersion returns an endpoint that makes HTTP requests to the
-// resource service ByKindNameVersion server.
-func (c *Client) ByKindNameVersion() goa.Endpoint {
+// ByCatalogKindNameVersion returns an endpoint that makes HTTP requests to the
+// resource service ByCatalogKindNameVersion server.
+func (c *Client) ByCatalogKindNameVersion() goa.Endpoint {
 	var (
-		decodeResponse = DecodeByKindNameVersionResponse(c.decoder, c.RestoreResponseBody)
+		decodeResponse = DecodeByCatalogKindNameVersionResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildByKindNameVersionRequest(ctx, v)
+		req, err := c.BuildByCatalogKindNameVersionRequest(ctx, v)
 		if err != nil {
 			return nil, err
 		}
-		resp, err := c.ByKindNameVersionDoer.Do(req)
+		resp, err := c.ByCatalogKindNameVersionDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("resource", "ByKindNameVersion", err)
+			return nil, goahttp.ErrRequestError("resource", "ByCatalogKindNameVersion", err)
 		}
 		return decodeResponse(resp)
 	}

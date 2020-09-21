@@ -54,12 +54,15 @@ var Catalog = Type("Catalog", func() {
 	Attribute("id", UInt, "ID is the unique id of the catalog", func() {
 		Example("id", 1)
 	})
+	Attribute("name", String, "Name of catalog", func() {
+		Example("name", "Tekton")
+	})
 	Attribute("type", String, "Type of catalog", func() {
 		Enum("official", "community")
 		Example("type", "community")
 	})
 
-	Required("id", "type")
+	Required("id", "name", "type")
 })
 
 var ResVersion = ResultType("application/vnd.hub.version", "Version", func() {

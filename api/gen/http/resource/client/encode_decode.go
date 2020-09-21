@@ -320,27 +320,30 @@ func DecodeVersionsByIDResponse(decoder func(*http.Response) goahttp.Decoder, re
 	}
 }
 
-// BuildByKindNameVersionRequest instantiates a HTTP request object with method
-// and path set to call the "resource" service "ByKindNameVersion" endpoint
-func (c *Client) BuildByKindNameVersionRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+// BuildByCatalogKindNameVersionRequest instantiates a HTTP request object with
+// method and path set to call the "resource" service
+// "ByCatalogKindNameVersion" endpoint
+func (c *Client) BuildByCatalogKindNameVersionRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
+		catalog string
 		kind    string
 		name    string
 		version string
 	)
 	{
-		p, ok := v.(*resource.ByKindNameVersionPayload)
+		p, ok := v.(*resource.ByCatalogKindNameVersionPayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("resource", "ByKindNameVersion", "*resource.ByKindNameVersionPayload", v)
+			return nil, goahttp.ErrInvalidType("resource", "ByCatalogKindNameVersion", "*resource.ByCatalogKindNameVersionPayload", v)
 		}
+		catalog = p.Catalog
 		kind = p.Kind
 		name = p.Name
 		version = p.Version
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ByKindNameVersionResourcePath(kind, name, version)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ByCatalogKindNameVersionResourcePath(catalog, kind, name, version)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("resource", "ByKindNameVersion", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("resource", "ByCatalogKindNameVersion", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -349,14 +352,14 @@ func (c *Client) BuildByKindNameVersionRequest(ctx context.Context, v interface{
 	return req, nil
 }
 
-// DecodeByKindNameVersionResponse returns a decoder for responses returned by
-// the resource ByKindNameVersion endpoint. restoreBody controls whether the
-// response body should be restored after having been read.
-// DecodeByKindNameVersionResponse may return the following errors:
+// DecodeByCatalogKindNameVersionResponse returns a decoder for responses
+// returned by the resource ByCatalogKindNameVersion endpoint. restoreBody
+// controls whether the response body should be restored after having been read.
+// DecodeByCatalogKindNameVersionResponse may return the following errors:
 //	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
 //	- "not-found" (type *goa.ServiceError): http.StatusNotFound
 //	- error: internal error
-func DecodeByKindNameVersionResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+func DecodeByCatalogKindNameVersionResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -373,52 +376,52 @@ func DecodeByKindNameVersionResponse(decoder func(*http.Response) goahttp.Decode
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body ByKindNameVersionResponseBody
+				body ByCatalogKindNameVersionResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("resource", "ByKindNameVersion", err)
+				return nil, goahttp.ErrDecodingError("resource", "ByCatalogKindNameVersion", err)
 			}
-			p := NewByKindNameVersionVersionOK(&body)
+			p := NewByCatalogKindNameVersionVersionOK(&body)
 			view := "default"
 			vres := &resourceviews.Version{Projected: p, View: view}
 			if err = resourceviews.ValidateVersion(vres); err != nil {
-				return nil, goahttp.ErrValidationError("resource", "ByKindNameVersion", err)
+				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindNameVersion", err)
 			}
 			res := resource.NewVersion(vres)
 			return res, nil
 		case http.StatusInternalServerError:
 			var (
-				body ByKindNameVersionInternalErrorResponseBody
+				body ByCatalogKindNameVersionInternalErrorResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("resource", "ByKindNameVersion", err)
+				return nil, goahttp.ErrDecodingError("resource", "ByCatalogKindNameVersion", err)
 			}
-			err = ValidateByKindNameVersionInternalErrorResponseBody(&body)
+			err = ValidateByCatalogKindNameVersionInternalErrorResponseBody(&body)
 			if err != nil {
-				return nil, goahttp.ErrValidationError("resource", "ByKindNameVersion", err)
+				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindNameVersion", err)
 			}
-			return nil, NewByKindNameVersionInternalError(&body)
+			return nil, NewByCatalogKindNameVersionInternalError(&body)
 		case http.StatusNotFound:
 			var (
-				body ByKindNameVersionNotFoundResponseBody
+				body ByCatalogKindNameVersionNotFoundResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("resource", "ByKindNameVersion", err)
+				return nil, goahttp.ErrDecodingError("resource", "ByCatalogKindNameVersion", err)
 			}
-			err = ValidateByKindNameVersionNotFoundResponseBody(&body)
+			err = ValidateByCatalogKindNameVersionNotFoundResponseBody(&body)
 			if err != nil {
-				return nil, goahttp.ErrValidationError("resource", "ByKindNameVersion", err)
+				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindNameVersion", err)
 			}
-			return nil, NewByKindNameVersionNotFound(&body)
+			return nil, NewByCatalogKindNameVersionNotFound(&body)
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("resource", "ByKindNameVersion", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("resource", "ByCatalogKindNameVersion", resp.StatusCode, string(body))
 		}
 	}
 }
@@ -750,6 +753,7 @@ func unmarshalResourceResponseToResourceviewsResourceView(v *ResourceResponse) *
 func unmarshalCatalogResponseToResourceviewsCatalogView(v *CatalogResponse) *resourceviews.CatalogView {
 	res := &resourceviews.CatalogView{
 		ID:   v.ID,
+		Name: v.Name,
 		Type: v.Type,
 	}
 
@@ -831,6 +835,7 @@ func unmarshalResourceResponseBodyToResourceviewsResourceView(v *ResourceRespons
 func unmarshalCatalogResponseBodyToResourceviewsCatalogView(v *CatalogResponseBody) *resourceviews.CatalogView {
 	res := &resourceviews.CatalogView{
 		ID:   v.ID,
+		Name: v.Name,
 		Type: v.Type,
 	}
 
@@ -848,10 +853,10 @@ func unmarshalTagResponseBodyToResourceviewsTagView(v *TagResponseBody) *resourc
 	return res
 }
 
-// unmarshalByKindNameVersionResponseBodyToResourceviewsVersionView builds a
-// value of type *resourceviews.VersionView from a value of type
-// *ByKindNameVersionResponseBody.
-func unmarshalByKindNameVersionResponseBodyToResourceviewsVersionView(v *ByKindNameVersionResponseBody) *resourceviews.VersionView {
+// unmarshalByCatalogKindNameVersionResponseBodyToResourceviewsVersionView
+// builds a value of type *resourceviews.VersionView from a value of type
+// *ByCatalogKindNameVersionResponseBody.
+func unmarshalByCatalogKindNameVersionResponseBodyToResourceviewsVersionView(v *ByCatalogKindNameVersionResponseBody) *resourceviews.VersionView {
 	res := &resourceviews.VersionView{
 		ID:                  v.ID,
 		Version:             v.Version,

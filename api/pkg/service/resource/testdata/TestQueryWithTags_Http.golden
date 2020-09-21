@@ -4,6 +4,7 @@
 		"name": "build-pipeline",
 		"catalog": {
 			"id": 1,
+			"name": "catalog-official",
 			"type": "official"
 		},
 		"kind": "pipeline",
@@ -34,6 +35,7 @@
 		"name": "buildah",
 		"catalog": {
 			"id": 1,
+			"name": "catalog-official",
 			"type": "official"
 		},
 		"kind": "task",

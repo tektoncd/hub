@@ -31,7 +31,7 @@ func BuildQueryPayload(resourceQueryName string, resourceQueryKinds string, reso
 		if resourceQueryKinds != "" {
 			err = json.Unmarshal([]byte(resourceQueryKinds), &kinds)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for kinds, example of valid JSON:\n%s", "'[\n      \"Quos distinctio ipsam eos.\",\n      \"Magnam illum ut nihil eum placeat.\",\n      \"Et consequuntur voluptas et enim ut rerum.\",\n      \"Aut eos qui fugiat.\"\n   ]'")
+				return nil, fmt.Errorf("invalid JSON for kinds, example of valid JSON:\n%s", "'[\n      \"Magnam illum ut nihil eum placeat.\",\n      \"Et consequuntur voluptas et enim ut rerum.\",\n      \"Aut eos qui fugiat.\"\n   ]'")
 			}
 		}
 	}
@@ -117,13 +117,17 @@ func BuildVersionsByIDPayload(resourceVersionsByIDID string) (*resource.Versions
 	return v, nil
 }
 
-// BuildByKindNameVersionPayload builds the payload for the resource
-// ByKindNameVersion endpoint from CLI flags.
-func BuildByKindNameVersionPayload(resourceByKindNameVersionKind string, resourceByKindNameVersionName string, resourceByKindNameVersionVersion string) (*resource.ByKindNameVersionPayload, error) {
+// BuildByCatalogKindNameVersionPayload builds the payload for the resource
+// ByCatalogKindNameVersion endpoint from CLI flags.
+func BuildByCatalogKindNameVersionPayload(resourceByCatalogKindNameVersionCatalog string, resourceByCatalogKindNameVersionKind string, resourceByCatalogKindNameVersionName string, resourceByCatalogKindNameVersionVersion string) (*resource.ByCatalogKindNameVersionPayload, error) {
 	var err error
+	var catalog string
+	{
+		catalog = resourceByCatalogKindNameVersionCatalog
+	}
 	var kind string
 	{
-		kind = resourceByKindNameVersionKind
+		kind = resourceByCatalogKindNameVersionKind
 		if !(kind == "task" || kind == "pipeline") {
 			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
 		}
@@ -133,13 +137,14 @@ func BuildByKindNameVersionPayload(resourceByKindNameVersionKind string, resourc
 	}
 	var name string
 	{
-		name = resourceByKindNameVersionName
+		name = resourceByCatalogKindNameVersionName
 	}
 	var version string
 	{
-		version = resourceByKindNameVersionVersion
+		version = resourceByCatalogKindNameVersionVersion
 	}
-	v := &resource.ByKindNameVersionPayload{}
+	v := &resource.ByCatalogKindNameVersionPayload{}
+	v.Catalog = catalog
 	v.Kind = kind
 	v.Name = name
 	v.Version = version

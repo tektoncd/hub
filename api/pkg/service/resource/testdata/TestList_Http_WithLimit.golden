@@ -4,6 +4,7 @@
 		"name": "tekton",
 		"catalog": {
 			"id": 1,
+			"name": "catalog-official",
 			"type": "official"
 		},
 		"kind": "task",
@@ -30,6 +31,7 @@
 		"name": "tkn",
 		"catalog": {
 			"id": 1,
+			"name": "catalog-official",
 			"type": "official"
 		},
 		"kind": "task",

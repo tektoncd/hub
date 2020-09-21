@@ -22,8 +22,8 @@ type Service interface {
 	List(context.Context, *ListPayload) (res ResourceCollection, err error)
 	// Find all versions of a resource by its id
 	VersionsByID(context.Context, *VersionsByIDPayload) (res *Versions, err error)
-	// Find resource using name, kind and version of resource
-	ByKindNameVersion(context.Context, *ByKindNameVersionPayload) (res *Version, err error)
+	// Find resource using name of catalog & name, kind and version of resource
+	ByCatalogKindNameVersion(context.Context, *ByCatalogKindNameVersionPayload) (res *Version, err error)
 	// Find a resource using its version's id
 	ByVersionID(context.Context, *ByVersionIDPayload) (res *Version, err error)
 	// Find resources using name and kind
@@ -40,7 +40,7 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [7]string{"Query", "List", "VersionsByID", "ByKindNameVersion", "ByVersionId", "ByKindName", "ById"}
+var MethodNames = [7]string{"Query", "List", "VersionsByID", "ByCatalogKindNameVersion", "ByVersionId", "ByKindName", "ById"}
 
 // QueryPayload is the payload type of the resource service Query method.
 type QueryPayload struct {
@@ -80,9 +80,11 @@ type Versions struct {
 	Versions []*Version
 }
 
-// ByKindNameVersionPayload is the payload type of the resource service
-// ByKindNameVersion method.
-type ByKindNameVersionPayload struct {
+// ByCatalogKindNameVersionPayload is the payload type of the resource service
+// ByCatalogKindNameVersion method.
+type ByCatalogKindNameVersionPayload struct {
+	// name of catalog
+	Catalog string
 	// kind of resource
 	Kind string
 	// name of resource
@@ -91,7 +93,8 @@ type ByKindNameVersionPayload struct {
 	Version string
 }
 
-// Version is the result type of the resource service ByKindNameVersion method.
+// Version is the result type of the resource service ByCatalogKindNameVersion
+// method.
 type Version struct {
 	// ID is the unique id of resource's version
 	ID uint
@@ -158,6 +161,8 @@ type Resource struct {
 type Catalog struct {
 	// ID is the unique id of the catalog
 	ID uint
+	// Name of catalog
+	Name string
 	// Type of catalog
 	Type string
 }
@@ -735,6 +740,7 @@ func transformResourceviewsCatalogViewToCatalog(v *resourceviews.CatalogView) *C
 	}
 	res := &Catalog{
 		ID:   *v.ID,
+		Name: *v.Name,
 		Type: *v.Type,
 	}
 
@@ -818,6 +824,7 @@ func transformResourceviewsResourceViewToResource(v *resourceviews.ResourceView)
 func transformCatalogToResourceviewsCatalogView(v *Catalog) *resourceviews.CatalogView {
 	res := &resourceviews.CatalogView{
 		ID:   &v.ID,
+		Name: &v.Name,
 		Type: &v.Type,
 	}
 

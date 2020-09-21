@@ -26,9 +26,9 @@ type VersionsByIDResponseBody struct {
 	Versions []*VersionResponseBodyMin `form:"versions" json:"versions" xml:"versions"`
 }
 
-// ByKindNameVersionResponseBody is the type of the "resource" service
-// "ByKindNameVersion" endpoint HTTP response body.
-type ByKindNameVersionResponseBody struct {
+// ByCatalogKindNameVersionResponseBody is the type of the "resource" service
+// "ByCatalogKindNameVersion" endpoint HTTP response body.
+type ByCatalogKindNameVersionResponseBody struct {
 	// ID is the unique id of resource's version
 	ID uint `form:"id" json:"id" xml:"id"`
 	// Version of resource
@@ -183,10 +183,10 @@ type VersionsByIDNotFoundResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
-// ByKindNameVersionInternalErrorResponseBody is the type of the "resource"
-// service "ByKindNameVersion" endpoint HTTP response body for the
-// "internal-error" error.
-type ByKindNameVersionInternalErrorResponseBody struct {
+// ByCatalogKindNameVersionInternalErrorResponseBody is the type of the
+// "resource" service "ByCatalogKindNameVersion" endpoint HTTP response body
+// for the "internal-error" error.
+type ByCatalogKindNameVersionInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -202,9 +202,10 @@ type ByKindNameVersionInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
-// ByKindNameVersionNotFoundResponseBody is the type of the "resource" service
-// "ByKindNameVersion" endpoint HTTP response body for the "not-found" error.
-type ByKindNameVersionNotFoundResponseBody struct {
+// ByCatalogKindNameVersionNotFoundResponseBody is the type of the "resource"
+// service "ByCatalogKindNameVersion" endpoint HTTP response body for the
+// "not-found" error.
+type ByCatalogKindNameVersionNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -351,6 +352,8 @@ type ResourceResponseWithoutVersion struct {
 type CatalogResponse struct {
 	// ID is the unique id of the catalog
 	ID uint `form:"id" json:"id" xml:"id"`
+	// Name of catalog
+	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog
 	Type string `form:"type" json:"type" xml:"type"`
 }
@@ -416,6 +419,8 @@ type ResourceResponseBodyInfo struct {
 type CatalogResponseBody struct {
 	// ID is the unique id of the catalog
 	ID uint `form:"id" json:"id" xml:"id"`
+	// Name of catalog
+	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog
 	Type string `form:"type" json:"type" xml:"type"`
 }
@@ -483,10 +488,11 @@ func NewVersionsByIDResponseBody(res *resourceviews.VersionsView) *VersionsByIDR
 	return body
 }
 
-// NewByKindNameVersionResponseBody builds the HTTP response body from the
-// result of the "ByKindNameVersion" endpoint of the "resource" service.
-func NewByKindNameVersionResponseBody(res *resourceviews.VersionView) *ByKindNameVersionResponseBody {
-	body := &ByKindNameVersionResponseBody{
+// NewByCatalogKindNameVersionResponseBody builds the HTTP response body from
+// the result of the "ByCatalogKindNameVersion" endpoint of the "resource"
+// service.
+func NewByCatalogKindNameVersionResponseBody(res *resourceviews.VersionView) *ByCatalogKindNameVersionResponseBody {
+	body := &ByCatalogKindNameVersionResponseBody{
 		ID:                  *res.ID,
 		Version:             *res.Version,
 		DisplayName:         *res.DisplayName,
@@ -621,11 +627,11 @@ func NewVersionsByIDNotFoundResponseBody(res *goa.ServiceError) *VersionsByIDNot
 	return body
 }
 
-// NewByKindNameVersionInternalErrorResponseBody builds the HTTP response body
-// from the result of the "ByKindNameVersion" endpoint of the "resource"
-// service.
-func NewByKindNameVersionInternalErrorResponseBody(res *goa.ServiceError) *ByKindNameVersionInternalErrorResponseBody {
-	body := &ByKindNameVersionInternalErrorResponseBody{
+// NewByCatalogKindNameVersionInternalErrorResponseBody builds the HTTP
+// response body from the result of the "ByCatalogKindNameVersion" endpoint of
+// the "resource" service.
+func NewByCatalogKindNameVersionInternalErrorResponseBody(res *goa.ServiceError) *ByCatalogKindNameVersionInternalErrorResponseBody {
+	body := &ByCatalogKindNameVersionInternalErrorResponseBody{
 		Name:      res.Name,
 		ID:        res.ID,
 		Message:   res.Message,
@@ -636,10 +642,11 @@ func NewByKindNameVersionInternalErrorResponseBody(res *goa.ServiceError) *ByKin
 	return body
 }
 
-// NewByKindNameVersionNotFoundResponseBody builds the HTTP response body from
-// the result of the "ByKindNameVersion" endpoint of the "resource" service.
-func NewByKindNameVersionNotFoundResponseBody(res *goa.ServiceError) *ByKindNameVersionNotFoundResponseBody {
-	body := &ByKindNameVersionNotFoundResponseBody{
+// NewByCatalogKindNameVersionNotFoundResponseBody builds the HTTP response
+// body from the result of the "ByCatalogKindNameVersion" endpoint of the
+// "resource" service.
+func NewByCatalogKindNameVersionNotFoundResponseBody(res *goa.ServiceError) *ByCatalogKindNameVersionNotFoundResponseBody {
+	body := &ByCatalogKindNameVersionNotFoundResponseBody{
 		Name:      res.Name,
 		ID:        res.ID,
 		Message:   res.Message,
@@ -763,10 +770,11 @@ func NewVersionsByIDPayload(id uint) *resource.VersionsByIDPayload {
 	return v
 }
 
-// NewByKindNameVersionPayload builds a resource service ByKindNameVersion
-// endpoint payload.
-func NewByKindNameVersionPayload(kind string, name string, version string) *resource.ByKindNameVersionPayload {
-	v := &resource.ByKindNameVersionPayload{}
+// NewByCatalogKindNameVersionPayload builds a resource service
+// ByCatalogKindNameVersion endpoint payload.
+func NewByCatalogKindNameVersionPayload(catalog string, kind string, name string, version string) *resource.ByCatalogKindNameVersionPayload {
+	v := &resource.ByCatalogKindNameVersionPayload{}
+	v.Catalog = catalog
 	v.Kind = kind
 	v.Name = name
 	v.Version = version

@@ -15,25 +15,25 @@ import (
 
 // Client is the "resource" service client.
 type Client struct {
-	QueryEndpoint             goa.Endpoint
-	ListEndpoint              goa.Endpoint
-	VersionsByIDEndpoint      goa.Endpoint
-	ByKindNameVersionEndpoint goa.Endpoint
-	ByVersionIDEndpoint       goa.Endpoint
-	ByKindNameEndpoint        goa.Endpoint
-	ByIDEndpoint              goa.Endpoint
+	QueryEndpoint                    goa.Endpoint
+	ListEndpoint                     goa.Endpoint
+	VersionsByIDEndpoint             goa.Endpoint
+	ByCatalogKindNameVersionEndpoint goa.Endpoint
+	ByVersionIDEndpoint              goa.Endpoint
+	ByKindNameEndpoint               goa.Endpoint
+	ByIDEndpoint                     goa.Endpoint
 }
 
 // NewClient initializes a "resource" service client given the endpoints.
-func NewClient(query, list, versionsByID, byKindNameVersion, byVersionID, byKindName, byID goa.Endpoint) *Client {
+func NewClient(query, list, versionsByID, byCatalogKindNameVersion, byVersionID, byKindName, byID goa.Endpoint) *Client {
 	return &Client{
-		QueryEndpoint:             query,
-		ListEndpoint:              list,
-		VersionsByIDEndpoint:      versionsByID,
-		ByKindNameVersionEndpoint: byKindNameVersion,
-		ByVersionIDEndpoint:       byVersionID,
-		ByKindNameEndpoint:        byKindName,
-		ByIDEndpoint:              byID,
+		QueryEndpoint:                    query,
+		ListEndpoint:                     list,
+		VersionsByIDEndpoint:             versionsByID,
+		ByCatalogKindNameVersionEndpoint: byCatalogKindNameVersion,
+		ByVersionIDEndpoint:              byVersionID,
+		ByKindNameEndpoint:               byKindName,
+		ByIDEndpoint:                     byID,
 	}
 }
 
@@ -67,11 +67,11 @@ func (c *Client) VersionsByID(ctx context.Context, p *VersionsByIDPayload) (res 
 	return ires.(*Versions), nil
 }
 
-// ByKindNameVersion calls the "ByKindNameVersion" endpoint of the "resource"
-// service.
-func (c *Client) ByKindNameVersion(ctx context.Context, p *ByKindNameVersionPayload) (res *Version, err error) {
+// ByCatalogKindNameVersion calls the "ByCatalogKindNameVersion" endpoint of
+// the "resource" service.
+func (c *Client) ByCatalogKindNameVersion(ctx context.Context, p *ByCatalogKindNameVersionPayload) (res *Version, err error) {
 	var ires interface{}
-	ires, err = c.ByKindNameVersionEndpoint(ctx, p)
+	ires, err = c.ByCatalogKindNameVersionEndpoint(ctx, p)
 	if err != nil {
 		return
 	}

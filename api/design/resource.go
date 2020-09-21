@@ -96,23 +96,24 @@ var _ = Service("resource", func() {
 		})
 	})
 
-	Method("ByKindNameVersion", func() {
-		Description("Find resource using name, kind and version of resource")
+	Method("ByCatalogKindNameVersion", func() {
+		Description("Find resource using name of catalog & name, kind and version of resource")
 		Payload(func() {
+			Attribute("catalog", String, "name of catalog")
 			Attribute("kind", String, "kind of resource", func() {
 				Enum("task", "pipeline")
 			})
 			Attribute("name", String, "name of resource")
 			Attribute("version", String, "version of resource")
 
-			Required("kind", "name", "version")
+			Required("catalog", "kind", "name", "version")
 		})
 		Result(ResVersion, func() {
 			View("default")
 		})
 
 		HTTP(func() {
-			GET("/resource/{kind}/{name}/{version}")
+			GET("/resource/{catalog}/{kind}/{name}/{version}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)

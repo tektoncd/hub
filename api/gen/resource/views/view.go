@@ -71,6 +71,8 @@ type ResourceView struct {
 type CatalogView struct {
 	// ID is the unique id of the catalog
 	ID *uint
+	// Name of catalog
+	Name *string
 	// Type of catalog
 	Type *string
 }
@@ -448,6 +450,9 @@ func ValidateResourceView(result *ResourceView) (err error) {
 func ValidateCatalogView(result *CatalogView) (err error) {
 	if result.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "result"))
+	}
+	if result.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
 	}
 	if result.Type == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("type", "result"))

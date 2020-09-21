@@ -279,20 +279,20 @@ func TestVersionsByID_Http_ErrorCase(t *testing.T) {
 	})
 }
 
-func ByKindNameVersionChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+func ByCatalogKindNameVersionChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	checker := goahttpcheck.New()
 	checker.Mount(
-		server.NewByKindNameVersionHandler,
-		server.MountByKindNameVersionHandler,
-		resource.NewByKindNameVersionEndpoint(New(tc)))
+		server.NewByCatalogKindNameVersionHandler,
+		server.MountByCatalogKindNameVersionHandler,
+		resource.NewByCatalogKindNameVersionEndpoint(New(tc)))
 	return checker
 }
 
-func TestByKindNameVersion_Http(t *testing.T) {
+func TestByCatalogKindNameVersion_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByKindNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/task/tkn/0.1").Check().
+	ByCatalogKindNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/task/tkn/0.1").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -305,11 +305,11 @@ func TestByKindNameVersion_Http(t *testing.T) {
 	})
 }
 
-func TestByKindNameVersion_Http_ErrorCase(t *testing.T) {
+func TestByCatalogKindNameVersion_Http_ErrorCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByKindNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/task/foo/0.1.1").Check().
+	ByCatalogKindNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/task/foo/0.1.1").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)

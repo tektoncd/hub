@@ -30,7 +30,7 @@ func UsageCommands() string {
 	return `category list
 auth authenticate
 status status
-resource (query|list|versions-by-id|by-kind-name-version|by-version-id|by-kind-name|by-id)
+resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-kind-name|by-id)
 rating (get|update)
 `
 }
@@ -38,10 +38,9 @@ rating (get|update)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` auth authenticate --code "Autem ut est error eaque."` + "\n" +
+		os.Args[0] + ` auth authenticate --code "Rerum harum ut tenetur laborum."` + "\n" +
 		os.Args[0] + ` status status` + "\n" +
-		os.Args[0] + ` resource query --name "Cumque omnis non." --kinds '[
-      "Quos distinctio ipsam eos.",
+		os.Args[0] + ` resource query --name "Aut quos distinctio ipsam." --kinds '[
       "Magnam illum ut nihil eum placeat.",
       "Et consequuntur voluptas et enim ut rerum.",
       "Aut eos qui fugiat."
@@ -51,7 +50,7 @@ func UsageExamples() string {
       "Aut beatae reiciendis accusantium.",
       "Qui ipsum deleniti corrupti non quo velit."
    ]' --limit 17876575713650742907 --match "contains"` + "\n" +
-		os.Args[0] + ` rating get --id 3376298804373115607 --token "Placeat facere."` + "\n" +
+		os.Args[0] + ` rating get --id 8441914113791270511 --token "Vitae voluptatem deleniti eum minus reiciendis nulla."` + "\n" +
 		""
 }
 
@@ -93,10 +92,11 @@ func ParseEndpoint(
 		resourceVersionsByIDFlags  = flag.NewFlagSet("versions-by-id", flag.ExitOnError)
 		resourceVersionsByIDIDFlag = resourceVersionsByIDFlags.String("id", "REQUIRED", "ID of a resource")
 
-		resourceByKindNameVersionFlags       = flag.NewFlagSet("by-kind-name-version", flag.ExitOnError)
-		resourceByKindNameVersionKindFlag    = resourceByKindNameVersionFlags.String("kind", "REQUIRED", "kind of resource")
-		resourceByKindNameVersionNameFlag    = resourceByKindNameVersionFlags.String("name", "REQUIRED", "name of resource")
-		resourceByKindNameVersionVersionFlag = resourceByKindNameVersionFlags.String("version", "REQUIRED", "version of resource")
+		resourceByCatalogKindNameVersionFlags       = flag.NewFlagSet("by-catalog-kind-name-version", flag.ExitOnError)
+		resourceByCatalogKindNameVersionCatalogFlag = resourceByCatalogKindNameVersionFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceByCatalogKindNameVersionKindFlag    = resourceByCatalogKindNameVersionFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByCatalogKindNameVersionNameFlag    = resourceByCatalogKindNameVersionFlags.String("name", "REQUIRED", "name of resource")
+		resourceByCatalogKindNameVersionVersionFlag = resourceByCatalogKindNameVersionFlags.String("version", "REQUIRED", "version of resource")
 
 		resourceByVersionIDFlags         = flag.NewFlagSet("by-version-id", flag.ExitOnError)
 		resourceByVersionIDVersionIDFlag = resourceByVersionIDFlags.String("version-id", "REQUIRED", "Version ID of a resource's version")
@@ -132,7 +132,7 @@ func ParseEndpoint(
 	resourceQueryFlags.Usage = resourceQueryUsage
 	resourceListFlags.Usage = resourceListUsage
 	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
-	resourceByKindNameVersionFlags.Usage = resourceByKindNameVersionUsage
+	resourceByCatalogKindNameVersionFlags.Usage = resourceByCatalogKindNameVersionUsage
 	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
 	resourceByKindNameFlags.Usage = resourceByKindNameUsage
 	resourceByIDFlags.Usage = resourceByIDUsage
@@ -213,8 +213,8 @@ func ParseEndpoint(
 			case "versions-by-id":
 				epf = resourceVersionsByIDFlags
 
-			case "by-kind-name-version":
-				epf = resourceByKindNameVersionFlags
+			case "by-catalog-kind-name-version":
+				epf = resourceByCatalogKindNameVersionFlags
 
 			case "by-version-id":
 				epf = resourceByVersionIDFlags
@@ -290,9 +290,9 @@ func ParseEndpoint(
 			case "versions-by-id":
 				endpoint = c.VersionsByID()
 				data, err = resourcec.BuildVersionsByIDPayload(*resourceVersionsByIDIDFlag)
-			case "by-kind-name-version":
-				endpoint = c.ByKindNameVersion()
-				data, err = resourcec.BuildByKindNameVersionPayload(*resourceByKindNameVersionKindFlag, *resourceByKindNameVersionNameFlag, *resourceByKindNameVersionVersionFlag)
+			case "by-catalog-kind-name-version":
+				endpoint = c.ByCatalogKindNameVersion()
+				data, err = resourcec.BuildByCatalogKindNameVersionPayload(*resourceByCatalogKindNameVersionCatalogFlag, *resourceByCatalogKindNameVersionKindFlag, *resourceByCatalogKindNameVersionNameFlag, *resourceByCatalogKindNameVersionVersionFlag)
 			case "by-version-id":
 				endpoint = c.ByVersionID()
 				data, err = resourcec.BuildByVersionIDPayload(*resourceByVersionIDVersionIDFlag)
@@ -365,7 +365,7 @@ Authenticates users against GitHub OAuth
     -code STRING: 
 
 Example:
-    `+os.Args[0]+` auth authenticate --code "Autem ut est error eaque."
+    `+os.Args[0]+` auth authenticate --code "Rerum harum ut tenetur laborum."
 `, os.Args[0])
 }
 
@@ -402,7 +402,7 @@ COMMAND:
     query: Find resources by a combination of name, kind and tags
     list: List all resources sorted by rating and name
     versions-by-id: Find all versions of a resource by its id
-    by-kind-name-version: Find resource using name, kind and version of resource
+    by-catalog-kind-name-version: Find resource using name of catalog & name, kind and version of resource
     by-version-id: Find a resource using its version's id
     by-kind-name: Find resources using name and kind
     by-id: Find a resource using it's id
@@ -422,8 +422,7 @@ Find resources by a combination of name, kind and tags
     -match STRING: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Cumque omnis non." --kinds '[
-      "Quos distinctio ipsam eos.",
+    `+os.Args[0]+` resource query --name "Aut quos distinctio ipsam." --kinds '[
       "Magnam illum ut nihil eum placeat.",
       "Et consequuntur voluptas et enim ut rerum.",
       "Aut eos qui fugiat."
@@ -458,16 +457,17 @@ Example:
 `, os.Args[0])
 }
 
-func resourceByKindNameVersionUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource by-kind-name-version -kind STRING -name STRING -version STRING
+func resourceByCatalogKindNameVersionUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name-version -catalog STRING -kind STRING -name STRING -version STRING
 
-Find resource using name, kind and version of resource
+Find resource using name of catalog & name, kind and version of resource
+    -catalog STRING: name of catalog
     -kind STRING: kind of resource
     -name STRING: name of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-kind-name-version --kind "task" --name "Tempora omnis et nihil aut quo quidem." --version "Qui nemo sint est."
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "Nemo sint est omnis." --kind "task" --name "Cupiditate voluptatem." --version "Tenetur unde."
 `, os.Args[0])
 }
 
@@ -478,7 +478,7 @@ Find a resource using its version's id
     -version-id UINT: Version ID of a resource's version
 
 Example:
-    `+os.Args[0]+` resource by-version-id --version-id 5020310314104480935
+    `+os.Args[0]+` resource by-version-id --version-id 8741701717887354389
 `, os.Args[0])
 }
 
@@ -490,7 +490,7 @@ Find resources using name and kind
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-kind-name --kind "pipeline" --name "Qui alias repudiandae enim ratione."
+    `+os.Args[0]+` resource by-kind-name --kind "pipeline" --name "Autem voluptatem molestiae est facilis."
 `, os.Args[0])
 }
 
@@ -501,7 +501,7 @@ Find a resource using it's id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource by-id --id 2593919908674814193
+    `+os.Args[0]+` resource by-id --id 9978331245820481361
 `, os.Args[0])
 }
 
@@ -527,7 +527,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 3376298804373115607 --token "Placeat facere."
+    `+os.Args[0]+` rating get --id 8441914113791270511 --token "Vitae voluptatem deleniti eum minus reiciendis nulla."
 `, os.Args[0])
 }
 
@@ -541,7 +541,7 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 0
-   }' --id 7378417340401583056 --token "Accusamus et."
+      "rating": 1
+   }' --id 6991370519422568791 --token "Fugit quam perspiciatis sed voluptatem nulla laborum."
 `, os.Args[0])
 }
