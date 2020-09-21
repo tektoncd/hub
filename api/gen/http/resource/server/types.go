@@ -257,9 +257,10 @@ type ByVersionIDNotFoundResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
-// ByKindNameInternalErrorResponseBody is the type of the "resource" service
-// "ByKindName" endpoint HTTP response body for the "internal-error" error.
-type ByKindNameInternalErrorResponseBody struct {
+// ByCatalogKindNameInternalErrorResponseBody is the type of the "resource"
+// service "ByCatalogKindName" endpoint HTTP response body for the
+// "internal-error" error.
+type ByCatalogKindNameInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -275,9 +276,9 @@ type ByKindNameInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
-// ByKindNameNotFoundResponseBody is the type of the "resource" service
-// "ByKindName" endpoint HTTP response body for the "not-found" error.
-type ByKindNameNotFoundResponseBody struct {
+// ByCatalogKindNameNotFoundResponseBody is the type of the "resource" service
+// "ByCatalogKindName" endpoint HTTP response body for the "not-found" error.
+type ByCatalogKindNameNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -685,10 +686,11 @@ func NewByVersionIDNotFoundResponseBody(res *goa.ServiceError) *ByVersionIDNotFo
 	return body
 }
 
-// NewByKindNameInternalErrorResponseBody builds the HTTP response body from
-// the result of the "ByKindName" endpoint of the "resource" service.
-func NewByKindNameInternalErrorResponseBody(res *goa.ServiceError) *ByKindNameInternalErrorResponseBody {
-	body := &ByKindNameInternalErrorResponseBody{
+// NewByCatalogKindNameInternalErrorResponseBody builds the HTTP response body
+// from the result of the "ByCatalogKindName" endpoint of the "resource"
+// service.
+func NewByCatalogKindNameInternalErrorResponseBody(res *goa.ServiceError) *ByCatalogKindNameInternalErrorResponseBody {
+	body := &ByCatalogKindNameInternalErrorResponseBody{
 		Name:      res.Name,
 		ID:        res.ID,
 		Message:   res.Message,
@@ -699,10 +701,10 @@ func NewByKindNameInternalErrorResponseBody(res *goa.ServiceError) *ByKindNameIn
 	return body
 }
 
-// NewByKindNameNotFoundResponseBody builds the HTTP response body from the
-// result of the "ByKindName" endpoint of the "resource" service.
-func NewByKindNameNotFoundResponseBody(res *goa.ServiceError) *ByKindNameNotFoundResponseBody {
-	body := &ByKindNameNotFoundResponseBody{
+// NewByCatalogKindNameNotFoundResponseBody builds the HTTP response body from
+// the result of the "ByCatalogKindName" endpoint of the "resource" service.
+func NewByCatalogKindNameNotFoundResponseBody(res *goa.ServiceError) *ByCatalogKindNameNotFoundResponseBody {
+	body := &ByCatalogKindNameNotFoundResponseBody{
 		Name:      res.Name,
 		ID:        res.ID,
 		Message:   res.Message,
@@ -790,9 +792,11 @@ func NewByVersionIDPayload(versionID uint) *resource.ByVersionIDPayload {
 	return v
 }
 
-// NewByKindNamePayload builds a resource service ByKindName endpoint payload.
-func NewByKindNamePayload(kind string, name string) *resource.ByKindNamePayload {
-	v := &resource.ByKindNamePayload{}
+// NewByCatalogKindNamePayload builds a resource service ByCatalogKindName
+// endpoint payload.
+func NewByCatalogKindNamePayload(catalog string, kind string, name string) *resource.ByCatalogKindNamePayload {
+	v := &resource.ByCatalogKindNamePayload{}
+	v.Catalog = catalog
 	v.Kind = kind
 	v.Name = name
 

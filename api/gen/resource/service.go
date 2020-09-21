@@ -26,8 +26,8 @@ type Service interface {
 	ByCatalogKindNameVersion(context.Context, *ByCatalogKindNameVersionPayload) (res *Version, err error)
 	// Find a resource using its version's id
 	ByVersionID(context.Context, *ByVersionIDPayload) (res *Version, err error)
-	// Find resources using name and kind
-	ByKindName(context.Context, *ByKindNamePayload) (res ResourceCollection, err error)
+	// Find resources using name of catalog, resource name and kind of resource
+	ByCatalogKindName(context.Context, *ByCatalogKindNamePayload) (res ResourceCollection, err error)
 	// Find a resource using it's id
 	ByID(context.Context, *ByIDPayload) (res *Resource, err error)
 }
@@ -40,7 +40,7 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [7]string{"Query", "List", "VersionsByID", "ByCatalogKindNameVersion", "ByVersionId", "ByKindName", "ById"}
+var MethodNames = [7]string{"Query", "List", "VersionsByID", "ByCatalogKindNameVersion", "ByVersionId", "ByCatalogKindName", "ById"}
 
 // QueryPayload is the payload type of the resource service Query method.
 type QueryPayload struct {
@@ -123,9 +123,11 @@ type ByVersionIDPayload struct {
 	VersionID uint
 }
 
-// ByKindNamePayload is the payload type of the resource service ByKindName
-// method.
-type ByKindNamePayload struct {
+// ByCatalogKindNamePayload is the payload type of the resource service
+// ByCatalogKindName method.
+type ByCatalogKindNamePayload struct {
+	// name of catalog
+	Catalog string
 	// kind of resource
 	Kind string
 	// Name of resource

@@ -30,7 +30,7 @@ func UsageCommands() string {
 	return `category list
 auth authenticate
 status status
-resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-kind-name|by-id)
+resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
 rating (get|update)
 `
 }
@@ -38,19 +38,16 @@ rating (get|update)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` auth authenticate --code "Rerum harum ut tenetur laborum."` + "\n" +
+		os.Args[0] + ` auth authenticate --code "Rerum non iure modi facere cumque omnis."` + "\n" +
 		os.Args[0] + ` status status` + "\n" +
-		os.Args[0] + ` resource query --name "Aut quos distinctio ipsam." --kinds '[
-      "Magnam illum ut nihil eum placeat.",
-      "Et consequuntur voluptas et enim ut rerum.",
-      "Aut eos qui fugiat."
+		os.Args[0] + ` resource query --name "Ut rerum repellat aut eos qui." --kinds '[
+      "Ut sunt est ea reiciendis.",
+      "Quasi illo voluptate."
    ]' --tags '[
-      "Sunt est.",
-      "Reiciendis pariatur quasi illo voluptate corrupti.",
       "Aut beatae reiciendis accusantium.",
       "Qui ipsum deleniti corrupti non quo velit."
    ]' --limit 17876575713650742907 --match "contains"` + "\n" +
-		os.Args[0] + ` rating get --id 8441914113791270511 --token "Vitae voluptatem deleniti eum minus reiciendis nulla."` + "\n" +
+		os.Args[0] + ` rating get --id 7378417340401583056 --token "Accusamus et."` + "\n" +
 		""
 }
 
@@ -101,9 +98,10 @@ func ParseEndpoint(
 		resourceByVersionIDFlags         = flag.NewFlagSet("by-version-id", flag.ExitOnError)
 		resourceByVersionIDVersionIDFlag = resourceByVersionIDFlags.String("version-id", "REQUIRED", "Version ID of a resource's version")
 
-		resourceByKindNameFlags    = flag.NewFlagSet("by-kind-name", flag.ExitOnError)
-		resourceByKindNameKindFlag = resourceByKindNameFlags.String("kind", "REQUIRED", "kind of resource")
-		resourceByKindNameNameFlag = resourceByKindNameFlags.String("name", "REQUIRED", "Name of resource")
+		resourceByCatalogKindNameFlags       = flag.NewFlagSet("by-catalog-kind-name", flag.ExitOnError)
+		resourceByCatalogKindNameCatalogFlag = resourceByCatalogKindNameFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceByCatalogKindNameKindFlag    = resourceByCatalogKindNameFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByCatalogKindNameNameFlag    = resourceByCatalogKindNameFlags.String("name", "REQUIRED", "Name of resource")
 
 		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
 		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
@@ -134,7 +132,7 @@ func ParseEndpoint(
 	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
 	resourceByCatalogKindNameVersionFlags.Usage = resourceByCatalogKindNameVersionUsage
 	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
-	resourceByKindNameFlags.Usage = resourceByKindNameUsage
+	resourceByCatalogKindNameFlags.Usage = resourceByCatalogKindNameUsage
 	resourceByIDFlags.Usage = resourceByIDUsage
 
 	ratingFlags.Usage = ratingUsage
@@ -219,8 +217,8 @@ func ParseEndpoint(
 			case "by-version-id":
 				epf = resourceByVersionIDFlags
 
-			case "by-kind-name":
-				epf = resourceByKindNameFlags
+			case "by-catalog-kind-name":
+				epf = resourceByCatalogKindNameFlags
 
 			case "by-id":
 				epf = resourceByIDFlags
@@ -296,9 +294,9 @@ func ParseEndpoint(
 			case "by-version-id":
 				endpoint = c.ByVersionID()
 				data, err = resourcec.BuildByVersionIDPayload(*resourceByVersionIDVersionIDFlag)
-			case "by-kind-name":
-				endpoint = c.ByKindName()
-				data, err = resourcec.BuildByKindNamePayload(*resourceByKindNameKindFlag, *resourceByKindNameNameFlag)
+			case "by-catalog-kind-name":
+				endpoint = c.ByCatalogKindName()
+				data, err = resourcec.BuildByCatalogKindNamePayload(*resourceByCatalogKindNameCatalogFlag, *resourceByCatalogKindNameKindFlag, *resourceByCatalogKindNameNameFlag)
 			case "by-id":
 				endpoint = c.ByID()
 				data, err = resourcec.BuildByIDPayload(*resourceByIDIDFlag)
@@ -365,7 +363,7 @@ Authenticates users against GitHub OAuth
     -code STRING: 
 
 Example:
-    `+os.Args[0]+` auth authenticate --code "Rerum harum ut tenetur laborum."
+    `+os.Args[0]+` auth authenticate --code "Rerum non iure modi facere cumque omnis."
 `, os.Args[0])
 }
 
@@ -404,7 +402,7 @@ COMMAND:
     versions-by-id: Find all versions of a resource by its id
     by-catalog-kind-name-version: Find resource using name of catalog & name, kind and version of resource
     by-version-id: Find a resource using its version's id
-    by-kind-name: Find resources using name and kind
+    by-catalog-kind-name: Find resources using name of catalog, resource name and kind of resource
     by-id: Find a resource using it's id
 
 Additional help:
@@ -422,13 +420,10 @@ Find resources by a combination of name, kind and tags
     -match STRING: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Aut quos distinctio ipsam." --kinds '[
-      "Magnam illum ut nihil eum placeat.",
-      "Et consequuntur voluptas et enim ut rerum.",
-      "Aut eos qui fugiat."
+    `+os.Args[0]+` resource query --name "Ut rerum repellat aut eos qui." --kinds '[
+      "Ut sunt est ea reiciendis.",
+      "Quasi illo voluptate."
    ]' --tags '[
-      "Sunt est.",
-      "Reiciendis pariatur quasi illo voluptate corrupti.",
       "Aut beatae reiciendis accusantium.",
       "Qui ipsum deleniti corrupti non quo velit."
    ]' --limit 17876575713650742907 --match "contains"
@@ -482,15 +477,16 @@ Example:
 `, os.Args[0])
 }
 
-func resourceByKindNameUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource by-kind-name -kind STRING -name STRING
+func resourceByCatalogKindNameUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name -catalog STRING -kind STRING -name STRING
 
-Find resources using name and kind
+Find resources using name of catalog, resource name and kind of resource
+    -catalog STRING: name of catalog
     -kind STRING: kind of resource
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-kind-name --kind "pipeline" --name "Autem voluptatem molestiae est facilis."
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "Facilis beatae itaque et nostrum." --kind "task" --name "Quis nostrum et ab placeat facere."
 `, os.Args[0])
 }
 
@@ -501,7 +497,7 @@ Find a resource using it's id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource by-id --id 9978331245820481361
+    `+os.Args[0]+` resource by-id --id 14491545834747945803
 `, os.Args[0])
 }
 
@@ -527,7 +523,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 8441914113791270511 --token "Vitae voluptatem deleniti eum minus reiciendis nulla."
+    `+os.Args[0]+` rating get --id 7378417340401583056 --token "Accusamus et."
 `, os.Args[0])
 }
 
@@ -541,7 +537,7 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 1
-   }' --id 6991370519422568791 --token "Fugit quam perspiciatis sed voluptatem nulla laborum."
+      "rating": 4
+   }' --id 8673375329227215362 --token "Ut quidem architecto rerum id quia quia."
 `, os.Args[0])
 }

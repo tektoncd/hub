@@ -75,9 +75,9 @@ type ByVersionIDResponseBody struct {
 	Resource *ResourceResponseBody `form:"resource,omitempty" json:"resource,omitempty" xml:"resource,omitempty"`
 }
 
-// ByKindNameResponseBody is the type of the "resource" service "ByKindName"
-// endpoint HTTP response body.
-type ByKindNameResponseBody []*ResourceResponse
+// ByCatalogKindNameResponseBody is the type of the "resource" service
+// "ByCatalogKindName" endpoint HTTP response body.
+type ByCatalogKindNameResponseBody []*ResourceResponse
 
 // ByIDResponseBody is the type of the "resource" service "ById" endpoint HTTP
 // response body.
@@ -264,9 +264,10 @@ type ByVersionIDNotFoundResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
-// ByKindNameInternalErrorResponseBody is the type of the "resource" service
-// "ByKindName" endpoint HTTP response body for the "internal-error" error.
-type ByKindNameInternalErrorResponseBody struct {
+// ByCatalogKindNameInternalErrorResponseBody is the type of the "resource"
+// service "ByCatalogKindName" endpoint HTTP response body for the
+// "internal-error" error.
+type ByCatalogKindNameInternalErrorResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -282,9 +283,9 @@ type ByKindNameInternalErrorResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
-// ByKindNameNotFoundResponseBody is the type of the "resource" service
-// "ByKindName" endpoint HTTP response body for the "not-found" error.
-type ByKindNameNotFoundResponseBody struct {
+// ByCatalogKindNameNotFoundResponseBody is the type of the "resource" service
+// "ByCatalogKindName" endpoint HTTP response body for the "not-found" error.
+type ByCatalogKindNameNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -659,9 +660,9 @@ func NewByVersionIDNotFound(body *ByVersionIDNotFoundResponseBody) *goa.ServiceE
 	return v
 }
 
-// NewByKindNameResourceCollectionOK builds a "resource" service "ByKindName"
-// endpoint result from a HTTP "OK" response.
-func NewByKindNameResourceCollectionOK(body ByKindNameResponseBody) resourceviews.ResourceCollectionView {
+// NewByCatalogKindNameResourceCollectionOK builds a "resource" service
+// "ByCatalogKindName" endpoint result from a HTTP "OK" response.
+func NewByCatalogKindNameResourceCollectionOK(body ByCatalogKindNameResponseBody) resourceviews.ResourceCollectionView {
 	v := make([]*resourceviews.ResourceView, len(body))
 	for i, val := range body {
 		v[i] = unmarshalResourceResponseToResourceviewsResourceView(val)
@@ -669,9 +670,9 @@ func NewByKindNameResourceCollectionOK(body ByKindNameResponseBody) resourceview
 	return v
 }
 
-// NewByKindNameInternalError builds a resource service ByKindName endpoint
-// internal-error error.
-func NewByKindNameInternalError(body *ByKindNameInternalErrorResponseBody) *goa.ServiceError {
+// NewByCatalogKindNameInternalError builds a resource service
+// ByCatalogKindName endpoint internal-error error.
+func NewByCatalogKindNameInternalError(body *ByCatalogKindNameInternalErrorResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -684,9 +685,9 @@ func NewByKindNameInternalError(body *ByKindNameInternalErrorResponseBody) *goa.
 	return v
 }
 
-// NewByKindNameNotFound builds a resource service ByKindName endpoint
-// not-found error.
-func NewByKindNameNotFound(body *ByKindNameNotFoundResponseBody) *goa.ServiceError {
+// NewByCatalogKindNameNotFound builds a resource service ByCatalogKindName
+// endpoint not-found error.
+func NewByCatalogKindNameNotFound(body *ByCatalogKindNameNotFoundResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -967,9 +968,9 @@ func ValidateByVersionIDNotFoundResponseBody(body *ByVersionIDNotFoundResponseBo
 	return
 }
 
-// ValidateByKindNameInternalErrorResponseBody runs the validations defined on
-// ByKindName_internal-error_Response_Body
-func ValidateByKindNameInternalErrorResponseBody(body *ByKindNameInternalErrorResponseBody) (err error) {
+// ValidateByCatalogKindNameInternalErrorResponseBody runs the validations
+// defined on ByCatalogKindName_internal-error_Response_Body
+func ValidateByCatalogKindNameInternalErrorResponseBody(body *ByCatalogKindNameInternalErrorResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -991,9 +992,9 @@ func ValidateByKindNameInternalErrorResponseBody(body *ByKindNameInternalErrorRe
 	return
 }
 
-// ValidateByKindNameNotFoundResponseBody runs the validations defined on
-// ByKindName_not-found_Response_Body
-func ValidateByKindNameNotFoundResponseBody(body *ByKindNameNotFoundResponseBody) (err error) {
+// ValidateByCatalogKindNameNotFoundResponseBody runs the validations defined
+// on ByCatalogKindName_not-found_Response_Body
+func ValidateByCatalogKindNameNotFoundResponseBody(body *ByCatalogKindNameNotFoundResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}

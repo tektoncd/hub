@@ -260,24 +260,35 @@ func TestByVersionID_NotFoundError(t *testing.T) {
 	assert.EqualError(t, err, "Resource not found")
 }
 
-func TestByKindName(t *testing.T) {
+func TestByCatalogKindName(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.ByKindNamePayload{Kind: "task", Name: "img"}
-	res, err := resourceSvc.ByKindName(context.Background(), payload)
+	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-community", Kind: "task", Name: "img"}
+	res, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(res))
+	assert.Equal(t, 1, len(res))
 }
 
-func TestByKindName_NotFoundError(t *testing.T) {
+func TestByCatalogKindName_NoCatalogWithName(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	resourceSvc := New(tc)
-	payload := &resource.ByKindNamePayload{Kind: "task", Name: "foo"}
-	_, err := resourceSvc.ByKindName(context.Background(), payload)
+	payload := &resource.ByCatalogKindNamePayload{Catalog: "abc", Kind: "task", Name: "foo"}
+	_, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Resource not found")
+}
+
+func TestByCatalogKindName_ResourceNotFoundError(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-community", Kind: "task", Name: "foo"}
+	_, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Resource not found")
 }

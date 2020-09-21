@@ -1,27 +1,5 @@
 [
 	{
-		"id": 6,
-		"name": "img",
-		"catalog": {
-			"id": 2,
-			"name": "catalog-community",
-			"type": "community"
-		},
-		"kind": "task",
-		"latestVersion": {
-			"id": 9,
-			"version": "0.1",
-			"displayName": "Image",
-			"description": "Desc3",
-			"minPipelinesVersion": "0.12.1",
-			"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog-community/master/task/img/0.1/img.yaml",
-			"webURL": "https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/img/0.1/img.yaml",
-			"updatedAt": "2016-01-01 12:30:12 +0000 UTC"
-		},
-		"tags": null,
-		"rating": 2.3
-	},
-	{
 		"id": 3,
 		"name": "img",
 		"catalog": {

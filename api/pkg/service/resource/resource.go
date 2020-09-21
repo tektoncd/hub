@@ -161,13 +161,14 @@ func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayloa
 	return versionInfoFromVersion(v), nil
 }
 
-// find resources using name and kind
-func (s *service) ByKindName(ctx context.Context, p *resource.ByKindNamePayload) (res resource.ResourceCollection, err error) {
+// find resources using name of catalog, resource name and kind of resource
+func (s *service) ByCatalogKindName(ctx context.Context, p *resource.ByCatalogKindNamePayload) (res resource.ResourceCollection, err error) {
 
 	db := s.DB(ctx)
 
 	q := db.Scopes(
 		withResourceDetails,
+		filterByCatalog(p.Catalog),
 		filterByKind(p.Kind),
 		filterResourceName("exact", p.Name))
 
