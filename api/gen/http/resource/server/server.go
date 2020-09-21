@@ -25,7 +25,7 @@ type Server struct {
 	VersionsByID             http.Handler
 	ByCatalogKindNameVersion http.Handler
 	ByVersionID              http.Handler
-	ByKindName               http.Handler
+	ByCatalogKindName        http.Handler
 	ByID                     http.Handler
 	CORS                     http.Handler
 }
@@ -68,14 +68,14 @@ func New(
 			{"VersionsByID", "GET", "/resource/{id}/versions"},
 			{"ByCatalogKindNameVersion", "GET", "/resource/{catalog}/{kind}/{name}/{version}"},
 			{"ByVersionID", "GET", "/resource/version/{versionID}"},
-			{"ByKindName", "GET", "/resource/{kind}/{name}"},
+			{"ByCatalogKindName", "GET", "/resource/{catalog}/{kind}/{name}"},
 			{"ByID", "GET", "/resource/{id}"},
 			{"CORS", "OPTIONS", "/query"},
 			{"CORS", "OPTIONS", "/resources"},
 			{"CORS", "OPTIONS", "/resource/{id}/versions"},
 			{"CORS", "OPTIONS", "/resource/{catalog}/{kind}/{name}/{version}"},
 			{"CORS", "OPTIONS", "/resource/version/{versionID}"},
-			{"CORS", "OPTIONS", "/resource/{kind}/{name}"},
+			{"CORS", "OPTIONS", "/resource/{catalog}/{kind}/{name}"},
 			{"CORS", "OPTIONS", "/resource/{id}"},
 		},
 		Query:                    NewQueryHandler(e.Query, mux, decoder, encoder, errhandler, formatter),
@@ -83,7 +83,7 @@ func New(
 		VersionsByID:             NewVersionsByIDHandler(e.VersionsByID, mux, decoder, encoder, errhandler, formatter),
 		ByCatalogKindNameVersion: NewByCatalogKindNameVersionHandler(e.ByCatalogKindNameVersion, mux, decoder, encoder, errhandler, formatter),
 		ByVersionID:              NewByVersionIDHandler(e.ByVersionID, mux, decoder, encoder, errhandler, formatter),
-		ByKindName:               NewByKindNameHandler(e.ByKindName, mux, decoder, encoder, errhandler, formatter),
+		ByCatalogKindName:        NewByCatalogKindNameHandler(e.ByCatalogKindName, mux, decoder, encoder, errhandler, formatter),
 		ByID:                     NewByIDHandler(e.ByID, mux, decoder, encoder, errhandler, formatter),
 		CORS:                     NewCORSHandler(),
 	}
@@ -99,7 +99,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.VersionsByID = m(s.VersionsByID)
 	s.ByCatalogKindNameVersion = m(s.ByCatalogKindNameVersion)
 	s.ByVersionID = m(s.ByVersionID)
-	s.ByKindName = m(s.ByKindName)
+	s.ByCatalogKindName = m(s.ByCatalogKindName)
 	s.ByID = m(s.ByID)
 	s.CORS = m(s.CORS)
 }
@@ -111,7 +111,7 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountVersionsByIDHandler(mux, h.VersionsByID)
 	MountByCatalogKindNameVersionHandler(mux, h.ByCatalogKindNameVersion)
 	MountByVersionIDHandler(mux, h.ByVersionID)
-	MountByKindNameHandler(mux, h.ByKindName)
+	MountByCatalogKindNameHandler(mux, h.ByCatalogKindName)
 	MountByIDHandler(mux, h.ByID)
 	MountCORSHandler(mux, h.CORS)
 }
@@ -372,21 +372,21 @@ func NewByVersionIDHandler(
 	})
 }
 
-// MountByKindNameHandler configures the mux to serve the "resource" service
-// "ByKindName" endpoint.
-func MountByKindNameHandler(mux goahttp.Muxer, h http.Handler) {
+// MountByCatalogKindNameHandler configures the mux to serve the "resource"
+// service "ByCatalogKindName" endpoint.
+func MountByCatalogKindNameHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := handleResourceOrigin(h).(http.HandlerFunc)
 	if !ok {
 		f = func(w http.ResponseWriter, r *http.Request) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/resource/{kind}/{name}", f)
+	mux.Handle("GET", "/resource/{catalog}/{kind}/{name}", f)
 }
 
-// NewByKindNameHandler creates a HTTP handler which loads the HTTP request and
-// calls the "resource" service "ByKindName" endpoint.
-func NewByKindNameHandler(
+// NewByCatalogKindNameHandler creates a HTTP handler which loads the HTTP
+// request and calls the "resource" service "ByCatalogKindName" endpoint.
+func NewByCatalogKindNameHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
 	decoder func(*http.Request) goahttp.Decoder,
@@ -395,13 +395,13 @@ func NewByKindNameHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
-		decodeRequest  = DecodeByKindNameRequest(mux, decoder)
-		encodeResponse = EncodeByKindNameResponse(encoder)
-		encodeError    = EncodeByKindNameError(encoder, formatter)
+		decodeRequest  = DecodeByCatalogKindNameRequest(mux, decoder)
+		encodeResponse = EncodeByCatalogKindNameResponse(encoder)
+		encodeError    = EncodeByCatalogKindNameError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "ByKindName")
+		ctx = context.WithValue(ctx, goa.MethodKey, "ByCatalogKindName")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "resource")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -489,7 +489,7 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	mux.Handle("OPTIONS", "/resource/{id}/versions", f)
 	mux.Handle("OPTIONS", "/resource/{catalog}/{kind}/{name}/{version}", f)
 	mux.Handle("OPTIONS", "/resource/version/{versionID}", f)
-	mux.Handle("OPTIONS", "/resource/{kind}/{name}", f)
+	mux.Handle("OPTIONS", "/resource/{catalog}/{kind}/{name}", f)
 	mux.Handle("OPTIONS", "/resource/{id}", f)
 }
 

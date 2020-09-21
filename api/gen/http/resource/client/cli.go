@@ -31,7 +31,7 @@ func BuildQueryPayload(resourceQueryName string, resourceQueryKinds string, reso
 		if resourceQueryKinds != "" {
 			err = json.Unmarshal([]byte(resourceQueryKinds), &kinds)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for kinds, example of valid JSON:\n%s", "'[\n      \"Magnam illum ut nihil eum placeat.\",\n      \"Et consequuntur voluptas et enim ut rerum.\",\n      \"Aut eos qui fugiat.\"\n   ]'")
+				return nil, fmt.Errorf("invalid JSON for kinds, example of valid JSON:\n%s", "'[\n      \"Ut sunt est ea reiciendis.\",\n      \"Quasi illo voluptate.\"\n   ]'")
 			}
 		}
 	}
@@ -40,7 +40,7 @@ func BuildQueryPayload(resourceQueryName string, resourceQueryKinds string, reso
 		if resourceQueryTags != "" {
 			err = json.Unmarshal([]byte(resourceQueryTags), &tags)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for tags, example of valid JSON:\n%s", "'[\n      \"Sunt est.\",\n      \"Reiciendis pariatur quasi illo voluptate corrupti.\",\n      \"Aut beatae reiciendis accusantium.\",\n      \"Qui ipsum deleniti corrupti non quo velit.\"\n   ]'")
+				return nil, fmt.Errorf("invalid JSON for tags, example of valid JSON:\n%s", "'[\n      \"Aut beatae reiciendis accusantium.\",\n      \"Qui ipsum deleniti corrupti non quo velit.\"\n   ]'")
 			}
 		}
 	}
@@ -171,13 +171,17 @@ func BuildByVersionIDPayload(resourceByVersionIDVersionID string) (*resource.ByV
 	return v, nil
 }
 
-// BuildByKindNamePayload builds the payload for the resource ByKindName
-// endpoint from CLI flags.
-func BuildByKindNamePayload(resourceByKindNameKind string, resourceByKindNameName string) (*resource.ByKindNamePayload, error) {
+// BuildByCatalogKindNamePayload builds the payload for the resource
+// ByCatalogKindName endpoint from CLI flags.
+func BuildByCatalogKindNamePayload(resourceByCatalogKindNameCatalog string, resourceByCatalogKindNameKind string, resourceByCatalogKindNameName string) (*resource.ByCatalogKindNamePayload, error) {
 	var err error
+	var catalog string
+	{
+		catalog = resourceByCatalogKindNameCatalog
+	}
 	var kind string
 	{
-		kind = resourceByKindNameKind
+		kind = resourceByCatalogKindNameKind
 		if !(kind == "task" || kind == "pipeline") {
 			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
 		}
@@ -187,9 +191,10 @@ func BuildByKindNamePayload(resourceByKindNameKind string, resourceByKindNameNam
 	}
 	var name string
 	{
-		name = resourceByKindNameName
+		name = resourceByCatalogKindNameName
 	}
-	v := &resource.ByKindNamePayload{}
+	v := &resource.ByCatalogKindNamePayload{}
+	v.Catalog = catalog
 	v.Kind = kind
 	v.Name = name
 

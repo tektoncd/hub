@@ -20,7 +20,7 @@ type Endpoints struct {
 	VersionsByID             goa.Endpoint
 	ByCatalogKindNameVersion goa.Endpoint
 	ByVersionID              goa.Endpoint
-	ByKindName               goa.Endpoint
+	ByCatalogKindName        goa.Endpoint
 	ByID                     goa.Endpoint
 }
 
@@ -32,7 +32,7 @@ func NewEndpoints(s Service) *Endpoints {
 		VersionsByID:             NewVersionsByIDEndpoint(s),
 		ByCatalogKindNameVersion: NewByCatalogKindNameVersionEndpoint(s),
 		ByVersionID:              NewByVersionIDEndpoint(s),
-		ByKindName:               NewByKindNameEndpoint(s),
+		ByCatalogKindName:        NewByCatalogKindNameEndpoint(s),
 		ByID:                     NewByIDEndpoint(s),
 	}
 }
@@ -44,7 +44,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.VersionsByID = m(e.VersionsByID)
 	e.ByCatalogKindNameVersion = m(e.ByCatalogKindNameVersion)
 	e.ByVersionID = m(e.ByVersionID)
-	e.ByKindName = m(e.ByKindName)
+	e.ByCatalogKindName = m(e.ByCatalogKindName)
 	e.ByID = m(e.ByID)
 }
 
@@ -118,12 +118,12 @@ func NewByVersionIDEndpoint(s Service) goa.Endpoint {
 	}
 }
 
-// NewByKindNameEndpoint returns an endpoint function that calls the method
-// "ByKindName" of service "resource".
-func NewByKindNameEndpoint(s Service) goa.Endpoint {
+// NewByCatalogKindNameEndpoint returns an endpoint function that calls the
+// method "ByCatalogKindName" of service "resource".
+func NewByCatalogKindNameEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*ByKindNamePayload)
-		res, err := s.ByKindName(ctx, p)
+		p := req.(*ByCatalogKindNamePayload)
+		res, err := s.ByCatalogKindName(ctx, p)
 		if err != nil {
 			return nil, err
 		}

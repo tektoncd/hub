@@ -367,20 +367,20 @@ func TestByVersionID_Http_ErrorCase(t *testing.T) {
 	})
 }
 
-func ByKindNameChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+func ByCatalogKindNameChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	checker := goahttpcheck.New()
 	checker.Mount(
-		server.NewByKindNameHandler,
-		server.MountByKindNameHandler,
-		resource.NewByKindNameEndpoint(New(tc)))
+		server.NewByCatalogKindNameHandler,
+		server.MountByCatalogKindNameHandler,
+		resource.NewByCatalogKindNameEndpoint(New(tc)))
 	return checker
 }
 
-func TestByKindName_Http(t *testing.T) {
+func TestByCatalogKindName_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByKindNameChecker(tc).Test(t, http.MethodGet, "/resource/task/img").Check().
+	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/task/img").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -393,11 +393,11 @@ func TestByKindName_Http(t *testing.T) {
 	})
 }
 
-func TestByKindName_Http_ErrorCase(t *testing.T) {
+func TestByCatalogKindName_Http_ErrorCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByKindNameChecker(tc).Test(t, http.MethodGet, "/resource/task/foo").Check().
+	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/task/foo").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)

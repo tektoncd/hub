@@ -525,25 +525,27 @@ func DecodeByVersionIDResponse(decoder func(*http.Response) goahttp.Decoder, res
 	}
 }
 
-// BuildByKindNameRequest instantiates a HTTP request object with method and
-// path set to call the "resource" service "ByKindName" endpoint
-func (c *Client) BuildByKindNameRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+// BuildByCatalogKindNameRequest instantiates a HTTP request object with method
+// and path set to call the "resource" service "ByCatalogKindName" endpoint
+func (c *Client) BuildByCatalogKindNameRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		kind string
-		name string
+		catalog string
+		kind    string
+		name    string
 	)
 	{
-		p, ok := v.(*resource.ByKindNamePayload)
+		p, ok := v.(*resource.ByCatalogKindNamePayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("resource", "ByKindName", "*resource.ByKindNamePayload", v)
+			return nil, goahttp.ErrInvalidType("resource", "ByCatalogKindName", "*resource.ByCatalogKindNamePayload", v)
 		}
+		catalog = p.Catalog
 		kind = p.Kind
 		name = p.Name
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ByKindNameResourcePath(kind, name)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ByCatalogKindNameResourcePath(catalog, kind, name)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("resource", "ByKindName", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("resource", "ByCatalogKindName", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -552,14 +554,14 @@ func (c *Client) BuildByKindNameRequest(ctx context.Context, v interface{}) (*ht
 	return req, nil
 }
 
-// DecodeByKindNameResponse returns a decoder for responses returned by the
-// resource ByKindName endpoint. restoreBody controls whether the response body
-// should be restored after having been read.
-// DecodeByKindNameResponse may return the following errors:
+// DecodeByCatalogKindNameResponse returns a decoder for responses returned by
+// the resource ByCatalogKindName endpoint. restoreBody controls whether the
+// response body should be restored after having been read.
+// DecodeByCatalogKindNameResponse may return the following errors:
 //	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
 //	- "not-found" (type *goa.ServiceError): http.StatusNotFound
 //	- error: internal error
-func DecodeByKindNameResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+func DecodeByCatalogKindNameResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -576,52 +578,52 @@ func DecodeByKindNameResponse(decoder func(*http.Response) goahttp.Decoder, rest
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body ByKindNameResponseBody
+				body ByCatalogKindNameResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("resource", "ByKindName", err)
+				return nil, goahttp.ErrDecodingError("resource", "ByCatalogKindName", err)
 			}
-			p := NewByKindNameResourceCollectionOK(body)
+			p := NewByCatalogKindNameResourceCollectionOK(body)
 			view := "withoutVersion"
 			vres := resourceviews.ResourceCollection{Projected: p, View: view}
 			if err = resourceviews.ValidateResourceCollection(vres); err != nil {
-				return nil, goahttp.ErrValidationError("resource", "ByKindName", err)
+				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindName", err)
 			}
 			res := resource.NewResourceCollection(vres)
 			return res, nil
 		case http.StatusInternalServerError:
 			var (
-				body ByKindNameInternalErrorResponseBody
+				body ByCatalogKindNameInternalErrorResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("resource", "ByKindName", err)
+				return nil, goahttp.ErrDecodingError("resource", "ByCatalogKindName", err)
 			}
-			err = ValidateByKindNameInternalErrorResponseBody(&body)
+			err = ValidateByCatalogKindNameInternalErrorResponseBody(&body)
 			if err != nil {
-				return nil, goahttp.ErrValidationError("resource", "ByKindName", err)
+				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindName", err)
 			}
-			return nil, NewByKindNameInternalError(&body)
+			return nil, NewByCatalogKindNameInternalError(&body)
 		case http.StatusNotFound:
 			var (
-				body ByKindNameNotFoundResponseBody
+				body ByCatalogKindNameNotFoundResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("resource", "ByKindName", err)
+				return nil, goahttp.ErrDecodingError("resource", "ByCatalogKindName", err)
 			}
-			err = ValidateByKindNameNotFoundResponseBody(&body)
+			err = ValidateByCatalogKindNameNotFoundResponseBody(&body)
 			if err != nil {
-				return nil, goahttp.ErrValidationError("resource", "ByKindName", err)
+				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindName", err)
 			}
-			return nil, NewByKindNameNotFound(&body)
+			return nil, NewByCatalogKindNameNotFound(&body)
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("resource", "ByKindName", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("resource", "ByCatalogKindName", resp.StatusCode, string(body))
 		}
 	}
 }
