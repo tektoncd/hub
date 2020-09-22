@@ -15,16 +15,131 @@
 package search
 
 import (
+	"strings"
+	"text/template"
+
 	"github.com/spf13/cobra"
+
+	"github.com/tektoncd/hub/cli/pkg/app"
+	"github.com/tektoncd/hub/cli/pkg/flag"
+	"github.com/tektoncd/hub/cli/pkg/formatter"
+	"github.com/tektoncd/hub/cli/pkg/hub"
+	"github.com/tektoncd/hub/cli/pkg/printer"
 )
 
-func Command() *cobra.Command {
+const resTemplate = `{{- $rl := len .Resources }}{{ if eq $rl 0 -}}
+No Resources found
+{{ else -}}
+NAME	KIND	DESCRIPTION	TAGS
+{{ range $_, $r := .Resources -}}
+{{ formatName $r.Name $r.LatestVersion.Version }}	{{ $r.Kind }}	{{ formatDesc $r.LatestVersion.Description }}	{{ formatTags $r.Tags }}	
+{{ end }}
+{{- end -}} 
+`
+
+var (
+	funcMap = template.FuncMap{
+		"formatName": formatter.FormatName,
+		"formatDesc": formatter.FormatDesc,
+		"formatTags": formatter.FormatTags,
+	}
+	tmpl = template.Must(template.New("List Resources").Funcs(funcMap).Parse(resTemplate))
+)
+
+type options struct {
+	cli    app.CLI
+	Limit  uint
+	Match  string
+	Output string
+	Tags   []string
+	Kinds  []string
+	Args   []string
+}
+
+func Command(cli app.CLI) *cobra.Command {
+
+	opts := &options{cli: cli}
+
 	cmd := &cobra.Command{
 		Use:          "search",
-		Short:        "Search a resource",
+		Short:        "Search resource by combination of its name, kind, and tags",
 		Long:         ``,
 		SilenceUsage: true,
+		Args:         cobra.MaximumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			opts.Args = args
+			return opts.run()
+		},
 	}
 
+	cmd.Flags().UintVarP(&opts.Limit, "limit", "l", 0, "Max number of resources to fetch")
+	cmd.Flags().StringVar(&opts.Match, "match", "contains", "Accept type of search. 'exact' or 'contains'.")
+	cmd.Flags().StringArrayVar(&opts.Kinds, "kinds", nil, "Accepts a comma separated list of kinds")
+	cmd.Flags().StringArrayVar(&opts.Tags, "tags", nil, "Accepts a comma separated list of tags")
+	cmd.Flags().StringVarP(&opts.Output, "output", "o", "table", "Accepts output format: [table, json]")
+
 	return cmd
+}
+
+func (opts *options) run() error {
+
+	if err := opts.validate(); err != nil {
+		return err
+	}
+
+	hubClient := opts.cli.Hub()
+
+	result := hubClient.Search(hub.SearchOption{
+		Name:  opts.name(),
+		Kinds: opts.Kinds,
+		Tags:  opts.Tags,
+		Match: opts.Match,
+		Limit: opts.Limit,
+	})
+
+	out := opts.cli.Stream().Out
+
+	if opts.Output == "json" {
+		return printer.New(out).JSON(result.Raw())
+	}
+
+	typed, err := result.Typed()
+	if err != nil {
+		return err
+	}
+
+	var templateData = struct {
+		Resources hub.SearchResponse
+	}{
+		Resources: typed,
+	}
+
+	return printer.New(out).Tabbed(tmpl, templateData)
+}
+
+func (opts *options) validate() error {
+	if err := flag.InList("match", opts.Match, []string{"contains", "exact"}); err != nil {
+		return err
+	}
+
+	if err := flag.InList("output", opts.Output, []string{"table", "json"}); err != nil {
+		return err
+	}
+
+	opts.Kinds = flag.TrimArray(opts.Kinds)
+	opts.Tags = flag.TrimArray(opts.Tags)
+
+	for _, k := range opts.Kinds {
+		if err := flag.Kind(k).IsValid(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (opts *options) name() string {
+	if len(opts.Args) == 0 {
+		return ""
+	}
+	return strings.TrimSpace(opts.Args[0])
 }

@@ -12,20 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package formatter
 
 import (
-	"os"
+	"testing"
 
-	"github.com/tektoncd/hub/cli/pkg/app"
-	"github.com/tektoncd/hub/cli/pkg/cmd"
+	"github.com/stretchr/testify/assert"
 )
 
-func main() {
+var formatted = `{
+	"id": 1,
+	"name": "abc"
+}`
 
-	cli := app.New()
-	hub := cmd.Root(cli)
-	if err := hub.Execute(); err != nil {
-		os.Exit(1)
-	}
+func TestFormatJSON(t *testing.T) {
+
+	data := []byte(`{"id": 1,"name": "abc"}`)
+
+	res, _ := FormatJSON(data)
+	assert.Equal(t, formatted, string(res))
 }

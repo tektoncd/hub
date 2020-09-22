@@ -12,20 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package flag
 
-import (
-	"os"
+import "fmt"
 
-	"github.com/tektoncd/hub/cli/pkg/app"
-	"github.com/tektoncd/hub/cli/pkg/cmd"
+// Kind describe kind of Tekton Resource
+type Kind string
+
+// Kinds of Tekton Resources
+const (
+	Task     Kind = "task"
+	Pipeline      = "pipeline"
 )
 
-func main() {
-
-	cli := app.New()
-	hub := cmd.Root(cli)
-	if err := hub.Execute(); err != nil {
-		os.Exit(1)
+// IsValid validates if a resource kind is valid Tekton kind
+func (r Kind) IsValid() error {
+	switch r {
+	case Task, Pipeline:
+		return nil
 	}
+	return fmt.Errorf("invalid value %q set for option kinds. Valid options: [task, pipeline]", r)
 }
