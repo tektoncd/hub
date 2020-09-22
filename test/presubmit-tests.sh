@@ -29,6 +29,7 @@ declare -r SCRIPT_PATH=$(readlink -f "$0")
 declare -r SCRIPT_DIR=$(cd $(dirname "$SCRIPT_PATH") && pwd)
 declare -r API_DIR="$SCRIPT_DIR/../api"
 declare -r UI_DIR="$SCRIPT_DIR/../ui"
+declare -r CLI_DIR="$SCRIPT_DIR/../cli"
 
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-tests.sh
 
@@ -93,6 +94,18 @@ api-build(){
   go build -mod=vendor ./cmd/...
 }
 
+cli-build(){
+  go mod vendor
+  go build -mod=vendor ./cmd/...
+}
+
+cli-unittest(){
+  info Running CLI unittests
+
+  go mod vendor
+  go test -v ./pkg/...
+}
+
 ui-build(){
   cd $UI_DIR
   install-node
@@ -119,6 +132,12 @@ run_unit_tests() {
   (
     set -eu -o pipefail
 
+    cd $CLI_DIR
+    cli-build
+    cli-unittest
+  )
+  (
+    set -eu -o pipefail
 
     cd $API_DIR
     api-build
@@ -126,7 +145,6 @@ run_unit_tests() {
   )
   (
     set -eu -o pipefail
-
 
     cd $UI_DIR
     ui-build

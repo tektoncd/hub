@@ -12,20 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package formatter
 
 import (
-	"os"
-
-	"github.com/tektoncd/hub/cli/pkg/app"
-	"github.com/tektoncd/hub/cli/pkg/cmd"
+	"bytes"
+	"encoding/json"
 )
 
-func main() {
-
-	cli := app.New()
-	hub := cmd.Root(cli)
-	if err := hub.Execute(); err != nil {
-		os.Exit(1)
+// FormatJSON returns formatted json string
+func FormatJSON(b []byte) ([]byte, error) {
+	var formatted bytes.Buffer
+	err := json.Indent(&formatted, b, "", "\t")
+	if err != nil {
+		return nil, err
 	}
+	return formatted.Bytes(), nil
 }

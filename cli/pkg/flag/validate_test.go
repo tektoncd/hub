@@ -12,20 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package flag
 
 import (
-	"os"
+	"testing"
 
-	"github.com/tektoncd/hub/cli/pkg/app"
-	"github.com/tektoncd/hub/cli/pkg/cmd"
+	"github.com/stretchr/testify/assert"
 )
 
-func main() {
+func TestInList(t *testing.T) {
 
-	cli := app.New()
-	hub := cmd.Root(cli)
-	if err := hub.Execute(); err != nil {
-		os.Exit(1)
-	}
+	// Valid Case
+	err := InList("match", "abc", []string{"abc", "def"})
+	assert.NoError(t, err)
+
+	// Invalid Case
+	err = InList("match", "xyz", []string{"abc", "def"})
+	assert.EqualError(t, err, "invalid value \"xyz\" set for option match. Valid options: [ abc,def ]")
+}
+
+func TestTrimArray(t *testing.T) {
+
+	input := []string{"a,b", "abc", "xyz,mno"}
+	res := TrimArray(input)
+	want := []string{"a", "b", "abc", "xyz", "mno"}
+	assert.Equal(t, want, res)
 }

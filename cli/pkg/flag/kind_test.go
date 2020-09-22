@@ -12,20 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package flag
 
 import (
-	"os"
+	"testing"
 
-	"github.com/tektoncd/hub/cli/pkg/app"
-	"github.com/tektoncd/hub/cli/pkg/cmd"
+	"github.com/stretchr/testify/assert"
 )
 
-func main() {
+func TestIsValid(t *testing.T) {
 
-	cli := app.New()
-	hub := cmd.Root(cli)
-	if err := hub.Execute(); err != nil {
-		os.Exit(1)
-	}
+	// Valid Tekton Resource Kind
+	k := "task"
+	err := Kind(k).IsValid()
+	assert.NoError(t, err)
+
+	// Invalid Case
+	k = "abc"
+	err = Kind(k).IsValid()
+	assert.Error(t, err, "invalid value \"abc\" set for option kinds. Valid options: [task, pipeline]")
 }

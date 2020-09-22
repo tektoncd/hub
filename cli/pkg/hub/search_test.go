@@ -12,20 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package hub
 
 import (
-	"os"
+	"testing"
 
-	"github.com/tektoncd/hub/cli/pkg/app"
-	"github.com/tektoncd/hub/cli/pkg/cmd"
+	"github.com/stretchr/testify/assert"
 )
 
-func main() {
+func TestEndpoint(t *testing.T) {
 
-	cli := app.New()
-	hub := cmd.Root(cli)
-	if err := hub.Execute(); err != nil {
-		os.Exit(1)
+	opt := SearchOption{
+		Match: "contains",
+		Limit: 100,
 	}
+
+	url := opt.Endpoint()
+	assert.Equal(t, "/query?limit=100&match=contains", url)
+
+	opt = SearchOption{
+		Name:  "res",
+		Kinds: []string{"k1", "k2", "k3"},
+		Tags:  []string{"t1", "t2"},
+		Match: "contains",
+	}
+	url = opt.Endpoint()
+	assert.Equal(t, "/query?kinds=k1&kinds=k2&kinds=k3&match=contains&name=res&tags=t1&tags=t2", url)
 }
