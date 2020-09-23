@@ -33,10 +33,9 @@ func Migrate(api *app.APIBase) error {
 		api.DB(),
 		gormigrate.DefaultOptions,
 		[]*gormigrate.Migration{
-			addResourceAndResourceVersionTable(log),
-			addMinimumPipelineVersionToResourceVersion(log),
-			addOrgAndDropOwnerColumnInCatalog(log),
-			addNotNullToResourceAndResourceVersion(log),
+			// NOTE: Checkout the migration template in migration_template.go.
+			// Create a new file for a new migration and
+			// add the migration function here.
 		},
 	)
 

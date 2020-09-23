@@ -19,19 +19,13 @@ import (
 	"gopkg.in/gormigrate.v1"
 
 	"github.com/tektoncd/hub/api/gen/log"
-	"github.com/tektoncd/hub/api/pkg/db/model"
 )
 
-func addMinimumPipelineVersionToResourceVersion(log *log.Logger) *gormigrate.Migration {
+func migrationTemplate(log *log.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
-		ID: "202006091100",
+		ID: "",
 		Migrate: func(db *gorm.DB) error {
-			if err := db.AutoMigrate(
-				&model.ResourceVersion{}).Error; err != nil {
-				log.Error(err)
-				return err
-			}
 			return nil
 		},
 	}
