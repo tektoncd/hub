@@ -16,19 +16,24 @@ import (
 
 // BuildRefreshPayload builds the payload for the catalog Refresh endpoint from
 // CLI flags.
-func BuildRefreshPayload(catalogRefreshBody string) (*catalog.RefreshPayload, error) {
+func BuildRefreshPayload(catalogRefreshBody string, catalogRefreshToken string) (*catalog.RefreshPayload, error) {
 	var err error
 	var body RefreshRequestBody
 	{
 		err = json.Unmarshal([]byte(catalogRefreshBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"name\": \"Sit nulla omnis incidunt.\",\n      \"org\": \"Aut porro nulla sunt omnis molestiae eligendi.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"name\": \"Similique temporibus sequi est nihil facilis adipisci.\",\n      \"org\": \"Aut iste.\"\n   }'")
 		}
+	}
+	var token string
+	{
+		token = catalogRefreshToken
 	}
 	v := &catalog.RefreshPayload{
 		Org:  body.Org,
 		Name: body.Name,
 	}
+	v.Token = token
 
 	return v, nil
 }

@@ -74,11 +74,23 @@ func NewRefreshInternalErrorResponseBody(res *goa.ServiceError) *RefreshInternal
 }
 
 // NewRefreshPayload builds a catalog service Refresh endpoint payload.
-func NewRefreshPayload(body *RefreshRequestBody) *catalog.RefreshPayload {
+func NewRefreshPayload(body *RefreshRequestBody, token string) *catalog.RefreshPayload {
 	v := &catalog.RefreshPayload{
-		Org:  body.Org,
-		Name: body.Name,
+		Org:  *body.Org,
+		Name: *body.Name,
 	}
+	v.Token = token
 
 	return v
+}
+
+// ValidateRefreshRequestBody runs the validations defined on RefreshRequestBody
+func ValidateRefreshRequestBody(body *RefreshRequestBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.Org == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("org", "body"))
+	}
+	return
 }

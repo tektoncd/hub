@@ -41,7 +41,7 @@ func NewUpdateAgentEndpoint(s Service, authJWTFn security.AuthJWTFunc) goa.Endpo
 		var err error
 		sc := security.JWTScheme{
 			Name:           "jwt",
-			Scopes:         []string{"rating:read", "rating:write", "agent:create"},
+			Scopes:         []string{"rating:read", "rating:write", "agent:create", "catalog:refresh"},
 			RequiredScopes: []string{"agent:create"},
 		}
 		ctx, err = authJWTFn(ctx, p.Token, &sc)

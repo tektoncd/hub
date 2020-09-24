@@ -23,17 +23,16 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/tektoncd/hub/api/gen/catalog"
-	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/git"
 	"github.com/tektoncd/hub/api/pkg/parser"
+	"github.com/tektoncd/hub/api/pkg/service/auth"
 )
 
 type service struct {
-	logger *log.Logger
-	db     *gorm.DB
-	wq     *catalogSyncer
+	*auth.Service
+	wq *catalogSyncer
 }
 
 var clonePath = "/tmp/catalog"
@@ -289,14 +288,14 @@ func (s *catalogSyncer) updateResources(job model.SyncJob, repo git.Repo, res []
 
 // New returns the catalog service implementation.
 func New(api app.Config) catalog.Service {
+	svc := auth.NewService(api, "catalog")
 	wq := newCatalogSyncer(api)
 
 	// start running after some delay to allow for all services to mount
 	time.AfterFunc(3*time.Second, wq.Run)
 
 	s := &service{
-		api.Logger("catalog"),
-		api.DB(),
+		svc,
 		wq,
 	}
 	return s
@@ -304,7 +303,15 @@ func New(api app.Config) catalog.Service {
 
 // refresh the catalog for new resources
 func (s *service) Refresh(ctx context.Context, p *catalog.RefreshPayload) (*catalog.Job, error) {
-	s.logger.Infof("going to enqueue")
+
+	_, err := s.User(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	log := s.Logger(ctx)
+
+	log.Infof("going to enqueue")
 
 	job, err := s.wq.Enqueue()
 	if err != nil {
@@ -312,7 +319,7 @@ func (s *service) Refresh(ctx context.Context, p *catalog.RefreshPayload) (*cata
 	}
 
 	res := &catalog.Job{ID: job.ID, Status: "queued"}
-	s.logger.Infof("job %d queued for refresh", job.ID)
+	log.Infof("job %d queued for refresh", job.ID)
 
 	return res, nil
 }

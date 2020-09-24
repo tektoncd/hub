@@ -26,21 +26,20 @@ var _ = Service("catalog", func() {
 
 	Method("Refresh", func() {
 		Description("Refresh a catalog by its org and name")
-		//Security(JWTAuth, func() {
-		//Scope("rating:read")
-		//})
-
+		Security(JWTAuth, func() {
+			Scope("catalog:refresh")
+		})
 		Payload(func() {
-			//Token("token", String, "JWT")
+			Token("token", String, "JWT")
 			Attribute("org", String, "Name of Organization the Catalog is in")
 			Attribute("name", String, "Name of Catalog")
+			Required("token", "name", "org")
 		})
-
 		Result(Job)
 
 		HTTP(func() {
 			POST("/catalog/refresh")
-			//Header("token:Authorization")
+			Header("token:Authorization")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)

@@ -17,9 +17,9 @@ import (
 // HTTP request body.
 type RefreshRequestBody struct {
 	// Name of Organization the Catalog is in
-	Org *string `form:"org,omitempty" json:"org,omitempty" xml:"org,omitempty"`
+	Org string `form:"org" json:"org" xml:"org"`
 	// Name of Catalog
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	Name string `form:"name" json:"name" xml:"name"`
 }
 
 // RefreshResponseBody is the type of the "catalog" service "Refresh" endpoint

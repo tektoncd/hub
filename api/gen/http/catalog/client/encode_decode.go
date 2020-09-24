@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 
 	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	catalogviews "github.com/tektoncd/hub/api/gen/catalog/views"
@@ -41,6 +42,14 @@ func EncodeRefreshRequest(encoder func(*http.Request) goahttp.Encoder) func(*htt
 		p, ok := v.(*catalog.RefreshPayload)
 		if !ok {
 			return goahttp.ErrInvalidType("catalog", "Refresh", "*catalog.RefreshPayload", v)
+		}
+		{
+			head := p.Token
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
 		}
 		body := NewRefreshRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {

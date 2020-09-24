@@ -12,12 +12,19 @@ import (
 
 	catalogviews "github.com/tektoncd/hub/api/gen/catalog/views"
 	goa "goa.design/goa/v3/pkg"
+	"goa.design/goa/v3/security"
 )
 
 // The Catalog Service exposes endpoints to interact with catalogs
 type Service interface {
 	// Refresh a catalog by its org and name
 	Refresh(context.Context, *RefreshPayload) (res *Job, err error)
+}
+
+// Auther defines the authorization functions to be implemented by the service.
+type Auther interface {
+	// JWTAuth implements the authorization logic for the JWT security scheme.
+	JWTAuth(ctx context.Context, token string, schema *security.JWTScheme) (context.Context, error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -32,10 +39,12 @@ var MethodNames = [1]string{"Refresh"}
 
 // RefreshPayload is the payload type of the catalog service Refresh method.
 type RefreshPayload struct {
+	// JWT
+	Token string
 	// Name of Organization the Catalog is in
-	Org *string
+	Org string
 	// Name of Catalog
-	Name *string
+	Name string
 }
 
 // Job is the result type of the catalog service Refresh method.

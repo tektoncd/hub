@@ -124,7 +124,10 @@ func fkey(log *log.Logger, db *gorm.DB, model interface{}, args ...string) error
 
 func addScopes(log *log.Logger, db *gorm.DB) error {
 
-	scopes := []string{"agent:create"}
+	scopes := []string{
+		"agent:create",
+		"catalog:refresh",
+	}
 
 	for _, s := range scopes {
 		sc := &model.Scope{Name: s}
