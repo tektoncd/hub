@@ -11,9 +11,9 @@ import (
 	"context"
 )
 
-// Describes the status of the server
+// Describes the status of each service
 type Service interface {
-	// Return status 'ok' when the server has started successfully
+	// Return status of the services
 	Status(context.Context) (res *StatusResult, err error)
 }
 
@@ -29,6 +29,16 @@ var MethodNames = [1]string{"Status"}
 
 // StatusResult is the result type of the status service Status method.
 type StatusResult struct {
-	// Status of server
+	// List of services and their status
+	Services []*HubService
+}
+
+// Describes the services and their status
+type HubService struct {
+	// Name of the service
+	Name string
+	// Status of the service
 	Status string
+	// Details of the error if any
+	Error *string
 }

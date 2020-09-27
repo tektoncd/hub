@@ -19,20 +19,16 @@ import (
 )
 
 var _ = Service("status", func() {
-	Description("Describes the status of the server")
+	Description("Describes the status of each service")
 
 	Method("Status", func() {
-		Description("Return status 'ok' when the server has started successfully")
+		Description("Return status of the services")
 		Result(func() {
-			Attribute("status", String, "Status of server", func() {
-				Example("status", "ok")
-			})
-			Required("status")
+			Attribute("services", ArrayOf(HubService), "List of services and their status")
 		})
 
 		HTTP(func() {
 			GET("/")
-
 			Response(StatusOK)
 		})
 	})

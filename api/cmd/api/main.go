@@ -86,7 +86,7 @@ func main() {
 		categorySvc = categorysvc.New(api)
 		ratingSvc = ratingsvc.New(api)
 		resourceSvc = resourcesvc.New(api)
-		statusSvc = statussvc.New()
+		statusSvc = statussvc.New(api)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
