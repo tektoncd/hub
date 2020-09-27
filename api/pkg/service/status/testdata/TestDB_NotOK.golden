@@ -1,0 +1,13 @@
+{
+	"services": [
+		{
+			"name": "api",
+			"status": "ok"
+		},
+		{
+			"name": "db",
+			"status": "Error",
+			"error": "sql: database is closed"
+		}
+	]
+}

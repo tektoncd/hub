@@ -1,0 +1,12 @@
+{
+	"services": [
+		{
+			"name": "api",
+			"status": "ok"
+		},
+		{
+			"name": "db",
+			"status": "ok"
+		}
+	]
+}

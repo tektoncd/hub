@@ -100,7 +100,7 @@ func (db *Database) String() string {
 }
 
 // ConnectionString returns the db connection string
-func (db *Database) ConnectionString() string {
+func (db Database) ConnectionString() string {
 	return fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		db.Host, db.Port, db.User, db.Password, db.Name)
@@ -114,6 +114,10 @@ func (ab *APIBase) Environment() EnvMode {
 // DB returns gorm db object
 func (ab *APIBase) DB() *gorm.DB {
 	return ab.db
+}
+
+func (ab *APIBase) Database() Database {
+	return *ab.dbConf
 }
 
 // Logger returns log.Logger appended with service name

@@ -29,25 +29,28 @@ import (
 func UsageCommands() string {
 	return `category list
 auth authenticate
-status status
 resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
 rating (get|update)
+status status
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` auth authenticate --code "Rerum non iure modi facere cumque omnis."` + "\n" +
-		os.Args[0] + ` status status` + "\n" +
-		os.Args[0] + ` resource query --name "Ut rerum repellat aut eos qui." --kinds '[
-      "Ut sunt est ea reiciendis.",
-      "Quasi illo voluptate."
+		os.Args[0] + ` auth authenticate --code "Non iure modi."` + "\n" +
+		os.Args[0] + ` resource query --name "Voluptas et." --kinds '[
+      "Et enim ut rerum repellat.",
+      "Eos qui fugiat earum ut.",
+      "Est ea reiciendis pariatur quasi illo."
    ]' --tags '[
-      "Aut beatae reiciendis accusantium.",
-      "Qui ipsum deleniti corrupti non quo velit."
-   ]' --limit 17876575713650742907 --match "contains"` + "\n" +
-		os.Args[0] + ` rating get --id 7378417340401583056 --token "Accusamus et."` + "\n" +
+      "Omnis aut beatae reiciendis accusantium distinctio.",
+      "Ipsum deleniti.",
+      "Non quo velit vitae aut porro.",
+      "Sunt omnis."
+   ]' --limit 18116174954750910161 --match "contains"` + "\n" +
+		os.Args[0] + ` rating get --id 17786740894094570122 --token "Et dignissimos omnis eaque maiores."` + "\n" +
+		os.Args[0] + ` status status` + "\n" +
 		""
 }
 
@@ -69,10 +72,6 @@ func ParseEndpoint(
 
 		authAuthenticateFlags    = flag.NewFlagSet("authenticate", flag.ExitOnError)
 		authAuthenticateCodeFlag = authAuthenticateFlags.String("code", "REQUIRED", "")
-
-		statusFlags = flag.NewFlagSet("status", flag.ContinueOnError)
-
-		statusStatusFlags = flag.NewFlagSet("status", flag.ExitOnError)
 
 		resourceFlags = flag.NewFlagSet("resource", flag.ContinueOnError)
 
@@ -116,15 +115,16 @@ func ParseEndpoint(
 		ratingUpdateBodyFlag  = ratingUpdateFlags.String("body", "REQUIRED", "")
 		ratingUpdateIDFlag    = ratingUpdateFlags.String("id", "REQUIRED", "ID of a resource")
 		ratingUpdateTokenFlag = ratingUpdateFlags.String("token", "REQUIRED", "")
+
+		statusFlags = flag.NewFlagSet("status", flag.ContinueOnError)
+
+		statusStatusFlags = flag.NewFlagSet("status", flag.ExitOnError)
 	)
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
 
 	authFlags.Usage = authUsage
 	authAuthenticateFlags.Usage = authAuthenticateUsage
-
-	statusFlags.Usage = statusUsage
-	statusStatusFlags.Usage = statusStatusUsage
 
 	resourceFlags.Usage = resourceUsage
 	resourceQueryFlags.Usage = resourceQueryUsage
@@ -138,6 +138,9 @@ func ParseEndpoint(
 	ratingFlags.Usage = ratingUsage
 	ratingGetFlags.Usage = ratingGetUsage
 	ratingUpdateFlags.Usage = ratingUpdateUsage
+
+	statusFlags.Usage = statusUsage
+	statusStatusFlags.Usage = statusStatusUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -158,12 +161,12 @@ func ParseEndpoint(
 			svcf = categoryFlags
 		case "auth":
 			svcf = authFlags
-		case "status":
-			svcf = statusFlags
 		case "resource":
 			svcf = resourceFlags
 		case "rating":
 			svcf = ratingFlags
+		case "status":
+			svcf = statusFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -190,13 +193,6 @@ func ParseEndpoint(
 			switch epn {
 			case "authenticate":
 				epf = authAuthenticateFlags
-
-			}
-
-		case "status":
-			switch epn {
-			case "status":
-				epf = statusStatusFlags
 
 			}
 
@@ -235,6 +231,13 @@ func ParseEndpoint(
 
 			}
 
+		case "status":
+			switch epn {
+			case "status":
+				epf = statusStatusFlags
+
+			}
+
 		}
 	}
 	if epf == nil {
@@ -268,13 +271,6 @@ func ParseEndpoint(
 			case "authenticate":
 				endpoint = c.Authenticate()
 				data, err = authc.BuildAuthenticatePayload(*authAuthenticateCodeFlag)
-			}
-		case "status":
-			c := statusc.NewClient(scheme, host, doer, enc, dec, restore)
-			switch epn {
-			case "status":
-				endpoint = c.Status()
-				data = nil
 			}
 		case "resource":
 			c := resourcec.NewClient(scheme, host, doer, enc, dec, restore)
@@ -310,6 +306,13 @@ func ParseEndpoint(
 			case "update":
 				endpoint = c.Update()
 				data, err = ratingc.BuildUpdatePayload(*ratingUpdateBodyFlag, *ratingUpdateIDFlag, *ratingUpdateTokenFlag)
+			}
+		case "status":
+			c := statusc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "status":
+				endpoint = c.Status()
+				data = nil
 			}
 		}
 	}
@@ -363,30 +366,7 @@ Authenticates users against GitHub OAuth
     -code STRING: 
 
 Example:
-    `+os.Args[0]+` auth authenticate --code "Rerum non iure modi facere cumque omnis."
-`, os.Args[0])
-}
-
-// statusUsage displays the usage of the status command and its subcommands.
-func statusUsage() {
-	fmt.Fprintf(os.Stderr, `Describes the status of the server
-Usage:
-    %s [globalflags] status COMMAND [flags]
-
-COMMAND:
-    status: Return status 'ok' when the server has started successfully
-
-Additional help:
-    %s status COMMAND --help
-`, os.Args[0], os.Args[0])
-}
-func statusStatusUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] status status
-
-Return status 'ok' when the server has started successfully
-
-Example:
-    `+os.Args[0]+` status status
+    `+os.Args[0]+` auth authenticate --code "Non iure modi."
 `, os.Args[0])
 }
 
@@ -420,13 +400,16 @@ Find resources by a combination of name, kind and tags
     -match STRING: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Ut rerum repellat aut eos qui." --kinds '[
-      "Ut sunt est ea reiciendis.",
-      "Quasi illo voluptate."
+    `+os.Args[0]+` resource query --name "Voluptas et." --kinds '[
+      "Et enim ut rerum repellat.",
+      "Eos qui fugiat earum ut.",
+      "Est ea reiciendis pariatur quasi illo."
    ]' --tags '[
-      "Aut beatae reiciendis accusantium.",
-      "Qui ipsum deleniti corrupti non quo velit."
-   ]' --limit 17876575713650742907 --match "contains"
+      "Omnis aut beatae reiciendis accusantium distinctio.",
+      "Ipsum deleniti.",
+      "Non quo velit vitae aut porro.",
+      "Sunt omnis."
+   ]' --limit 18116174954750910161 --match "contains"
 `, os.Args[0])
 }
 
@@ -437,7 +420,7 @@ List all resources sorted by rating and name
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource list --limit 8773123889721374510
+    `+os.Args[0]+` resource list --limit 1029125940089474859
 `, os.Args[0])
 }
 
@@ -448,7 +431,7 @@ Find all versions of a resource by its id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource versions-by-id --id 16313197953130531523
+    `+os.Args[0]+` resource versions-by-id --id 8465297455073686893
 `, os.Args[0])
 }
 
@@ -462,7 +445,7 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "Nemo sint est omnis." --kind "task" --name "Cupiditate voluptatem." --version "Tenetur unde."
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "Nesciunt sint cupiditate." --kind "pipeline" --name "Tenetur unde." --version "Amet eum."
 `, os.Args[0])
 }
 
@@ -473,7 +456,7 @@ Find a resource using its version's id
     -version-id UINT: Version ID of a resource's version
 
 Example:
-    `+os.Args[0]+` resource by-version-id --version-id 8741701717887354389
+    `+os.Args[0]+` resource by-version-id --version-id 2490605953988106511
 `, os.Args[0])
 }
 
@@ -486,7 +469,7 @@ Find resources using name of catalog, resource name and kind of resource
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "Facilis beatae itaque et nostrum." --kind "task" --name "Quis nostrum et ab placeat facere."
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "Et nostrum explicabo vel quis nostrum et." --kind "pipeline" --name "Facere pariatur."
 `, os.Args[0])
 }
 
@@ -497,7 +480,7 @@ Find a resource using it's id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource by-id --id 14491545834747945803
+    `+os.Args[0]+` resource by-id --id 15496720379312305334
 `, os.Args[0])
 }
 
@@ -523,7 +506,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 7378417340401583056 --token "Accusamus et."
+    `+os.Args[0]+` rating get --id 17786740894094570122 --token "Et dignissimos omnis eaque maiores."
 `, os.Args[0])
 }
 
@@ -537,7 +520,30 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 4
-   }' --id 8673375329227215362 --token "Ut quidem architecto rerum id quia quia."
+      "rating": 2
+   }' --id 10128758337029638897 --token "Id quia quia."
+`, os.Args[0])
+}
+
+// statusUsage displays the usage of the status command and its subcommands.
+func statusUsage() {
+	fmt.Fprintf(os.Stderr, `Describes the status of each service
+Usage:
+    %s [globalflags] status COMMAND [flags]
+
+COMMAND:
+    status: Return status of the services
+
+Additional help:
+    %s status COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func statusStatusUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] status status
+
+Return status of the services
+
+Example:
+    `+os.Args[0]+` status status
 `, os.Args[0])
 }

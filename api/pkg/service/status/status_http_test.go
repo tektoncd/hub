@@ -15,24 +15,73 @@
 package status
 
 import (
-	"encoding/json"
+	"context"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
 
 	"github.com/ikawaha/goahttpcheck"
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gotest.tools/v3/golden"
+
 	"github.com/tektoncd/hub/api/gen/http/status/server"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/gen/status"
+	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/pkg/testutils"
 )
 
+type statusTestConfig struct {
+	*testutils.TestConfig
+	service app.Service
+	db      *gorm.DB
+}
+
+func newStatusTestConfig(t *testing.T) *statusTestConfig {
+
+	tc := testutils.Setup(t)
+	db, err := gorm.Open(app.DBDialect, tc.Database().ConnectionString())
+	assert.NoError(t, err)
+
+	return &statusTestConfig{
+		TestConfig: tc,
+		db:         db,
+		service:    &fakeService{db: db},
+	}
+}
+func (tc statusTestConfig) Service(n string) app.Service {
+	return tc.service
+}
+
+type fakeService struct {
+	db *gorm.DB
+}
+
+var _ app.Service = (*fakeService)(nil)
+
+func (fs *fakeService) Logger(ctx context.Context) *log.Logger {
+	return nil
+}
+
+func (fs *fakeService) LoggerWith(ctx context.Context, args ...interface{}) *log.Logger {
+	return nil
+}
+
+func (fs *fakeService) DB(ctx context.Context) *gorm.DB {
+	return fs.db
+}
+
 func TestOk_http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
 
 	checker := goahttpcheck.New()
 	checker.Mount(
 		server.NewStatusHandler,
 		server.MountStatusHandler,
-		status.NewStatusEndpoint(New()),
+		status.NewStatusEndpoint(New(tc)),
 	)
 
 	checker.Test(t, http.MethodGet, "/").Check().
@@ -41,10 +90,38 @@ func TestOk_http(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var jsonMap map[string]interface{}
-		marshallErr := json.Unmarshal([]byte(b), &jsonMap)
-		assert.NoError(t, marshallErr)
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
 
-		assert.Equal(t, "ok", jsonMap["status"])
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
 	})
+}
+
+func TestDB_NotOK(t *testing.T) {
+
+	tc := newStatusTestConfig(t)
+
+	checker := goahttpcheck.New()
+	checker.Mount(
+		server.NewStatusHandler,
+		server.MountStatusHandler,
+		status.NewStatusEndpoint(New(tc)),
+	)
+
+	tc.db.Close()
+
+	checker.Test(t, http.MethodGet, "/").Check().
+		HasStatus(http.StatusOK).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+
+	// ensure the db connnection is still intact for other tests to execute
+	assert.NoError(t, testutils.Config().DB().DB().Ping())
 }

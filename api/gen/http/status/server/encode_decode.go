@@ -26,3 +26,18 @@ func EncodeStatusResponse(encoder func(context.Context, http.ResponseWriter) goa
 		return enc.Encode(body)
 	}
 }
+
+// marshalStatusHubServiceToHubServiceResponseBody builds a value of type
+// *HubServiceResponseBody from a value of type *status.HubService.
+func marshalStatusHubServiceToHubServiceResponseBody(v *status.HubService) *HubServiceResponseBody {
+	if v == nil {
+		return nil
+	}
+	res := &HubServiceResponseBody{
+		Name:   v.Name,
+		Status: v.Status,
+		Error:  v.Error,
+	}
+
+	return res
+}

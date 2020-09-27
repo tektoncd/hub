@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"net/url"
 
+	status "github.com/tektoncd/hub/api/gen/status"
 	goahttp "goa.design/goa/v3/http"
 )
 
@@ -70,4 +71,19 @@ func DecodeStatusResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 			return nil, goahttp.ErrInvalidResponse("status", "Status", resp.StatusCode, string(body))
 		}
 	}
+}
+
+// unmarshalHubServiceResponseBodyToStatusHubService builds a value of type
+// *status.HubService from a value of type *HubServiceResponseBody.
+func unmarshalHubServiceResponseBodyToStatusHubService(v *HubServiceResponseBody) *status.HubService {
+	if v == nil {
+		return nil
+	}
+	res := &status.HubService{
+		Name:   *v.Name,
+		Status: *v.Status,
+		Error:  v.Error,
+	}
+
+	return res
 }
