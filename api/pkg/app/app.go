@@ -41,6 +41,7 @@ type BaseConfig interface {
 	Logger(service string) *log.Logger
 	DB() *gorm.DB
 	Data() *Data
+	ReloadData() error
 	Cleanup()
 }
 
@@ -138,6 +139,32 @@ func (ab *APIBase) Data() *Data {
 	return &ab.data
 }
 
+// ReloadData reads config file and loads data in Data object
+func (ab *APIBase) ReloadData() error {
+	// Reads config file url from env
+	url, err := configFileURL()
+	if err != nil {
+		return err
+	}
+
+	// Reads data from config file
+	data, err := dataFromURL(url)
+	if err != nil {
+		ab.logger.Errorf("failed to read config file: %v", err)
+		return err
+	}
+
+	// Viper unmarshals data from config file into Data Object
+	viper.SetConfigType("yaml")
+	viper.ReadConfig(bytes.NewBuffer(data))
+	if err := viper.Unmarshal(&ab.data); err != nil {
+		ab.logger.Errorf("failed to unmarshal config data: %v", err)
+		return err
+	}
+
+	return nil
+}
+
 // Cleanup flushes any buffered log entries & closes the db connection
 func (ab *APIBase) Cleanup() {
 	ab.logger.Sync()
@@ -172,6 +199,11 @@ func FromEnvFile(file string) (*APIConfig, error) {
 		return nil, err
 	}
 
+	err = ab.ReloadData()
+	if err != nil {
+		return nil, err
+	}
+
 	ac := &APIConfig{APIBase: ab}
 	if ac.conf, err = initOAuthConfig(); err != nil {
 		return nil, err
@@ -194,8 +226,7 @@ func APIBaseFromEnv() (*APIBase, error) {
 
 // APIBaseFromEnvFile expects a filepath to env file which has configurations
 // It loads .env file, skips it if not found, initialises a db connection &
-// logger depending on the EnvMode and returns a APIBase Object. It reads the
-// application data and put it in APIBase.data.
+// logger depending on the EnvMode and returns a APIBase Object.
 func APIBaseFromEnvFile(file string) (*APIBase, error) {
 	if err := godotenv.Load(file); err != nil {
 		fmt.Fprintf(os.Stderr, "SKIP: loading env file %s failed: %s\n", file, err)
@@ -228,26 +259,6 @@ func APIBaseFromEnvFile(file string) (*APIBase, error) {
 		return nil, err
 	}
 	log.Infof("Successfully connected to [%s]", ac.dbConf)
-
-	url, err := configFileURL()
-	if err != nil {
-		return nil, err
-	}
-
-	// Reads data from config file
-	data, err := dataFromURL(url)
-	if err != nil {
-		log.Errorf("failed to read config file: %v", err)
-		return nil, err
-	}
-
-	// Viper unmarshals data from config file into Data Object
-	viper.SetConfigType("yaml")
-	viper.ReadConfig(bytes.NewBuffer(data))
-	if err := viper.Unmarshal(&ac.data); err != nil {
-		log.Errorf("failed to unmarshal config data: %v", err)
-		return nil, err
-	}
 
 	return ac, nil
 }
