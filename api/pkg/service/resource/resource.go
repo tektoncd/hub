@@ -40,8 +40,8 @@ var replaceGHtoRaw = strings.NewReplacer("github.com", "raw.githubusercontent.co
 
 // Errors
 var (
-	fetchError    = resource.MakeInternalError(fmt.Errorf("Failed to fetch resources"))
-	notFoundError = resource.MakeNotFound(fmt.Errorf("Resource not found"))
+	fetchError    = resource.MakeInternalError(fmt.Errorf("failed to fetch resources"))
+	notFoundError = resource.MakeNotFound(fmt.Errorf("resource not found"))
 )
 
 // New returns the resource service implementation.
