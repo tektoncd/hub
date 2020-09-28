@@ -30,7 +30,7 @@ type service struct {
 }
 
 var (
-	fetchError = category.MakeInternalError(fmt.Errorf("Failed to fetch categories"))
+	fetchError = category.MakeInternalError(fmt.Errorf("failed to fetch categories"))
 )
 
 // New returns the category service implementation.

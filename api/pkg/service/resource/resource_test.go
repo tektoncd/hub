@@ -145,7 +145,7 @@ func TestQuery_ExactNameNotFoundError(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "build", Kinds: []string{}, Match: "exact", Limit: 100}
 	_, err := resourceSvc.Query(context.Background(), payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Resource not found")
+	assert.EqualError(t, err, "resource not found")
 }
 
 func TestQuery_NotFoundError(t *testing.T) {
@@ -156,7 +156,7 @@ func TestQuery_NotFoundError(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "foo", Kinds: []string{}, Limit: 100}
 	_, err := resourceSvc.Query(context.Background(), payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Resource not found")
+	assert.EqualError(t, err, "resource not found")
 }
 
 func TestList_ByLimit(t *testing.T) {
@@ -191,7 +191,7 @@ func TestVersionsByID_NotFoundError(t *testing.T) {
 	payload := &resource.VersionsByIDPayload{ID: 11}
 	_, err := resourceSvc.VersionsByID(context.Background(), payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Resource not found")
+	assert.EqualError(t, err, "resource not found")
 }
 
 func TestByCatalogKindNameVersion(t *testing.T) {
@@ -213,7 +213,7 @@ func TestByCatalogKindNameVersion_NoResourceWithName(t *testing.T) {
 	payload := &resource.ByCatalogKindNameVersionPayload{Catalog: "catalog-official", Kind: "task", Name: "foo", Version: "0.1"}
 	_, err := resourceSvc.ByCatalogKindNameVersion(context.Background(), payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Resource not found")
+	assert.EqualError(t, err, "resource not found")
 }
 
 func TestByCatalogKindNameVersion_NoCatalogWithName(t *testing.T) {
@@ -224,7 +224,7 @@ func TestByCatalogKindNameVersion_NoCatalogWithName(t *testing.T) {
 	payload := &resource.ByCatalogKindNameVersionPayload{Catalog: "Abc", Kind: "task", Name: "foo", Version: "0.1"}
 	_, err := resourceSvc.ByCatalogKindNameVersion(context.Background(), payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Resource not found")
+	assert.EqualError(t, err, "resource not found")
 }
 
 func TestByCatalogKindNameVersion_ResourceVersionNotFound(t *testing.T) {
@@ -235,7 +235,7 @@ func TestByCatalogKindNameVersion_ResourceVersionNotFound(t *testing.T) {
 	payload := &resource.ByCatalogKindNameVersionPayload{Catalog: "catalog-official", Kind: "task", Name: "tekton", Version: "0.9"}
 	_, err := resourceSvc.ByCatalogKindNameVersion(context.Background(), payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Resource not found")
+	assert.EqualError(t, err, "resource not found")
 }
 
 func TestByVersionID(t *testing.T) {
@@ -257,7 +257,7 @@ func TestByVersionID_NotFoundError(t *testing.T) {
 	payload := &resource.ByVersionIDPayload{VersionID: 111}
 	_, err := resourceSvc.ByVersionID(context.Background(), payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Resource not found")
+	assert.EqualError(t, err, "resource not found")
 }
 
 func TestByCatalogKindName(t *testing.T) {
@@ -279,7 +279,7 @@ func TestByCatalogKindName_NoCatalogWithName(t *testing.T) {
 	payload := &resource.ByCatalogKindNamePayload{Catalog: "abc", Kind: "task", Name: "foo"}
 	_, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Resource not found")
+	assert.EqualError(t, err, "resource not found")
 }
 
 func TestByCatalogKindName_ResourceNotFoundError(t *testing.T) {
@@ -290,7 +290,7 @@ func TestByCatalogKindName_ResourceNotFoundError(t *testing.T) {
 	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-community", Kind: "task", Name: "foo"}
 	_, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Resource not found")
+	assert.EqualError(t, err, "resource not found")
 }
 
 func TestByID(t *testing.T) {
@@ -312,5 +312,5 @@ func TestByID_NotFoundError(t *testing.T) {
 	payload := &resource.ByIDPayload{ID: 77}
 	_, err := resourceSvc.ByID(context.Background(), payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Resource not found")
+	assert.EqualError(t, err, "resource not found")
 }

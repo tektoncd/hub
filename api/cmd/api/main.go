@@ -70,7 +70,7 @@ func main() {
 	// Populate Tables
 	initializer := initializer.New(context.Background(), api)
 	if err := initializer.Run(); err != nil {
-		logger.Fatalf("Failed to populate table: %v", err)
+		logger.Fatalf("failed to populate table: %v", err)
 	}
 
 	// Initialize the services.
