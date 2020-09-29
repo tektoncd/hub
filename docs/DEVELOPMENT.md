@@ -132,36 +132,27 @@ Once the `hub_test` database is created, you can run the test using following co
 ```
 
 To re-generate the golden files use the below command
-This will run `go test a/package -test.update-golden=true` on all packages that are importing `gotest.tools/v3/golden`
 
 ```bash
 go test $(go list -f '{{ .ImportPath }} {{ .TestImports }}' ./... | grep gotest.tools/v3/golden | awk '{print $1}' | tr '\n' ' ') -test.update-golden=true
 ```
+This will run `go test a/package -test.update-golden=true` on all packages that are importing `gotest.tools/v3/golden`
 
 **NOTE:** `tests` use the database configurations from [test/config/env.test][env-test-file]
 
 ### Creating JWT for testing
 
-To create a JWT, create a HTML file adding below code
-```html
-<!DOCTYPE html>
-<html>
+To create a JWT, Open below URL in a browser. 
+```
+https://github.com/login/oauth/authorize?client_id=<Add Client ID here>
+```
+Add your OAuth Client ID from [.env.dev][env-dev] in place of `<Add Client ID here>`.
 
-<body>
-  <a href="https://github.com/login/oauth/authorize?client_id=<Add Client ID here>">
-    Login with github
-  </a>
-</body>
-
-</html>
-````
-Add your OAuth Client ID from [.env.dev][env-dev] in HTML file in place of `<Add Client ID here>` and Save it.
-
-Open the HTML file, click on `Login with github` It will redirect you to GitHub. Once you authorize, it will redirect you to url localhost.
+It will redirect you to GitHub. Login using your GitHub Credentials and Once you authorize, it will redirect you to `localhost:8080`.
 
 for ex. `http://localhost:8080/?code=32d4a0b4eb6e9fbea731`
 
-Use the `code` from url in `/auth/login` API. It will create a user in db and return a JWT. 
+Use the `code` from url in `/auth/login` API. It will add you as a user in db and return a JWT. 
 
 #### JWT with Additional Scopes:
 
