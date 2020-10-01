@@ -44,10 +44,12 @@ func Migrate(api *app.APIBase) error {
 			&model.Category{},
 			&model.Tag{},
 			&model.Catalog{},
+			&model.CatalogError{},
 			&model.Resource{},
 			&model.ResourceVersion{},
 			&model.User{},
 			&model.UserResourceRating{},
+			&model.SyncJob{},
 			&model.Scope{},
 		).Error; err != nil {
 			log.Error(err)
@@ -75,6 +77,12 @@ func Migrate(api *app.APIBase) error {
 		if err := fkey(log, db, model.UserResourceRating{},
 			"resource_id", "resources",
 			"user_id", "users"); err != nil {
+			return err
+		}
+		if err := fkey(log, db, model.SyncJob{},
+			"catalog_id", "catalogs(id)",
+			"user_id", "users(id)",
+		); err != nil {
 			return err
 		}
 
@@ -120,7 +128,10 @@ func fkey(log *log.Logger, db *gorm.DB, model interface{}, args ...string) error
 
 func addScopes(log *log.Logger, db *gorm.DB) error {
 
-	scopes := []string{"agent:create"}
+	scopes := []string{
+		"agent:create",
+		"catalog:refresh",
+	}
 
 	for _, s := range scopes {
 		sc := &model.Scope{Name: s}
