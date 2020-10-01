@@ -15,6 +15,7 @@ import (
 
 	adminc "github.com/tektoncd/hub/api/gen/http/admin/client"
 	authc "github.com/tektoncd/hub/api/gen/http/auth/client"
+	catalogc "github.com/tektoncd/hub/api/gen/http/catalog/client"
 	categoryc "github.com/tektoncd/hub/api/gen/http/category/client"
 	ratingc "github.com/tektoncd/hub/api/gen/http/rating/client"
 	resourcec "github.com/tektoncd/hub/api/gen/http/resource/client"

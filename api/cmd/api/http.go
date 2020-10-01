@@ -28,9 +28,11 @@ import (
 
 	admin "github.com/tektoncd/hub/api/gen/admin"
 	auth "github.com/tektoncd/hub/api/gen/auth"
+	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	category "github.com/tektoncd/hub/api/gen/category"
 	adminsvr "github.com/tektoncd/hub/api/gen/http/admin/server"
 	authsvr "github.com/tektoncd/hub/api/gen/http/auth/server"
+	catalogsvr "github.com/tektoncd/hub/api/gen/http/catalog/server"
 	categorysvr "github.com/tektoncd/hub/api/gen/http/category/server"
 	ratingsvr "github.com/tektoncd/hub/api/gen/http/rating/server"
 	resourcesvr "github.com/tektoncd/hub/api/gen/http/resource/server"
@@ -48,6 +50,7 @@ func handleHTTPServer(
 	ctx context.Context, u *url.URL,
 	adminEndpoints *admin.Endpoints,
 	authEndpoints *auth.Endpoints,
+	catalogEndpoints *catalog.Endpoints,
 	categoryEndpoints *category.Endpoints,
 	ratingEndpoints *rating.Endpoints,
 	resourceEndpoints *resource.Endpoints,
@@ -85,6 +88,7 @@ func handleHTTPServer(
 	var (
 		adminServer    *adminsvr.Server
 		authServer     *authsvr.Server
+		catalogServer  *catalogsvr.Server
 		categoryServer *categorysvr.Server
 		ratingServer   *ratingsvr.Server
 		resourceServer *resourcesvr.Server
@@ -95,6 +99,7 @@ func handleHTTPServer(
 		eh := errorHandler(logger)
 		adminServer = adminsvr.New(adminEndpoints, mux, dec, enc, eh, nil)
 		authServer = authsvr.New(authEndpoints, mux, dec, enc, eh, nil)
+		catalogServer = catalogsvr.New(catalogEndpoints, mux, dec, enc, eh, nil)
 		categoryServer = categorysvr.New(categoryEndpoints, mux, dec, enc, eh, nil)
 		ratingServer = ratingsvr.New(ratingEndpoints, mux, dec, enc, eh, nil)
 		resourceServer = resourcesvr.New(resourceEndpoints, mux, dec, enc, eh, nil)
@@ -105,6 +110,7 @@ func handleHTTPServer(
 			servers := goahttp.Servers{
 				adminServer,
 				authServer,
+				catalogServer,
 				categoryServer,
 				ratingServer,
 				resourceServer,
@@ -117,6 +123,7 @@ func handleHTTPServer(
 	// Configure the mux.
 	adminsvr.Mount(mux, adminServer)
 	authsvr.Mount(mux, authServer)
+	catalogsvr.Mount(mux, catalogServer)
 	categorysvr.Mount(mux, categoryServer)
 	ratingsvr.Mount(mux, ratingServer)
 	resourcesvr.Mount(mux, resourceServer)
@@ -138,6 +145,9 @@ func handleHTTPServer(
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range authServer.Mounts {
+		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range catalogServer.Mounts {
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range categoryServer.Mounts {

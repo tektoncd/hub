@@ -26,6 +26,7 @@ import (
 
 	admin "github.com/tektoncd/hub/api/gen/admin"
 	auth "github.com/tektoncd/hub/api/gen/auth"
+	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	category "github.com/tektoncd/hub/api/gen/category"
 	"github.com/tektoncd/hub/api/gen/log"
 	rating "github.com/tektoncd/hub/api/gen/rating"
@@ -35,6 +36,7 @@ import (
 	"github.com/tektoncd/hub/api/pkg/db/initializer"
 	adminsvc "github.com/tektoncd/hub/api/pkg/service/admin"
 	authsvc "github.com/tektoncd/hub/api/pkg/service/auth"
+	catalogsvc "github.com/tektoncd/hub/api/pkg/service/catalog"
 	categorysvc "github.com/tektoncd/hub/api/pkg/service/category"
 	ratingsvc "github.com/tektoncd/hub/api/pkg/service/rating"
 	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
@@ -72,13 +74,14 @@ func main() {
 	// Populate Tables
 	initializer := initializer.New(context.Background(), api)
 	if err := initializer.Run(); err != nil {
-		logger.Fatalf("failed to populate table: %v", err)
+		logger.Fatalf("Failed to populate table: %v", err)
 	}
 
 	// Initialize the services.
 	var (
 		adminSvc    admin.Service
 		authSvc     auth.Service
+		catalogSvc  catalog.Service
 		categorySvc category.Service
 		ratingSvc   rating.Service
 		resourceSvc resource.Service
@@ -87,6 +90,7 @@ func main() {
 	{
 		adminSvc = adminsvc.New(api)
 		authSvc = authsvc.New(api)
+		catalogSvc = catalogsvc.New(api)
 		categorySvc = categorysvc.New(api)
 		ratingSvc = ratingsvc.New(api)
 		resourceSvc = resourcesvc.New(api)
@@ -98,6 +102,7 @@ func main() {
 	var (
 		adminEndpoints    *admin.Endpoints
 		authEndpoints     *auth.Endpoints
+		catalogEndpoints  *catalog.Endpoints
 		categoryEndpoints *category.Endpoints
 		ratingEndpoints   *rating.Endpoints
 		resourceEndpoints *resource.Endpoints
@@ -106,6 +111,7 @@ func main() {
 	{
 		adminEndpoints = admin.NewEndpoints(adminSvc)
 		authEndpoints = auth.NewEndpoints(authSvc)
+		catalogEndpoints = catalog.NewEndpoints(catalogSvc)
 		categoryEndpoints = category.NewEndpoints(categorySvc)
 		ratingEndpoints = rating.NewEndpoints(ratingSvc)
 		resourceEndpoints = resource.NewEndpoints(resourceSvc)
@@ -153,6 +159,7 @@ func main() {
 				ctx, u,
 				adminEndpoints,
 				authEndpoints,
+				catalogEndpoints,
 				categoryEndpoints,
 				ratingEndpoints,
 				resourceEndpoints,
