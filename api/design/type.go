@@ -282,6 +282,7 @@ var JWTAuth = JWTSecurity("jwt", func() {
 	Scope("rating:read", "Read-only access to rating")
 	Scope("rating:write", "Read and write access to rating")
 	Scope("agent:create", "Access to create or update an agent")
+	Scope("catalog:refresh", "Access to refresh catalog")
 })
 
 var HubService = Type("HubService", func() {
@@ -298,4 +299,11 @@ var HubService = Type("HubService", func() {
 	})
 
 	Required("name", "status")
+})
+
+var Job = ResultType("application/vnd.hub.job", "Job", func() {
+	Description("The Job type describes a catalog refresh job that is run asynchronously")
+	Attribute("id", UInt, "id of the job")
+	Attribute("status", String, "status of the job")
+	Required("id", "status")
 })
