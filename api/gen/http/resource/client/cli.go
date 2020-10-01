@@ -31,7 +31,7 @@ func BuildQueryPayload(resourceQueryName string, resourceQueryKinds string, reso
 		if resourceQueryKinds != "" {
 			err = json.Unmarshal([]byte(resourceQueryKinds), &kinds)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for kinds, example of valid JSON:\n%s", "'[\n      \"Deleniti corrupti non quo velit.\",\n      \"Aut porro nulla sunt omnis molestiae eligendi.\",\n      \"Sit nulla omnis incidunt.\"\n   ]'")
+				return nil, fmt.Errorf("invalid JSON for kinds, example of valid JSON:\n%s", "'[\n      \"Velit magni reprehenderit.\",\n      \"Soluta sapiente deleniti voluptatem distinctio distinctio.\",\n      \"Beatae id qui quia consequatur possimus tempora.\",\n      \"Et nihil aut.\"\n   ]'")
 			}
 		}
 	}
@@ -40,7 +40,7 @@ func BuildQueryPayload(resourceQueryName string, resourceQueryKinds string, reso
 		if resourceQueryTags != "" {
 			err = json.Unmarshal([]byte(resourceQueryTags), &tags)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for tags, example of valid JSON:\n%s", "'[\n      \"Velit magni reprehenderit.\",\n      \"Soluta sapiente deleniti voluptatem distinctio distinctio.\",\n      \"Beatae id qui quia consequatur possimus tempora.\",\n      \"Et nihil aut.\"\n   ]'")
+				return nil, fmt.Errorf("invalid JSON for tags, example of valid JSON:\n%s", "'[\n      \"Magni qui nemo sint est omnis nesciunt.\",\n      \"Cupiditate voluptatem.\",\n      \"Tenetur unde.\",\n      \"Amet eum.\"\n   ]'")
 			}
 		}
 	}
