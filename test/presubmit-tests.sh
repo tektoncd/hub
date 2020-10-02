@@ -123,6 +123,7 @@ run_build_tests() {
     set -eu -o pipefail
     api-build
     ui-build
+    cli-build
   )
 }
 
@@ -133,21 +134,18 @@ run_unit_tests() {
     set -eu -o pipefail
 
     cd $CLI_DIR
-    cli-build
     cli-unittest
   )
   (
     set -eu -o pipefail
 
     cd $API_DIR
-    api-build
     api-unittest
   )
   (
     set -eu -o pipefail
 
     cd $UI_DIR
-    ui-build
     ui-unittest
   )
 }
