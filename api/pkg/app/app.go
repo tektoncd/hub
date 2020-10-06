@@ -271,7 +271,7 @@ func APIBaseFromEnvFile(file string) (*APIBase, error) {
 // It looks for 'ENVIRONMENT' to be defined as environment variable and
 // if does not found it then set it as development mode
 func Environment() EnvMode {
-	mode := "development"
+	mode := "production"
 	if val := viper.GetString("ENVIRONMENT"); val != "" {
 		mode = val
 	}
