@@ -71,7 +71,6 @@ func (c *CatalogParser) Parse() ([]Resource, Result) {
 	resources := []Resource{}
 	result := Result{}
 
-	kinds := []string{"Task", "Pipeline"}
 	for _, k := range kinds {
 		res, r := c.findResourcesByKind(k)
 		resources = append(resources, res...)

@@ -24,6 +24,8 @@ var _ = Service("resource", func() {
 	Error("internal-error", ErrorResult, "Internal Server Error")
 	Error("not-found", ErrorResult, "Resource Not Found Error")
 
+	// NOTE: Supported Tekton Resource kind by APIs are defined in /pkg/parser/kind.go
+
 	Method("Query", func() {
 		Description("Find resources by a combination of name, kind and tags")
 		Payload(func() {
