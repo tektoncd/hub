@@ -27,7 +27,7 @@
   updated_at: 2016-01-01 12:30:12 UTC
 
 - id: 31
-  name: agent-001
+  agent_name: agent-001
   type: agent
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC

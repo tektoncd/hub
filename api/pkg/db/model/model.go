@@ -86,7 +86,7 @@ type (
 
 	User struct {
 		gorm.Model
-		Name        string
+		AgentName   string
 		GithubLogin string
 		GithubName  string
 		Type        UserType
