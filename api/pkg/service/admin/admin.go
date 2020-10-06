@@ -101,7 +101,7 @@ func (r *agentRequest) updateAgent(name string, scopes []string) (string, error)
 
 	// Check if an agent already exist with the name
 	q := r.db.Model(&model.User{}).
-		Where(&model.User{Name: name, Type: model.AgentUserType})
+		Where(&model.User{AgentName: name, Type: model.AgentUserType})
 
 	agent := &model.User{}
 	if err := q.First(&agent).Error; err != nil {
@@ -121,8 +121,8 @@ func (r *agentRequest) updateAgent(name string, scopes []string) (string, error)
 func (r *agentRequest) addNewAgent(name string, scopes []string) (string, error) {
 
 	agent := &model.User{
-		Name: name,
-		Type: model.AgentUserType,
+		AgentName: name,
+		Type:      model.AgentUserType,
 	}
 	if err := r.db.Create(agent).Error; err != nil {
 		r.log.Error(err)
@@ -184,7 +184,7 @@ func (r *agentRequest) createJWT(user *model.User, scopes []string) (string, err
 
 	claim := jwt.MapClaims{
 		"id":     user.ID,
-		"name":   user.Name,
+		"name":   user.AgentName,
 		"type":   user.Type,
 		"scopes": scopes,
 	}
