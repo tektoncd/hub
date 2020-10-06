@@ -43,9 +43,10 @@ var (
 )
 
 func newSyncer(api app.BaseConfig) *syncer {
+	logger := api.Logger("syncer")
 	return &syncer{
-		db:     api.DB(),
-		logger: api.Logger("syncer").SugaredLogger,
+		db:     app.DBWithLogger(api.DB(), logger),
+		logger: logger.SugaredLogger,
 		limit:  make(chan bool, 1),
 		stop:   make(chan bool),
 		git:    git.New(api.Logger("git").SugaredLogger),

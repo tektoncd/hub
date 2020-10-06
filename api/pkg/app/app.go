@@ -116,6 +116,14 @@ func (ab *APIBase) DB() *gorm.DB {
 	return ab.db
 }
 
+// DBWithLogger returns gorm db object initialised with logger
+func DBWithLogger(db *gorm.DB, logger *log.Logger) *gorm.DB {
+	db = db.New()
+	db.SetLogger(&gormLogger{logger})
+	return db
+}
+
+// Database returns the database object used for initializing db connection
 func (ab *APIBase) Database() Database {
 	return *ab.dbConf
 }
