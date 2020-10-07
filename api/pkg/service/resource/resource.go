@@ -25,6 +25,7 @@ import (
 	"github.com/tektoncd/hub/api/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
+	"github.com/tektoncd/hub/api/pkg/parser"
 )
 
 type service struct {
@@ -51,6 +52,13 @@ func New(api app.BaseConfig) resource.Service {
 
 // Find resources based on name, kind or both
 func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (res resource.ResourceCollection, err error) {
+
+	// Validate the kinds passed are supported by Hub
+	for _, k := range p.Kinds {
+		if !parser.IsSupportedKind(k) {
+			return nil, invalidKindError(k)
+		}
+	}
 
 	db := s.DB(ctx)
 
@@ -465,4 +473,9 @@ func lower(t []string) []string {
 		t[i] = strings.ToLower(t[i])
 	}
 	return t
+}
+
+func invalidKindError(kind string) error {
+	return resource.MakeInvalidKind(fmt.Errorf("resource kind '%s' not supported. Supported kinds are %v",
+		kind, parser.SupportedKinds()))
 }

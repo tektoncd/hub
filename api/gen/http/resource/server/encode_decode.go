@@ -99,6 +99,18 @@ func EncodeQueryError(encoder func(context.Context, http.ResponseWriter) goahttp
 			w.Header().Set("goa-error", "internal-error")
 			w.WriteHeader(http.StatusInternalServerError)
 			return enc.Encode(body)
+		case "invalid-kind":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewQueryInvalidKindResponseBody(res)
+			}
+			w.Header().Set("goa-error", "invalid-kind")
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
 		case "not-found":
 			res := v.(*goa.ServiceError)
 			enc := encoder(ctx, w)

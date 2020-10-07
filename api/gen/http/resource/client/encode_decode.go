@@ -63,6 +63,7 @@ func EncodeQueryRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.
 // restored after having been read.
 // DecodeQueryResponse may return the following errors:
 //	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- "invalid-kind" (type *goa.ServiceError): http.StatusBadRequest
 //	- "not-found" (type *goa.ServiceError): http.StatusNotFound
 //	- error: internal error
 func DecodeQueryResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
@@ -111,6 +112,20 @@ func DecodeQueryResponse(decoder func(*http.Response) goahttp.Decoder, restoreBo
 				return nil, goahttp.ErrValidationError("resource", "Query", err)
 			}
 			return nil, NewQueryInternalError(&body)
+		case http.StatusBadRequest:
+			var (
+				body QueryInvalidKindResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "Query", err)
+			}
+			err = ValidateQueryInvalidKindResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "Query", err)
+			}
+			return nil, NewQueryInvalidKind(&body)
 		case http.StatusNotFound:
 			var (
 				body QueryNotFoundResponseBody

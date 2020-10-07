@@ -118,6 +118,24 @@ type QueryInternalErrorResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
+// QueryInvalidKindResponseBody is the type of the "resource" service "Query"
+// endpoint HTTP response body for the "invalid-kind" error.
+type QueryInvalidKindResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
 // QueryNotFoundResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "not-found" error.
 type QueryNotFoundResponseBody struct {
@@ -482,6 +500,21 @@ func NewQueryInternalError(body *QueryInternalErrorResponseBody) *goa.ServiceErr
 	return v
 }
 
+// NewQueryInvalidKind builds a resource service Query endpoint invalid-kind
+// error.
+func NewQueryInvalidKind(body *QueryInvalidKindResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
 // NewQueryNotFound builds a resource service Query endpoint not-found error.
 func NewQueryNotFound(body *QueryNotFoundResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
@@ -755,6 +788,30 @@ func NewByIDNotFound(body *ByIDNotFoundResponseBody) *goa.ServiceError {
 // ValidateQueryInternalErrorResponseBody runs the validations defined on
 // Query_internal-error_Response_Body
 func ValidateQueryInternalErrorResponseBody(body *QueryInternalErrorResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateQueryInvalidKindResponseBody runs the validations defined on
+// Query_invalid-kind_Response_Body
+func ValidateQueryInvalidKindResponseBody(body *QueryInvalidKindResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}

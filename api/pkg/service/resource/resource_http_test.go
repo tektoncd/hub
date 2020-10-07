@@ -23,6 +23,7 @@ import (
 
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
+	goa "goa.design/goa/v3/pkg"
 	"gotest.tools/v3/golden"
 
 	"github.com/tektoncd/hub/api/gen/http/resource/server"
@@ -69,6 +70,25 @@ func TestQueryWithKinds_Http(t *testing.T) {
 		assert.NoError(t, err)
 
 		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
+func TestQueryWithInvalidKind_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	QueryChecker(tc).Test(t, http.MethodGet, "/query?kinds=task&kinds=abc").Check().
+		HasStatus(400).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		var err *goa.ServiceError
+		marshallErr := json.Unmarshal([]byte(b), &err)
+		assert.NoError(t, marshallErr)
+
+		assert.Equal(t, "invalid-kind", err.Name)
+		assert.Equal(t, "resource kind 'abc' not supported. Supported kinds are [Task Pipeline]", err.Message)
 	})
 }
 
