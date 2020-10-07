@@ -39,7 +39,7 @@ type AuthenticatePayload struct {
 // AuthenticateResult is the result type of the auth service Authenticate
 // method.
 type AuthenticateResult struct {
-	// JWT
+	// JSON Web Token with user details
 	Token string
 }
 

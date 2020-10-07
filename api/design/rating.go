@@ -37,7 +37,9 @@ var _ = Service("rating", func() {
 			Required("id", "token")
 		})
 		Result(func() {
-			Attribute("rating", Int, "User rating for resource")
+			Attribute("rating", Int, "User rating for resource", func() {
+				Example("rating", 4)
+			})
 			Required("rating")
 		})
 
