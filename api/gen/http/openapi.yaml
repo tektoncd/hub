@@ -475,13 +475,13 @@ paths:
             $ref: '#/definitions/ResourceListInternalErrorResponseBody'
       schemes:
       - http
-  /swagger/swagger.json:
+  /schema/swagger.json:
     get:
       tags:
       - swagger
-      summary: Download gen/http/openapi.json
+      summary: Download gen/http/openapi3.yaml
       description: JSON document containing the API swagger definition
-      operationId: swagger#/swagger/swagger.json
+      operationId: swagger#/schema/swagger.json
       responses:
         "200":
           description: File downloaded
