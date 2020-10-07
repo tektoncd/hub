@@ -111,6 +111,24 @@ type QueryInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// QueryInvalidKindResponseBody is the type of the "resource" service "Query"
+// endpoint HTTP response body for the "invalid-kind" error.
+type QueryInvalidKindResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
 // QueryNotFoundResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "not-found" error.
 type QueryNotFoundResponseBody struct {
@@ -562,6 +580,20 @@ func NewByIDResponseBody(res *resourceviews.ResourceView) *ByIDResponseBody {
 // result of the "Query" endpoint of the "resource" service.
 func NewQueryInternalErrorResponseBody(res *goa.ServiceError) *QueryInternalErrorResponseBody {
 	body := &QueryInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewQueryInvalidKindResponseBody builds the HTTP response body from the
+// result of the "Query" endpoint of the "resource" service.
+func NewQueryInvalidKindResponseBody(res *goa.ServiceError) *QueryInvalidKindResponseBody {
+	body := &QueryInvalidKindResponseBody{
 		Name:      res.Name,
 		ID:        res.ID,
 		Message:   res.Message,

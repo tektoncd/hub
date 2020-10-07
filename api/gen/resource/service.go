@@ -194,6 +194,15 @@ func MakeNotFound(err error) *goa.ServiceError {
 	}
 }
 
+// MakeInvalidKind builds a goa.ServiceError from an error.
+func MakeInvalidKind(err error) *goa.ServiceError {
+	return &goa.ServiceError{
+		Name:    "invalid-kind",
+		ID:      goa.NewErrorID(),
+		Message: err.Error(),
+	}
+}
+
 // NewResourceCollection initializes result type ResourceCollection from viewed
 // result type ResourceCollection.
 func NewResourceCollection(vres resourceviews.ResourceCollection) ResourceCollection {

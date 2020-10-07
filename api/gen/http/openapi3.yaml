@@ -28,9 +28,6 @@ paths:
                 - error: unable to reach db
                   name: api
                   status: ok
-                - error: unable to reach db
-                  name: api
-                  status: ok
   /auth/login:
     post:
       tags:
@@ -125,8 +122,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Job'
               example:
-                id: 2070151992422837927
-                status: Unde et amet eum hic.
+                id: 11641146429081913029
+                status: Et amet eum.
         "404":
           description: ""
           content:
@@ -147,12 +144,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
+                temporary: true
+                timeout: false
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -363,6 +360,19 @@ paths:
                 tags:
                 - id: 1
                   name: image-build
+        "400":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: true
+                timeout: true
         "404":
           description: ""
           content:
@@ -503,8 +513,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
+                temporary: false
+                timeout: false
         "500":
           description: ""
           content:
@@ -517,7 +527,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: false
+                timeout: true
   /resource/{catalog}/{kind}/{name}/{version}:
     get:
       tags:
@@ -599,12 +609,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -612,12 +622,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
+                temporary: false
+                timeout: true
   /resource/{id}:
     get:
       tags:
@@ -679,7 +689,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -687,12 +697,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
+                temporary: true
+                timeout: true
   /resource/{id}/rating:
     get:
       tags:
@@ -726,11 +736,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
+                temporary: false
                 timeout: false
         "403":
           description: ""
@@ -743,7 +753,7 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
+                temporary: true
                 timeout: false
         "404":
           description: ""
@@ -752,7 +762,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
@@ -769,8 +779,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
+                temporary: false
+                timeout: false
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -800,7 +810,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateRequestBody'
             example:
-              rating: 0
+              rating: 3
       responses:
         "200":
           description: ""
@@ -814,12 +824,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: true
+                timeout: false
         "403":
           description: ""
           content:
@@ -832,7 +842,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: true
+                timeout: false
         "404":
           description: ""
           content:
@@ -845,7 +855,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: false
+                timeout: true
         "500":
           description: ""
           content:
@@ -853,12 +863,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
+                temporary: true
+                timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -916,7 +926,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: false
+                timeout: true
         "500":
           description: ""
           content:
@@ -924,7 +934,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
@@ -981,7 +991,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
@@ -998,8 +1008,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
+                temporary: true
+                timeout: true
   /resources:
     get:
       tags:
@@ -1090,12 +1100,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: true
+                timeout: false
   /schema/swagger.json:
     get:
       tags:
@@ -1120,10 +1130,10 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateAgentRequestBody'
             example:
-              name: Aut magnam illum.
+              name: Ut nihil eum placeat.
               scopes:
-              - Eum placeat voluptas et consequuntur.
-              - Et enim ut rerum repellat.
+              - Consequuntur voluptas.
+              - Enim ut rerum repellat aut.
       responses:
         "200":
           description: ""
@@ -1132,7 +1142,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticateResponseBody'
               example:
-                token: Est ea reiciendis pariatur quasi illo.
+                token: Sunt est.
         "400":
           description: ""
           content:
@@ -1140,7 +1150,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
@@ -1157,8 +1167,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
+                temporary: false
+                timeout: false
         "403":
           description: ""
           content:
@@ -1171,7 +1181,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -1183,8 +1193,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
+                temporary: true
+                timeout: false
       security:
       - jwt_header_Authorization:
         - rating:read

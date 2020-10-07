@@ -23,6 +23,7 @@ var _ = Service("resource", func() {
 
 	Error("internal-error", ErrorResult, "Internal Server Error")
 	Error("not-found", ErrorResult, "Resource Not Found Error")
+	Error("invalid-kind", ErrorResult, "Invalid Resource Kind")
 
 	// NOTE: Supported Tekton Resource kind by APIs are defined in /pkg/parser/kind.go
 
@@ -63,6 +64,7 @@ var _ = Service("resource", func() {
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
+			Response("invalid-kind", StatusBadRequest)
 			Response("not-found", StatusNotFound)
 		})
 	})

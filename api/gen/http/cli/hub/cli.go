@@ -51,13 +51,13 @@ func UsageExamples() string {
       "build"
    ]' --limit 100 --match "contains"` + "\n" +
 		os.Args[0] + ` admin update-agent --body '{
-      "name": "Aut magnam illum.",
+      "name": "Ut nihil eum placeat.",
       "scopes": [
-         "Eum placeat voluptas et consequuntur.",
-         "Et enim ut rerum repellat."
+         "Consequuntur voluptas.",
+         "Enim ut rerum repellat aut."
       ]
-   }' --token "Eos qui fugiat earum ut."` + "\n" +
-		os.Args[0] + ` rating get --id 12675193400067993949 --token "Vitae aut porro nulla sunt."` + "\n" +
+   }' --token "Qui fugiat earum."` + "\n" +
+		os.Args[0] + ` rating get --id 7330939304923238182 --token "Deleniti corrupti non quo velit."` + "\n" +
 		""
 }
 
@@ -498,7 +498,7 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -559,12 +559,12 @@ Create or Update an agent user with required scopes
 
 Example:
     `+os.Args[0]+` admin update-agent --body '{
-      "name": "Aut magnam illum.",
+      "name": "Ut nihil eum placeat.",
       "scopes": [
-         "Eum placeat voluptas et consequuntur.",
-         "Et enim ut rerum repellat."
+         "Consequuntur voluptas.",
+         "Enim ut rerum repellat aut."
       ]
-   }' --token "Eos qui fugiat earum ut."
+   }' --token "Qui fugiat earum."
 `, os.Args[0])
 }
 
@@ -590,7 +590,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 12675193400067993949 --token "Vitae aut porro nulla sunt."
+    `+os.Args[0]+` rating get --id 7330939304923238182 --token "Deleniti corrupti non quo velit."
 `, os.Args[0])
 }
 
@@ -604,8 +604,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 0
-   }' --id 10565924265057917925 --token "Deleniti voluptatem distinctio distinctio voluptas beatae id."
+      "rating": 3
+   }' --id 16313197953130531523 --token "Magni reprehenderit libero soluta sapiente."
 `, os.Args[0])
 }
 
@@ -652,6 +652,6 @@ Refreshes Tekton Catalog
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --token "Sint est omnis."
+    `+os.Args[0]+` catalog refresh --token "Nihil aut quo quidem magni qui."
 `, os.Args[0])
 }
