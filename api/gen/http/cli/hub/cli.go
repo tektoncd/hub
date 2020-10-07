@@ -42,26 +42,22 @@ catalog refresh
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` auth authenticate --code "Quasi illo voluptate."` + "\n" +
-		os.Args[0] + ` resource query --name "Molestiae eligendi animi sit nulla omnis incidunt." --kinds '[
-      "Velit magni reprehenderit.",
-      "Soluta sapiente deleniti voluptatem distinctio distinctio.",
-      "Beatae id qui quia consequatur possimus tempora.",
-      "Et nihil aut."
+		os.Args[0] + ` auth authenticate --code "5628b69ec09c09512eef"` + "\n" +
+		os.Args[0] + ` resource query --name "buildah" --kinds '[
+      "task",
+      "pipelines"
    ]' --tags '[
-      "Magni qui nemo sint est omnis nesciunt.",
-      "Cupiditate voluptatem.",
-      "Tenetur unde.",
-      "Amet eum."
-   ]' --limit 14044190301285965164 --match "exact"` + "\n" +
+      "image",
+      "build"
+   ]' --limit 100 --match "contains"` + "\n" +
 		os.Args[0] + ` admin update-agent --body '{
-      "name": "Quia totam.",
+      "name": "Aut magnam illum.",
       "scopes": [
-         "Maxime et velit.",
-         "Dolores dolor esse officia velit aliquid praesentium."
+         "Eum placeat voluptas et consequuntur.",
+         "Et enim ut rerum repellat."
       ]
-   }' --token "Sed optio ab beatae est."` + "\n" +
-		os.Args[0] + ` rating get --id 7167068260337367790 --token "Et similique."` + "\n" +
+   }' --token "Eos qui fugiat earum ut."` + "\n" +
+		os.Args[0] + ` rating get --id 12675193400067993949 --token "Vitae aut porro nulla sunt."` + "\n" +
 		""
 }
 
@@ -426,7 +422,7 @@ Authenticates users against GitHub OAuth
     -code STRING: 
 
 Example:
-    `+os.Args[0]+` auth authenticate --code "Quasi illo voluptate."
+    `+os.Args[0]+` auth authenticate --code "5628b69ec09c09512eef"
 `, os.Args[0])
 }
 
@@ -460,17 +456,13 @@ Find resources by a combination of name, kind and tags
     -match STRING: 
 
 Example:
-    `+os.Args[0]+` resource query --name "Molestiae eligendi animi sit nulla omnis incidunt." --kinds '[
-      "Velit magni reprehenderit.",
-      "Soluta sapiente deleniti voluptatem distinctio distinctio.",
-      "Beatae id qui quia consequatur possimus tempora.",
-      "Et nihil aut."
+    `+os.Args[0]+` resource query --name "buildah" --kinds '[
+      "task",
+      "pipelines"
    ]' --tags '[
-      "Magni qui nemo sint est omnis nesciunt.",
-      "Cupiditate voluptatem.",
-      "Tenetur unde.",
-      "Amet eum."
-   ]' --limit 14044190301285965164 --match "exact"
+      "image",
+      "build"
+   ]' --limit 100 --match "contains"
 `, os.Args[0])
 }
 
@@ -481,7 +473,7 @@ List all resources sorted by rating and name
     -limit UINT: 
 
 Example:
-    `+os.Args[0]+` resource list --limit 2216955063948573428
+    `+os.Args[0]+` resource list --limit 100
 `, os.Args[0])
 }
 
@@ -492,7 +484,7 @@ Find all versions of a resource by its id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource versions-by-id --id 6577683779875133659
+    `+os.Args[0]+` resource versions-by-id --id 1
 `, os.Args[0])
 }
 
@@ -506,7 +498,7 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "Ipsum iusto et dolor vitae voluptatem." --kind "pipeline" --name "Minus reiciendis nulla quasi." --version "Aut assumenda aut accusamus et dignissimos."
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -517,7 +509,7 @@ Find a resource using its version's id
     -version-id UINT: Version ID of a resource's version
 
 Example:
-    `+os.Args[0]+` resource by-version-id --version-id 6991370519422568791
+    `+os.Args[0]+` resource by-version-id --version-id 1
 `, os.Args[0])
 }
 
@@ -530,7 +522,7 @@ Find resources using name of catalog, resource name and kind of resource
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "Necessitatibus magni quia illum perferendis." --kind "task" --name "Est quae rerum autem."
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah"
 `, os.Args[0])
 }
 
@@ -541,7 +533,7 @@ Find a resource using it's id
     -id UINT: ID of a resource
 
 Example:
-    `+os.Args[0]+` resource by-id --id 16837229221636600385
+    `+os.Args[0]+` resource by-id --id 1
 `, os.Args[0])
 }
 
@@ -567,12 +559,12 @@ Create or Update an agent user with required scopes
 
 Example:
     `+os.Args[0]+` admin update-agent --body '{
-      "name": "Quia totam.",
+      "name": "Aut magnam illum.",
       "scopes": [
-         "Maxime et velit.",
-         "Dolores dolor esse officia velit aliquid praesentium."
+         "Eum placeat voluptas et consequuntur.",
+         "Et enim ut rerum repellat."
       ]
-   }' --token "Sed optio ab beatae est."
+   }' --token "Eos qui fugiat earum ut."
 `, os.Args[0])
 }
 
@@ -598,7 +590,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 7167068260337367790 --token "Et similique."
+    `+os.Args[0]+` rating get --id 12675193400067993949 --token "Vitae aut porro nulla sunt."
 `, os.Args[0])
 }
 
@@ -612,8 +604,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 1
-   }' --id 7627800160226674904 --token "Mollitia aut neque similique ipsam."
+      "rating": 0
+   }' --id 10565924265057917925 --token "Deleniti voluptatem distinctio distinctio voluptas beatae id."
 `, os.Args[0])
 }
 
@@ -660,6 +652,6 @@ Refreshes Tekton Catalog
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --token "Ut ut debitis quia sed."
+    `+os.Args[0]+` catalog refresh --token "Sint est omnis."
 `, os.Args[0])
 }

@@ -29,11 +29,17 @@ var _ = Service("auth", func() {
 	Method("Authenticate", func() {
 		Description("Authenticates users against GitHub OAuth")
 		Payload(func() {
-			Attribute("code", String, "OAuth Authorization code of User")
+			Attribute("code", String, "OAuth Authorization code of User", func() {
+				Example("code", "5628b69ec09c09512eef")
+			})
 			Required("code")
 		})
 		Result(func() {
-			Attribute("token", String, "JWT")
+			Attribute("token", String, "JSON Web Token with user details", func() {
+				Example("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."+
+					"eyJpZCI6MTAwMDEsImxvZ2luIjoidGVzdCIsIm5hbWUiOiJ0ZXN0LXVzZXIiLCJzY29wZXMiOlsicmF0aW5nOnJlYWQiLCJyYXRpbmc6d3JpdGUiXX0."+
+					"zFztueyvZLLCyx3RD7WpzzfVaTrybzxgS5a_pDsq5M8")
+			})
 			Required("token")
 		})
 
