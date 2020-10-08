@@ -111,6 +111,11 @@ type (
 		UserID  uint
 		ScopeID uint
 	}
+
+	Config struct {
+		gorm.Model
+		Checksum string
+	}
 )
 
 type UserType string

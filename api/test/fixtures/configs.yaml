@@ -12,11 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- user_id: 11
-  scope_id: 2
-
-- user_id: 13
-  scope_id: 3
-
-- user_id: 31
-  scope_id: 1
+- id: 1
+  checksum: testChecksum
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC

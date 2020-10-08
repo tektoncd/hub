@@ -16,6 +16,8 @@ package app
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"strings"
@@ -160,19 +162,25 @@ func (ab *APIBase) ReloadData() error {
 	}
 
 	// Reads data from config file
-	data, err := dataFromURL(url)
+	fileData, err := dataFromURL(url)
 	if err != nil {
 		ab.logger.Errorf("failed to read config file: %v", err)
 		return err
 	}
 
 	// Viper unmarshals data from config file into Data Object
+	var data Data
 	viper.SetConfigType("yaml")
-	viper.ReadConfig(bytes.NewBuffer(data))
-	if err := viper.Unmarshal(&ab.data); err != nil {
+	viper.ReadConfig(bytes.NewBuffer(fileData))
+	if err := viper.Unmarshal(&data); err != nil {
 		ab.logger.Errorf("failed to unmarshal config data: %v", err)
 		return err
 	}
+	ab.data = data
+
+	// computes checksum on config data
+	hash := sha256.Sum256(fileData)
+	ab.data.Checksum = hex.EncodeToString(hash[:])
 
 	return nil
 }
@@ -256,23 +264,23 @@ func APIBaseFromEnvFile(file string) (*APIBase, error) {
 		return nil, err
 	}
 
-	ac := &APIBase{mode: mode, logger: l}
-	log := ac.logger.With("app", "hub")
+	ab := &APIBase{mode: mode, logger: l}
+	log := ab.logger.With("app", "hub")
 
 	log.Infof("in %q mode ", mode)
 
-	if ac.dbConf, err = initDB(); err != nil {
+	if ab.dbConf, err = initDB(); err != nil {
 		log.Errorf("failed to obtain database configuration: %v", err)
 		return nil, err
 	}
-	ac.db, err = gorm.Open(DBDialect, ac.dbConf.ConnectionString())
+	ab.db, err = gorm.Open(DBDialect, ab.dbConf.ConnectionString())
 	if err != nil {
-		log.Errorf("failed to establish database connection: [%s]: %s", ac.dbConf, err)
+		log.Errorf("failed to establish database connection: [%s]: %s", ab.dbConf, err)
 		return nil, err
 	}
-	log.Infof("Successfully connected to [%s]", ac.dbConf)
+	log.Infof("Successfully connected to [%s]", ab.dbConf)
 
-	return ac, nil
+	return ab, nil
 }
 
 // Environment return EnvMode the Api server would be running in.
