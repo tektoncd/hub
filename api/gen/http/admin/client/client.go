@@ -21,6 +21,10 @@ type Client struct {
 	// endpoint.
 	UpdateAgentDoer goahttp.Doer
 
+	// RefreshConfig Doer is the HTTP client used to make requests to the
+	// RefreshConfig endpoint.
+	RefreshConfigDoer goahttp.Doer
+
 	// CORS Doer is the HTTP client used to make requests to the  endpoint.
 	CORSDoer goahttp.Doer
 
@@ -45,6 +49,7 @@ func NewClient(
 ) *Client {
 	return &Client{
 		UpdateAgentDoer:     doer,
+		RefreshConfigDoer:   doer,
 		CORSDoer:            doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
@@ -73,6 +78,30 @@ func (c *Client) UpdateAgent() goa.Endpoint {
 		resp, err := c.UpdateAgentDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("admin", "UpdateAgent", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// RefreshConfig returns an endpoint that makes HTTP requests to the admin
+// service RefreshConfig server.
+func (c *Client) RefreshConfig() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeRefreshConfigRequest(c.encoder)
+		decodeResponse = DecodeRefreshConfigResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildRefreshConfigRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.RefreshConfigDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("admin", "RefreshConfig", err)
 		}
 		return decodeResponse(resp)
 	}

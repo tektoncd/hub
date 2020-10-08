@@ -15,13 +15,15 @@ import (
 
 // Client is the "admin" service client.
 type Client struct {
-	UpdateAgentEndpoint goa.Endpoint
+	UpdateAgentEndpoint   goa.Endpoint
+	RefreshConfigEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "admin" service client given the endpoints.
-func NewClient(updateAgent goa.Endpoint) *Client {
+func NewClient(updateAgent, refreshConfig goa.Endpoint) *Client {
 	return &Client{
-		UpdateAgentEndpoint: updateAgent,
+		UpdateAgentEndpoint:   updateAgent,
+		RefreshConfigEndpoint: refreshConfig,
 	}
 }
 
@@ -33,4 +35,14 @@ func (c *Client) UpdateAgent(ctx context.Context, p *UpdateAgentPayload) (res *U
 		return
 	}
 	return ires.(*UpdateAgentResult), nil
+}
+
+// RefreshConfig calls the "RefreshConfig" endpoint of the "admin" service.
+func (c *Client) RefreshConfig(ctx context.Context, p *RefreshConfigPayload) (res *RefreshConfigResult, err error) {
+	var ires interface{}
+	ires, err = c.RefreshConfigEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*RefreshConfigResult), nil
 }

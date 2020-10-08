@@ -32,7 +32,7 @@ func UsageCommands() string {
 	return `category list
 auth authenticate
 resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
-admin update-agent
+admin (update-agent|refresh-config)
 rating (get|update)
 status status
 catalog refresh
@@ -49,15 +49,16 @@ func UsageExamples() string {
    ]' --tags '[
       "image",
       "build"
-   ]' --limit 100 --match "contains"` + "\n" +
+   ]' --limit 100 --match "exact"` + "\n" +
 		os.Args[0] + ` admin update-agent --body '{
-      "name": "Ut nihil eum placeat.",
+      "name": "Enim ut rerum repellat aut.",
       "scopes": [
-         "Consequuntur voluptas.",
-         "Enim ut rerum repellat aut."
+         "Fugiat earum ut sunt est ea.",
+         "Pariatur quasi.",
+         "Voluptate corrupti omnis."
       ]
-   }' --token "Qui fugiat earum."` + "\n" +
-		os.Args[0] + ` rating get --id 7330939304923238182 --token "Deleniti corrupti non quo velit."` + "\n" +
+   }' --token "Beatae reiciendis accusantium distinctio qui."` + "\n" +
+		os.Args[0] + ` rating get --id 18055863874781766200 --token "Nihil aut quo quidem magni qui."` + "\n" +
 		""
 }
 
@@ -118,6 +119,10 @@ func ParseEndpoint(
 		adminUpdateAgentBodyFlag  = adminUpdateAgentFlags.String("body", "REQUIRED", "")
 		adminUpdateAgentTokenFlag = adminUpdateAgentFlags.String("token", "REQUIRED", "")
 
+		adminRefreshConfigFlags     = flag.NewFlagSet("refresh-config", flag.ExitOnError)
+		adminRefreshConfigBodyFlag  = adminRefreshConfigFlags.String("body", "REQUIRED", "")
+		adminRefreshConfigTokenFlag = adminRefreshConfigFlags.String("token", "REQUIRED", "")
+
 		ratingFlags = flag.NewFlagSet("rating", flag.ContinueOnError)
 
 		ratingGetFlags     = flag.NewFlagSet("get", flag.ExitOnError)
@@ -155,6 +160,7 @@ func ParseEndpoint(
 
 	adminFlags.Usage = adminUsage
 	adminUpdateAgentFlags.Usage = adminUpdateAgentUsage
+	adminRefreshConfigFlags.Usage = adminRefreshConfigUsage
 
 	ratingFlags.Usage = ratingUsage
 	ratingGetFlags.Usage = ratingGetUsage
@@ -254,6 +260,9 @@ func ParseEndpoint(
 			case "update-agent":
 				epf = adminUpdateAgentFlags
 
+			case "refresh-config":
+				epf = adminRefreshConfigFlags
+
 			}
 
 		case "rating":
@@ -345,6 +354,9 @@ func ParseEndpoint(
 			case "update-agent":
 				endpoint = c.UpdateAgent()
 				data, err = adminc.BuildUpdateAgentPayload(*adminUpdateAgentBodyFlag, *adminUpdateAgentTokenFlag)
+			case "refresh-config":
+				endpoint = c.RefreshConfig()
+				data, err = adminc.BuildRefreshConfigPayload(*adminRefreshConfigBodyFlag, *adminRefreshConfigTokenFlag)
 			}
 		case "rating":
 			c := ratingc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -462,7 +474,7 @@ Example:
    ]' --tags '[
       "image",
       "build"
-   ]' --limit 100 --match "contains"
+   ]' --limit 100 --match "exact"
 `, os.Args[0])
 }
 
@@ -522,7 +534,7 @@ Find resources using name of catalog, resource name and kind of resource
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah"
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah"
 `, os.Args[0])
 }
 
@@ -545,6 +557,7 @@ Usage:
 
 COMMAND:
     update-agent: Create or Update an agent user with required scopes
+    refresh-config: Refresh the changes in config file
 
 Additional help:
     %s admin COMMAND --help
@@ -559,12 +572,27 @@ Create or Update an agent user with required scopes
 
 Example:
     `+os.Args[0]+` admin update-agent --body '{
-      "name": "Ut nihil eum placeat.",
+      "name": "Enim ut rerum repellat aut.",
       "scopes": [
-         "Consequuntur voluptas.",
-         "Enim ut rerum repellat aut."
+         "Fugiat earum ut sunt est ea.",
+         "Pariatur quasi.",
+         "Voluptate corrupti omnis."
       ]
-   }' --token "Qui fugiat earum."
+   }' --token "Beatae reiciendis accusantium distinctio qui."
+`, os.Args[0])
+}
+
+func adminRefreshConfigUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] admin refresh-config -body JSON -token STRING
+
+Refresh the changes in config file
+    -body JSON: 
+    -token STRING: 
+
+Example:
+    `+os.Args[0]+` admin refresh-config --body '{
+      "force": false
+   }' --token "Expedita velit magni reprehenderit libero."
 `, os.Args[0])
 }
 
@@ -590,7 +618,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 7330939304923238182 --token "Deleniti corrupti non quo velit."
+    `+os.Args[0]+` rating get --id 18055863874781766200 --token "Nihil aut quo quidem magni qui."
 `, os.Args[0])
 }
 
@@ -604,8 +632,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 3
-   }' --id 16313197953130531523 --token "Magni reprehenderit libero soluta sapiente."
+      "rating": 2
+   }' --id 14044190301285965164 --token "Consequatur explicabo."
 `, os.Args[0])
 }
 
@@ -652,6 +680,6 @@ Refreshes Tekton Catalog
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --token "Nihil aut quo quidem magni qui."
+    `+os.Args[0]+` catalog refresh --token "Ratione molestias quibusdam autem voluptatem molestiae."
 `, os.Args[0])
 }

@@ -21,11 +21,25 @@ type UpdateAgentRequestBody struct {
 	Scopes []string `form:"scopes,omitempty" json:"scopes,omitempty" xml:"scopes,omitempty"`
 }
 
+// RefreshConfigRequestBody is the type of the "admin" service "RefreshConfig"
+// endpoint HTTP request body.
+type RefreshConfigRequestBody struct {
+	// Force Refresh the config file
+	Force *bool `form:"force,omitempty" json:"force,omitempty" xml:"force,omitempty"`
+}
+
 // UpdateAgentResponseBody is the type of the "admin" service "UpdateAgent"
 // endpoint HTTP response body.
 type UpdateAgentResponseBody struct {
 	// Agent JWT
 	Token string `form:"token" json:"token" xml:"token"`
+}
+
+// RefreshConfigResponseBody is the type of the "admin" service "RefreshConfig"
+// endpoint HTTP response body.
+type RefreshConfigResponseBody struct {
+	// Config file checksum
+	Checksum string `form:"checksum" json:"checksum" xml:"checksum"`
 }
 
 // UpdateAgentInvalidPayloadResponseBody is the type of the "admin" service
@@ -100,11 +114,74 @@ type UpdateAgentInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// RefreshConfigInvalidTokenResponseBody is the type of the "admin" service
+// "RefreshConfig" endpoint HTTP response body for the "invalid-token" error.
+type RefreshConfigInvalidTokenResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// RefreshConfigInvalidScopesResponseBody is the type of the "admin" service
+// "RefreshConfig" endpoint HTTP response body for the "invalid-scopes" error.
+type RefreshConfigInvalidScopesResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// RefreshConfigInternalErrorResponseBody is the type of the "admin" service
+// "RefreshConfig" endpoint HTTP response body for the "internal-error" error.
+type RefreshConfigInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
 // NewUpdateAgentResponseBody builds the HTTP response body from the result of
 // the "UpdateAgent" endpoint of the "admin" service.
 func NewUpdateAgentResponseBody(res *admin.UpdateAgentResult) *UpdateAgentResponseBody {
 	body := &UpdateAgentResponseBody{
 		Token: res.Token,
+	}
+	return body
+}
+
+// NewRefreshConfigResponseBody builds the HTTP response body from the result
+// of the "RefreshConfig" endpoint of the "admin" service.
+func NewRefreshConfigResponseBody(res *admin.RefreshConfigResult) *RefreshConfigResponseBody {
+	body := &RefreshConfigResponseBody{
+		Checksum: res.Checksum,
 	}
 	return body
 }
@@ -165,6 +242,48 @@ func NewUpdateAgentInternalErrorResponseBody(res *goa.ServiceError) *UpdateAgent
 	return body
 }
 
+// NewRefreshConfigInvalidTokenResponseBody builds the HTTP response body from
+// the result of the "RefreshConfig" endpoint of the "admin" service.
+func NewRefreshConfigInvalidTokenResponseBody(res *goa.ServiceError) *RefreshConfigInvalidTokenResponseBody {
+	body := &RefreshConfigInvalidTokenResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewRefreshConfigInvalidScopesResponseBody builds the HTTP response body from
+// the result of the "RefreshConfig" endpoint of the "admin" service.
+func NewRefreshConfigInvalidScopesResponseBody(res *goa.ServiceError) *RefreshConfigInvalidScopesResponseBody {
+	body := &RefreshConfigInvalidScopesResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewRefreshConfigInternalErrorResponseBody builds the HTTP response body from
+// the result of the "RefreshConfig" endpoint of the "admin" service.
+func NewRefreshConfigInternalErrorResponseBody(res *goa.ServiceError) *RefreshConfigInternalErrorResponseBody {
+	body := &RefreshConfigInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewUpdateAgentPayload builds a admin service UpdateAgent endpoint payload.
 func NewUpdateAgentPayload(body *UpdateAgentRequestBody, token string) *admin.UpdateAgentPayload {
 	v := &admin.UpdateAgentPayload{
@@ -179,6 +298,17 @@ func NewUpdateAgentPayload(body *UpdateAgentRequestBody, token string) *admin.Up
 	return v
 }
 
+// NewRefreshConfigPayload builds a admin service RefreshConfig endpoint
+// payload.
+func NewRefreshConfigPayload(body *RefreshConfigRequestBody, token string) *admin.RefreshConfigPayload {
+	v := &admin.RefreshConfigPayload{
+		Force: *body.Force,
+	}
+	v.Token = token
+
+	return v
+}
+
 // ValidateUpdateAgentRequestBody runs the validations defined on
 // UpdateAgentRequestBody
 func ValidateUpdateAgentRequestBody(body *UpdateAgentRequestBody) (err error) {
@@ -187,6 +317,15 @@ func ValidateUpdateAgentRequestBody(body *UpdateAgentRequestBody) (err error) {
 	}
 	if body.Scopes == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("scopes", "body"))
+	}
+	return
+}
+
+// ValidateRefreshConfigRequestBody runs the validations defined on
+// RefreshConfigRequestBody
+func ValidateRefreshConfigRequestBody(body *RefreshConfigRequestBody) (err error) {
+	if body.Force == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("force", "body"))
 	}
 	return
 }

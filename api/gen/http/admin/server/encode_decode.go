@@ -134,3 +134,108 @@ func EncodeUpdateAgentError(encoder func(context.Context, http.ResponseWriter) g
 		}
 	}
 }
+
+// EncodeRefreshConfigResponse returns an encoder for responses returned by the
+// admin RefreshConfig endpoint.
+func EncodeRefreshConfigResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*admin.RefreshConfigResult)
+		enc := encoder(ctx, w)
+		body := NewRefreshConfigResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeRefreshConfigRequest returns a decoder for requests sent to the admin
+// RefreshConfig endpoint.
+func DecodeRefreshConfigRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body RefreshConfigRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateRefreshConfigRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+
+		var (
+			token string
+		)
+		token = r.Header.Get("Authorization")
+		if token == "" {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewRefreshConfigPayload(&body, token)
+		if strings.Contains(payload.Token, " ") {
+			// Remove authorization scheme prefix (e.g. "Bearer")
+			cred := strings.SplitN(payload.Token, " ", 2)[1]
+			payload.Token = cred
+		}
+
+		return payload, nil
+	}
+}
+
+// EncodeRefreshConfigError returns an encoder for errors returned by the
+// RefreshConfig admin endpoint.
+func EncodeRefreshConfigError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "invalid-token":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewRefreshConfigInvalidTokenResponseBody(res)
+			}
+			w.Header().Set("goa-error", "invalid-token")
+			w.WriteHeader(http.StatusUnauthorized)
+			return enc.Encode(body)
+		case "invalid-scopes":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewRefreshConfigInvalidScopesResponseBody(res)
+			}
+			w.Header().Set("goa-error", "invalid-scopes")
+			w.WriteHeader(http.StatusForbidden)
+			return enc.Encode(body)
+		case "internal-error":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewRefreshConfigInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "internal-error")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
