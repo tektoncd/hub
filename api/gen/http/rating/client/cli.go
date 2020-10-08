@@ -48,7 +48,7 @@ func BuildUpdatePayload(ratingUpdateBody string, ratingUpdateID string, ratingUp
 	{
 		err = json.Unmarshal([]byte(ratingUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"rating\": 3\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"rating\": 2\n   }'")
 		}
 		if body.Rating < 0 {
 			err = goa.MergeErrors(err, goa.InvalidRangeError("body.rating", body.Rating, 0, true))

@@ -159,3 +159,129 @@ func DecodeUpdateAgentResponse(decoder func(*http.Response) goahttp.Decoder, res
 		}
 	}
 }
+
+// BuildRefreshConfigRequest instantiates a HTTP request object with method and
+// path set to call the "admin" service "RefreshConfig" endpoint
+func (c *Client) BuildRefreshConfigRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RefreshConfigAdminPath()}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("admin", "RefreshConfig", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeRefreshConfigRequest returns an encoder for requests sent to the admin
+// RefreshConfig server.
+func EncodeRefreshConfigRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*admin.RefreshConfigPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("admin", "RefreshConfig", "*admin.RefreshConfigPayload", v)
+		}
+		{
+			head := p.Token
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
+		body := NewRefreshConfigRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("admin", "RefreshConfig", err)
+		}
+		return nil
+	}
+}
+
+// DecodeRefreshConfigResponse returns a decoder for responses returned by the
+// admin RefreshConfig endpoint. restoreBody controls whether the response body
+// should be restored after having been read.
+// DecodeRefreshConfigResponse may return the following errors:
+//	- "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
+//	- "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- error: internal error
+func DecodeRefreshConfigResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body RefreshConfigResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("admin", "RefreshConfig", err)
+			}
+			err = ValidateRefreshConfigResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("admin", "RefreshConfig", err)
+			}
+			res := NewRefreshConfigResultOK(&body)
+			return res, nil
+		case http.StatusUnauthorized:
+			var (
+				body RefreshConfigInvalidTokenResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("admin", "RefreshConfig", err)
+			}
+			err = ValidateRefreshConfigInvalidTokenResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("admin", "RefreshConfig", err)
+			}
+			return nil, NewRefreshConfigInvalidToken(&body)
+		case http.StatusForbidden:
+			var (
+				body RefreshConfigInvalidScopesResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("admin", "RefreshConfig", err)
+			}
+			err = ValidateRefreshConfigInvalidScopesResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("admin", "RefreshConfig", err)
+			}
+			return nil, NewRefreshConfigInvalidScopes(&body)
+		case http.StatusInternalServerError:
+			var (
+				body RefreshConfigInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("admin", "RefreshConfig", err)
+			}
+			err = ValidateRefreshConfigInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("admin", "RefreshConfig", err)
+			}
+			return nil, NewRefreshConfigInternalError(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("admin", "RefreshConfig", resp.StatusCode, string(body))
+		}
+	}
+}

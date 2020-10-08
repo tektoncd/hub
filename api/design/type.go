@@ -283,6 +283,7 @@ var JWTAuth = JWTSecurity("jwt", func() {
 	Scope("rating:write", "Read and write access to rating")
 	Scope("agent:create", "Access to create or update an agent")
 	Scope("catalog:refresh", "Access to refresh catalog")
+	Scope("config:refresh", "Access to refresh config file")
 })
 
 var HubService = Type("HubService", func() {

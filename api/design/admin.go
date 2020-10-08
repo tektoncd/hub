@@ -53,4 +53,30 @@ var _ = Service("admin", func() {
 			Response("internal-error", StatusInternalServerError)
 		})
 	})
+
+	Method("RefreshConfig", func() {
+		Description("Refresh the changes in config file")
+		Security(JWTAuth, func() {
+			Scope("config:refresh")
+		})
+		Payload(func() {
+			Token("token", String, "User JWT")
+			Attribute("force", Boolean, "Force Refresh the config file")
+			Required("token", "force")
+		})
+		Result(func() {
+			Attribute("checksum", String, "Config file checksum")
+			Required("checksum")
+		})
+
+		HTTP(func() {
+			POST("/system/config/refresh")
+			Header("token:Authorization")
+
+			Response(StatusOK)
+			Response("invalid-token", StatusUnauthorized)
+			Response("invalid-scopes", StatusForbidden)
+			Response("internal-error", StatusInternalServerError)
+		})
+	})
 })

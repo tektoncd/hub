@@ -18,6 +18,8 @@ import (
 type Service interface {
 	// Create or Update an agent user with required scopes
 	UpdateAgent(context.Context, *UpdateAgentPayload) (res *UpdateAgentResult, err error)
+	// Refresh the changes in config file
+	RefreshConfig(context.Context, *RefreshConfigPayload) (res *RefreshConfigResult, err error)
 }
 
 // Auther defines the authorization functions to be implemented by the service.
@@ -34,7 +36,7 @@ const ServiceName = "admin"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [1]string{"UpdateAgent"}
+var MethodNames = [2]string{"UpdateAgent", "RefreshConfig"}
 
 // UpdateAgentPayload is the payload type of the admin service UpdateAgent
 // method.
@@ -51,6 +53,22 @@ type UpdateAgentPayload struct {
 type UpdateAgentResult struct {
 	// Agent JWT
 	Token string
+}
+
+// RefreshConfigPayload is the payload type of the admin service RefreshConfig
+// method.
+type RefreshConfigPayload struct {
+	// User JWT
+	Token string
+	// Force Refresh the config file
+	Force bool
+}
+
+// RefreshConfigResult is the result type of the admin service RefreshConfig
+// method.
+type RefreshConfigResult struct {
+	// Config file checksum
+	Checksum string
 }
 
 // MakeInvalidPayload builds a goa.ServiceError from an error.

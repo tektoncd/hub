@@ -11,3 +11,8 @@ package server
 func UpdateAgentAdminPath() string {
 	return "/system/user/agent"
 }
+
+// RefreshConfigAdminPath returns the URL path to the admin service RefreshConfig HTTP endpoint.
+func RefreshConfigAdminPath() string {
+	return "/system/config/refresh"
+}
