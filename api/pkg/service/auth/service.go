@@ -23,6 +23,7 @@ import (
 	"goa.design/goa/v3/security"
 
 	"github.com/tektoncd/hub/api/gen/auth"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/token"
@@ -69,20 +70,28 @@ func (s *Service) JWTAuth(ctx context.Context, jwt string, scheme *security.JWTS
 		return ctx, tokenError
 	}
 
-	return WithUserID(ctx, uint(userID)), nil
+	ctx = WithUserID(ctx, uint(userID))
+	if _, err := s.User(ctx); err != nil {
+		return ctx, err
+	}
+
+	return ctx, nil
+}
+
+// Logger returns a logger with "user-id" added as a field
+func (s *Service) Logger(ctx context.Context) *log.Logger {
+	return s.LoggerWith(ctx, "user-id", UserID(ctx))
 }
 
 // User fetch user id from the passed context verfies if it exists in db
 // returns the User object
 func (s *Service) User(ctx context.Context) (*model.User, error) {
 
-	userID := UserID(ctx)
-
-	log := s.LoggerWith(ctx, "user-id", userID)
+	log := s.Logger(ctx)
 	db := s.DB(ctx)
 
 	var user model.User
-	if err := db.First(&user, userID).Error; err != nil {
+	if err := db.First(&user, UserID(ctx)).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			log.Warnf("user not found for token: %s", err.Error())
 			return nil, tokenError

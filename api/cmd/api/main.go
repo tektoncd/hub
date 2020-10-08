@@ -72,8 +72,8 @@ func main() {
 	}
 
 	// Populate Tables
-	initializer := initializer.New(context.Background(), api)
-	if err := initializer.Run(); err != nil {
+	initializer := initializer.New(api)
+	if _, err := initializer.Run(context.Background()); err != nil {
 		logger.Fatalf("Failed to populate table: %v", err)
 	}
 

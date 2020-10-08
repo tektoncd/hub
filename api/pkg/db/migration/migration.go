@@ -34,6 +34,7 @@ func Migrate(api *app.APIBase) error {
 		gormigrate.DefaultOptions,
 		[]*gormigrate.Migration{
 			renameNameColumnToAgentNameInUserTable(log),
+			createConfigTable(log),
 		},
 	)
 
@@ -49,6 +50,7 @@ func Migrate(api *app.APIBase) error {
 			&model.UserResourceRating{},
 			&model.SyncJob{},
 			&model.Scope{},
+			&model.Config{},
 		).Error; err != nil {
 			log.Error(err)
 			return err

@@ -19,6 +19,13 @@
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
 
+- id: 13
+  github_name: foi-boi
+  github_login: foi
+  type: user
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+
 - id: 21
   github_name: abc-def
   github_login: abc

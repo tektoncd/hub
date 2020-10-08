@@ -22,6 +22,7 @@ import (
 )
 
 type Data struct {
+	Checksum   string
 	Catalogs   []Catalog
 	Categories []Category
 	Scopes     []Scope
