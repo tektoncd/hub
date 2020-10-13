@@ -28,34 +28,55 @@ func TestUpdateAgent(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with agent:create scope
+	user, _, err := tc.UserWithScopes("foo", "agent:create")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	adminSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), 11)
-	payload := &admin.UpdateAgentPayload{Name: "agent-007", Scopes: []string{"test:read"}}
+	ctx := auth.WithUserID(context.Background(), user.ID)
+	payload := &admin.UpdateAgentPayload{Name: "agent-007", Scopes: []string{"config:refresh"}}
 	res, err := adminSvc.UpdateAgent(ctx, payload)
 	assert.NoError(t, err)
-	assert.Equal(t, agentToken007, res.Token)
+
+	// expected jwt for agent-007
+	agent, agentToken, err := tc.AgentWithScopes("agent-007", "config:refresh")
+	assert.Equal(t, agent.AgentName, "agent-007")
+	assert.NoError(t, err)
+
+	assert.Equal(t, agentToken, res.Token)
 }
 
 func TestUpdateAgent_NormalUserExistsWithName(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with agent:create scope
+	user, _, err := tc.UserWithScopes("foo", "agent:create")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	adminSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), 11)
-	payload := &admin.UpdateAgentPayload{Name: "foo-bar", Scopes: []string{"test:read", "agent:create"}}
-	_, err := adminSvc.UpdateAgent(ctx, payload)
+	ctx := auth.WithUserID(context.Background(), user.ID)
+	payload := &admin.UpdateAgentPayload{Name: "foo", Scopes: []string{"config:refresh", "agent:create"}}
+	_, err = adminSvc.UpdateAgent(ctx, payload)
 	assert.Error(t, err)
-	assert.EqualError(t, err, "user exists with name: foo-bar")
+	assert.EqualError(t, err, "user exists with name: foo")
 }
 
 func TestUpdateAgent_InvalidScopeInPayload(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with agent:create scope
+	user, _, err := tc.UserWithScopes("foo", "agent:create")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	adminSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), 11)
+	ctx := auth.WithUserID(context.Background(), user.ID)
 	payload := &admin.UpdateAgentPayload{Name: "agent:007", Scopes: []string{"abc:read"}}
-	_, err := adminSvc.UpdateAgent(ctx, payload)
+	_, err = adminSvc.UpdateAgent(ctx, payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "scope does not exist: abc:read")
 }
@@ -64,10 +85,21 @@ func TestUpdateAgent_UpdateScopesCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with agent:create scope
+	user, _, err := tc.UserWithScopes("foo", "agent:create")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	adminSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), 11)
-	payload := &admin.UpdateAgentPayload{Name: "agent-001", Scopes: []string{"test:read", "agent:create"}}
+	ctx := auth.WithUserID(context.Background(), user.ID)
+	payload := &admin.UpdateAgentPayload{Name: "agent-001", Scopes: []string{"config:refresh", "agent:create"}}
 	res, err := adminSvc.UpdateAgent(ctx, payload)
 	assert.NoError(t, err)
-	assert.Equal(t, agentToken007Updated, res.Token)
+
+	// expected jwt for agent-001 after updating scopes
+	agent, agentToken, err := tc.AgentWithScopes("agent-001", "config:refresh", "agent:create")
+	assert.Equal(t, agent.AgentName, "agent-001")
+	assert.NoError(t, err)
+
+	assert.Equal(t, agentToken, res.Token)
 }

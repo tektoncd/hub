@@ -28,11 +28,6 @@ import (
 	"github.com/tektoncd/hub/api/pkg/testutils"
 )
 
-// Token for agent agent-001 with catalog:refresh scope
-const agentTokenWithCatalogRefreshScope = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-	"eyJpZCI6MzEsIm5hbWUiOiJhZ2VudC0wMDEiLCJzY29wZXMiOlsiY2F0YWxvZzpyZWZyZXNoIl0sInR5cGUiOiJhZ2VudCJ9." +
-	"-PSkMT2YJuM_WRtNmYJm5fpnUh47gLIL4Cdykz2lTFE"
-
 func RefreshChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	service := auth.NewService(tc.APIConfig, tc.JWTSigningKey())
 	checker := goahttpcheck.New()
@@ -46,10 +41,15 @@ func TestRefresh_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with catalog:refresh scope
+	agent, token, err := tc.AgentWithScopes("agent-001", "catalog:refresh")
+	assert.Equal(t, agent.AgentName, "agent-001")
+	assert.NoError(t, err)
+
 	data := []byte(`{"name": "catalog-official","org":"tektoncd"}`)
 
 	RefreshChecker(tc).Test(t, http.MethodPost, "/catalog/refresh").
-		WithHeader("Authorization", agentTokenWithCatalogRefreshScope).
+		WithHeader("Authorization", token).
 		WithBody(data).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)

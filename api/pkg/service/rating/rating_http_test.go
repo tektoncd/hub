@@ -22,23 +22,13 @@ import (
 
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
-	goa "goa.design/goa/v3/pkg"
-
 	"github.com/tektoncd/hub/api/gen/http/rating/server"
 	"github.com/tektoncd/hub/api/gen/rating"
+	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/service/auth"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	goa "goa.design/goa/v3/pkg"
 )
-
-// Token for the user with github name "foo-bar" and github login "foo"
-const validToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-	"eyJpZCI6MTEsImxvZ2luIjoiZm9vIiwibmFtZSI6ImZvby1iYXIiLCJzY29wZXMiOlsicmF0aW5nOnJlYWQiLCJyYXRpbmc6d3JpdGUiXX0." +
-	"AnQtXmPfyAE22XqYo95mzfyynsqr6pe5GADXutsmRaM"
-
-// Token with Invalid Scopes
-const tokenWithInvalidScope = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-	"eyJpZCI6MTIzLCJsb2dpbiI6ImZvbyIsIm5hbWUiOiJmb28tYmFyIiwic2NvcGVzIjpbImludmFsaWQ6c2NvcGUiXX0." +
-	"SEBQUE9aG8zHDuyAlV5R20h63-TBQjlDEyXxdPmCIX4"
 
 func GetChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	service := auth.NewService(tc.APIConfig, tc.JWTSigningKey())
@@ -72,8 +62,13 @@ func TestGet_Http_InvalidScopes(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// invalid user token, does not have required scopes
+	user, token, err := tc.UserWithScopes("abc", "catalog:refresh")
+	assert.Equal(t, user.GithubLogin, "abc")
+	assert.NoError(t, err)
+
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
-		WithHeader("Authorization", tokenWithInvalidScope).Check().
+		WithHeader("Authorization", token).Check().
 		HasStatus(403).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -91,8 +86,13 @@ func TestGet_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with rating:read scope
+	user, token, err := tc.UserWithScopes("foo", "rating:read")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
-		WithHeader("Authorization", validToken).Check().
+		WithHeader("Authorization", token).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -110,8 +110,13 @@ func TestGet_Http_RatingNotFound(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with rating:read scope
+	user, token, err := tc.UserWithScopes("foo", "rating:read")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/3/rating").
-		WithHeader("Authorization", validToken).Check().
+		WithHeader("Authorization", token).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -129,8 +134,13 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with rating:read scope
+	user, token, err := tc.UserWithScopes("foo", "rating:read")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/99/rating").
-		WithHeader("Authorization", validToken).Check().
+		WithHeader("Authorization", token).Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -157,22 +167,61 @@ func TestUpdate_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with rating:write scope
+	user, token, err := tc.UserWithScopes("foo", "rating:write")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	data := []byte(`{"rating": 5}`)
+
+	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/3/rating").
+		WithHeader("Authorization", token).
+		WithBody(data).Check().
+		HasStatus(200)
+
+	r := &model.UserResourceRating{ResourceID: 3, UserID: user.ID}
+	err = tc.DB().First(r).Error
+	assert.NoError(t, err)
+
+	assert.Equal(t, uint(5), r.Rating)
+}
+
+func TestUpdate_Http_Existing(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user with rating:write scope
+	user, token, err := tc.UserWithScopes("foo", "rating:write")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	data := []byte(`{"rating": 2}`)
 
 	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/1/rating").
-		WithHeader("Authorization", validToken).
+		WithHeader("Authorization", token).
 		WithBody(data).Check().
 		HasStatus(200)
+
+	r := &model.UserResourceRating{ResourceID: 1, UserID: user.ID}
+	err = tc.DB().First(r).Error
+	assert.NoError(t, err)
+
+	assert.Equal(t, uint(2), r.Rating)
 }
 
 func TestUpdate_Http_ResourceNotFound(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with rating:write scope
+	user, token, err := tc.UserWithScopes("foo", "rating:write")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	data := []byte(`{"rating": 2}`)
 
 	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/99/rating").
-		WithHeader("Authorization", validToken).
+		WithHeader("Authorization", token).
 		WithBody(data).Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
