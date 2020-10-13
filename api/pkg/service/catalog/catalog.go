@@ -55,11 +55,6 @@ func New(api app.Config) catalog.Service {
 // refresh the catalog for new resources
 func (s *service) Refresh(ctx context.Context, p *catalog.RefreshPayload) (*catalog.Job, error) {
 
-	user, err := s.User(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	log := s.Logger(ctx)
 	db := s.DB(ctx)
 
@@ -70,7 +65,7 @@ func (s *service) Refresh(ctx context.Context, p *catalog.RefreshPayload) (*cata
 		return nil, notFoundOrInternalError(err)
 	}
 
-	job, err := s.wq.Enqueue(user.ID, ctg.ID)
+	job, err := s.wq.Enqueue(auth.UserID(ctx), ctg.ID)
 	if err != nil {
 		return nil, err
 	}
