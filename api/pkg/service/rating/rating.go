@@ -38,9 +38,9 @@ type service struct {
 }
 
 type request struct {
-	db   *gorm.DB
-	log  *log.Logger
-	user *model.User
+	db     *gorm.DB
+	log    *log.Logger
+	userID uint
 }
 
 // New returns the rating service implementation.
@@ -51,15 +51,10 @@ func New(api app.Config) rating.Service {
 // Find user's rating for a resource
 func (s *service) Get(ctx context.Context, p *rating.GetPayload) (*rating.GetResult, error) {
 
-	user, err := s.User(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	req := request{
-		db:   s.DB(ctx),
-		log:  s.Logger(ctx),
-		user: user,
+		db:     s.DB(ctx),
+		log:    s.Logger(ctx),
+		userID: auth.UserID(ctx),
 	}
 
 	return req.getRating(p.ID)
@@ -68,15 +63,10 @@ func (s *service) Get(ctx context.Context, p *rating.GetPayload) (*rating.GetRes
 // Update user's rating for a resource
 func (s *service) Update(ctx context.Context, p *rating.UpdatePayload) error {
 
-	user, err := s.User(ctx)
-	if err != nil {
-		return err
-	}
-
 	req := request{
-		db:   s.DB(ctx),
-		log:  s.Logger(ctx),
-		user: user,
+		db:     s.DB(ctx),
+		log:    s.Logger(ctx),
+		userID: auth.UserID(ctx),
 	}
 
 	return req.updateRating(p.ID, p.Rating)
@@ -89,7 +79,7 @@ func (r *request) getRating(resID uint) (*rating.GetResult, error) {
 		return nil, err
 	}
 
-	q := r.db.Where(&model.UserResourceRating{UserID: r.user.ID, ResourceID: resID})
+	q := r.db.Where(&model.UserResourceRating{UserID: r.userID, ResourceID: resID})
 
 	userRating := model.UserResourceRating{}
 	if err := q.Find(&userRating).Error; err != nil {
@@ -119,7 +109,7 @@ func (r *request) updateRating(resID, userRating uint) error {
 
 func (r *request) updateUserRating(resID, rating uint) error {
 
-	q := r.db.Where(&model.UserResourceRating{UserID: r.user.ID, ResourceID: resID})
+	q := r.db.Where(&model.UserResourceRating{UserID: r.userID, ResourceID: resID})
 
 	rat := &model.UserResourceRating{}
 	if err := q.FirstOrInit(rat).Error; err != nil {
