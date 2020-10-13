@@ -24,36 +24,13 @@ import (
 
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
-	goa "goa.design/goa/v3/pkg"
-
 	"github.com/tektoncd/hub/api/gen/admin"
 	"github.com/tektoncd/hub/api/gen/http/admin/server"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/service/auth"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	goa "goa.design/goa/v3/pkg"
 )
-
-// Token for the user with github name "foo-bar" and github login "foo"
-// It has a scope "agent:create" along with default scope
-const validTokenWithAgentCreateScope = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-	"eyJpZCI6MTEsImxvZ2luIjoiZm9vIiwibmFtZSI6ImZvby1iYXIiLCJzY29wZXMiOlsicmF0aW5nOnJlYWQiLCJyYXRpbmc6d3JpdGUiLCJhZ2VudDpjcmVhdGUiXX0." +
-	"bKPINZyhzX2Ls1QM--UV56cC-vm5uymT8y-DmEhY1dE"
-
-// Token for the agent with name "agent-007" with scopes ["test:read"]
-const agentToken007 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-	"eyJpZCI6MTAwMDEsIm5hbWUiOiJhZ2VudC0wMDciLCJzY29wZXMiOlsidGVzdDpyZWFkIl0sInR5cGUiOiJhZ2VudCJ9." +
-	"x2qjMYZT55-V6fH0z0hVVdM8jQAsiMzyxKQK2iEUiQA"
-
-// Token for the agent with name "agent-007" with scopes ["test:read","agent:create"]
-const agentToken007Updated = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-	"eyJpZCI6MzEsIm5hbWUiOiJhZ2VudC0wMDEiLCJzY29wZXMiOlsidGVzdDpyZWFkIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhZ2VudCJ9." +
-	"0u_SkfkJjuq8jyax8jwLdAzHUl7J0g0a6jkN9gLoJl4"
-
-// Token for the user with github name "foi-boi" and github login "foi"
-// It has a extra scope "config:refresh" along with default scope
-const validTokenWithConfigRefreshScope = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-	"eyJpZCI6MTMsImxvZ2luIjoiZm9pIiwibmFtZSI6ImZvaS1ib2kiLCJzY29wZXMiOlsicmF0aW5nOnJlYWQiLCJyYXRpbmc6d3JpdGUiLCJjb25maWc6cmVmcmVzaCJdfQ." +
-	"7eA0J6xbOOkth2dsPd9z_VxmZVHjIwXamQWyCq-Jur8"
 
 func UpdateAgentChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	service := auth.NewService(tc.APIConfig, tc.JWTSigningKey())
@@ -64,14 +41,19 @@ func UpdateAgentChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	return checker
 }
 
-func TestUpdateAgent_Http(t *testing.T) {
+func TestUpdateAgent_Http_NewAgent(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	data := []byte(`{"name": "agent-007","scopes": ["test:read"]}`)
+	// user with agent:create scope
+	user, token, err := tc.UserWithScopes("foo", "agent:create")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	data := []byte(`{"name": "agent-007","scopes": ["catalog:refresh"]}`)
 
 	UpdateAgentChecker(tc).Test(t, http.MethodPut, "/system/user/agent").
-		WithHeader("Authorization", validTokenWithAgentCreateScope).WithBody(data).
+		WithHeader("Authorization", token).WithBody(data).
 		Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -82,7 +64,12 @@ func TestUpdateAgent_Http(t *testing.T) {
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, agentToken007, res.Token)
+		// expected jwt for agent-007
+		agent, agentToken, err := tc.AgentWithScopes("agent-007", "catalog:refresh")
+		assert.Equal(t, agent.AgentName, "agent-007")
+		assert.NoError(t, err)
+
+		assert.Equal(t, agentToken, res.Token)
 	})
 }
 
@@ -90,10 +77,15 @@ func TestUpdateAgent_Http_NormalUserExistWithName(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	data := []byte(`{"name": "foo-bar","scopes": ["test:read"]}`)
+	// user with agent:create scope
+	user, token, err := tc.UserWithScopes("foo", "agent:create")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	data := []byte(`{"name": "foo","scopes": ["catalog:refresh"]}`)
 
 	UpdateAgentChecker(tc).Test(t, http.MethodPut, "/system/user/agent").
-		WithHeader("Authorization", validTokenWithAgentCreateScope).WithBody(data).
+		WithHeader("Authorization", token).WithBody(data).
 		Check().
 		HasStatus(400).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -104,7 +96,7 @@ func TestUpdateAgent_Http_NormalUserExistWithName(t *testing.T) {
 		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
-		assert.EqualError(t, err, "user exists with name: foo-bar")
+		assert.EqualError(t, err, "user exists with name: foo")
 	})
 }
 
@@ -112,10 +104,15 @@ func TestUpdateAgent_Http_InvalidScopeCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with agent:create scope
+	user, token, err := tc.UserWithScopes("foo", "agent:create")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	data := []byte(`{"name": "agent-001","scopes": ["invalid:scope"]}`)
 
 	UpdateAgentChecker(tc).Test(t, http.MethodPut, "/system/user/agent").
-		WithHeader("Authorization", validTokenWithAgentCreateScope).WithBody(data).
+		WithHeader("Authorization", token).WithBody(data).
 		Check().
 		HasStatus(400).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -134,10 +131,15 @@ func TestUpdateAgent_Http_UpdateCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	data := []byte(`{"name": "agent-001","scopes": ["test:read","agent:create"]}`)
+	// user with agent:create scope
+	user, token, err := tc.UserWithScopes("foo", "agent:create")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	data := []byte(`{"name": "agent-001","scopes": ["catalog:refresh","agent:create"]}`)
 
 	UpdateAgentChecker(tc).Test(t, http.MethodPut, "/system/user/agent").
-		WithHeader("Authorization", validTokenWithAgentCreateScope).WithBody(data).
+		WithHeader("Authorization", token).WithBody(data).
 		Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -148,7 +150,12 @@ func TestUpdateAgent_Http_UpdateCase(t *testing.T) {
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, agentToken007Updated, res.Token)
+		// expected jwt for agent-001 after updating scopes
+		agent, agentToken, err := tc.AgentWithScopes("agent-001", "catalog:refresh", "agent:create")
+		assert.Equal(t, agent.AgentName, "agent-001")
+		assert.NoError(t, err)
+
+		assert.Equal(t, agentToken, res.Token)
 	})
 }
 
@@ -164,16 +171,21 @@ func TestRefreshConfig_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with config:refresh scope
+	user, token, err := tc.UserWithScopes("foo", "config:refresh")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	// DB is populated using text fixture, so it has by default value `testChecksum` in table
 	config := &model.Config{}
-	err := tc.DB().First(config).Error
+	err = tc.DB().First(config).Error
 	assert.NoError(t, err)
 	assert.Equal(t, "testChecksum", config.Checksum)
 
 	data := []byte(`{"force": false}`)
 
 	RefreshConfigChecker(tc).Test(t, http.MethodPost, "/system/config/refresh").
-		WithHeader("Authorization", validTokenWithConfigRefreshScope).
+		WithHeader("Authorization", token).
 		WithBody(data).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -196,16 +208,21 @@ func TestRefreshConfig_Http_ForceRefresh(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with config:refresh scope
+	user, token, err := tc.UserWithScopes("foo", "config:refresh")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	// DB is populated using text fixture, so it has by default value `testChecksum` in table
 	config := &model.Config{}
-	err := tc.DB().First(config).Error
+	err = tc.DB().First(config).Error
 	assert.NoError(t, err)
 	assert.Equal(t, "testChecksum", config.Checksum)
 
 	data := []byte(`{"force": true}`)
 
 	RefreshConfigChecker(tc).Test(t, http.MethodPost, "/system/config/refresh").
-		WithHeader("Authorization", validTokenWithConfigRefreshScope).
+		WithHeader("Authorization", token).
 		WithBody(data).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)

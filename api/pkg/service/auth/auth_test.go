@@ -20,10 +20,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/h2non/gock.v1"
-
 	"github.com/tektoncd/hub/api/gen/auth"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	"gopkg.in/h2non/gock.v1"
 )
 
 func TestLogin(t *testing.T) {
@@ -51,7 +50,13 @@ func TestLogin(t *testing.T) {
 	payload := &auth.AuthenticatePayload{Code: "test-code"}
 	res, err := authSvc.Authenticate(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, validToken, res.Token)
+
+	// expected user jwt with default scopes
+	user, token, err := tc.UserWithScopes("test", "rating:read", "rating:write")
+	assert.Equal(t, user.GithubLogin, "test")
+	assert.NoError(t, err)
+
+	assert.Equal(t, token, res.Token)
 	assert.Equal(t, gock.IsDone(), true)
 }
 
@@ -81,7 +86,13 @@ func TestLogin_again(t *testing.T) {
 	payload := &auth.AuthenticatePayload{Code: "test-code"}
 	res, err := authSvc.Authenticate(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, validToken, res.Token)
+
+	// expected user jwt with default scopes
+	user, token, err := tc.UserWithScopes("test", "rating:read", "rating:write")
+	assert.Equal(t, user.GithubLogin, "test")
+	assert.NoError(t, err)
+
+	assert.Equal(t, token, res.Token)
 
 	gock.New("https://github.com").
 		Post("/login/oauth/access_token").
@@ -89,10 +100,11 @@ func TestLogin_again(t *testing.T) {
 		JSON(map[string]string{
 			"access_token": "test-token-2",
 		})
+
 	payloadAgain := &auth.AuthenticatePayload{Code: "test-code-2"}
 	resAgain, err := authSvc.Authenticate(context.Background(), payloadAgain)
 	assert.NoError(t, err)
-	assert.Equal(t, validToken, resAgain.Token)
+	assert.Equal(t, token, resAgain.Token)
 	assert.Equal(t, gock.IsDone(), true)
 }
 
@@ -139,6 +151,12 @@ func TestLogin_UserWithExtraScope(t *testing.T) {
 	payload := &auth.AuthenticatePayload{Code: "foo-test"}
 	res, err := authSvc.Authenticate(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, validTokenWithExtraScope, res.Token)
+
+	// expected user jwt with scopes
+	user, token, err := tc.UserWithScopes("foo", "rating:read", "rating:write", "agent:create")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	assert.Equal(t, token, res.Token)
 	assert.Equal(t, gock.IsDone(), true)
 }

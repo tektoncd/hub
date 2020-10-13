@@ -19,7 +19,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
 	"github.com/tektoncd/hub/api/gen/rating"
 	"github.com/tektoncd/hub/api/pkg/service/auth"
 	"github.com/tektoncd/hub/api/pkg/testutils"
@@ -29,10 +28,14 @@ func TestGet(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ratingSvc := New(tc)
+	// user with rating:read scope
+	user, _, err := tc.UserWithScopes("foo", "rating:read")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
 
-	ctx := auth.WithUserID(context.Background(), 11)
-	payload := &rating.GetPayload{ID: 1, Token: "token"}
+	ratingSvc := New(tc)
+	ctx := auth.WithUserID(context.Background(), user.ID)
+	payload := &rating.GetPayload{ID: 1}
 	rat, err := ratingSvc.Get(ctx, payload)
 	assert.NoError(t, err)
 	assert.Equal(t, 5, rat.Rating)
@@ -42,9 +45,14 @@ func TestGet_RatingNotFound(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with rating:read scope
+	user, _, err := tc.UserWithScopes("foo", "rating:read")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	ratingSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), 11)
-	payload := &rating.GetPayload{ID: 3, Token: "token"}
+	ctx := auth.WithUserID(context.Background(), user.ID)
+	payload := &rating.GetPayload{ID: 3}
 	rat, err := ratingSvc.Get(ctx, payload)
 	assert.NoError(t, err)
 	assert.Equal(t, -1, rat.Rating)
@@ -54,10 +62,15 @@ func TestGet_ResourceNotFound(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with rating:read scope
+	user, _, err := tc.UserWithScopes("foo", "rating:read")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	ratingSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), 11)
-	payload := &rating.GetPayload{ID: 99, Token: "token"}
-	_, err := ratingSvc.Get(ctx, payload)
+	ctx := auth.WithUserID(context.Background(), user.ID)
+	payload := &rating.GetPayload{ID: 99}
+	_, err = ratingSvc.Get(ctx, payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "resource not found")
 }
@@ -66,10 +79,15 @@ func TestUpdate(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with rating:write scope
+	user, _, err := tc.UserWithScopes("foo", "rating:write")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	ratingSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), 11)
-	payload := &rating.UpdatePayload{ID: 1, Rating: 3, Token: "token"}
-	err := ratingSvc.Update(ctx, payload)
+	ctx := auth.WithUserID(context.Background(), user.ID)
+	payload := &rating.UpdatePayload{ID: 1, Rating: 3}
+	err = ratingSvc.Update(ctx, payload)
 	assert.NoError(t, err)
 }
 
@@ -77,10 +95,15 @@ func TestUpdate_ResourceNotFound(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with rating:write scope
+	user, _, err := tc.UserWithScopes("foo", "rating:write")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	ratingSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), 11)
-	payload := &rating.UpdatePayload{ID: 99, Rating: 3, Token: "token"}
-	err := ratingSvc.Update(ctx, payload)
+	ctx := auth.WithUserID(context.Background(), user.ID)
+	payload := &rating.UpdatePayload{ID: 99, Rating: 3}
+	err = ratingSvc.Update(ctx, payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "resource not found")
 }

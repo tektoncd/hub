@@ -19,7 +19,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
 	"github.com/tektoncd/hub/api/gen/catalog"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/service/auth"
@@ -42,8 +41,13 @@ func TestRefresh(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with catalog:refresh scope
+	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	catalogSvc := NewServiceTest(tc)
-	ctx := auth.WithUserID(context.Background(), 11)
+	ctx := auth.WithUserID(context.Background(), user.ID)
 
 	payload := &catalog.RefreshPayload{}
 	job, err := catalogSvc.Refresh(ctx, payload)
@@ -56,8 +60,13 @@ func TestRefreshAgain(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
+	// user with catalog:refresh scopes
+	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
 	catalogSvc := NewServiceTest(tc)
-	ctx := auth.WithUserID(context.Background(), 11)
+	ctx := auth.WithUserID(context.Background(), user.ID)
 
 	payload := &catalog.RefreshPayload{}
 	res, err := catalogSvc.Refresh(ctx, payload)

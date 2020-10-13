@@ -18,10 +18,3 @@
   rating: 5
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
-
-- id: 2
-  user_id: 21
-  resource_id: 1
-  rating: 5
-  created_at: 2016-01-01 12:30:12 UTC
-  updated_at: 2016-01-01 12:30:12 UTC

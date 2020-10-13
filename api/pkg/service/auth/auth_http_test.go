@@ -23,24 +23,12 @@ import (
 
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
-	goa "goa.design/goa/v3/pkg"
-	"gopkg.in/h2non/gock.v1"
-
 	"github.com/tektoncd/hub/api/gen/auth"
 	"github.com/tektoncd/hub/api/gen/http/auth/server"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	goa "goa.design/goa/v3/pkg"
+	"gopkg.in/h2non/gock.v1"
 )
-
-// Token for the user with github name "test-user" and github login "test"
-const validToken string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-	"eyJpZCI6MTAwMDEsImxvZ2luIjoidGVzdCIsIm5hbWUiOiJ0ZXN0LXVzZXIiLCJzY29wZXMiOlsicmF0aW5nOnJlYWQiLCJyYXRpbmc6d3JpdGUiXX0." +
-	"zFztueyvZLLCyx3RD7WpzzfVaTrybzxgS5a_pDsq5M8"
-
-// Token for the user with github name "foo-bar" and github login "foo"
-// It has a extra scope "agent:create" along with default scope
-const validTokenWithExtraScope = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-	"eyJpZCI6MTEsImxvZ2luIjoiZm9vIiwibmFtZSI6ImZvby1iYXIiLCJzY29wZXMiOlsicmF0aW5nOnJlYWQiLCJyYXRpbmc6d3JpdGUiLCJhZ2VudDpjcmVhdGUiXX0." +
-	"bKPINZyhzX2Ls1QM--UV56cC-vm5uymT8y-DmEhY1dE"
 
 func AuthenticateChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	checker := goahttpcheck.New()
@@ -86,7 +74,12 @@ func TestLogin_Http(t *testing.T) {
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, validToken, res.Token)
+		// expected jwt for user
+		user, token, err := tc.UserWithScopes("test", "rating:read", "rating:write")
+		assert.Equal(t, user.GithubLogin, "test")
+		assert.NoError(t, err)
+
+		assert.Equal(t, token, res.Token)
 		assert.Equal(t, gock.IsDone(), true)
 	})
 }
@@ -155,7 +148,12 @@ func TestLogin_Http_UserWithExtraScope(t *testing.T) {
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, validTokenWithExtraScope, res.Token)
+		// expected jwt for user
+		user, token, err := tc.UserWithScopes("foo", "rating:read", "rating:write", "agent:create")
+		assert.Equal(t, user.GithubLogin, "foo")
+		assert.NoError(t, err)
+
+		assert.Equal(t, token, res.Token)
 		assert.Equal(t, gock.IsDone(), true)
 	})
 }
