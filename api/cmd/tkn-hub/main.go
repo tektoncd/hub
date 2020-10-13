@@ -12,44 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package app
+package main
 
 import (
-	"io"
+	"os"
 
-	hub "github.com/tektoncd/hub/cli/pkg/hub"
+	"github.com/tektoncd/hub/api/pkg/cli/app"
+	"github.com/tektoncd/hub/api/pkg/cli/cmd"
 )
 
-type Stream struct {
-	Out io.Writer
-	Err io.Writer
-}
+func main() {
 
-type CLI interface {
-	Hub() hub.Client
-	Stream() Stream
-	SetStream(out, err io.Writer)
-}
-
-type cli struct {
-	hub    hub.Client
-	stream Stream
-}
-
-var _ CLI = (*cli)(nil)
-
-func New() *cli {
-	return &cli{hub: hub.NewClient()}
-}
-
-func (c *cli) Stream() Stream {
-	return c.stream
-}
-
-func (c *cli) SetStream(out, err io.Writer) {
-	c.stream = Stream{Out: out, Err: err}
-}
-
-func (c *cli) Hub() hub.Client {
-	return c.hub
+	cli := app.New()
+	hub := cmd.Root(cli)
+	if err := hub.Execute(); err != nil {
+		os.Exit(1)
+	}
 }

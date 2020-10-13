@@ -17,9 +17,9 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/tektoncd/hub/cli/pkg/app"
-	"github.com/tektoncd/hub/cli/pkg/cmd/search"
-	"github.com/tektoncd/hub/cli/pkg/hub"
+	"github.com/tektoncd/hub/api/pkg/cli/app"
+	"github.com/tektoncd/hub/api/pkg/cli/cmd/search"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 )
 
 // Root represents the base command when called without any subcommands
@@ -28,8 +28,11 @@ func Root(cli app.CLI) *cobra.Command {
 	apiURL := ""
 
 	cmd := &cobra.Command{
-		Use:          "tkn-hub",
-		Short:        "CLI for tekton hub",
+		Use: "hub",
+		Annotations: map[string]string{
+			"commandType": "main",
+		},
+		Short:        "Interact with tekton hub",
 		Long:         ``,
 		SilenceUsage: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {

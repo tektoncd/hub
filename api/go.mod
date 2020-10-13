@@ -11,6 +11,7 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.3.0
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.5.1
 	github.com/tektoncd/pipeline v0.15.2
@@ -40,3 +41,6 @@ replace (
 	k8s.io/code-generator => k8s.io/code-generator v0.17.6
 	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20200410145947-bcb3869e6f29
 )
+
+// Use the same Cobra as upstream tkn cli
+replace github.com/spf13/cobra => github.com/chmouel/cobra v0.0.0-20200107083527-379e7a80af0c

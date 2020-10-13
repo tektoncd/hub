@@ -22,10 +22,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	goa "goa.design/goa/v3/pkg"
 	"gopkg.in/h2non/gock.v1"
-	"gotest.tools/golden"
+	"gotest.tools/v3/golden"
 
 	res "github.com/tektoncd/hub/api/gen/resource"
-	"github.com/tektoncd/hub/cli/pkg/test"
+	"github.com/tektoncd/hub/api/pkg/cli/test"
 )
 
 const api string = "http://test.hub.cli"
