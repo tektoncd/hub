@@ -20,11 +20,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/tektoncd/hub/cli/pkg/app"
-	"github.com/tektoncd/hub/cli/pkg/flag"
-	"github.com/tektoncd/hub/cli/pkg/formatter"
-	"github.com/tektoncd/hub/cli/pkg/hub"
-	"github.com/tektoncd/hub/cli/pkg/printer"
+	"github.com/tektoncd/hub/api/pkg/cli/app"
+	"github.com/tektoncd/hub/api/pkg/cli/flag"
+	"github.com/tektoncd/hub/api/pkg/cli/formatter"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
+	"github.com/tektoncd/hub/api/pkg/cli/printer"
 )
 
 const resTemplate = `{{- $rl := len .Resources }}{{ if eq $rl 0 -}}
@@ -34,7 +34,7 @@ NAME	KIND	DESCRIPTION	TAGS
 {{ range $_, $r := .Resources -}}
 {{ formatName $r.Name $r.LatestVersion.Version }}	{{ $r.Kind }}	{{ formatDesc $r.LatestVersion.Description }}	{{ formatTags $r.Tags }}	
 {{ end }}
-{{- end -}} 
+{{- end -}}
 `
 
 var (
@@ -61,9 +61,12 @@ func Command(cli app.CLI) *cobra.Command {
 	opts := &options{cli: cli}
 
 	cmd := &cobra.Command{
-		Use:          "search",
-		Short:        "Search resource by combination of its name, kind, and tags",
-		Long:         ``,
+		Use:   "search",
+		Short: "Search resource by combination of its name, kind, and tags",
+		Long:  ``,
+		Annotations: map[string]string{
+			"commandType": "main",
+		},
 		SilenceUsage: true,
 		Args:         cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

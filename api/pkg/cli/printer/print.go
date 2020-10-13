@@ -20,7 +20,7 @@ import (
 	"text/tabwriter"
 	"text/template"
 
-	formatter "github.com/tektoncd/hub/cli/pkg/formatter"
+	"github.com/tektoncd/hub/api/pkg/cli/formatter"
 )
 
 type Printer struct {

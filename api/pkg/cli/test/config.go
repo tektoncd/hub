@@ -17,8 +17,8 @@ package test
 import (
 	"io"
 
-	"github.com/tektoncd/hub/cli/pkg/app"
-	"github.com/tektoncd/hub/cli/pkg/hub"
+	"github.com/tektoncd/hub/api/pkg/cli/app"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 )
 
 type cli struct {
