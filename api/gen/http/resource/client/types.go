@@ -77,7 +77,24 @@ type ByVersionIDResponseBody struct {
 
 // ByCatalogKindNameResponseBody is the type of the "resource" service
 // "ByCatalogKindName" endpoint HTTP response body.
-type ByCatalogKindNameResponseBody []*ResourceResponse
+type ByCatalogKindNameResponseBody struct {
+	// ID is the unique id of the resource
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name of resource
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Type of catalog to which resource belongs
+	Catalog *CatalogResponseBody `form:"catalog,omitempty" json:"catalog,omitempty" xml:"catalog,omitempty"`
+	// Kind of resource
+	Kind *string `form:"kind,omitempty" json:"kind,omitempty" xml:"kind,omitempty"`
+	// Latest version of resource
+	LatestVersion *VersionResponseBody `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
+	// Tags related to resource
+	Tags []*TagResponseBody `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
+	// Rating of resource
+	Rating *float64 `form:"rating,omitempty" json:"rating,omitempty" xml:"rating,omitempty"`
+	// List of all versions of a resource
+	Versions []*VersionResponseBody `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
+}
 
 // ByIDResponseBody is the type of the "resource" service "ById" endpoint HTTP
 // response body.
@@ -693,13 +710,26 @@ func NewByVersionIDNotFound(body *ByVersionIDNotFoundResponseBody) *goa.ServiceE
 	return v
 }
 
-// NewByCatalogKindNameResourceCollectionOK builds a "resource" service
+// NewByCatalogKindNameResourceOK builds a "resource" service
 // "ByCatalogKindName" endpoint result from a HTTP "OK" response.
-func NewByCatalogKindNameResourceCollectionOK(body ByCatalogKindNameResponseBody) resourceviews.ResourceCollectionView {
-	v := make([]*resourceviews.ResourceView, len(body))
-	for i, val := range body {
-		v[i] = unmarshalResourceResponseToResourceviewsResourceView(val)
+func NewByCatalogKindNameResourceOK(body *ByCatalogKindNameResponseBody) *resourceviews.ResourceView {
+	v := &resourceviews.ResourceView{
+		ID:     body.ID,
+		Name:   body.Name,
+		Kind:   body.Kind,
+		Rating: body.Rating,
 	}
+	v.Catalog = unmarshalCatalogResponseBodyToResourceviewsCatalogView(body.Catalog)
+	v.LatestVersion = unmarshalVersionResponseBodyToResourceviewsVersionView(body.LatestVersion)
+	v.Tags = make([]*resourceviews.TagView, len(body.Tags))
+	for i, val := range body.Tags {
+		v.Tags[i] = unmarshalTagResponseBodyToResourceviewsTagView(val)
+	}
+	v.Versions = make([]*resourceviews.VersionView, len(body.Versions))
+	for i, val := range body.Versions {
+		v.Versions[i] = unmarshalVersionResponseBodyToResourceviewsVersionView(val)
+	}
+
 	return v
 }
 

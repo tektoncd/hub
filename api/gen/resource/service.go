@@ -27,7 +27,7 @@ type Service interface {
 	// Find a resource using its version's id
 	ByVersionID(context.Context, *ByVersionIDPayload) (res *Version, err error)
 	// Find resources using name of catalog, resource name and kind of resource
-	ByCatalogKindName(context.Context, *ByCatalogKindNamePayload) (res ResourceCollection, err error)
+	ByCatalogKindName(context.Context, *ByCatalogKindNamePayload) (res *Resource, err error)
 	// Find a resource using it's id
 	ByID(context.Context, *ByIDPayload) (res *Resource, err error)
 }
@@ -134,13 +134,7 @@ type ByCatalogKindNamePayload struct {
 	Name string
 }
 
-// ByIDPayload is the payload type of the resource service ById method.
-type ByIDPayload struct {
-	// ID of a resource
-	ID uint
-}
-
-// Resource is the result type of the resource service ById method.
+// Resource is the result type of the resource service ByCatalogKindName method.
 type Resource struct {
 	// ID is the unique id of the resource
 	ID uint
@@ -158,6 +152,12 @@ type Resource struct {
 	Rating float64
 	// List of all versions of a resource
 	Versions []*Version
+}
+
+// ByIDPayload is the payload type of the resource service ById method.
+type ByIDPayload struct {
+	// ID of a resource
+	ID uint
 }
 
 type Catalog struct {

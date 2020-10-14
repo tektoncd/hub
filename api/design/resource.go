@@ -175,8 +175,8 @@ var _ = Service("resource", func() {
 			})
 			Required("catalog", "kind", "name")
 		})
-		Result(CollectionOf(Resource), func() {
-			View("withoutVersion")
+		Result(Resource, func() {
+			View("default")
 		})
 
 		HTTP(func() {

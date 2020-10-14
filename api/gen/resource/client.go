@@ -90,13 +90,13 @@ func (c *Client) ByVersionID(ctx context.Context, p *ByVersionIDPayload) (res *V
 
 // ByCatalogKindName calls the "ByCatalogKindName" endpoint of the "resource"
 // service.
-func (c *Client) ByCatalogKindName(ctx context.Context, p *ByCatalogKindNamePayload) (res ResourceCollection, err error) {
+func (c *Client) ByCatalogKindName(ctx context.Context, p *ByCatalogKindNamePayload) (res *Resource, err error) {
 	var ires interface{}
 	ires, err = c.ByCatalogKindNameEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(ResourceCollection), nil
+	return ires.(*Resource), nil
 }
 
 // ByID calls the "ById" endpoint of the "resource" service.

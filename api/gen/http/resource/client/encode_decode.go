@@ -600,13 +600,13 @@ func DecodeByCatalogKindNameResponse(decoder func(*http.Response) goahttp.Decode
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("resource", "ByCatalogKindName", err)
 			}
-			p := NewByCatalogKindNameResourceCollectionOK(body)
-			view := "withoutVersion"
-			vres := resourceviews.ResourceCollection{Projected: p, View: view}
-			if err = resourceviews.ValidateResourceCollection(vres); err != nil {
+			p := NewByCatalogKindNameResourceOK(&body)
+			view := "default"
+			vres := &resourceviews.Resource{Projected: p, View: view}
+			if err = resourceviews.ValidateResource(vres); err != nil {
 				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindName", err)
 			}
-			res := resource.NewResourceCollection(vres)
+			res := resource.NewResource(vres)
 			return res, nil
 		case http.StatusInternalServerError:
 			var (
@@ -904,6 +904,30 @@ func unmarshalByVersionIDResponseBodyToResourceviewsVersionView(v *ByVersionIDRe
 		UpdatedAt:           v.UpdatedAt,
 	}
 	res.Resource = unmarshalResourceResponseBodyToResourceviewsResourceView(v.Resource)
+
+	return res
+}
+
+// unmarshalByCatalogKindNameResponseBodyToResourceviewsResourceView builds a
+// value of type *resourceviews.ResourceView from a value of type
+// *ByCatalogKindNameResponseBody.
+func unmarshalByCatalogKindNameResponseBodyToResourceviewsResourceView(v *ByCatalogKindNameResponseBody) *resourceviews.ResourceView {
+	res := &resourceviews.ResourceView{
+		ID:     v.ID,
+		Name:   v.Name,
+		Kind:   v.Kind,
+		Rating: v.Rating,
+	}
+	res.Catalog = unmarshalCatalogResponseBodyToResourceviewsCatalogView(v.Catalog)
+	res.LatestVersion = unmarshalVersionResponseBodyToResourceviewsVersionView(v.LatestVersion)
+	res.Tags = make([]*resourceviews.TagView, len(v.Tags))
+	for i, val := range v.Tags {
+		res.Tags[i] = unmarshalTagResponseBodyToResourceviewsTagView(val)
+	}
+	res.Versions = make([]*resourceviews.VersionView, len(v.Versions))
+	for i, val := range v.Versions {
+		res.Versions[i] = unmarshalVersionResponseBodyToResourceviewsVersionView(val)
+	}
 
 	return res
 }

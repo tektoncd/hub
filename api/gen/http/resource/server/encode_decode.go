@@ -441,9 +441,9 @@ func EncodeByVersionIDError(encoder func(context.Context, http.ResponseWriter) g
 // the resource ByCatalogKindName endpoint.
 func EncodeByCatalogKindNameResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		res := v.(resourceviews.ResourceCollection)
+		res := v.(*resourceviews.Resource)
 		enc := encoder(ctx, w)
-		body := NewResourceResponseWithoutVersionCollection(res.Projected)
+		body := NewByCatalogKindNameResponseBody(res.Projected)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}

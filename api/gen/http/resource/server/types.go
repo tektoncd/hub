@@ -72,6 +72,27 @@ type ByVersionIDResponseBody struct {
 	Resource *ResourceResponseBodyInfo `form:"resource" json:"resource" xml:"resource"`
 }
 
+// ByCatalogKindNameResponseBody is the type of the "resource" service
+// "ByCatalogKindName" endpoint HTTP response body.
+type ByCatalogKindNameResponseBody struct {
+	// ID is the unique id of the resource
+	ID uint `form:"id" json:"id" xml:"id"`
+	// Name of resource
+	Name string `form:"name" json:"name" xml:"name"`
+	// Type of catalog to which resource belongs
+	Catalog *CatalogResponseBody `form:"catalog" json:"catalog" xml:"catalog"`
+	// Kind of resource
+	Kind string `form:"kind" json:"kind" xml:"kind"`
+	// Latest version of resource
+	LatestVersion *VersionResponseBodyWithoutResource `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
+	// Tags related to resource
+	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
+	// Rating of resource
+	Rating float64 `form:"rating" json:"rating" xml:"rating"`
+	// List of all versions of a resource
+	Versions []*VersionResponseBodyTiny `form:"versions" json:"versions" xml:"versions"`
+}
+
 // ByIDResponseBody is the type of the "resource" service "ById" endpoint HTTP
 // response body.
 type ByIDResponseBody struct {
@@ -542,6 +563,36 @@ func NewByVersionIDResponseBody(res *resourceviews.VersionView) *ByVersionIDResp
 	}
 	if res.Resource != nil {
 		body.Resource = marshalResourceviewsResourceViewToResourceResponseBodyInfo(res.Resource)
+	}
+	return body
+}
+
+// NewByCatalogKindNameResponseBody builds the HTTP response body from the
+// result of the "ByCatalogKindName" endpoint of the "resource" service.
+func NewByCatalogKindNameResponseBody(res *resourceviews.ResourceView) *ByCatalogKindNameResponseBody {
+	body := &ByCatalogKindNameResponseBody{
+		ID:     *res.ID,
+		Name:   *res.Name,
+		Kind:   *res.Kind,
+		Rating: *res.Rating,
+	}
+	if res.Catalog != nil {
+		body.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBody(res.Catalog)
+	}
+	if res.LatestVersion != nil {
+		body.LatestVersion = marshalResourceviewsVersionViewToVersionResponseBodyWithoutResource(res.LatestVersion)
+	}
+	if res.Tags != nil {
+		body.Tags = make([]*TagResponseBody, len(res.Tags))
+		for i, val := range res.Tags {
+			body.Tags[i] = marshalResourceviewsTagViewToTagResponseBody(val)
+		}
+	}
+	if res.Versions != nil {
+		body.Versions = make([]*VersionResponseBodyTiny, len(res.Versions))
+		for i, val := range res.Versions {
+			body.Versions[i] = marshalResourceviewsVersionViewToVersionResponseBodyTiny(val)
+		}
 	}
 	return body
 }

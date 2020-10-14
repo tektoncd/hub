@@ -51,7 +51,7 @@ func New(api app.BaseConfig) resource.Service {
 }
 
 // Find resources based on name, kind or both
-func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (res resource.ResourceCollection, err error) {
+func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (resource.ResourceCollection, error) {
 
 	// Validate the kinds passed are supported by Hub
 	for _, k := range p.Kinds {
@@ -74,32 +74,24 @@ func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (res reso
 		withResourceDetails,
 	).Limit(p.Limit)
 
-	req := request{
-		db:  q,
-		log: s.Logger(ctx),
-	}
-
-	return req.resourcesForQuery()
+	req := request{db: q, log: s.Logger(ctx)}
+	return req.findAllResources()
 }
 
 // List all resources sorted by rating and name
-func (s *service) List(ctx context.Context, p *resource.ListPayload) (res resource.ResourceCollection, err error) {
+func (s *service) List(ctx context.Context, p *resource.ListPayload) (resource.ResourceCollection, error) {
 
 	db := s.DB(ctx)
 
 	q := db.Scopes(withResourceDetails).
 		Limit(p.Limit)
 
-	req := request{
-		db:  q,
-		log: s.Logger(ctx),
-	}
-
-	return req.resourcesForQuery()
+	req := request{db: q, log: s.Logger(ctx)}
+	return req.findAllResources()
 }
 
 // VersionsByID returns all versions of a resource given its resource id
-func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayload) (res *resource.Versions, err error) {
+func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayload) (*resource.Versions, error) {
 
 	log := s.Logger(ctx)
 	db := s.DB(ctx)
@@ -116,7 +108,7 @@ func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayl
 		return nil, notFoundError
 	}
 
-	res = &resource.Versions{}
+	res := &resource.Versions{}
 	for _, r := range all {
 		res.Versions = append(res.Versions, minVersionInfo(r))
 	}
@@ -126,7 +118,7 @@ func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayl
 }
 
 // find resource using name of catalog & name, kind and version of resource
-func (s *service) ByCatalogKindNameVersion(ctx context.Context, p *resource.ByCatalogKindNameVersionPayload) (res *resource.Version, err error) {
+func (s *service) ByCatalogKindNameVersion(ctx context.Context, p *resource.ByCatalogKindNameVersionPayload) (*resource.Version, error) {
 
 	log := s.Logger(ctx)
 	db := s.DB(ctx)
@@ -138,7 +130,7 @@ func (s *service) ByCatalogKindNameVersion(ctx context.Context, p *resource.ByCa
 		filterResourceName("exact", p.Name))
 
 	var r model.Resource
-	if err := findOne(q, &r); err != nil {
+	if err := findOne(q, log, &r); err != nil {
 		return nil, err
 	}
 
@@ -155,14 +147,13 @@ func (s *service) ByCatalogKindNameVersion(ctx context.Context, p *resource.ByCa
 }
 
 // find a resource using its version's id
-func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayload) (res *resource.Version, err error) {
+func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayload) (*resource.Version, error) {
 
 	db := s.DB(ctx)
-
 	q := db.Scopes(withResourceVersionDetails, filterByVersionID(p.VersionID))
 
 	var v model.ResourceVersion
-	if err := findOne(q, &v); err != nil {
+	if err := findOne(q, s.Logger(ctx), &v); err != nil {
 		return nil, err
 	}
 
@@ -170,7 +161,7 @@ func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayloa
 }
 
 // find resources using name of catalog, resource name and kind of resource
-func (s *service) ByCatalogKindName(ctx context.Context, p *resource.ByCatalogKindNamePayload) (res resource.ResourceCollection, err error) {
+func (s *service) ByCatalogKindName(ctx context.Context, p *resource.ByCatalogKindNamePayload) (*resource.Resource, error) {
 
 	db := s.DB(ctx)
 
@@ -180,37 +171,37 @@ func (s *service) ByCatalogKindName(ctx context.Context, p *resource.ByCatalogKi
 		filterByKind(p.Kind),
 		filterResourceName("exact", p.Name))
 
-	req := request{
-		db:  q,
-		log: s.Logger(ctx),
-	}
-
-	return req.resourcesForQuery()
+	req := &request{db: q, log: s.Logger(ctx)}
+	return req.findSingleResource()
 }
 
 // Find a resource using it's id
-func (s *service) ByID(ctx context.Context, p *resource.ByIDPayload) (res *resource.Resource, err error) {
+func (s *service) ByID(ctx context.Context, p *resource.ByIDPayload) (*resource.Resource, error) {
 
 	db := s.DB(ctx)
 
-	q := db.Scopes(withResourceDetails,
-		filterByID(p.ID))
+	q := db.Scopes(withResourceDetails, filterByID(p.ID))
 
-	var r model.Resource
-	if err := findOne(q, &r); err != nil {
+	req := &request{db: q, log: s.Logger(ctx)}
+	return req.findSingleResource()
+}
+
+func (r *request) findSingleResource() (*resource.Resource, error) {
+
+	var resource model.Resource
+	if err := findOne(r.db, r.log, &resource); err != nil {
 		return nil, err
 	}
 
-	res = initResource(r)
-
-	for _, v := range r.Versions {
+	res := initResource(resource)
+	for _, v := range resource.Versions {
 		res.Versions = append(res.Versions, tinyVersionInfo(v))
 	}
 
 	return res, nil
 }
 
-func (r *request) resourcesForQuery() (resource.ResourceCollection, error) {
+func (r *request) findAllResources() (resource.ResourceCollection, error) {
 
 	var rs []model.Resource
 	if err := r.db.Find(&rs).Error; err != nil {
@@ -368,16 +359,17 @@ func orderByTags(db *gorm.DB) *gorm.DB {
 }
 
 func orderByVersion(db *gorm.DB) *gorm.DB {
-	return db.Order("string_to_array(version, '.')::int[];")
+	return db.Order("string_to_array(version, '.')::int[]")
 }
 
-func findOne(db *gorm.DB, result interface{}) error {
+func findOne(db *gorm.DB, log *log.Logger, result interface{}) error {
 
-	err := db.Find(result).Error
+	err := db.First(result).Error
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return notFoundError
 		}
+		log.Error(err)
 		return fetchError
 	}
 	return nil
