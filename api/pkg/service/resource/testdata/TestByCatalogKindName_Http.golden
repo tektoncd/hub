@@ -1,29 +1,41 @@
-[
-	{
-		"id": 3,
-		"name": "img",
-		"catalog": {
+{
+	"id": 1,
+	"name": "tekton",
+	"catalog": {
+		"id": 1,
+		"name": "catalog-official",
+		"type": "official"
+	},
+	"kind": "task",
+	"latestVersion": {
+		"id": 5,
+		"version": "0.2",
+		"displayName": "Tekton CLI",
+		"description": "Desc1",
+		"minPipelinesVersion": "0.12.1",
+		"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.2/tekton.yaml",
+		"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml",
+		"updatedAt": "2016-01-01 12:30:12 +0000 UTC"
+	},
+	"tags": [
+		{
+			"id": 2,
+			"name": "rtag"
+		}
+	],
+	"rating": 5,
+	"versions": [
+		{
 			"id": 1,
-			"name": "catalog-official",
-			"type": "official"
+			"version": "0.1"
 		},
-		"kind": "task",
-		"latestVersion": {
-			"id": 3,
-			"version": "0.1",
-			"displayName": "Image",
-			"description": "Desc3",
-			"minPipelinesVersion": "0.12.1",
-			"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/img/0.1/img.yaml",
-			"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/img/0.1/img.yaml",
-			"updatedAt": "2016-01-01 12:30:12 +0000 UTC"
+		{
+			"id": 6,
+			"version": "0.1.1"
 		},
-		"tags": [
-			{
-				"id": 3,
-				"name": "ptag"
-			}
-		],
-		"rating": 2
-	}
-]
+		{
+			"id": 5,
+			"version": "0.2"
+		}
+	]
+}
