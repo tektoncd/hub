@@ -268,7 +268,7 @@ func TestByCatalogKindName(t *testing.T) {
 	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-community", Kind: "task", Name: "img"}
 	res, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, len(res))
+	assert.Equal(t, "img", res.Name)
 }
 
 func TestByCatalogKindName_NoCatalogWithName(t *testing.T) {

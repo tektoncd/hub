@@ -127,7 +127,7 @@ func NewByCatalogKindNameEndpoint(s Service) goa.Endpoint {
 		if err != nil {
 			return nil, err
 		}
-		vres := NewViewedResourceCollection(res, "withoutVersion")
+		vres := NewViewedResource(res, "default")
 		return vres, nil
 	}
 }

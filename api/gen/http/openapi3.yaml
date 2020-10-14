@@ -451,9 +451,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourceResponseWithoutVersionCollection'
+                $ref: '#/components/schemas/ByCatalogKindNameResponseBody'
               example:
-              - catalog:
+                catalog:
                   id: 1
                   type: community
                 id: 1
@@ -472,44 +472,11 @@ paths:
                 tags:
                 - id: 1
                   name: image-build
-              - catalog:
-                  id: 1
-                  type: community
-                id: 1
-                kind: task
-                latestVersion:
-                  description: Buildah task builds source into a container image and then pushes it to a container registry.
-                  displayName: Buildah
-                  id: 1
-                  minPipelinesVersion: 0.12.1
-                  rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                  updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                  version: "0.1"
-                  webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                name: buildah
-                rating: 4.3
-                tags:
+                versions:
                 - id: 1
-                  name: image-build
-              - catalog:
-                  id: 1
-                  type: community
-                id: 1
-                kind: task
-                latestVersion:
-                  description: Buildah task builds source into a container image and then pushes it to a container registry.
-                  displayName: Buildah
-                  id: 1
-                  minPipelinesVersion: 0.12.1
-                  rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                  updatedAt: 2020-01-01 12:00:00 +0000 UTC
                   version: "0.1"
-                  webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                name: buildah
-                rating: 4.3
-                tags:
-                - id: 1
-                  name: image-build
+                - id: 2
+                  version: "0.2"
         "404":
           description: ""
           content:
@@ -659,7 +626,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ByIDResponseBody'
+                $ref: '#/components/schemas/ByCatalogKindNameResponseBody'
               example:
                 catalog:
                   id: 1
@@ -1296,6 +1263,83 @@ components:
         token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAwMDEsImxvZ2luIjoidGVzdCIsIm5hbWUiOiJ0ZXN0LXVzZXIiLCJzY29wZXMiOlsicmF0aW5nOnJlYWQiLCJyYXRpbmc6d3JpdGUiXX0.zFztueyvZLLCyx3RD7WpzzfVaTrybzxgS5a_pDsq5M8
       required:
       - token
+    ByCatalogKindNameResponseBody:
+      type: object
+      properties:
+        catalog:
+          $ref: '#/components/schemas/Catalog'
+        id:
+          type: integer
+          description: ID is the unique id of the resource
+          example: 1
+        kind:
+          type: string
+          description: Kind of resource
+          example: task
+        latestVersion:
+          $ref: '#/components/schemas/Version'
+        name:
+          type: string
+          description: Name of resource
+          example: buildah
+        rating:
+          type: number
+          description: Rating of resource
+          example: 4.3
+          format: double
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          description: Tags related to resource
+          example:
+          - id: 1
+            name: image-build
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Version3'
+          description: List of all versions of a resource
+          example:
+          - id: 1
+            version: "0.1"
+          - id: 2
+            version: "0.2"
+      description: ByCatalogKindNameResponseBody result type (default view)
+      example:
+        catalog:
+          id: 1
+          type: community
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        name: buildah
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+        versions:
+        - id: 1
+          version: "0.1"
+        - id: 2
+          version: "0.2"
+      required:
+      - id
+      - name
+      - catalog
+      - kind
+      - latestVersion
+      - tags
+      - rating
+      - versions
     ByCatalogKindNameVersionResponseBody:
       type: object
       properties:
@@ -1367,83 +1411,6 @@ components:
       - webURL
       - updatedAt
       - resource
-    ByIDResponseBody:
-      type: object
-      properties:
-        catalog:
-          $ref: '#/components/schemas/Catalog'
-        id:
-          type: integer
-          description: ID is the unique id of the resource
-          example: 1
-        kind:
-          type: string
-          description: Kind of resource
-          example: task
-        latestVersion:
-          $ref: '#/components/schemas/Version'
-        name:
-          type: string
-          description: Name of resource
-          example: buildah
-        rating:
-          type: number
-          description: Rating of resource
-          example: 4.3
-          format: double
-        tags:
-          type: array
-          items:
-            $ref: '#/components/schemas/Tag'
-          description: Tags related to resource
-          example:
-          - id: 1
-            name: image-build
-        versions:
-          type: array
-          items:
-            $ref: '#/components/schemas/Version3'
-          description: List of all versions of a resource
-          example:
-          - id: 1
-            version: "0.1"
-          - id: 2
-            version: "0.2"
-      description: ByIdResponseBody result type (default view)
-      example:
-        catalog:
-          id: 1
-          type: community
-        id: 1
-        kind: task
-        latestVersion:
-          description: Buildah task builds source into a container image and then pushes it to a container registry.
-          displayName: Buildah
-          id: 1
-          minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-          updatedAt: 2020-01-01 12:00:00 +0000 UTC
-          version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-        name: buildah
-        rating: 4.3
-        tags:
-        - id: 1
-          name: image-build
-        versions:
-        - id: 1
-          version: "0.1"
-        - id: 2
-          version: "0.2"
-      required:
-      - id
-      - name
-      - catalog
-      - kind
-      - latestVersion
-      - tags
-      - rating
-      - versions
     Catalog:
       type: object
       properties:

@@ -400,7 +400,7 @@ func TestByCatalogKindName_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/task/img").Check().
+	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/task/tekton").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
