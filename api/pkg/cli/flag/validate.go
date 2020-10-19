@@ -28,8 +28,8 @@ func InList(option, val string, list []string) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("invalid value %q set for option %s. Valid options: [ %s ]",
-		val, option, strings.Join(list, ","))
+	return fmt.Errorf("invalid value %q set for option %s. Valid options: [%s]",
+		val, option, strings.Join(list, ", "))
 }
 
 // TrimArray Splits the array by `,` & ' '(space) and returns an array
@@ -37,4 +37,14 @@ func InList(option, val string, list []string) error {
 func TrimArray(arr []string) []string {
 	input := strings.Trim(fmt.Sprint(arr), "[]")
 	return strings.FieldsFunc(input, func(r rune) bool { return r == ' ' || r == ',' })
+}
+
+// AllEmpty checks if all the passed arrays are empty
+func AllEmpty(arr ...[]string) bool {
+	for _, a := range arr {
+		if len(a) != 0 {
+			return false
+		}
+	}
+	return true
 }

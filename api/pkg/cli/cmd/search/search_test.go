@@ -20,12 +20,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	res "github.com/tektoncd/hub/api/gen/resource"
+	"github.com/tektoncd/hub/api/pkg/cli/test"
 	goa "goa.design/goa/v3/pkg"
 	"gopkg.in/h2non/gock.v1"
 	"gotest.tools/v3/golden"
-
-	res "github.com/tektoncd/hub/api/gen/resource"
-	"github.com/tektoncd/hub/api/pkg/cli/test"
 )
 
 const api string = "http://test.hub.cli"
@@ -100,30 +99,37 @@ func TestValidate(t *testing.T) {
 
 func TestValidate_ErrorCases(t *testing.T) {
 
-	opt := options{
+	opt := options{}
+	err := opt.validate()
+	assert.Error(t, err)
+	assert.EqualError(t, err, "please specify a name, tag or a kind to search")
+
+	opt = options{
 		Kinds:  []string{"abc"},
 		Match:  "exact",
 		Output: "table",
 	}
-	err := opt.validate()
+	err = opt.validate()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "invalid value \"abc\" set for option kinds. Valid options: [task, pipeline]")
+	assert.EqualError(t, err, "invalid value \"abc\" set for option kinds. supported kinds: [task, pipeline]")
 
 	opt = options{
+		Kinds:  []string{"task"},
 		Match:  "abc",
 		Output: "table",
 	}
 	err = opt.validate()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "invalid value \"abc\" set for option match. Valid options: [ contains,exact ]")
+	assert.EqualError(t, err, "invalid value \"abc\" set for option match. Valid options: [contains, exact]")
 
 	opt = options{
+		Kinds:  []string{"task"},
 		Match:  "exact",
 		Output: "abc",
 	}
 	err = opt.validate()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "invalid value \"abc\" set for option output. Valid options: [ table,json ]")
+	assert.EqualError(t, err, "invalid value \"abc\" set for option output. Valid options: [table, json]")
 }
 
 func TestSearch_TableFormat(t *testing.T) {
