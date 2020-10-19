@@ -15,16 +15,17 @@
 package search
 
 import (
+	"fmt"
 	"strings"
 	"text/template"
 
 	"github.com/spf13/cobra"
-
 	"github.com/tektoncd/hub/api/pkg/cli/app"
 	"github.com/tektoncd/hub/api/pkg/cli/flag"
 	"github.com/tektoncd/hub/api/pkg/cli/formatter"
 	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/printer"
+	"github.com/tektoncd/hub/api/pkg/parser"
 )
 
 const resTemplate = `{{- $rl := len .Resources }}{{ if eq $rl 0 -}}
@@ -121,6 +122,11 @@ func (opts *options) run() error {
 }
 
 func (opts *options) validate() error {
+
+	if flag.AllEmpty(opts.Args, opts.Kinds, opts.Tags) {
+		return fmt.Errorf("please specify a name, tag or a kind to search")
+	}
+
 	if err := flag.InList("match", opts.Match, []string{"contains", "exact"}); err != nil {
 		return err
 	}
@@ -133,8 +139,9 @@ func (opts *options) validate() error {
 	opts.Tags = flag.TrimArray(opts.Tags)
 
 	for _, k := range opts.Kinds {
-		if err := flag.Kind(k).IsValid(); err != nil {
-			return err
+		if !parser.IsSupportedKind(k) {
+			return fmt.Errorf("invalid value %q set for option kinds. supported kinds: [%s]",
+				k, strings.ToLower(strings.Join(parser.SupportedKinds(), ", ")))
 		}
 	}
 	return nil

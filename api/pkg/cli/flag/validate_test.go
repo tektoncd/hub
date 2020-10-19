@@ -28,7 +28,7 @@ func TestInList(t *testing.T) {
 
 	// Invalid Case
 	err = InList("match", "xyz", []string{"abc", "def"})
-	assert.EqualError(t, err, "invalid value \"xyz\" set for option match. Valid options: [ abc,def ]")
+	assert.EqualError(t, err, "invalid value \"xyz\" set for option match. Valid options: [abc, def]")
 }
 
 func TestTrimArray(t *testing.T) {
