@@ -57,14 +57,27 @@ type options struct {
 	args   []string
 }
 
+var examples string = `
+Search a resource of name 'foo':
+
+    tkn hub search foo
+
+or
+
+Search resources using tag 'cli':
+
+    tkn hub search --tags cli
+`
+
 func Command(cli app.CLI) *cobra.Command {
 
 	opts := &options{cli: cli}
 
 	cmd := &cobra.Command{
-		Use:   "search",
-		Short: "Search resource by a combination of name, kind, and tags",
-		Long:  ``,
+		Use:     "search",
+		Short:   "Search resource by a combination of name, kind, and tags",
+		Long:    ``,
+		Example: examples,
 		Annotations: map[string]string{
 			"commandType": "main",
 		},
