@@ -27,8 +27,6 @@ import (
 	"gotest.tools/v3/golden"
 )
 
-const api string = "http://test.hub.cli"
-
 var res1 = &res.Resource{
 	ID:   1,
 	Name: "foo",
@@ -78,19 +76,19 @@ var res2 = &res.Resource{
 
 func TestValidate(t *testing.T) {
 	opt := options{
-		Kinds:  []string{"pipeline"},
-		Tags:   []string{"abc,def", "mno"},
-		Match:  "exact",
-		Output: "table",
+		kinds:  []string{"pipeline"},
+		tags:   []string{"abc,def", "mno"},
+		match:  "exact",
+		output: "table",
 	}
 
 	err := opt.validate()
 	assert.NoError(t, err)
 
 	opt = options{
-		Args:   []string{"abc"},
-		Match:  "contains",
-		Output: "json",
+		args:   []string{"abc"},
+		match:  "contains",
+		output: "json",
 	}
 
 	err = opt.validate()
@@ -105,27 +103,27 @@ func TestValidate_ErrorCases(t *testing.T) {
 	assert.EqualError(t, err, "please specify a name, tag or a kind to search")
 
 	opt = options{
-		Kinds:  []string{"abc"},
-		Match:  "exact",
-		Output: "table",
+		kinds:  []string{"abc"},
+		match:  "exact",
+		output: "table",
 	}
 	err = opt.validate()
 	assert.Error(t, err)
 	assert.EqualError(t, err, "invalid value \"abc\" set for option kinds. supported kinds: [task, pipeline]")
 
 	opt = options{
-		Kinds:  []string{"task"},
-		Match:  "abc",
-		Output: "table",
+		kinds:  []string{"task"},
+		match:  "abc",
+		output: "table",
 	}
 	err = opt.validate()
 	assert.Error(t, err)
 	assert.EqualError(t, err, "invalid value \"abc\" set for option match. Valid options: [contains, exact]")
 
 	opt = options{
-		Kinds:  []string{"task"},
-		Match:  "exact",
-		Output: "abc",
+		kinds:  []string{"task"},
+		match:  "exact",
+		output: "abc",
 	}
 	err = opt.validate()
 	assert.Error(t, err)
@@ -135,14 +133,11 @@ func TestValidate_ErrorCases(t *testing.T) {
 func TestSearch_TableFormat(t *testing.T) {
 	cli := test.NewCLI()
 
-	err := cli.Hub().SetURL(api)
-	assert.NoError(t, err)
-
 	defer gock.Off()
 	rArr := res.ResourceCollection{res1, res2}
 	res := res.NewViewedResourceCollection(rArr, "withoutVersion")
 
-	gock.New(api).
+	gock.New(test.API).
 		Get("/query").
 		Reply(200).
 		JSON(&res.Projected)
@@ -152,12 +147,12 @@ func TestSearch_TableFormat(t *testing.T) {
 
 	opt := &options{
 		cli:    cli,
-		Args:   []string{"foo"},
-		Match:  "contains",
-		Output: "table",
+		args:   []string{"foo"},
+		match:  "contains",
+		output: "table",
 	}
 
-	err = opt.run()
+	err := opt.run()
 	assert.NoError(t, err)
 	golden.Assert(t, buf.String(), fmt.Sprintf("%s.golden", t.Name()))
 	assert.Equal(t, gock.IsDone(), true)
@@ -166,14 +161,11 @@ func TestSearch_TableFormat(t *testing.T) {
 func TestSearch_JSONFormat(t *testing.T) {
 	cli := test.NewCLI()
 
-	err := cli.Hub().SetURL(api)
-	assert.NoError(t, err)
-
 	defer gock.Off()
 	rArr := res.ResourceCollection{res2}
 	res := res.NewViewedResourceCollection(rArr, "withoutVersion")
 
-	gock.New(api).
+	gock.New(test.API).
 		Get("/query").
 		Reply(200).
 		JSON(&res.Projected)
@@ -183,12 +175,12 @@ func TestSearch_JSONFormat(t *testing.T) {
 
 	opt := &options{
 		cli:    cli,
-		Args:   []string{"foo-bar"},
-		Match:  "exact",
-		Output: "json",
+		args:   []string{"foo-bar"},
+		match:  "exact",
+		output: "json",
 	}
 
-	err = opt.run()
+	err := opt.run()
 	assert.NoError(t, err)
 	golden.Assert(t, buf.String(), fmt.Sprintf("%s.golden", t.Name()))
 	assert.Equal(t, gock.IsDone(), true)
@@ -197,12 +189,9 @@ func TestSearch_JSONFormat(t *testing.T) {
 func TestSearch_ResourceNotFound(t *testing.T) {
 	cli := test.NewCLI()
 
-	err := cli.Hub().SetURL(api)
-	assert.NoError(t, err)
-
 	defer gock.Off()
 
-	gock.New(api).
+	gock.New(test.API).
 		Get("/query").
 		Reply(404).
 		JSON(&goa.ServiceError{
@@ -216,12 +205,12 @@ func TestSearch_ResourceNotFound(t *testing.T) {
 
 	opt := &options{
 		cli:    cli,
-		Args:   []string{"xyz"},
-		Match:  "exact",
-		Output: "json",
+		args:   []string{"xyz"},
+		match:  "exact",
+		output: "json",
 	}
 
-	err = opt.run()
+	err := opt.run()
 	assert.NoError(t, err)
 	assert.Equal(t, gock.IsDone(), true)
 }
@@ -229,12 +218,9 @@ func TestSearch_ResourceNotFound(t *testing.T) {
 func TestSearch_InternalServerError(t *testing.T) {
 	cli := test.NewCLI()
 
-	err := cli.Hub().SetURL(api)
-	assert.NoError(t, err)
-
 	defer gock.Off()
 
-	gock.New(api).
+	gock.New(test.API).
 		Get("/query").
 		Reply(500).
 		JSON(&goa.ServiceError{
@@ -248,12 +234,12 @@ func TestSearch_InternalServerError(t *testing.T) {
 
 	opt := &options{
 		cli:    cli,
-		Args:   []string{"xyz"},
-		Match:  "exact",
-		Output: "json",
+		args:   []string{"xyz"},
+		match:  "exact",
+		output: "json",
 	}
 
-	err = opt.run()
+	err := opt.run()
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Internal server Error: consider filing a bug report")
 	assert.Equal(t, gock.IsDone(), true)

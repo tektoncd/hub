@@ -16,6 +16,7 @@ package flag
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -47,4 +48,16 @@ func AllEmpty(arr ...[]string) bool {
 		}
 	}
 	return true
+}
+
+// ValidateVersion validates version format
+func ValidateVersion(version string) error {
+	if version == "" {
+		return nil
+	}
+	var re = regexp.MustCompile(`^(\d+\.)?(\d+\.)?(\*|\d+)$`)
+	if !re.MatchString(version) {
+		return fmt.Errorf("invalid value %q set for option version. valid eg. 0.1, 1.2.1", version)
+	}
+	return nil
 }

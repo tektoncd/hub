@@ -43,6 +43,15 @@ type SearchResult struct {
 	err       error
 }
 
+// Search queries the data using Hub Endpoint
+func (h *client) Search(so SearchOption) SearchResult {
+	data, status, err := h.Get(so.Endpoint())
+	if status == http.StatusNotFound {
+		err = nil
+	}
+	return SearchResult{data: data, status: status, err: err}
+}
+
 // Raw returns API response as byte array
 func (sr *SearchResult) Raw() ([]byte, error) {
 	return sr.data, sr.err

@@ -38,3 +38,17 @@ func TestTrimArray(t *testing.T) {
 	want := []string{"a", "b", "abc", "xyz", "mno"}
 	assert.Equal(t, want, res)
 }
+
+func TestValidateVersion(t *testing.T) {
+
+	// Valid Case
+	err := ValidateVersion("0.1")
+	assert.NoError(t, err)
+
+	err = ValidateVersion("0.1.1")
+	assert.NoError(t, err)
+
+	// Invalid Case
+	err = ValidateVersion("abc")
+	assert.EqualError(t, err, "invalid value \"abc\" set for option version. valid eg. 0.1, 1.2.1")
+}
