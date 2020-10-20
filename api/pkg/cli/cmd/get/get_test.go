@@ -141,9 +141,9 @@ func TestGet_WithoutVersion(t *testing.T) {
 	cli.SetStream(buf, buf)
 
 	opt := &options{
-		cli:     cli,
-		args:    []string{"foo"},
-		catalog: "tekton",
+		cli:  cli,
+		args: []string{"foo"},
+		from: "tekton",
 	}
 
 	err := opt.run()
@@ -174,7 +174,7 @@ func TestGet_WithVersion(t *testing.T) {
 	opt := &options{
 		cli:     cli,
 		args:    []string{"foo"},
-		catalog: "tekton",
+		from:    "tekton",
 		version: "0.3",
 	}
 
@@ -202,9 +202,9 @@ func TestGet_ResourceNotFound(t *testing.T) {
 	cli.SetStream(buf, buf)
 
 	opt := &options{
-		cli:     cli,
-		args:    []string{"xyz"},
-		catalog: "tekton",
+		cli:  cli,
+		args: []string{"xyz"},
+		from: "tekton",
 	}
 
 	err := opt.run()

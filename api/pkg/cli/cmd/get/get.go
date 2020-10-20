@@ -26,11 +26,23 @@ import (
 
 type options struct {
 	cli     app.CLI
-	catalog string
+	from    string
 	version string
 	kind    string
 	args    []string
 }
+
+var cmdExamples string = `
+Get a %s of name 'foo':
+
+    tkn hub get %s foo
+
+or
+
+Get a %s of name 'foo' of version '0.3':
+
+    tkn hub get %s foo --version 0.3
+`
 
 func Command(cli app.CLI) *cobra.Command {
 
@@ -51,7 +63,7 @@ func Command(cli app.CLI) *cobra.Command {
 		commandForKind("pipeline", opts),
 	)
 
-	cmd.PersistentFlags().StringVar(&opts.catalog, "catalog", "tekton", "Name of Catalog to which resource belongs to.")
+	cmd.PersistentFlags().StringVar(&opts.from, "from", "tekton", "Name of Catalog to which resource belongs to.")
 	cmd.PersistentFlags().StringVar(&opts.version, "version", "", "Version of Resource")
 
 	return cmd
@@ -66,6 +78,7 @@ func commandForKind(kind string, opts *options) *cobra.Command {
 		Short:        "Get " + kind + " by name, catalog and version",
 		Long:         ``,
 		SilenceUsage: true,
+		Example:      examples(kind),
 		Annotations: map[string]string{
 			"commandType": "main",
 		},
@@ -88,7 +101,7 @@ func (opts *options) run() error {
 
 	resource := hubClient.GetResource(hub.ResourceOption{
 		Name:    opts.name(),
-		Catalog: opts.catalog,
+		Catalog: opts.from,
 		Kind:    opts.kind,
 		Version: opts.version,
 	})
@@ -103,4 +116,8 @@ func (opts *options) validate() error {
 
 func (opts *options) name() string {
 	return strings.TrimSpace(opts.args[0])
+}
+
+func examples(kind string) string {
+	return strings.ReplaceAll(cmdExamples, "%s", kind)
 }
