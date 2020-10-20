@@ -49,12 +49,12 @@ var (
 
 type options struct {
 	cli    app.CLI
-	Limit  uint
-	Match  string
-	Output string
-	Tags   []string
-	Kinds  []string
-	Args   []string
+	limit  uint
+	match  string
+	output string
+	tags   []string
+	kinds  []string
+	args   []string
 }
 
 func Command(cli app.CLI) *cobra.Command {
@@ -63,7 +63,7 @@ func Command(cli app.CLI) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "search",
-		Short: "Search resource by combination of its name, kind, and tags",
+		Short: "Search resource by a combination of name, kind, and tags",
 		Long:  ``,
 		Annotations: map[string]string{
 			"commandType": "main",
@@ -71,16 +71,16 @@ func Command(cli app.CLI) *cobra.Command {
 		SilenceUsage: true,
 		Args:         cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			opts.Args = args
+			opts.args = args
 			return opts.run()
 		},
 	}
 
-	cmd.Flags().UintVarP(&opts.Limit, "limit", "l", 0, "Max number of resources to fetch")
-	cmd.Flags().StringVar(&opts.Match, "match", "contains", "Accept type of search. 'exact' or 'contains'.")
-	cmd.Flags().StringArrayVar(&opts.Kinds, "kinds", nil, "Accepts a comma separated list of kinds")
-	cmd.Flags().StringArrayVar(&opts.Tags, "tags", nil, "Accepts a comma separated list of tags")
-	cmd.Flags().StringVarP(&opts.Output, "output", "o", "table", "Accepts output format: [table, json]")
+	cmd.Flags().UintVarP(&opts.limit, "limit", "l", 0, "Max number of resources to fetch")
+	cmd.Flags().StringVar(&opts.match, "match", "contains", "Accept type of search. 'exact' or 'contains'.")
+	cmd.Flags().StringArrayVar(&opts.kinds, "kinds", nil, "Accepts a comma separated list of kinds")
+	cmd.Flags().StringArrayVar(&opts.tags, "tags", nil, "Accepts a comma separated list of tags")
+	cmd.Flags().StringVarP(&opts.output, "output", "o", "table", "Accepts output format: [table, json]")
 
 	return cmd
 }
@@ -95,15 +95,15 @@ func (opts *options) run() error {
 
 	result := hubClient.Search(hub.SearchOption{
 		Name:  opts.name(),
-		Kinds: opts.Kinds,
-		Tags:  opts.Tags,
-		Match: opts.Match,
-		Limit: opts.Limit,
+		Kinds: opts.kinds,
+		Tags:  opts.tags,
+		Match: opts.match,
+		Limit: opts.limit,
 	})
 
 	out := opts.cli.Stream().Out
 
-	if opts.Output == "json" {
+	if opts.output == "json" {
 		return printer.New(out).JSON(result.Raw())
 	}
 
@@ -123,22 +123,22 @@ func (opts *options) run() error {
 
 func (opts *options) validate() error {
 
-	if flag.AllEmpty(opts.Args, opts.Kinds, opts.Tags) {
+	if flag.AllEmpty(opts.args, opts.kinds, opts.tags) {
 		return fmt.Errorf("please specify a name, tag or a kind to search")
 	}
 
-	if err := flag.InList("match", opts.Match, []string{"contains", "exact"}); err != nil {
+	if err := flag.InList("match", opts.match, []string{"contains", "exact"}); err != nil {
 		return err
 	}
 
-	if err := flag.InList("output", opts.Output, []string{"table", "json"}); err != nil {
+	if err := flag.InList("output", opts.output, []string{"table", "json"}); err != nil {
 		return err
 	}
 
-	opts.Kinds = flag.TrimArray(opts.Kinds)
-	opts.Tags = flag.TrimArray(opts.Tags)
+	opts.kinds = flag.TrimArray(opts.kinds)
+	opts.tags = flag.TrimArray(opts.tags)
 
-	for _, k := range opts.Kinds {
+	for _, k := range opts.kinds {
 		if !parser.IsSupportedKind(k) {
 			return fmt.Errorf("invalid value %q set for option kinds. supported kinds: [%s]",
 				k, strings.ToLower(strings.Join(parser.SupportedKinds(), ", ")))
@@ -148,8 +148,8 @@ func (opts *options) validate() error {
 }
 
 func (opts *options) name() string {
-	if len(opts.Args) == 0 {
+	if len(opts.args) == 0 {
 		return ""
 	}
-	return strings.TrimSpace(opts.Args[0])
+	return strings.TrimSpace(opts.args[0])
 }

@@ -22,13 +22,15 @@ import (
 )
 
 const (
-	URL = "https://api.hub.tekton.dev"
+	// hubURL - Hub API Server URL
+	hubURL = "https://api.hub.tekton.dev"
 )
 
 type Client interface {
 	SetURL(u string) error
-	FetchData(endpoint string) ([]byte, int, error)
+	Get(endpoint string) ([]byte, int, error)
 	Search(opt SearchOption) SearchResult
+	GetResource(opt ResourceOption) ResourceResult
 }
 
 type client struct {
@@ -38,7 +40,12 @@ type client struct {
 var _ Client = (*client)(nil)
 
 func NewClient() *client {
-	return &client{apiURL: URL}
+	return &client{apiURL: hubURL}
+}
+
+// URL returns the Hub API Server URL
+func URL() string {
+	return hubURL
 }
 
 // SetURL validates and sets the hub apiURL server URL
@@ -53,20 +60,14 @@ func (h *client) SetURL(apiURL string) error {
 	return nil
 }
 
-// FetchData gets data from Hub
-func (h *client) FetchData(endpoint string) ([]byte, int, error) {
-	resp, err := http.Get(h.apiURL + endpoint)
-	if err != nil {
-		return nil, 0, err
-	}
-	defer resp.Body.Close()
-
-	data, err := ioutil.ReadAll(resp.Body)
+// Get gets data from Hub
+func (h *client) Get(endpoint string) ([]byte, int, error) {
+	data, status, err := httpGet(h.apiURL + endpoint)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	switch resp.StatusCode {
+	switch status {
 	case http.StatusOK:
 		err = nil
 	case http.StatusNotFound:
@@ -77,14 +78,21 @@ func (h *client) FetchData(endpoint string) ([]byte, int, error) {
 		err = fmt.Errorf("Invalid Response from server")
 	}
 
-	return data, resp.StatusCode, err
+	return data, status, err
 }
 
-// Search queries the data using Hub Endpoint
-func (h *client) Search(so SearchOption) SearchResult {
-	data, status, err := h.FetchData(so.Endpoint())
-	if status == http.StatusNotFound {
-		err = nil
+// httpGet gets raw data given the url
+func httpGet(url string) ([]byte, int, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, 0, err
 	}
-	return SearchResult{data: data, status: status, err: err}
+	defer resp.Body.Close()
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return data, resp.StatusCode, err
 }

@@ -12,43 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package test
+package hub
 
 import (
-	"io"
+	"testing"
 
-	"github.com/tektoncd/hub/api/pkg/cli/app"
-	"github.com/tektoncd/hub/api/pkg/cli/hub"
+	"github.com/stretchr/testify/assert"
 )
 
-// API is test URL
-const API string = "http://test.hub.cli"
+func TestGetResourceEndpoint(t *testing.T) {
 
-type cli struct {
-	hub    hub.Client
-	stream app.Stream
-}
-
-var _ app.CLI = (*cli)(nil)
-
-func NewCLI() *cli {
-	h := hub.NewClient()
-	h.SetURL(API)
-
-	return &cli{
-		stream: app.Stream{},
-		hub:    h,
+	opt := ResourceOption{
+		Version: "",
+		Catalog: "tekton",
+		Name:    "abc",
+		Kind:    "task",
 	}
-}
+	url := opt.Endpoint()
+	assert.Equal(t, "/resource/tekton/task/abc", url)
 
-func (c *cli) Stream() app.Stream {
-	return c.stream
-}
-
-func (c *cli) SetStream(out, err io.Writer) {
-	c.stream = app.Stream{Out: out, Err: err}
-}
-
-func (c *cli) Hub() hub.Client {
-	return c.hub
+	opt.Version = "0.1.1"
+	url = opt.Endpoint()
+	assert.Equal(t, "/resource/tekton/task/abc/0.1.1", url)
 }

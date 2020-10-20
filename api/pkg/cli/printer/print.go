@@ -54,3 +54,13 @@ func (p *Printer) Tabbed(tmpl *template.Template, templateData interface{}) erro
 
 	return tmpl.Execute(w, templateData)
 }
+
+// Raw prints the raw byte array to printer's output stream
+func (p *Printer) Raw(data []byte, err error) error {
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintln(p.out, string(data))
+	return nil
+}
