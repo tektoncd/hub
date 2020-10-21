@@ -1,6 +1,7 @@
 import { Catalog, CatalogStore } from './catalog';
 import { getSnapshot } from 'mobx-state-tree';
 import { assert } from './utils';
+import { Icons } from '../common/icons';
 
 describe('Store Object', () => {
   it('can create a catalog object', () => {
@@ -68,6 +69,24 @@ describe('Store Object', () => {
     store.clearSelected();
 
     expect(catalogs.selected).toBe(false);
+
+    done();
+  });
+
+  it('can get an icon for catalog', (done) => {
+    const store = CatalogStore.create({});
+
+    const item = Catalog.create({
+      id: 1,
+      name: 'tekton',
+      type: 'community'
+    });
+
+    store.add(item);
+
+    const catalog = store.items.get('1');
+    assert(catalog);
+    expect(catalog.icon).toBe(Icons.User);
 
     done();
   });

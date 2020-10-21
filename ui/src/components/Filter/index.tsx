@@ -1,14 +1,21 @@
 import React from 'react';
 import { useObserver } from 'mobx-react';
+
 import { Button, Checkbox, Text, TextVariants, Grid, GridItem } from '@patternfly/react-core';
-import TimesIcon from '@patternfly/react-icons/dist/js/icons/times-icon';
+import { IconSize, TimesIcon } from '@patternfly/react-icons';
+
+import Icon from '../Icon';
+import { titleCase } from '../../common/titlecase';
+
 import './Filter.css';
+import { Icons } from '../../common/icons';
 
 interface Filterable {
   id?: number;
   name: string;
   selected: boolean;
   toggle(): void;
+  icon?: Icons;
 }
 
 interface Store {
@@ -21,11 +28,18 @@ interface Props {
   header: string;
 }
 
+const labelWithIcon = (label: string, icon?: Icons) => (
+  <div>
+    {icon && <Icon id={icon} size={IconSize.sm} label={label} />}
+    {titleCase(label)}
+  </div>
+);
+
 const checkboxes = (values: Filterable[]) => {
   return values.map((c: Filterable) => (
     <Checkbox
       key={c.name}
-      label={c.name}
+      label={labelWithIcon(c.name, c.icon)}
       isChecked={c.selected}
       onChange={() => c.toggle()}
       aria-label="controlled checkbox"
