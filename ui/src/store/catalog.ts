@@ -1,4 +1,11 @@
 import { Instance, types } from 'mobx-state-tree';
+import { Icons } from '../common/icons';
+
+const icons: { [catalog: string]: Icons } = {
+  official: Icons.Cat,
+  verified: Icons.Certificate,
+  community: Icons.User
+};
 
 export const Catalog = types
   .model({
@@ -10,6 +17,11 @@ export const Catalog = types
   .actions((self) => ({
     toggle() {
       self.selected = !self.selected;
+    }
+  }))
+  .views((self) => ({
+    get icon(): Icons {
+      return icons[self.type] || Icons.Unknown;
     }
   }));
 

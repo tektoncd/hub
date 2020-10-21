@@ -1,6 +1,7 @@
 import { Kind, KindStore } from './kind';
 import { getSnapshot } from 'mobx-state-tree';
 import { assert } from './utils';
+import { Icons } from '../common/icons';
 
 describe('Store Object', () => {
   it('can create a kind object', () => {
@@ -63,6 +64,22 @@ describe('Store Object', () => {
 
     store.clearSelected();
     expect(kinds.selected).toBe(false);
+
+    done();
+  });
+
+  it('should get an icon for kind', (done) => {
+    const store = KindStore.create({});
+
+    const item = {
+      name: 'Task'
+    };
+
+    store.add(item.name);
+
+    const kind = store.items.get('Task');
+    assert(kind);
+    expect(kind.icon).toBe(Icons.Build);
 
     done();
   });

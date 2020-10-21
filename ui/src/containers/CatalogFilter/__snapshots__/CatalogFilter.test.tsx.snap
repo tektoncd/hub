@@ -32,19 +32,37 @@ exports[`CatalogFilter finds the filter component and matches the count 1`] = `
             </GridItem>
             <GridItem span={12}>
               <div className=\\"pf-l-grid__item pf-m-12-col\\">
-                <Checkbox label=\\"tekton\\" isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"1\\" name=\\"tekton\\" className=\\"\\" isValid={true} isDisabled={false}>
+                <Checkbox label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"1\\" name=\\"tekton\\" className=\\"\\" isValid={true} isDisabled={false}>
                   <div className=\\"pf-c-check\\">
                     <input id=\\"1\\" name=\\"tekton\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"1\\">
-                      tekton
+                      <div>
+                        <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\">
+                          <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                            <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                              <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                            </svg>
+                          </UserIcon>
+                        </Icon>
+                        Tekton
+                      </div>
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox label=\\"tekton-hub\\" isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"2\\" name=\\"tekton-hub\\" className=\\"\\" isValid={true} isDisabled={false}>
+                <Checkbox label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"2\\" name=\\"tekton-hub\\" className=\\"\\" isValid={true} isDisabled={false}>
                   <div className=\\"pf-c-check\\">
                     <input id=\\"2\\" name=\\"tekton-hub\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"2\\">
-                      tekton-hub
+                      <div>
+                        <Icon id=\\"cat\\" size=\\"sm\\" label=\\"tekton-hub\\">
+                          <CatIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton-hub\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                            <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 512 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton-hub\\">
+                              <path d=\\"M290.59 192c-20.18 0-106.82 1.98-162.59 85.95V192c0-52.94-43.06-96-96-96-17.67 0-32 14.33-32 32s14.33 32 32 32c17.64 0 32 14.36 32 32v256c0 35.3 28.7 64 64 64h176c8.84 0 16-7.16 16-16v-16c0-17.67-14.33-32-32-32h-32l128-96v144c0 8.84 7.16 16 16 16h32c8.84 0 16-7.16 16-16V289.86c-10.29 2.67-20.89 4.54-32 4.54-61.81 0-113.52-44.05-125.41-102.4zM448 96h-64l-64-64v134.4c0 53.02 42.98 96 96 96s96-42.98 96-96V32l-64 64zm-72 80c-8.84 0-16-7.16-16-16s7.16-16 16-16 16 7.16 16 16-7.16 16-16 16zm80 0c-8.84 0-16-7.16-16-16s7.16-16 16-16 16 7.16 16 16-7.16 16-16 16z\\" transform=\\"\\" />
+                            </svg>
+                          </CatIcon>
+                        </Icon>
+                        Tekton-hub
+                      </div>
                     </label>
                   </div>
                 </Checkbox>

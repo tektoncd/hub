@@ -1,4 +1,10 @@
 import { types, Instance } from 'mobx-state-tree';
+import { Icons } from '../common/icons';
+
+const icons: { [kind: string]: Icons } = {
+  Task: Icons.Build,
+  Pipeline: Icons.Domain
+};
 
 export const Kind = types
   .model({
@@ -8,6 +14,11 @@ export const Kind = types
   .actions((self) => ({
     toggle() {
       self.selected = !self.selected;
+    }
+  }))
+  .views((self) => ({
+    get icon(): Icons {
+      return icons[self.name] || Icons.Unknown;
     }
   }));
 

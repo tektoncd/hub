@@ -10,7 +10,7 @@ const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
 const { Provider, root } = createProviderAndStore(api);
 
-describe('CategoryFilter', () => {
+describe('KindFilter', () => {
   it('finds the filter component and matches the count', (done) => {
     const component = mount(
       <Provider>
