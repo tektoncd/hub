@@ -46,11 +46,11 @@ func TestFormatTags(t *testing.T) {
 	tagName1 := "tag1"
 	tagName2 := "tag2"
 
-	res := []*client.TagResponse{
-		&client.TagResponse{
+	res := []*client.TagResponseBody{
+		&client.TagResponseBody{
 			Name: &tagName1,
 		},
-		&client.TagResponse{
+		&client.TagResponseBody{
 			Name: &tagName2,
 		},
 	}
