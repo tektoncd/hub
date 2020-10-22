@@ -1,26 +1,28 @@
-[
-	{
-		"ID": 2,
-		"Name": "foo-bar",
-		"Catalog": {
-			"ID": 1,
-			"Name": "",
-			"Type": "community"
-		},
-		"Kind": "Pipeline",
-		"LatestVersion": {
-			"ID": 12,
-			"Version": "0.2",
-			"DisplayName": "foo-bar-0.1",
-			"Description": "Description for pipeline foo-bar version 0.2",
-			"MinPipelinesVersion": "0.12",
-			"RawURL": "http://raw.github.url/foo-bar/",
-			"WebURL": "http://web.github.com/foo-bar/",
-			"UpdatedAt": "2020-01-01 12:00:00 +0000 UTC",
-			"Resource": null
-		},
-		"Tags": [],
-		"Rating": 4,
-		"Versions": null
-	}
-]
+{
+	"Data": [
+		{
+			"ID": 2,
+			"Name": "foo-bar",
+			"Catalog": {
+				"ID": 1,
+				"Name": "",
+				"Type": "community"
+			},
+			"Kind": "Pipeline",
+			"LatestVersion": {
+				"ID": 12,
+				"Version": "0.2",
+				"DisplayName": "foo-bar-0.1",
+				"Description": "Description for pipeline foo-bar version 0.2",
+				"MinPipelinesVersion": "0.12",
+				"RawURL": "http://raw.github.url/foo-bar/",
+				"WebURL": "http://web.github.com/foo-bar/",
+				"UpdatedAt": "2020-01-01 12:00:00 +0000 UTC",
+				"Resource": null
+			},
+			"Tags": [],
+			"Rating": 4,
+			"Versions": null
+		}
+	]
+}

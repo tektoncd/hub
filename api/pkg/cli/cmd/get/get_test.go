@@ -39,7 +39,7 @@ Get a Abc of name 'foo' of version '0.3':
     tkn hub get abc foo --version 0.3
 `
 
-var resource = &res.Resource{
+var resource = &res.ResourceData{
 	ID:   1,
 	Name: "foo",
 	Kind: "Task",
@@ -49,7 +49,7 @@ var resource = &res.Resource{
 		Type: "community",
 	},
 	Rating: 4.8,
-	LatestVersion: &res.Version{
+	LatestVersion: &res.ResourceVersionData{
 		ID:                  11,
 		Version:             "0.1",
 		Description:         "Description for task abc version 0.1",
@@ -69,15 +69,15 @@ var resource = &res.Resource{
 			Name: "tag1",
 		},
 	},
-	Versions: []*res.Version{
-		&res.Version{
+	Versions: []*res.ResourceVersionData{
+		&res.ResourceVersionData{
 			ID:      11,
 			Version: "0.1",
 		},
 	},
 }
 
-var resVersion = &res.Version{
+var resVersion = &res.ResourceVersionData{
 	ID:                  11,
 	Version:             "0.3",
 	DisplayName:         "foo",
@@ -86,7 +86,7 @@ var resVersion = &res.Version{
 	RawURL:              "http://raw.github.url/foo/0.3/foo.yaml",
 	WebURL:              "http://web.github.com/foo/0.3/foo.yaml",
 	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
-	Resource: &res.Resource{
+	Resource: &res.ResourceData{
 		ID:   1,
 		Name: "foo",
 		Kind: "Task",
@@ -136,6 +136,7 @@ func TestGet_WithoutVersion(t *testing.T) {
 
 	defer gock.Off()
 
+	resource := &res.Resource{Data: resource}
 	res := res.NewViewedResource(resource, "default")
 	gock.New(test.API).
 		Get("/resource").
@@ -167,7 +168,8 @@ func TestGet_WithVersion(t *testing.T) {
 
 	defer gock.Off()
 
-	res := res.NewViewedVersion(resVersion, "default")
+	resVersion := &res.ResourceVersion{Data: resVersion}
+	res := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource").
 		Reply(200).

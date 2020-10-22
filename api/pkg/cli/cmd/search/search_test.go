@@ -27,7 +27,7 @@ import (
 	"gotest.tools/v3/golden"
 )
 
-var res1 = &res.Resource{
+var res1 = &res.ResourceData{
 	ID:   1,
 	Name: "foo",
 	Kind: "Task",
@@ -36,7 +36,7 @@ var res1 = &res.Resource{
 		Type: "community",
 	},
 	Rating: 4.8,
-	LatestVersion: &res.Version{
+	LatestVersion: &res.ResourceVersionData{
 		ID:                  11,
 		Version:             "0.1",
 		Description:         "Description for task abc version 0.1",
@@ -52,7 +52,7 @@ var res1 = &res.Resource{
 	},
 }
 
-var res2 = &res.Resource{
+var res2 = &res.ResourceData{
 	ID:   2,
 	Name: "foo-bar",
 	Kind: "Pipeline",
@@ -61,7 +61,7 @@ var res2 = &res.Resource{
 		Type: "community",
 	},
 	Rating: 4,
-	LatestVersion: &res.Version{
+	LatestVersion: &res.ResourceVersionData{
 		ID:                  12,
 		Version:             "0.2",
 		Description:         "Description for pipeline foo-bar version 0.2",
@@ -134,8 +134,8 @@ func TestSearch_TableFormat(t *testing.T) {
 	cli := test.NewCLI()
 
 	defer gock.Off()
-	rArr := res.ResourceCollection{res1, res2}
-	res := res.NewViewedResourceCollection(rArr, "withoutVersion")
+	rArr := &res.Resources{Data: res.ResourceDataCollection{res1, res2}}
+	res := res.NewViewedResources(rArr, "withoutVersion")
 
 	gock.New(test.API).
 		Get("/query").
@@ -162,8 +162,8 @@ func TestSearch_JSONFormat(t *testing.T) {
 	cli := test.NewCLI()
 
 	defer gock.Off()
-	rArr := res.ResourceCollection{res2}
-	res := res.NewViewedResourceCollection(rArr, "withoutVersion")
+	rArr := &res.Resources{Data: res.ResourceDataCollection{res2}}
+	res := res.NewViewedResources(rArr, "withoutVersion")
 
 	gock.New(test.API).
 		Get("/query").
