@@ -31,8 +31,8 @@ func TestCategory_List(t *testing.T) {
 	all, err := category.List(context.Background())
 
 	assert.NoError(t, err)
-	assert.Equal(t, 3, len(all))
-	assert.Equal(t, 2, len(all[0].Tags))
-	assert.Equal(t, "abc", all[0].Name)          // categories are sorted by name
-	assert.Equal(t, "atag", all[0].Tags[0].Name) // tags are sorted by name
+	assert.Equal(t, 3, len(all.Data))
+	assert.Equal(t, 2, len(all.Data[0].Tags))
+	assert.Equal(t, "abc", all.Data[0].Name)          // categories are sorted by name
+	assert.Equal(t, "atag", all.Data[0].Tags[0].Name) // tags are sorted by name
 }

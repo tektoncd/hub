@@ -51,7 +51,7 @@ func New(api app.BaseConfig) resource.Service {
 }
 
 // Find resources based on name, kind or both
-func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (resource.ResourceCollection, error) {
+func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (*resource.Resources, error) {
 
 	// Validate the kinds passed are supported by Hub
 	for _, k := range p.Kinds {
@@ -79,7 +79,7 @@ func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (resource
 }
 
 // List all resources sorted by rating and name
-func (s *service) List(ctx context.Context, p *resource.ListPayload) (resource.ResourceCollection, error) {
+func (s *service) List(ctx context.Context, p *resource.ListPayload) (*resource.Resources, error) {
 
 	db := s.DB(ctx)
 
@@ -91,7 +91,7 @@ func (s *service) List(ctx context.Context, p *resource.ListPayload) (resource.R
 }
 
 // VersionsByID returns all versions of a resource given its resource id
-func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayload) (*resource.Versions, error) {
+func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayload) (*resource.ResourceVersions, error) {
 
 	log := s.Logger(ctx)
 	db := s.DB(ctx)
@@ -114,11 +114,11 @@ func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayl
 	}
 	res.Latest = minVersionInfo(all[len(all)-1])
 
-	return res, nil
+	return &resource.ResourceVersions{Data: res}, nil
 }
 
 // find resource using name of catalog & name, kind and version of resource
-func (s *service) ByCatalogKindNameVersion(ctx context.Context, p *resource.ByCatalogKindNameVersionPayload) (*resource.Version, error) {
+func (s *service) ByCatalogKindNameVersion(ctx context.Context, p *resource.ByCatalogKindNameVersionPayload) (*resource.ResourceVersion, error) {
 
 	log := s.Logger(ctx)
 	db := s.DB(ctx)
@@ -147,7 +147,7 @@ func (s *service) ByCatalogKindNameVersion(ctx context.Context, p *resource.ByCa
 }
 
 // find a resource using its version's id
-func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayload) (*resource.Version, error) {
+func (s *service) ByVersionID(ctx context.Context, p *resource.ByVersionIDPayload) (*resource.ResourceVersion, error) {
 
 	db := s.DB(ctx)
 	q := db.Scopes(withResourceVersionDetails, filterByVersionID(p.VersionID))
@@ -188,20 +188,20 @@ func (s *service) ByID(ctx context.Context, p *resource.ByIDPayload) (*resource.
 
 func (r *request) findSingleResource() (*resource.Resource, error) {
 
-	var resource model.Resource
-	if err := findOne(r.db, r.log, &resource); err != nil {
+	var dbRes model.Resource
+	if err := findOne(r.db, r.log, &dbRes); err != nil {
 		return nil, err
 	}
 
-	res := initResource(resource)
-	for _, v := range resource.Versions {
+	res := initResource(dbRes)
+	for _, v := range dbRes.Versions {
 		res.Versions = append(res.Versions, tinyVersionInfo(v))
 	}
 
-	return res, nil
+	return &resource.Resource{Data: res}, nil
 }
 
-func (r *request) findAllResources() (resource.ResourceCollection, error) {
+func (r *request) findAllResources() (*resource.Resources, error) {
 
 	var rs []model.Resource
 	if err := r.db.Find(&rs).Error; err != nil {
@@ -213,17 +213,17 @@ func (r *request) findAllResources() (resource.ResourceCollection, error) {
 		return nil, notFoundError
 	}
 
-	res := resource.ResourceCollection{}
+	res := []*resource.ResourceData{}
 	for _, r := range rs {
 		res = append(res, initResource(r))
 	}
 
-	return res, nil
+	return &resource.Resources{Data: res}, nil
 }
 
-func initResource(r model.Resource) *resource.Resource {
+func initResource(r model.Resource) *resource.ResourceData {
 
-	res := &resource.Resource{}
+	res := &resource.ResourceData{}
 	res.ID = r.ID
 	res.Name = r.Name
 	res.Catalog = &resource.Catalog{
@@ -235,7 +235,7 @@ func initResource(r model.Resource) *resource.Resource {
 	res.Rating = r.Rating
 
 	lv := (r.Versions)[len(r.Versions)-1]
-	res.LatestVersion = &resource.Version{
+	res.LatestVersion = &resource.ResourceVersionData{
 		ID:                  lv.ID,
 		Version:             lv.Version,
 		Description:         lv.Description,
@@ -255,9 +255,9 @@ func initResource(r model.Resource) *resource.Resource {
 	return res
 }
 
-func tinyVersionInfo(r model.ResourceVersion) *resource.Version {
+func tinyVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 
-	res := &resource.Version{
+	res := &resource.ResourceVersionData{
 		ID:      r.ID,
 		Version: r.Version,
 	}
@@ -265,7 +265,7 @@ func tinyVersionInfo(r model.ResourceVersion) *resource.Version {
 	return res
 }
 
-func minVersionInfo(r model.ResourceVersion) *resource.Version {
+func minVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 
 	res := tinyVersionInfo(r)
 	res.WebURL = r.URL
@@ -274,7 +274,7 @@ func minVersionInfo(r model.ResourceVersion) *resource.Version {
 	return res
 }
 
-func versionInfoFromResource(r model.Resource) *resource.Version {
+func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 
 	tags := []*resource.Tag{}
 	for _, tag := range r.Tags {
@@ -283,7 +283,7 @@ func versionInfoFromResource(r model.Resource) *resource.Version {
 			Name: tag.Name,
 		})
 	}
-	res := &resource.Resource{
+	res := &resource.ResourceData{
 		ID:     r.ID,
 		Name:   r.Name,
 		Kind:   r.Kind,
@@ -297,7 +297,7 @@ func versionInfoFromResource(r model.Resource) *resource.Version {
 	}
 
 	v := r.Versions[0]
-	ver := &resource.Version{
+	ver := &resource.ResourceVersionData{
 		ID:                  v.ID,
 		Version:             v.Version,
 		Description:         v.Description,
@@ -309,10 +309,10 @@ func versionInfoFromResource(r model.Resource) *resource.Version {
 		Resource:            res,
 	}
 
-	return ver
+	return &resource.ResourceVersion{Data: ver}
 }
 
-func versionInfoFromVersion(v model.ResourceVersion) *resource.Version {
+func versionInfoFromVersion(v model.ResourceVersion) *resource.ResourceVersion {
 
 	// NOTE: we are not preloading all versions (optimisation) and we only
 	// need to return version detials of v, thus manually populating only

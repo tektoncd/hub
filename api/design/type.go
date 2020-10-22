@@ -65,7 +65,7 @@ var Catalog = Type("Catalog", func() {
 	Required("id", "name", "type")
 })
 
-var ResVersion = ResultType("application/vnd.hub.version", "Version", func() {
+var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data", "ResourceVersionData", func() {
 	Description("The Version result type describes resource's version information.")
 
 	Attribute("id", UInt, "ID is the unique id of resource's version", func() {
@@ -95,7 +95,7 @@ var ResVersion = ResultType("application/vnd.hub.version", "Version", func() {
 		Format(FormatDateTime)
 		Example("updatedAt", "2020-01-01 12:00:00 +0000 UTC")
 	})
-	Attribute("resource", Resource, "Resource to which the version belongs", func() {
+	Attribute("resource", ResourceData, "Resource to which the version belongs", func() {
 		View("info")
 		Example("resource", func() {
 			Value(Val{
@@ -147,7 +147,7 @@ var ResVersion = ResultType("application/vnd.hub.version", "Version", func() {
 	Required("id", "version", "displayName", "description", "minPipelinesVersion", "rawURL", "webURL", "updatedAt", "resource")
 })
 
-var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
+var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData", func() {
 	Description("The resource type describes resource information.")
 
 	Attribute("id", UInt, "ID is the unique id of the resource", func() {
@@ -164,7 +164,7 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 	Attribute("kind", String, "Kind of resource", func() {
 		Example("kind", "task")
 	})
-	Attribute("latestVersion", "Version", "Latest version of resource", func() {
+	Attribute("latestVersion", "ResourceVersionData", "Latest version of resource", func() {
 		View("withoutResource")
 		Example("latestVersion", func() {
 			Value(Val{
@@ -189,7 +189,7 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 	Attribute("rating", Float64, "Rating of resource", func() {
 		Example("rating", 4.3)
 	})
-	Attribute("versions", ArrayOf("Version"), "List of all versions of a resource", func() {
+	Attribute("versions", ArrayOf("ResourceVersionData"), "List of all versions of a resource", func() {
 		Example("versions", func() {
 			Value([]Val{{
 				"id":      1,
@@ -239,7 +239,7 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {
 	Description("The Versions type describes response for versions by resource id API.")
 
-	Attribute("latest", ResVersion, "Latest Version of resource", func() {
+	Attribute("latest", ResourceVersionData, "Latest Version of resource", func() {
 		Example("latest", func() {
 			Value(Val{
 				"id":      2,
@@ -249,7 +249,7 @@ var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {
 			})
 		})
 	})
-	Attribute("versions", ArrayOf(ResVersion), "List of all versions of resource", func() {
+	Attribute("versions", ArrayOf(ResourceVersionData), "List of all versions of resource", func() {
 		Example("versions", func() {
 			Value([]Val{{
 				"id":      1,
@@ -307,4 +307,30 @@ var Job = ResultType("application/vnd.hub.job", "Job", func() {
 	Attribute("id", UInt, "id of the job")
 	Attribute("status", String, "status of the job")
 	Required("id", "status")
+})
+
+var Resources = ResultType("application/vnd.hub.resources", "Resources", func() {
+	Attribute("data", CollectionOf(ResourceData), func() {
+		View("withoutVersion")
+	})
+	Required("data")
+})
+
+var ResourceVersions = ResultType("application/vnd.hub.resource.versions", "ResourceVersions", func() {
+	Attribute("data", Versions)
+	Required("data")
+})
+
+var ResourceVersion = ResultType("application/vnd.hub.resource.version", "ResourceVersion", func() {
+	Attribute("data", ResourceVersionData, func() {
+		View("default")
+	})
+	Required("data")
+})
+
+var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
+	Attribute("data", ResourceData, func() {
+		View("default")
+	})
+	Required("data")
 })

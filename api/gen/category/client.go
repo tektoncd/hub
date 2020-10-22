@@ -26,11 +26,11 @@ func NewClient(list goa.Endpoint) *Client {
 }
 
 // List calls the "list" endpoint of the "category" service.
-func (c *Client) List(ctx context.Context) (res []*Category, err error) {
+func (c *Client) List(ctx context.Context) (res *ListResult, err error) {
 	var ires interface{}
 	ires, err = c.ListEndpoint(ctx, nil)
 	if err != nil {
 		return
 	}
-	return ires.([]*Category), nil
+	return ires.(*ListResult), nil
 }

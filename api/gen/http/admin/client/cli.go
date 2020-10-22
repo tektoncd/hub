@@ -23,7 +23,7 @@ func BuildUpdateAgentPayload(adminUpdateAgentBody string, adminUpdateAgentToken 
 	{
 		err = json.Unmarshal([]byte(adminUpdateAgentBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"name\": \"Enim ut rerum repellat aut.\",\n      \"scopes\": [\n         \"Fugiat earum ut sunt est ea.\",\n         \"Pariatur quasi.\",\n         \"Voluptate corrupti omnis.\"\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"name\": \"Non aut qui dolor.\",\n      \"scopes\": [\n         \"Suscipit aut minima autem ut est error.\",\n         \"Quos commodi.\",\n         \"Harum ut tenetur.\"\n      ]\n   }'")
 		}
 		if body.Scopes == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("scopes", "body"))
@@ -58,7 +58,7 @@ func BuildRefreshConfigPayload(adminRefreshConfigBody string, adminRefreshConfig
 	{
 		err = json.Unmarshal([]byte(adminRefreshConfigBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"force\": false\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"force\": true\n   }'")
 		}
 	}
 	var token string

@@ -29,7 +29,9 @@ var _ = Service("category", func() {
 
 	Method("list", func() {
 		Description("List all categories along with their tags sorted by name")
-		Result(ArrayOf(Category))
+		Result(func() {
+			Attribute("data", ArrayOf(Category))
+		})
 
 		HTTP(func() {
 			GET("/")

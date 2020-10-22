@@ -16,7 +16,6 @@ import (
 
 	category "github.com/tektoncd/hub/api/gen/category"
 	goahttp "goa.design/goa/v3/http"
-	goa "goa.design/goa/v3/pkg"
 )
 
 // BuildListRequest instantiates a HTTP request object with method and path set
@@ -64,17 +63,11 @@ func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("category", "list", err)
 			}
-			for _, e := range body {
-				if e != nil {
-					if err2 := ValidateCategoryResponse(e); err2 != nil {
-						err = goa.MergeErrors(err, err2)
-					}
-				}
-			}
+			err = ValidateListResponseBody(&body)
 			if err != nil {
 				return nil, goahttp.ErrValidationError("category", "list", err)
 			}
-			res := NewListCategoryOK(body)
+			res := NewListResultOK(&body)
 			return res, nil
 		case http.StatusInternalServerError:
 			var (
@@ -97,24 +90,27 @@ func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 	}
 }
 
-// unmarshalCategoryResponseToCategoryCategory builds a value of type
-// *category.Category from a value of type *CategoryResponse.
-func unmarshalCategoryResponseToCategoryCategory(v *CategoryResponse) *category.Category {
+// unmarshalCategoryResponseBodyToCategoryCategory builds a value of type
+// *category.Category from a value of type *CategoryResponseBody.
+func unmarshalCategoryResponseBodyToCategoryCategory(v *CategoryResponseBody) *category.Category {
+	if v == nil {
+		return nil
+	}
 	res := &category.Category{
 		ID:   *v.ID,
 		Name: *v.Name,
 	}
 	res.Tags = make([]*category.Tag, len(v.Tags))
 	for i, val := range v.Tags {
-		res.Tags[i] = unmarshalTagResponseToCategoryTag(val)
+		res.Tags[i] = unmarshalTagResponseBodyToCategoryTag(val)
 	}
 
 	return res
 }
 
-// unmarshalTagResponseToCategoryTag builds a value of type *category.Tag from
-// a value of type *TagResponse.
-func unmarshalTagResponseToCategoryTag(v *TagResponse) *category.Tag {
+// unmarshalTagResponseBodyToCategoryTag builds a value of type *category.Tag
+// from a value of type *TagResponseBody.
+func unmarshalTagResponseBodyToCategoryTag(v *TagResponseBody) *category.Tag {
 	res := &category.Tag{
 		ID:   *v.ID,
 		Name: *v.Name,

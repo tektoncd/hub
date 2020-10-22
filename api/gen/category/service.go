@@ -16,7 +16,7 @@ import (
 // The category service provides details about category
 type Service interface {
 	// List all categories along with their tags sorted by name
-	List(context.Context) (res []*Category, err error)
+	List(context.Context) (res *ListResult, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -28,6 +28,11 @@ const ServiceName = "category"
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
 var MethodNames = [1]string{"list"}
+
+// ListResult is the result type of the category service list method.
+type ListResult struct {
+	Data []*Category
+}
 
 type Category struct {
 	// ID is the unique id of the category
