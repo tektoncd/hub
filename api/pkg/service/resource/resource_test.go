@@ -32,7 +32,7 @@ func TestQuery_DefaultLimit(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "", Kinds: []string{}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 7, len(all))
+	assert.Equal(t, 7, len(all.Data))
 }
 
 func TestQuery_ByLimit(t *testing.T) {
@@ -43,8 +43,8 @@ func TestQuery_ByLimit(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "", Limit: 2}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(all))
-	assert.Equal(t, "tekton", all[0].Name)
+	assert.Equal(t, 2, len(all.Data))
+	assert.Equal(t, "tekton", all.Data[0].Name)
 }
 
 func TestQuery_ByName(t *testing.T) {
@@ -55,8 +55,8 @@ func TestQuery_ByName(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "tekton", Kinds: []string{}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, len(all))
-	assert.Equal(t, "0.2", all[0].LatestVersion.Version)
+	assert.Equal(t, 1, len(all.Data))
+	assert.Equal(t, "0.2", all.Data[0].LatestVersion.Version)
 }
 
 func TestQuery_ByPartialName(t *testing.T) {
@@ -67,7 +67,7 @@ func TestQuery_ByPartialName(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "build", Kinds: []string{}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(all))
+	assert.Equal(t, 2, len(all.Data))
 }
 
 func TestQuery_ByKind(t *testing.T) {
@@ -78,7 +78,7 @@ func TestQuery_ByKind(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "", Kinds: []string{"pipeline"}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, len(all))
+	assert.Equal(t, 1, len(all.Data))
 }
 
 func TestQuery_ByMultipleKinds(t *testing.T) {
@@ -89,7 +89,7 @@ func TestQuery_ByMultipleKinds(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "", Kinds: []string{"task", "pipeline"}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 7, len(all))
+	assert.Equal(t, 7, len(all.Data))
 }
 
 func TestQuery_ByTags(t *testing.T) {
@@ -100,7 +100,7 @@ func TestQuery_ByTags(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "", Kinds: []string{}, Tags: []string{"atag"}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, len(all))
+	assert.Equal(t, 1, len(all.Data))
 }
 
 func TestQuery_ByNameAndKind(t *testing.T) {
@@ -111,8 +111,8 @@ func TestQuery_ByNameAndKind(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "build", Kinds: []string{"pipeline"}, Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, len(all))
-	assert.Equal(t, "build-pipeline", all[0].Name)
+	assert.Equal(t, 1, len(all.Data))
+	assert.Equal(t, "build-pipeline", all.Data[0].Name)
 }
 
 func TestQuery_ByNameTagsAndMultipleType(t *testing.T) {
@@ -123,7 +123,7 @@ func TestQuery_ByNameTagsAndMultipleType(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "build", Kinds: []string{"task", "pipeline"}, Tags: []string{"atag", "ztag"}, Match: "contains", Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(all))
+	assert.Equal(t, 2, len(all.Data))
 }
 
 func TestQuery_ByExactNameAndMultipleType(t *testing.T) {
@@ -134,7 +134,7 @@ func TestQuery_ByExactNameAndMultipleType(t *testing.T) {
 	payload := &resource.QueryPayload{Name: "buildah", Kinds: []string{"task", "pipeline"}, Match: "exact", Limit: 100}
 	all, err := resourceSvc.Query(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, len(all))
+	assert.Equal(t, 1, len(all.Data))
 }
 
 func TestQuery_ExactNameNotFoundError(t *testing.T) {
@@ -167,8 +167,8 @@ func TestList_ByLimit(t *testing.T) {
 	payload := &resource.ListPayload{Limit: 3}
 	all, err := resourceSvc.List(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 3, len(all))
-	assert.Equal(t, "tekton", all[0].Name)
+	assert.Equal(t, 3, len(all.Data))
+	assert.Equal(t, "tekton", all.Data[0].Name)
 }
 
 func TestVersionsByID(t *testing.T) {
@@ -177,10 +177,10 @@ func TestVersionsByID(t *testing.T) {
 
 	resourceSvc := New(tc)
 	payload := &resource.VersionsByIDPayload{ID: 1}
-	all, err := resourceSvc.VersionsByID(context.Background(), payload)
+	res, err := resourceSvc.VersionsByID(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 3, len(all.Versions))
-	assert.Equal(t, "0.2", all.Latest.Version)
+	assert.Equal(t, 3, len(res.Data.Versions))
+	assert.Equal(t, "0.2", res.Data.Latest.Version)
 }
 
 func TestVersionsByID_NotFoundError(t *testing.T) {
@@ -202,7 +202,7 @@ func TestByCatalogKindNameVersion(t *testing.T) {
 	payload := &resource.ByCatalogKindNameVersionPayload{Catalog: "catalog-official", Kind: "task", Name: "tkn", Version: "0.1"}
 	res, err := resourceSvc.ByCatalogKindNameVersion(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, "0.1", res.Version)
+	assert.Equal(t, "0.1", res.Data.Version)
 }
 
 func TestByCatalogKindNameVersion_NoResourceWithName(t *testing.T) {
@@ -246,7 +246,7 @@ func TestByVersionID(t *testing.T) {
 	payload := &resource.ByVersionIDPayload{VersionID: 6}
 	res, err := resourceSvc.ByVersionID(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, "0.1.1", res.Version)
+	assert.Equal(t, "0.1.1", res.Data.Version)
 }
 
 func TestByVersionID_NotFoundError(t *testing.T) {
@@ -268,7 +268,7 @@ func TestByCatalogKindName(t *testing.T) {
 	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-community", Kind: "task", Name: "img"}
 	res, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, "img", res.Name)
+	assert.Equal(t, "img", res.Data.Name)
 }
 
 func TestByCatalogKindName_NoCatalogWithName(t *testing.T) {
@@ -301,7 +301,7 @@ func TestByID(t *testing.T) {
 	payload := &resource.ByIDPayload{ID: 1}
 	res, err := resourceSvc.ByID(context.Background(), payload)
 	assert.NoError(t, err)
-	assert.Equal(t, "tekton", res.Name)
+	assert.Equal(t, "tekton", res.Data.Name)
 }
 
 func TestByID_NotFoundError(t *testing.T) {

@@ -14,7 +14,9 @@ import (
 
 // ListResponseBody is the type of the "category" service "list" endpoint HTTP
 // response body.
-type ListResponseBody []*CategoryResponse
+type ListResponseBody struct {
+	Data []*CategoryResponseBody `form:"data,omitempty" json:"data,omitempty" xml:"data,omitempty"`
+}
 
 // ListInternalErrorResponseBody is the type of the "category" service "list"
 // endpoint HTTP response body for the "internal-error" error.
@@ -34,18 +36,18 @@ type ListInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
-// CategoryResponse is used to define fields on response body types.
-type CategoryResponse struct {
+// CategoryResponseBody is used to define fields on response body types.
+type CategoryResponseBody struct {
 	// ID is the unique id of the category
 	ID uint `form:"id" json:"id" xml:"id"`
 	// Name of category
 	Name string `form:"name" json:"name" xml:"name"`
 	// List of tags associated with the category
-	Tags []*TagResponse `form:"tags" json:"tags" xml:"tags"`
+	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
 }
 
-// TagResponse is used to define fields on response body types.
-type TagResponse struct {
+// TagResponseBody is used to define fields on response body types.
+type TagResponseBody struct {
 	// ID is the unique id of tag
 	ID uint `form:"id" json:"id" xml:"id"`
 	// Name of tag
@@ -54,10 +56,13 @@ type TagResponse struct {
 
 // NewListResponseBody builds the HTTP response body from the result of the
 // "list" endpoint of the "category" service.
-func NewListResponseBody(res []*category.Category) ListResponseBody {
-	body := make([]*CategoryResponse, len(res))
-	for i, val := range res {
-		body[i] = marshalCategoryCategoryToCategoryResponse(val)
+func NewListResponseBody(res *category.ListResult) *ListResponseBody {
+	body := &ListResponseBody{}
+	if res.Data != nil {
+		body.Data = make([]*CategoryResponseBody, len(res.Data))
+		for i, val := range res.Data {
+			body.Data[i] = marshalCategoryCategoryToCategoryResponseBody(val)
+		}
 	}
 	return body
 }

@@ -41,7 +41,7 @@ var _ = Service("resource", func() {
 				Example([]string{"image", "build"})
 			})
 			Attribute("limit", UInt, "Maximum number of resources to be returned", func() {
-				Default(100)
+				Default(1000)
 				Example("limit", 100)
 			})
 
@@ -50,9 +50,7 @@ var _ = Service("resource", func() {
 				Default("contains")
 			})
 		})
-		Result(CollectionOf(Resource), func() {
-			View("withoutVersion")
-		})
+		Result(Resources)
 
 		HTTP(func() {
 			GET("/query")
@@ -73,13 +71,11 @@ var _ = Service("resource", func() {
 		Description("List all resources sorted by rating and name")
 		Payload(func() {
 			Attribute("limit", UInt, "Maximum number of resources to be returned", func() {
-				Default(100)
+				Default(1000)
 				Example("limit", 100)
 			})
 		})
-		Result(CollectionOf(Resource), func() {
-			View("withoutVersion")
-		})
+		Result(Resources)
 
 		HTTP(func() {
 			GET("/resources")
@@ -98,7 +94,7 @@ var _ = Service("resource", func() {
 			})
 			Required("id")
 		})
-		Result(Versions)
+		Result(ResourceVersions)
 
 		HTTP(func() {
 			GET("/resource/{id}/versions")
@@ -127,9 +123,7 @@ var _ = Service("resource", func() {
 
 			Required("catalog", "kind", "name", "version")
 		})
-		Result(ResVersion, func() {
-			View("default")
-		})
+		Result(ResourceVersion)
 
 		HTTP(func() {
 			GET("/resource/{catalog}/{kind}/{name}/{version}")
@@ -148,9 +142,7 @@ var _ = Service("resource", func() {
 			})
 			Required("versionID")
 		})
-		Result(ResVersion, func() {
-			View("default")
-		})
+		Result(ResourceVersion)
 
 		HTTP(func() {
 			GET("/resource/version/{versionID}")
@@ -175,9 +167,7 @@ var _ = Service("resource", func() {
 			})
 			Required("catalog", "kind", "name")
 		})
-		Result(Resource, func() {
-			View("default")
-		})
+		Result(Resource)
 
 		HTTP(func() {
 			GET("/resource/{catalog}/{kind}/{name}")
@@ -196,9 +186,7 @@ var _ = Service("resource", func() {
 			})
 			Required("id")
 		})
-		Result(Resource, func() {
-			View("default")
-		})
+		Result(Resource)
 
 		HTTP(func() {
 			GET("/resource/{id}")

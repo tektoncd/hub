@@ -31,11 +31,11 @@ import (
 func UsageCommands() string {
 	return `category list
 auth authenticate
-resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
 admin (update-agent|refresh-config)
 rating (get|update)
 status status
 catalog refresh
+resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
 `
 }
 
@@ -43,22 +43,16 @@ catalog refresh
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
 		os.Args[0] + ` auth authenticate --code "5628b69ec09c09512eef"` + "\n" +
-		os.Args[0] + ` resource query --name "buildah" --kinds '[
-      "task",
-      "pipelines"
-   ]' --tags '[
-      "image",
-      "build"
-   ]' --limit 100 --match "exact"` + "\n" +
 		os.Args[0] + ` admin update-agent --body '{
-      "name": "Enim ut rerum repellat aut.",
+      "name": "Non aut qui dolor.",
       "scopes": [
-         "Fugiat earum ut sunt est ea.",
-         "Pariatur quasi.",
-         "Voluptate corrupti omnis."
+         "Suscipit aut minima autem ut est error.",
+         "Quos commodi.",
+         "Harum ut tenetur."
       ]
-   }' --token "Beatae reiciendis accusantium distinctio qui."` + "\n" +
-		os.Args[0] + ` rating get --id 18055863874781766200 --token "Nihil aut quo quidem magni qui."` + "\n" +
+   }' --token "Tempore eaque esse fugit."` + "\n" +
+		os.Args[0] + ` rating get --id 18213508041950448663 --token "Quasi illo voluptate."` + "\n" +
+		os.Args[0] + ` status status` + "\n" +
 		""
 }
 
@@ -80,38 +74,6 @@ func ParseEndpoint(
 
 		authAuthenticateFlags    = flag.NewFlagSet("authenticate", flag.ExitOnError)
 		authAuthenticateCodeFlag = authAuthenticateFlags.String("code", "REQUIRED", "")
-
-		resourceFlags = flag.NewFlagSet("resource", flag.ContinueOnError)
-
-		resourceQueryFlags     = flag.NewFlagSet("query", flag.ExitOnError)
-		resourceQueryNameFlag  = resourceQueryFlags.String("name", "", "")
-		resourceQueryKindsFlag = resourceQueryFlags.String("kinds", "", "")
-		resourceQueryTagsFlag  = resourceQueryFlags.String("tags", "", "")
-		resourceQueryLimitFlag = resourceQueryFlags.String("limit", "100", "")
-		resourceQueryMatchFlag = resourceQueryFlags.String("match", "contains", "")
-
-		resourceListFlags     = flag.NewFlagSet("list", flag.ExitOnError)
-		resourceListLimitFlag = resourceListFlags.String("limit", "100", "")
-
-		resourceVersionsByIDFlags  = flag.NewFlagSet("versions-by-id", flag.ExitOnError)
-		resourceVersionsByIDIDFlag = resourceVersionsByIDFlags.String("id", "REQUIRED", "ID of a resource")
-
-		resourceByCatalogKindNameVersionFlags       = flag.NewFlagSet("by-catalog-kind-name-version", flag.ExitOnError)
-		resourceByCatalogKindNameVersionCatalogFlag = resourceByCatalogKindNameVersionFlags.String("catalog", "REQUIRED", "name of catalog")
-		resourceByCatalogKindNameVersionKindFlag    = resourceByCatalogKindNameVersionFlags.String("kind", "REQUIRED", "kind of resource")
-		resourceByCatalogKindNameVersionNameFlag    = resourceByCatalogKindNameVersionFlags.String("name", "REQUIRED", "name of resource")
-		resourceByCatalogKindNameVersionVersionFlag = resourceByCatalogKindNameVersionFlags.String("version", "REQUIRED", "version of resource")
-
-		resourceByVersionIDFlags         = flag.NewFlagSet("by-version-id", flag.ExitOnError)
-		resourceByVersionIDVersionIDFlag = resourceByVersionIDFlags.String("version-id", "REQUIRED", "Version ID of a resource's version")
-
-		resourceByCatalogKindNameFlags       = flag.NewFlagSet("by-catalog-kind-name", flag.ExitOnError)
-		resourceByCatalogKindNameCatalogFlag = resourceByCatalogKindNameFlags.String("catalog", "REQUIRED", "name of catalog")
-		resourceByCatalogKindNameKindFlag    = resourceByCatalogKindNameFlags.String("kind", "REQUIRED", "kind of resource")
-		resourceByCatalogKindNameNameFlag    = resourceByCatalogKindNameFlags.String("name", "REQUIRED", "Name of resource")
-
-		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
-		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
 
 		adminFlags = flag.NewFlagSet("admin", flag.ContinueOnError)
 
@@ -142,21 +104,44 @@ func ParseEndpoint(
 
 		catalogRefreshFlags     = flag.NewFlagSet("refresh", flag.ExitOnError)
 		catalogRefreshTokenFlag = catalogRefreshFlags.String("token", "REQUIRED", "")
+
+		resourceFlags = flag.NewFlagSet("resource", flag.ContinueOnError)
+
+		resourceQueryFlags     = flag.NewFlagSet("query", flag.ExitOnError)
+		resourceQueryNameFlag  = resourceQueryFlags.String("name", "", "")
+		resourceQueryKindsFlag = resourceQueryFlags.String("kinds", "", "")
+		resourceQueryTagsFlag  = resourceQueryFlags.String("tags", "", "")
+		resourceQueryLimitFlag = resourceQueryFlags.String("limit", "1000", "")
+		resourceQueryMatchFlag = resourceQueryFlags.String("match", "contains", "")
+
+		resourceListFlags     = flag.NewFlagSet("list", flag.ExitOnError)
+		resourceListLimitFlag = resourceListFlags.String("limit", "1000", "")
+
+		resourceVersionsByIDFlags  = flag.NewFlagSet("versions-by-id", flag.ExitOnError)
+		resourceVersionsByIDIDFlag = resourceVersionsByIDFlags.String("id", "REQUIRED", "ID of a resource")
+
+		resourceByCatalogKindNameVersionFlags       = flag.NewFlagSet("by-catalog-kind-name-version", flag.ExitOnError)
+		resourceByCatalogKindNameVersionCatalogFlag = resourceByCatalogKindNameVersionFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceByCatalogKindNameVersionKindFlag    = resourceByCatalogKindNameVersionFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByCatalogKindNameVersionNameFlag    = resourceByCatalogKindNameVersionFlags.String("name", "REQUIRED", "name of resource")
+		resourceByCatalogKindNameVersionVersionFlag = resourceByCatalogKindNameVersionFlags.String("version", "REQUIRED", "version of resource")
+
+		resourceByVersionIDFlags         = flag.NewFlagSet("by-version-id", flag.ExitOnError)
+		resourceByVersionIDVersionIDFlag = resourceByVersionIDFlags.String("version-id", "REQUIRED", "Version ID of a resource's version")
+
+		resourceByCatalogKindNameFlags       = flag.NewFlagSet("by-catalog-kind-name", flag.ExitOnError)
+		resourceByCatalogKindNameCatalogFlag = resourceByCatalogKindNameFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceByCatalogKindNameKindFlag    = resourceByCatalogKindNameFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByCatalogKindNameNameFlag    = resourceByCatalogKindNameFlags.String("name", "REQUIRED", "Name of resource")
+
+		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
+		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
 	)
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
 
 	authFlags.Usage = authUsage
 	authAuthenticateFlags.Usage = authAuthenticateUsage
-
-	resourceFlags.Usage = resourceUsage
-	resourceQueryFlags.Usage = resourceQueryUsage
-	resourceListFlags.Usage = resourceListUsage
-	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
-	resourceByCatalogKindNameVersionFlags.Usage = resourceByCatalogKindNameVersionUsage
-	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
-	resourceByCatalogKindNameFlags.Usage = resourceByCatalogKindNameUsage
-	resourceByIDFlags.Usage = resourceByIDUsage
 
 	adminFlags.Usage = adminUsage
 	adminUpdateAgentFlags.Usage = adminUpdateAgentUsage
@@ -171,6 +156,15 @@ func ParseEndpoint(
 
 	catalogFlags.Usage = catalogUsage
 	catalogRefreshFlags.Usage = catalogRefreshUsage
+
+	resourceFlags.Usage = resourceUsage
+	resourceQueryFlags.Usage = resourceQueryUsage
+	resourceListFlags.Usage = resourceListUsage
+	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
+	resourceByCatalogKindNameVersionFlags.Usage = resourceByCatalogKindNameVersionUsage
+	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
+	resourceByCatalogKindNameFlags.Usage = resourceByCatalogKindNameUsage
+	resourceByIDFlags.Usage = resourceByIDUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -191,8 +185,6 @@ func ParseEndpoint(
 			svcf = categoryFlags
 		case "auth":
 			svcf = authFlags
-		case "resource":
-			svcf = resourceFlags
 		case "admin":
 			svcf = adminFlags
 		case "rating":
@@ -201,6 +193,8 @@ func ParseEndpoint(
 			svcf = statusFlags
 		case "catalog":
 			svcf = catalogFlags
+		case "resource":
+			svcf = resourceFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -227,31 +221,6 @@ func ParseEndpoint(
 			switch epn {
 			case "authenticate":
 				epf = authAuthenticateFlags
-
-			}
-
-		case "resource":
-			switch epn {
-			case "query":
-				epf = resourceQueryFlags
-
-			case "list":
-				epf = resourceListFlags
-
-			case "versions-by-id":
-				epf = resourceVersionsByIDFlags
-
-			case "by-catalog-kind-name-version":
-				epf = resourceByCatalogKindNameVersionFlags
-
-			case "by-version-id":
-				epf = resourceByVersionIDFlags
-
-			case "by-catalog-kind-name":
-				epf = resourceByCatalogKindNameFlags
-
-			case "by-id":
-				epf = resourceByIDFlags
 
 			}
 
@@ -289,6 +258,31 @@ func ParseEndpoint(
 
 			}
 
+		case "resource":
+			switch epn {
+			case "query":
+				epf = resourceQueryFlags
+
+			case "list":
+				epf = resourceListFlags
+
+			case "versions-by-id":
+				epf = resourceVersionsByIDFlags
+
+			case "by-catalog-kind-name-version":
+				epf = resourceByCatalogKindNameVersionFlags
+
+			case "by-version-id":
+				epf = resourceByVersionIDFlags
+
+			case "by-catalog-kind-name":
+				epf = resourceByCatalogKindNameFlags
+
+			case "by-id":
+				epf = resourceByIDFlags
+
+			}
+
 		}
 	}
 	if epf == nil {
@@ -323,31 +317,6 @@ func ParseEndpoint(
 				endpoint = c.Authenticate()
 				data, err = authc.BuildAuthenticatePayload(*authAuthenticateCodeFlag)
 			}
-		case "resource":
-			c := resourcec.NewClient(scheme, host, doer, enc, dec, restore)
-			switch epn {
-			case "query":
-				endpoint = c.Query()
-				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryKindsFlag, *resourceQueryTagsFlag, *resourceQueryLimitFlag, *resourceQueryMatchFlag)
-			case "list":
-				endpoint = c.List()
-				data, err = resourcec.BuildListPayload(*resourceListLimitFlag)
-			case "versions-by-id":
-				endpoint = c.VersionsByID()
-				data, err = resourcec.BuildVersionsByIDPayload(*resourceVersionsByIDIDFlag)
-			case "by-catalog-kind-name-version":
-				endpoint = c.ByCatalogKindNameVersion()
-				data, err = resourcec.BuildByCatalogKindNameVersionPayload(*resourceByCatalogKindNameVersionCatalogFlag, *resourceByCatalogKindNameVersionKindFlag, *resourceByCatalogKindNameVersionNameFlag, *resourceByCatalogKindNameVersionVersionFlag)
-			case "by-version-id":
-				endpoint = c.ByVersionID()
-				data, err = resourcec.BuildByVersionIDPayload(*resourceByVersionIDVersionIDFlag)
-			case "by-catalog-kind-name":
-				endpoint = c.ByCatalogKindName()
-				data, err = resourcec.BuildByCatalogKindNamePayload(*resourceByCatalogKindNameCatalogFlag, *resourceByCatalogKindNameKindFlag, *resourceByCatalogKindNameNameFlag)
-			case "by-id":
-				endpoint = c.ByID()
-				data, err = resourcec.BuildByIDPayload(*resourceByIDIDFlag)
-			}
 		case "admin":
 			c := adminc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
@@ -381,6 +350,31 @@ func ParseEndpoint(
 			case "refresh":
 				endpoint = c.Refresh()
 				data, err = catalogc.BuildRefreshPayload(*catalogRefreshTokenFlag)
+			}
+		case "resource":
+			c := resourcec.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "query":
+				endpoint = c.Query()
+				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryKindsFlag, *resourceQueryTagsFlag, *resourceQueryLimitFlag, *resourceQueryMatchFlag)
+			case "list":
+				endpoint = c.List()
+				data, err = resourcec.BuildListPayload(*resourceListLimitFlag)
+			case "versions-by-id":
+				endpoint = c.VersionsByID()
+				data, err = resourcec.BuildVersionsByIDPayload(*resourceVersionsByIDIDFlag)
+			case "by-catalog-kind-name-version":
+				endpoint = c.ByCatalogKindNameVersion()
+				data, err = resourcec.BuildByCatalogKindNameVersionPayload(*resourceByCatalogKindNameVersionCatalogFlag, *resourceByCatalogKindNameVersionKindFlag, *resourceByCatalogKindNameVersionNameFlag, *resourceByCatalogKindNameVersionVersionFlag)
+			case "by-version-id":
+				endpoint = c.ByVersionID()
+				data, err = resourcec.BuildByVersionIDPayload(*resourceByVersionIDVersionIDFlag)
+			case "by-catalog-kind-name":
+				endpoint = c.ByCatalogKindName()
+				data, err = resourcec.BuildByCatalogKindNamePayload(*resourceByCatalogKindNameCatalogFlag, *resourceByCatalogKindNameKindFlag, *resourceByCatalogKindNameNameFlag)
+			case "by-id":
+				endpoint = c.ByID()
+				data, err = resourcec.BuildByIDPayload(*resourceByIDIDFlag)
 			}
 		}
 	}
@@ -438,117 +432,6 @@ Example:
 `, os.Args[0])
 }
 
-// resourceUsage displays the usage of the resource command and its subcommands.
-func resourceUsage() {
-	fmt.Fprintf(os.Stderr, `The resource service provides details about all kind of resources
-Usage:
-    %s [globalflags] resource COMMAND [flags]
-
-COMMAND:
-    query: Find resources by a combination of name, kind and tags
-    list: List all resources sorted by rating and name
-    versions-by-id: Find all versions of a resource by its id
-    by-catalog-kind-name-version: Find resource using name of catalog & name, kind and version of resource
-    by-version-id: Find a resource using its version's id
-    by-catalog-kind-name: Find resources using name of catalog, resource name and kind of resource
-    by-id: Find a resource using it's id
-
-Additional help:
-    %s resource COMMAND --help
-`, os.Args[0], os.Args[0])
-}
-func resourceQueryUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -kinds JSON -tags JSON -limit UINT -match STRING
-
-Find resources by a combination of name, kind and tags
-    -name STRING: 
-    -kinds JSON: 
-    -tags JSON: 
-    -limit UINT: 
-    -match STRING: 
-
-Example:
-    `+os.Args[0]+` resource query --name "buildah" --kinds '[
-      "task",
-      "pipelines"
-   ]' --tags '[
-      "image",
-      "build"
-   ]' --limit 100 --match "exact"
-`, os.Args[0])
-}
-
-func resourceListUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource list -limit UINT
-
-List all resources sorted by rating and name
-    -limit UINT: 
-
-Example:
-    `+os.Args[0]+` resource list --limit 100
-`, os.Args[0])
-}
-
-func resourceVersionsByIDUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource versions-by-id -id UINT
-
-Find all versions of a resource by its id
-    -id UINT: ID of a resource
-
-Example:
-    `+os.Args[0]+` resource versions-by-id --id 1
-`, os.Args[0])
-}
-
-func resourceByCatalogKindNameVersionUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name-version -catalog STRING -kind STRING -name STRING -version STRING
-
-Find resource using name of catalog & name, kind and version of resource
-    -catalog STRING: name of catalog
-    -kind STRING: kind of resource
-    -name STRING: name of resource
-    -version STRING: version of resource
-
-Example:
-    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
-`, os.Args[0])
-}
-
-func resourceByVersionIDUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource by-version-id -version-id UINT
-
-Find a resource using its version's id
-    -version-id UINT: Version ID of a resource's version
-
-Example:
-    `+os.Args[0]+` resource by-version-id --version-id 1
-`, os.Args[0])
-}
-
-func resourceByCatalogKindNameUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name -catalog STRING -kind STRING -name STRING
-
-Find resources using name of catalog, resource name and kind of resource
-    -catalog STRING: name of catalog
-    -kind STRING: kind of resource
-    -name STRING: Name of resource
-
-Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah"
-`, os.Args[0])
-}
-
-func resourceByIDUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource by-id -id UINT
-
-Find a resource using it's id
-    -id UINT: ID of a resource
-
-Example:
-    `+os.Args[0]+` resource by-id --id 1
-`, os.Args[0])
-}
-
 // adminUsage displays the usage of the admin command and its subcommands.
 func adminUsage() {
 	fmt.Fprintf(os.Stderr, `Admin service
@@ -572,13 +455,13 @@ Create or Update an agent user with required scopes
 
 Example:
     `+os.Args[0]+` admin update-agent --body '{
-      "name": "Enim ut rerum repellat aut.",
+      "name": "Non aut qui dolor.",
       "scopes": [
-         "Fugiat earum ut sunt est ea.",
-         "Pariatur quasi.",
-         "Voluptate corrupti omnis."
+         "Suscipit aut minima autem ut est error.",
+         "Quos commodi.",
+         "Harum ut tenetur."
       ]
-   }' --token "Beatae reiciendis accusantium distinctio qui."
+   }' --token "Tempore eaque esse fugit."
 `, os.Args[0])
 }
 
@@ -591,8 +474,8 @@ Refresh the changes in config file
 
 Example:
     `+os.Args[0]+` admin refresh-config --body '{
-      "force": false
-   }' --token "Expedita velit magni reprehenderit libero."
+      "force": true
+   }' --token "Magnam illum ut nihil eum placeat."
 `, os.Args[0])
 }
 
@@ -618,7 +501,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 18055863874781766200 --token "Nihil aut quo quidem magni qui."
+    `+os.Args[0]+` rating get --id 18213508041950448663 --token "Quasi illo voluptate."
 `, os.Args[0])
 }
 
@@ -633,7 +516,7 @@ Update user's rating for a resource
 Example:
     `+os.Args[0]+` rating update --body '{
       "rating": 2
-   }' --id 14044190301285965164 --token "Consequatur explicabo."
+   }' --id 17876575713650742907 --token "Porro nulla sunt omnis molestiae."
 `, os.Args[0])
 }
 
@@ -680,6 +563,117 @@ Refreshes Tekton Catalog
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --token "Ratione molestias quibusdam autem voluptatem molestiae."
+    `+os.Args[0]+` catalog refresh --token "Deleniti voluptatem distinctio distinctio voluptas beatae id."
+`, os.Args[0])
+}
+
+// resourceUsage displays the usage of the resource command and its subcommands.
+func resourceUsage() {
+	fmt.Fprintf(os.Stderr, `The resource service provides details about all kind of resources
+Usage:
+    %s [globalflags] resource COMMAND [flags]
+
+COMMAND:
+    query: Find resources by a combination of name, kind and tags
+    list: List all resources sorted by rating and name
+    versions-by-id: Find all versions of a resource by its id
+    by-catalog-kind-name-version: Find resource using name of catalog & name, kind and version of resource
+    by-version-id: Find a resource using its version's id
+    by-catalog-kind-name: Find resources using name of catalog, resource name and kind of resource
+    by-id: Find a resource using it's id
+
+Additional help:
+    %s resource COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func resourceQueryUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -kinds JSON -tags JSON -limit UINT -match STRING
+
+Find resources by a combination of name, kind and tags
+    -name STRING: 
+    -kinds JSON: 
+    -tags JSON: 
+    -limit UINT: 
+    -match STRING: 
+
+Example:
+    `+os.Args[0]+` resource query --name "buildah" --kinds '[
+      "task",
+      "pipelines"
+   ]' --tags '[
+      "image",
+      "build"
+   ]' --limit 100 --match "contains"
+`, os.Args[0])
+}
+
+func resourceListUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource list -limit UINT
+
+List all resources sorted by rating and name
+    -limit UINT: 
+
+Example:
+    `+os.Args[0]+` resource list --limit 100
+`, os.Args[0])
+}
+
+func resourceVersionsByIDUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource versions-by-id -id UINT
+
+Find all versions of a resource by its id
+    -id UINT: ID of a resource
+
+Example:
+    `+os.Args[0]+` resource versions-by-id --id 1
+`, os.Args[0])
+}
+
+func resourceByCatalogKindNameVersionUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name-version -catalog STRING -kind STRING -name STRING -version STRING
+
+Find resource using name of catalog & name, kind and version of resource
+    -catalog STRING: name of catalog
+    -kind STRING: kind of resource
+    -name STRING: name of resource
+    -version STRING: version of resource
+
+Example:
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
+`, os.Args[0])
+}
+
+func resourceByVersionIDUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-version-id -version-id UINT
+
+Find a resource using its version's id
+    -version-id UINT: Version ID of a resource's version
+
+Example:
+    `+os.Args[0]+` resource by-version-id --version-id 1
+`, os.Args[0])
+}
+
+func resourceByCatalogKindNameUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name -catalog STRING -kind STRING -name STRING
+
+Find resources using name of catalog, resource name and kind of resource
+    -catalog STRING: name of catalog
+    -kind STRING: kind of resource
+    -name STRING: Name of resource
+
+Example:
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah"
+`, os.Args[0])
+}
+
+func resourceByIDUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-id -id UINT
+
+Find a resource using it's id
+    -id UINT: ID of a resource
+
+Example:
+    `+os.Args[0]+` resource by-id --id 1
 `, os.Args[0])
 }

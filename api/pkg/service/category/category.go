@@ -39,7 +39,7 @@ func New(api app.BaseConfig) category.Service {
 }
 
 // List all categories along with their tags sorted by name
-func (s *service) List(ctx context.Context) (res []*category.Category, err error) {
+func (s *service) List(ctx context.Context) (*category.ListResult, error) {
 
 	log := s.Logger(ctx)
 	db := s.DB(ctx)
@@ -54,6 +54,7 @@ func (s *service) List(ctx context.Context) (res []*category.Category, err error
 		return nil, fetchError
 	}
 
+	res := []*category.Category{}
 	for _, c := range all {
 		tags := []*category.Tag{}
 		for _, t := range c.Tags {
@@ -62,5 +63,5 @@ func (s *service) List(ctx context.Context) (res []*category.Category, err error
 		res = append(res, &category.Category{ID: c.ID, Name: c.Name, Tags: tags})
 	}
 
-	return res, nil
+	return &category.ListResult{Data: res}, nil
 }

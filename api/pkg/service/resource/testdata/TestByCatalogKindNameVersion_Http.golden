@@ -1,27 +1,29 @@
 {
-	"id": 8,
-	"version": "0.1",
-	"displayName": "Tkn CLI",
-	"description": "Desc5",
-	"minPipelinesVersion": "0.12.1",
-	"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tkn/0.1/tkn.yaml",
-	"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tkn/0.1/tkn.yaml",
-	"updatedAt": "2013-01-01 00:00:01 +0000 UTC",
-	"resource": {
-		"id": 5,
-		"name": "tkn",
-		"catalog": {
-			"id": 1,
-			"name": "catalog-official",
-			"type": "official"
-		},
-		"kind": "task",
-		"tags": [
-			{
-				"id": 2,
-				"name": "rtag"
-			}
-		],
-		"rating": 5
+	"data": {
+		"id": 8,
+		"version": "0.1",
+		"displayName": "Tkn CLI",
+		"description": "Desc5",
+		"minPipelinesVersion": "0.12.1",
+		"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tkn/0.1/tkn.yaml",
+		"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tkn/0.1/tkn.yaml",
+		"updatedAt": "2013-01-01 00:00:01 +0000 UTC",
+		"resource": {
+			"id": 5,
+			"name": "tkn",
+			"catalog": {
+				"id": 1,
+				"name": "catalog-official",
+				"type": "official"
+			},
+			"kind": "task",
+			"tags": [
+				{
+					"id": 2,
+					"name": "rtag"
+				}
+			],
+			"rating": 5
+		}
 	}
 }

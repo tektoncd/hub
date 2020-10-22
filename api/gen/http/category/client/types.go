@@ -14,7 +14,9 @@ import (
 
 // ListResponseBody is the type of the "category" service "list" endpoint HTTP
 // response body.
-type ListResponseBody []*CategoryResponse
+type ListResponseBody struct {
+	Data []*CategoryResponseBody `form:"data,omitempty" json:"data,omitempty" xml:"data,omitempty"`
+}
 
 // ListInternalErrorResponseBody is the type of the "category" service "list"
 // endpoint HTTP response body for the "internal-error" error.
@@ -34,31 +36,35 @@ type ListInternalErrorResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
-// CategoryResponse is used to define fields on response body types.
-type CategoryResponse struct {
+// CategoryResponseBody is used to define fields on response body types.
+type CategoryResponseBody struct {
 	// ID is the unique id of the category
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Name of category
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// List of tags associated with the category
-	Tags []*TagResponse `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
+	Tags []*TagResponseBody `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
 }
 
-// TagResponse is used to define fields on response body types.
-type TagResponse struct {
+// TagResponseBody is used to define fields on response body types.
+type TagResponseBody struct {
 	// ID is the unique id of tag
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Name of tag
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
-// NewListCategoryOK builds a "category" service "list" endpoint result from a
+// NewListResultOK builds a "category" service "list" endpoint result from a
 // HTTP "OK" response.
-func NewListCategoryOK(body []*CategoryResponse) []*category.Category {
-	v := make([]*category.Category, len(body))
-	for i, val := range body {
-		v[i] = unmarshalCategoryResponseToCategoryCategory(val)
+func NewListResultOK(body *ListResponseBody) *category.ListResult {
+	v := &category.ListResult{}
+	if body.Data != nil {
+		v.Data = make([]*category.Category, len(body.Data))
+		for i, val := range body.Data {
+			v.Data[i] = unmarshalCategoryResponseBodyToCategoryCategory(val)
+		}
 	}
+
 	return v
 }
 
@@ -75,6 +81,18 @@ func NewListInternalError(body *ListInternalErrorResponseBody) *goa.ServiceError
 	}
 
 	return v
+}
+
+// ValidateListResponseBody runs the validations defined on ListResponseBody
+func ValidateListResponseBody(body *ListResponseBody) (err error) {
+	for _, e := range body.Data {
+		if e != nil {
+			if err2 := ValidateCategoryResponseBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
 }
 
 // ValidateListInternalErrorResponseBody runs the validations defined on
@@ -101,8 +119,9 @@ func ValidateListInternalErrorResponseBody(body *ListInternalErrorResponseBody) 
 	return
 }
 
-// ValidateCategoryResponse runs the validations defined on CategoryResponse
-func ValidateCategoryResponse(body *CategoryResponse) (err error) {
+// ValidateCategoryResponseBody runs the validations defined on
+// CategoryResponseBody
+func ValidateCategoryResponseBody(body *CategoryResponseBody) (err error) {
 	if body.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
 	}
@@ -114,7 +133,7 @@ func ValidateCategoryResponse(body *CategoryResponse) (err error) {
 	}
 	for _, e := range body.Tags {
 		if e != nil {
-			if err2 := ValidateTagResponse(e); err2 != nil {
+			if err2 := ValidateTagResponseBody(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
@@ -122,8 +141,8 @@ func ValidateCategoryResponse(body *CategoryResponse) (err error) {
 	return
 }
 
-// ValidateTagResponse runs the validations defined on TagResponse
-func ValidateTagResponse(body *TagResponse) (err error) {
+// ValidateTagResponseBody runs the validations defined on TagResponseBody
+func ValidateTagResponseBody(body *TagResponseBody) (err error) {
 	if body.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
 	}

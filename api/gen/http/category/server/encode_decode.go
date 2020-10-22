@@ -20,7 +20,7 @@ import (
 // list endpoint.
 func EncodeListResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		res := v.([]*category.Category)
+		res := v.(*category.ListResult)
 		enc := encoder(ctx, w)
 		body := NewListResponseBody(res)
 		w.WriteHeader(http.StatusOK)
@@ -56,27 +56,30 @@ func EncodeListError(encoder func(context.Context, http.ResponseWriter) goahttp.
 	}
 }
 
-// marshalCategoryCategoryToCategoryResponse builds a value of type
-// *CategoryResponse from a value of type *category.Category.
-func marshalCategoryCategoryToCategoryResponse(v *category.Category) *CategoryResponse {
-	res := &CategoryResponse{
+// marshalCategoryCategoryToCategoryResponseBody builds a value of type
+// *CategoryResponseBody from a value of type *category.Category.
+func marshalCategoryCategoryToCategoryResponseBody(v *category.Category) *CategoryResponseBody {
+	if v == nil {
+		return nil
+	}
+	res := &CategoryResponseBody{
 		ID:   v.ID,
 		Name: v.Name,
 	}
 	if v.Tags != nil {
-		res.Tags = make([]*TagResponse, len(v.Tags))
+		res.Tags = make([]*TagResponseBody, len(v.Tags))
 		for i, val := range v.Tags {
-			res.Tags[i] = marshalCategoryTagToTagResponse(val)
+			res.Tags[i] = marshalCategoryTagToTagResponseBody(val)
 		}
 	}
 
 	return res
 }
 
-// marshalCategoryTagToTagResponse builds a value of type *TagResponse from a
-// value of type *category.Tag.
-func marshalCategoryTagToTagResponse(v *category.Tag) *TagResponse {
-	res := &TagResponse{
+// marshalCategoryTagToTagResponseBody builds a value of type *TagResponseBody
+// from a value of type *category.Tag.
+func marshalCategoryTagToTagResponseBody(v *category.Tag) *TagResponseBody {
+	res := &TagResponseBody{
 		ID:   v.ID,
 		Name: v.Name,
 	}
