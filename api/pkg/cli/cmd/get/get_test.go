@@ -27,7 +27,17 @@ import (
 	"gotest.tools/v3/golden"
 )
 
-const api string = "http://test.hub.cli"
+var want string = `
+Get a Abc of name 'foo':
+
+    tkn hub get abc foo
+
+or
+
+Get a Abc of name 'foo' of version '0.3':
+
+    tkn hub get abc foo --version 0.3
+`
 
 var resource = &res.Resource{
 	ID:   1,
@@ -211,4 +221,9 @@ func TestGet_ResourceNotFound(t *testing.T) {
 	assert.Error(t, err)
 	assert.EqualError(t, err, "No Resource Found")
 	assert.Equal(t, gock.IsDone(), true)
+}
+
+func Test_examples(t *testing.T) {
+	got := examples("abc")
+	assert.Equal(t, want, got)
 }
