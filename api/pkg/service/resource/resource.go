@@ -243,7 +243,7 @@ func initResource(r model.Resource) *resource.Resource {
 		MinPipelinesVersion: lv.MinPipelinesVersion,
 		WebURL:              lv.URL,
 		RawURL:              replaceGHtoRaw.Replace(lv.URL),
-		UpdatedAt:           lv.UpdatedAt.UTC().String(),
+		UpdatedAt:           lv.ModifiedAt.UTC().String(),
 	}
 	for _, tag := range r.Tags {
 		res.Tags = append(res.Tags, &resource.Tag{
@@ -305,7 +305,7 @@ func versionInfoFromResource(r model.Resource) *resource.Version {
 		MinPipelinesVersion: v.MinPipelinesVersion,
 		WebURL:              v.URL,
 		RawURL:              replaceGHtoRaw.Replace(v.URL),
-		UpdatedAt:           v.UpdatedAt.UTC().String(),
+		UpdatedAt:           v.ModifiedAt.UTC().String(),
 		Resource:            res,
 	}
 

@@ -16,7 +16,7 @@
 			"minPipelinesVersion": "0.12.1",
 			"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.2/tekton.yaml",
 			"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml",
-			"updatedAt": "2016-01-01 12:30:12 +0000 UTC"
+			"updatedAt": "2013-01-01 00:00:01 +0000 UTC"
 		},
 		"tags": [
 			{
@@ -43,7 +43,7 @@
 			"minPipelinesVersion": "0.12.1",
 			"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tkn/0.1/tkn.yaml",
 			"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tkn/0.1/tkn.yaml",
-			"updatedAt": "2016-01-01 12:30:12 +0000 UTC"
+			"updatedAt": "2013-01-01 00:00:01 +0000 UTC"
 		},
 		"tags": [
 			{
