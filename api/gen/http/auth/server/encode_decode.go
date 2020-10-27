@@ -112,3 +112,32 @@ func EncodeAuthenticateError(encoder func(context.Context, http.ResponseWriter) 
 		}
 	}
 }
+
+// marshalAuthAuthTokensToAuthTokensResponseBody builds a value of type
+// *AuthTokensResponseBody from a value of type *auth.AuthTokens.
+func marshalAuthAuthTokensToAuthTokensResponseBody(v *auth.AuthTokens) *AuthTokensResponseBody {
+	res := &AuthTokensResponseBody{}
+	if v.Access != nil {
+		res.Access = marshalAuthTokenToTokenResponseBody(v.Access)
+	}
+	if v.Refresh != nil {
+		res.Refresh = marshalAuthTokenToTokenResponseBody(v.Refresh)
+	}
+
+	return res
+}
+
+// marshalAuthTokenToTokenResponseBody builds a value of type
+// *TokenResponseBody from a value of type *auth.Token.
+func marshalAuthTokenToTokenResponseBody(v *auth.Token) *TokenResponseBody {
+	if v == nil {
+		return nil
+	}
+	res := &TokenResponseBody{
+		Token:           v.Token,
+		RefreshInterval: v.RefreshInterval,
+		ExpiresAt:       v.ExpiresAt,
+	}
+
+	return res
+}

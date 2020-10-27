@@ -27,6 +27,7 @@ require (
 	k8s.io/apimachinery v0.19.0
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	knative.dev/pkg v0.0.0-20200922164940-4bf40ad82aab
+	maze.io/x/duration v0.0.0-20160924141736-faac084b6075
 )
 
 // Pin k8s deps to 0.18.9

@@ -22,6 +22,7 @@ import (
 	"github.com/tektoncd/hub/api/gen/admin"
 	"github.com/tektoncd/hub/api/pkg/service/auth"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	"github.com/tektoncd/hub/api/pkg/token"
 )
 
 func TestUpdateAgent(t *testing.T) {
@@ -32,6 +33,9 @@ func TestUpdateAgent(t *testing.T) {
 	user, _, err := tc.UserWithScopes("foo", "agent:create")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	token.Now = testutils.Now
 
 	adminSvc := New(tc)
 	ctx := auth.WithUserID(context.Background(), user.ID)
@@ -89,6 +93,9 @@ func TestUpdateAgent_UpdateScopesCase(t *testing.T) {
 	user, _, err := tc.UserWithScopes("foo", "agent:create")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	token.Now = testutils.Now
 
 	adminSvc := New(tc)
 	ctx := auth.WithUserID(context.Background(), user.ID)

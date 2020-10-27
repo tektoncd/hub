@@ -16,9 +16,10 @@ package auth
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/google/go-github/github"
 	"github.com/tektoncd/hub/api/gen/auth"
 	"github.com/tektoncd/hub/api/gen/log"
@@ -39,7 +40,7 @@ type request struct {
 	log           *log.Logger
 	oauth         *oauth2.Config
 	defaultScopes []string
-	jwtSigningKey string
+	jwtConfig     *app.JWTConfig
 }
 
 var (
@@ -63,7 +64,7 @@ func (s *service) Authenticate(ctx context.Context, p *auth.AuthenticatePayload)
 		log:           s.Logger(ctx),
 		oauth:         s.api.OAuthConfig(),
 		defaultScopes: s.api.Data().Default.Scopes,
-		jwtSigningKey: s.api.JWTSigningKey(),
+		jwtConfig:     s.api.JWTConfig(),
 	}
 
 	return req.authenticate(p.Code)
@@ -98,13 +99,8 @@ func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
 		return nil, err
 	}
 
-	// creates jwt using user details
-	jwt, err := r.createJWT(user, scopes)
-	if err != nil {
-		return nil, err
-	}
-
-	return &auth.AuthenticateResult{Token: jwt}, nil
+	// creates tokens using user details
+	return r.createTokens(user, scopes)
 }
 
 func (r *request) addUser(user *github.User) (*model.User, error) {
@@ -143,20 +139,50 @@ func (r *request) userScopes(user *model.User) ([]string, error) {
 	return userScopes, nil
 }
 
-func (r *request) createJWT(user *model.User, scopes []string) (string, error) {
+func (r *request) createTokens(user *model.User, scopes []string) (*auth.AuthenticateResult, error) {
 
-	claim := jwt.MapClaims{
-		"id":     user.ID,
-		"login":  user.GithubLogin,
-		"name":   user.GithubName,
-		"scopes": scopes,
+	req := token.Request{
+		User:      user,
+		Scopes:    scopes,
+		JWTConfig: r.jwtConfig,
 	}
 
-	token, err := token.Create(claim, r.jwtSigningKey)
+	accessToken, accessExpiresAt, err := req.AccessJWT()
 	if err != nil {
 		r.log.Error(err)
-		return "", internalError
+		return nil, internalError
 	}
 
-	return token, nil
+	refreshToken, refreshExpiresAt, err := req.RefreshJWT()
+	if err != nil {
+		r.log.Error(err)
+		return nil, internalError
+	}
+
+	user.RefreshTokenChecksum = createChecksum(refreshToken)
+
+	if err = r.db.Save(user).Error; err != nil {
+		r.log.Error(err)
+		return nil, internalError
+	}
+
+	data := &auth.AuthTokens{
+		Access: &auth.Token{
+			Token:           accessToken,
+			RefreshInterval: r.jwtConfig.AccessExpiresIn.String(),
+			ExpiresAt:       accessExpiresAt,
+		},
+		Refresh: &auth.Token{
+			Token:           refreshToken,
+			RefreshInterval: r.jwtConfig.RefreshExpiresIn.String(),
+			ExpiresAt:       refreshExpiresAt,
+		},
+	}
+
+	return &auth.AuthenticateResult{Data: data}, nil
+}
+
+func createChecksum(token string) string {
+	hash := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(hash[:])
 }

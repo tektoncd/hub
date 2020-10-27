@@ -35,26 +35,26 @@ var (
 )
 
 var (
-	tokenError  = auth.MakeInvalidToken(fmt.Errorf("invalid user token"))
+	tokenError  = auth.MakeInvalidToken(fmt.Errorf("invalid or expired user token"))
 	scopesError = auth.MakeInvalidScopes(fmt.Errorf("user not authorized"))
 )
 
 type Service struct {
 	app.Service
-	signingKey string
+	jwtConfig *app.JWTConfig
 }
 
 func NewService(api app.Config, name string) *Service {
 	return &Service{
-		Service:    api.Service(name),
-		signingKey: api.JWTSigningKey(),
+		Service:   api.Service(name),
+		jwtConfig: api.JWTConfig(),
 	}
 }
 
 // JWTAuth implements the authorization logic for services for the "jwt" security scheme.
 func (s *Service) JWTAuth(ctx context.Context, jwt string, scheme *security.JWTScheme) (context.Context, error) {
 
-	claims, err := token.Verify(jwt, s.signingKey)
+	claims, err := token.Verify(jwt, s.jwtConfig.SigningKey)
 	if err != nil {
 		return ctx, tokenError
 	}

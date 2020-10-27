@@ -17,11 +17,23 @@ package testutils
 import (
 	"bytes"
 	"encoding/json"
+	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/token"
 )
+
+// Now mocks the current time
+var Now = func() time.Time {
+	return time.Date(2020, 01, 01, 12, 00, 00, 01234567, time.UTC)
+}
+
+// NowAfterDuration returns a time one second after adding the duration in Now
+func NowAfterDuration(dur time.Duration) func() time.Time {
+	return func() time.Time {
+		return Now().Add(dur).Add(1 * time.Second)
+	}
+}
 
 // FormatJSON formats json string to be added to golden file
 func FormatJSON(b []byte) (string, error) {
@@ -47,47 +59,60 @@ func (tc *TestConfig) UserWithScopes(name string, scopes ...string) (*model.User
 		return nil, "", err
 	}
 
-	claim := jwt.MapClaims{
-		"id":     user.ID,
-		"login":  user.GithubLogin,
-		"name":   user.GithubName,
-		"scopes": scopes,
-	}
+	token.Now = Now
 
-	token, err := token.Create(claim, tc.JWTSigningKey())
+	req := token.Request{User: user, Scopes: scopes, JWTConfig: tc.JWTConfig()}
+	accessToken, _, err := req.AccessJWT()
 	if err != nil {
 		return nil, "", err
 	}
 
-	return user, token, nil
+	return user, accessToken, nil
+}
+
+// RefreshTokenForUser returns refresh JWT for user with refresh:token scope
+// User will have same github login and github name in db
+func (tc *TestConfig) RefreshTokenForUser(name string) (*model.User, string, error) {
+
+	user := &model.User{GithubLogin: name, GithubName: name, Type: model.NormalUserType}
+	if err := tc.DB().Where(&model.User{GithubLogin: name}).
+		FirstOrCreate(user).Error; err != nil {
+		return nil, "", err
+	}
+
+	token.Now = Now
+
+	req := token.Request{User: user, JWTConfig: tc.JWTConfig()}
+	refreshToken, _, err := req.RefreshJWT()
+	if err != nil {
+		return nil, "", err
+	}
+
+	return user, refreshToken, nil
 }
 
 // AgentWithScopes returns JWT for user with required scopes
 func (tc *TestConfig) AgentWithScopes(name string, scopes ...string) (*model.User, string, error) {
 
-	user := &model.User{AgentName: name, Type: model.AgentUserType}
+	agent := &model.User{AgentName: name, Type: model.AgentUserType}
 	if err := tc.DB().Where(&model.User{AgentName: name}).
-		FirstOrCreate(user).Error; err != nil {
+		FirstOrCreate(agent).Error; err != nil {
 		return nil, "", err
 	}
 
-	if err := tc.AddScopesForUser(user.ID, scopes); err != nil {
+	if err := tc.AddScopesForUser(agent.ID, scopes); err != nil {
 		return nil, "", err
 	}
 
-	claim := jwt.MapClaims{
-		"id":     user.ID,
-		"name":   user.AgentName,
-		"type":   user.Type,
-		"scopes": scopes,
-	}
+	token.Now = Now
 
-	token, err := token.Create(claim, tc.JWTSigningKey())
+	req := token.Request{User: agent, Scopes: scopes, JWTConfig: tc.JWTConfig()}
+	agentToken, err := req.AgentJWT()
 	if err != nil {
 		return nil, "", err
 	}
 
-	return user, token, nil
+	return agent, agentToken, nil
 }
 
 // AddScopesForUser adds scopes for passed User ID

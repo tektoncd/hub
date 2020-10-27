@@ -15,8 +15,8 @@ import (
 // AuthenticateResponseBody is the type of the "auth" service "Authenticate"
 // endpoint HTTP response body.
 type AuthenticateResponseBody struct {
-	// JSON Web Token with user details
-	Token string `form:"token" json:"token" xml:"token"`
+	// User Tokens
+	Data *AuthTokensResponseBody `form:"data" json:"data" xml:"data"`
 }
 
 // AuthenticateInvalidCodeResponseBody is the type of the "auth" service
@@ -91,11 +91,30 @@ type AuthenticateInvalidScopesResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// AuthTokensResponseBody is used to define fields on response body types.
+type AuthTokensResponseBody struct {
+	// Access Token
+	Access *TokenResponseBody `form:"access,omitempty" json:"access,omitempty" xml:"access,omitempty"`
+	// Refresh Token
+	Refresh *TokenResponseBody `form:"refresh,omitempty" json:"refresh,omitempty" xml:"refresh,omitempty"`
+}
+
+// TokenResponseBody is used to define fields on response body types.
+type TokenResponseBody struct {
+	// JWT
+	Token string `form:"token" json:"token" xml:"token"`
+	// Duration the token will Expire In
+	RefreshInterval string `form:"refreshInterval" json:"refreshInterval" xml:"refreshInterval"`
+	// Time the token will expires at
+	ExpiresAt int64 `form:"expiresAt" json:"expiresAt" xml:"expiresAt"`
+}
+
 // NewAuthenticateResponseBody builds the HTTP response body from the result of
 // the "Authenticate" endpoint of the "auth" service.
 func NewAuthenticateResponseBody(res *auth.AuthenticateResult) *AuthenticateResponseBody {
-	body := &AuthenticateResponseBody{
-		Token: res.Token,
+	body := &AuthenticateResponseBody{}
+	if res.Data != nil {
+		body.Data = marshalAuthAuthTokensToAuthTokensResponseBody(res.Data)
 	}
 	return body
 }

@@ -39,8 +39,26 @@ type AuthenticatePayload struct {
 // AuthenticateResult is the result type of the auth service Authenticate
 // method.
 type AuthenticateResult struct {
-	// JSON Web Token with user details
+	// User Tokens
+	Data *AuthTokens
+}
+
+// Auth tokens have access and refresh token for user
+type AuthTokens struct {
+	// Access Token
+	Access *Token
+	// Refresh Token
+	Refresh *Token
+}
+
+// Token includes the JWT, Expire Duration & Time
+type Token struct {
+	// JWT
 	Token string
+	// Duration the token will Expire In
+	RefreshInterval string
+	// Time the token will expires at
+	ExpiresAt int64
 }
 
 // MakeInvalidCode builds a goa.ServiceError from an error.

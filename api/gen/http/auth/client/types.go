@@ -15,8 +15,8 @@ import (
 // AuthenticateResponseBody is the type of the "auth" service "Authenticate"
 // endpoint HTTP response body.
 type AuthenticateResponseBody struct {
-	// JSON Web Token with user details
-	Token *string `form:"token,omitempty" json:"token,omitempty" xml:"token,omitempty"`
+	// User Tokens
+	Data *AuthTokensResponseBody `form:"data,omitempty" json:"data,omitempty" xml:"data,omitempty"`
 }
 
 // AuthenticateInvalidCodeResponseBody is the type of the "auth" service
@@ -91,12 +91,29 @@ type AuthenticateInvalidScopesResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
+// AuthTokensResponseBody is used to define fields on response body types.
+type AuthTokensResponseBody struct {
+	// Access Token
+	Access *TokenResponseBody `form:"access,omitempty" json:"access,omitempty" xml:"access,omitempty"`
+	// Refresh Token
+	Refresh *TokenResponseBody `form:"refresh,omitempty" json:"refresh,omitempty" xml:"refresh,omitempty"`
+}
+
+// TokenResponseBody is used to define fields on response body types.
+type TokenResponseBody struct {
+	// JWT
+	Token *string `form:"token,omitempty" json:"token,omitempty" xml:"token,omitempty"`
+	// Duration the token will Expire In
+	RefreshInterval *string `form:"refreshInterval,omitempty" json:"refreshInterval,omitempty" xml:"refreshInterval,omitempty"`
+	// Time the token will expires at
+	ExpiresAt *int64 `form:"expiresAt,omitempty" json:"expiresAt,omitempty" xml:"expiresAt,omitempty"`
+}
+
 // NewAuthenticateResultOK builds a "auth" service "Authenticate" endpoint
 // result from a HTTP "OK" response.
 func NewAuthenticateResultOK(body *AuthenticateResponseBody) *auth.AuthenticateResult {
-	v := &auth.AuthenticateResult{
-		Token: *body.Token,
-	}
+	v := &auth.AuthenticateResult{}
+	v.Data = unmarshalAuthTokensResponseBodyToAuthAuthTokens(body.Data)
 
 	return v
 }
@@ -164,8 +181,13 @@ func NewAuthenticateInvalidScopes(body *AuthenticateInvalidScopesResponseBody) *
 // ValidateAuthenticateResponseBody runs the validations defined on
 // AuthenticateResponseBody
 func ValidateAuthenticateResponseBody(body *AuthenticateResponseBody) (err error) {
-	if body.Token == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("token", "body"))
+	if body.Data == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("data", "body"))
+	}
+	if body.Data != nil {
+		if err2 := ValidateAuthTokensResponseBody(body.Data); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
 	}
 	return
 }
@@ -262,6 +284,36 @@ func ValidateAuthenticateInvalidScopesResponseBody(body *AuthenticateInvalidScop
 	}
 	if body.Fault == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateAuthTokensResponseBody runs the validations defined on
+// AuthTokensResponseBody
+func ValidateAuthTokensResponseBody(body *AuthTokensResponseBody) (err error) {
+	if body.Access != nil {
+		if err2 := ValidateTokenResponseBody(body.Access); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	if body.Refresh != nil {
+		if err2 := ValidateTokenResponseBody(body.Refresh); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateTokenResponseBody runs the validations defined on TokenResponseBody
+func ValidateTokenResponseBody(body *TokenResponseBody) (err error) {
+	if body.Token == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("token", "body"))
+	}
+	if body.RefreshInterval == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("refreshInterval", "body"))
+	}
+	if body.ExpiresAt == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("expiresAt", "body"))
 	}
 	return
 }

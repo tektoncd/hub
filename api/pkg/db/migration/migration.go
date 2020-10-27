@@ -33,6 +33,7 @@ func Migrate(api *app.APIBase) error {
 		[]*gormigrate.Migration{
 			renameNameColumnToAgentNameInUserTable(log),
 			createConfigTable(log),
+			addRefreshTokenChecksumColumnInUserTable(log),
 		},
 	)
 
