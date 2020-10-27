@@ -29,7 +29,7 @@ import (
 )
 
 func RefreshChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, tc.JWTSigningKey())
+	service := auth.NewService(tc.APIConfig, "catalog")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewRefreshHandler,
 		server.MountRefreshHandler,

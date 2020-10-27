@@ -334,3 +334,26 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 	})
 	Required("data")
 })
+
+var Token = Type("Token", func() {
+	Description("Token includes the JWT, Expire Duration & Time")
+	Attribute("token", String, "JWT", func() {
+		Example("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."+
+			"eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ."+
+			"6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM")
+	})
+	Attribute("refreshInterval", String, "Duration the token will Expire In", func() {
+		Example("refreshInterval", "1h30m")
+	})
+	Attribute("expiresAt", Int64, "Time the token will expires at", func() {
+		Example("expiresAt", 0)
+	})
+
+	Required("token", "refreshInterval", "expiresAt")
+})
+
+var AuthTokens = Type("AuthTokens", func() {
+	Description("Auth tokens have access and refresh token for user")
+	Attribute("access", Token, "Access Token")
+	Attribute("refresh", Token, "Refresh Token")
+})

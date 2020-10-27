@@ -25,7 +25,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/auth"
 	"github.com/tektoncd/hub/api/gen/http/auth/server"
+	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	"github.com/tektoncd/hub/api/pkg/token"
 	goa "goa.design/goa/v3/pkg"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -64,6 +66,9 @@ func TestLogin_Http(t *testing.T) {
 			"name":  "test-user",
 		})
 
+	// Mocks the time
+	token.Now = testutils.Now
+
 	AuthenticateChecker(tc).Test(t, http.MethodPost, "/auth/login?code=test").Check().
 		HasStatus(http.StatusOK).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -74,13 +79,25 @@ func TestLogin_Http(t *testing.T) {
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
-		// expected jwt for user
-		user, token, err := tc.UserWithScopes("test", "rating:read", "rating:write")
+		// expected access jwt for user
+		user, accessToken, err := tc.UserWithScopes("test", "rating:read", "rating:write")
 		assert.Equal(t, user.GithubLogin, "test")
 		assert.NoError(t, err)
 
-		assert.Equal(t, token, res.Token)
-		assert.Equal(t, true, gock.IsDone())
+		// expected refresh jwt for user
+		user, refreshToken, err := tc.RefreshTokenForUser("test")
+		assert.Equal(t, user.GithubLogin, "test")
+		assert.NoError(t, err)
+
+		assert.Equal(t, accessToken, res.Data.Access.Token)
+		assert.Equal(t, refreshToken, res.Data.Refresh.Token)
+		assert.Equal(t, gock.IsDone(), true)
+
+		// validate the new checksum
+		ut := &model.User{}
+		err = tc.DB().First(ut, user.ID).Error
+		assert.NoError(t, err)
+		assert.Equal(t, ut.RefreshTokenChecksum, createChecksum(refreshToken))
 	})
 }
 
@@ -138,6 +155,9 @@ func TestLogin_Http_UserWithExtraScope(t *testing.T) {
 			"name":  "foo-bar",
 		})
 
+	// Mocks the time
+	token.Now = testutils.Now
+
 	AuthenticateChecker(tc).Test(t, http.MethodPost, "/auth/login?code=foo-test").Check().
 		HasStatus(http.StatusOK).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -148,12 +168,24 @@ func TestLogin_Http_UserWithExtraScope(t *testing.T) {
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
-		// expected jwt for user
-		user, token, err := tc.UserWithScopes("foo", "rating:read", "rating:write", "agent:create")
+		// expected access jwt for user
+		user, accessToken, err := tc.UserWithScopes("foo", "rating:read", "rating:write", "agent:create")
 		assert.Equal(t, user.GithubLogin, "foo")
 		assert.NoError(t, err)
 
-		assert.Equal(t, token, res.Token)
-		assert.Equal(t, true, gock.IsDone())
+		// expected refresh jwt for user
+		user, refreshToken, err := tc.RefreshTokenForUser("foo")
+		assert.Equal(t, user.GithubLogin, "foo")
+		assert.NoError(t, err)
+
+		assert.Equal(t, accessToken, res.Data.Access.Token)
+		assert.Equal(t, refreshToken, res.Data.Refresh.Token)
+		assert.Equal(t, gock.IsDone(), true)
+
+		// validate the new checksum
+		ut := &model.User{}
+		err = tc.DB().First(ut, user.ID).Error
+		assert.NoError(t, err)
+		assert.Equal(t, ut.RefreshTokenChecksum, createChecksum(refreshToken))
 	})
 }

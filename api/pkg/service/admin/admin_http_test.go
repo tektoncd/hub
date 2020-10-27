@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/admin"
@@ -29,11 +30,12 @@ import (
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/service/auth"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	"github.com/tektoncd/hub/api/pkg/token"
 	goa "goa.design/goa/v3/pkg"
 )
 
 func UpdateAgentChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, tc.JWTSigningKey())
+	service := auth.NewService(tc.APIConfig, "admin")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewUpdateAgentHandler,
 		server.MountUpdateAgentHandler,
@@ -46,14 +48,18 @@ func TestUpdateAgent_Http_NewAgent(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, token, err := tc.UserWithScopes("foo", "agent:create")
+	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+	token.Now = testutils.Now
 
 	data := []byte(`{"name": "agent-007","scopes": ["catalog:refresh"]}`)
 
 	UpdateAgentChecker(tc).Test(t, http.MethodPut, "/system/user/agent").
-		WithHeader("Authorization", token).WithBody(data).
+		WithHeader("Authorization", accessToken).WithBody(data).
 		Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -78,14 +84,17 @@ func TestUpdateAgent_Http_NormalUserExistWithName(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, token, err := tc.UserWithScopes("foo", "agent:create")
+	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
 
 	data := []byte(`{"name": "foo","scopes": ["catalog:refresh"]}`)
 
 	UpdateAgentChecker(tc).Test(t, http.MethodPut, "/system/user/agent").
-		WithHeader("Authorization", token).WithBody(data).
+		WithHeader("Authorization", accessToken).WithBody(data).
 		Check().
 		HasStatus(400).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -105,14 +114,17 @@ func TestUpdateAgent_Http_InvalidScopeCase(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, token, err := tc.UserWithScopes("foo", "agent:create")
+	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
 
 	data := []byte(`{"name": "agent-001","scopes": ["invalid:scope"]}`)
 
 	UpdateAgentChecker(tc).Test(t, http.MethodPut, "/system/user/agent").
-		WithHeader("Authorization", token).WithBody(data).
+		WithHeader("Authorization", accessToken).WithBody(data).
 		Check().
 		HasStatus(400).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -132,14 +144,18 @@ func TestUpdateAgent_Http_UpdateCase(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, token, err := tc.UserWithScopes("foo", "agent:create")
+	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+	token.Now = testutils.Now
 
 	data := []byte(`{"name": "agent-001","scopes": ["catalog:refresh","agent:create"]}`)
 
 	UpdateAgentChecker(tc).Test(t, http.MethodPut, "/system/user/agent").
-		WithHeader("Authorization", token).WithBody(data).
+		WithHeader("Authorization", accessToken).WithBody(data).
 		Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
@@ -175,6 +191,9 @@ func TestRefreshConfig_Http(t *testing.T) {
 	user, token, err := tc.UserWithScopes("foo", "config:refresh")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
 
 	// DB is populated using text fixture, so it has by default value `testChecksum` in table
 	config := &model.Config{}
@@ -212,6 +231,9 @@ func TestRefreshConfig_Http_ForceRefresh(t *testing.T) {
 	user, token, err := tc.UserWithScopes("foo", "config:refresh")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
 
 	// DB is populated using text fixture, so it has by default value `testChecksum` in table
 	config := &model.Config{}

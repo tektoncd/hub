@@ -30,29 +30,28 @@ import (
 //
 func UsageCommands() string {
 	return `category list
-auth authenticate
 admin (update-agent|refresh-config)
 rating (get|update)
 status status
 catalog refresh
 resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
+auth authenticate
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` auth authenticate --code "5628b69ec09c09512eef"` + "\n" +
 		os.Args[0] + ` admin update-agent --body '{
-      "name": "Non aut qui dolor.",
+      "name": "Pariatur occaecati voluptas assumenda maiores quaerat consequatur.",
       "scopes": [
-         "Suscipit aut minima autem ut est error.",
-         "Quos commodi.",
-         "Harum ut tenetur."
+         "Nihil officia itaque non.",
+         "Qui dolor consequatur assumenda."
       ]
-   }' --token "Tempore eaque esse fugit."` + "\n" +
-		os.Args[0] + ` rating get --id 18213508041950448663 --token "Quasi illo voluptate."` + "\n" +
+   }' --token "Aut minima autem ut est error eaque."` + "\n" +
+		os.Args[0] + ` rating get --id 14411076152978990455 --token "Rerum repellat aut."` + "\n" +
 		os.Args[0] + ` status status` + "\n" +
+		os.Args[0] + ` catalog refresh --token "Animi sit nulla."` + "\n" +
 		""
 }
 
@@ -69,11 +68,6 @@ func ParseEndpoint(
 		categoryFlags = flag.NewFlagSet("category", flag.ContinueOnError)
 
 		categoryListFlags = flag.NewFlagSet("list", flag.ExitOnError)
-
-		authFlags = flag.NewFlagSet("auth", flag.ContinueOnError)
-
-		authAuthenticateFlags    = flag.NewFlagSet("authenticate", flag.ExitOnError)
-		authAuthenticateCodeFlag = authAuthenticateFlags.String("code", "REQUIRED", "")
 
 		adminFlags = flag.NewFlagSet("admin", flag.ContinueOnError)
 
@@ -136,12 +130,14 @@ func ParseEndpoint(
 
 		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
 		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
+
+		authFlags = flag.NewFlagSet("auth", flag.ContinueOnError)
+
+		authAuthenticateFlags    = flag.NewFlagSet("authenticate", flag.ExitOnError)
+		authAuthenticateCodeFlag = authAuthenticateFlags.String("code", "REQUIRED", "")
 	)
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
-
-	authFlags.Usage = authUsage
-	authAuthenticateFlags.Usage = authAuthenticateUsage
 
 	adminFlags.Usage = adminUsage
 	adminUpdateAgentFlags.Usage = adminUpdateAgentUsage
@@ -166,6 +162,9 @@ func ParseEndpoint(
 	resourceByCatalogKindNameFlags.Usage = resourceByCatalogKindNameUsage
 	resourceByIDFlags.Usage = resourceByIDUsage
 
+	authFlags.Usage = authUsage
+	authAuthenticateFlags.Usage = authAuthenticateUsage
+
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
 	}
@@ -183,8 +182,6 @@ func ParseEndpoint(
 		switch svcn {
 		case "category":
 			svcf = categoryFlags
-		case "auth":
-			svcf = authFlags
 		case "admin":
 			svcf = adminFlags
 		case "rating":
@@ -195,6 +192,8 @@ func ParseEndpoint(
 			svcf = catalogFlags
 		case "resource":
 			svcf = resourceFlags
+		case "auth":
+			svcf = authFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -214,13 +213,6 @@ func ParseEndpoint(
 			switch epn {
 			case "list":
 				epf = categoryListFlags
-
-			}
-
-		case "auth":
-			switch epn {
-			case "authenticate":
-				epf = authAuthenticateFlags
 
 			}
 
@@ -283,6 +275,13 @@ func ParseEndpoint(
 
 			}
 
+		case "auth":
+			switch epn {
+			case "authenticate":
+				epf = authAuthenticateFlags
+
+			}
+
 		}
 	}
 	if epf == nil {
@@ -309,13 +308,6 @@ func ParseEndpoint(
 			case "list":
 				endpoint = c.List()
 				data = nil
-			}
-		case "auth":
-			c := authc.NewClient(scheme, host, doer, enc, dec, restore)
-			switch epn {
-			case "authenticate":
-				endpoint = c.Authenticate()
-				data, err = authc.BuildAuthenticatePayload(*authAuthenticateCodeFlag)
 			}
 		case "admin":
 			c := adminc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -376,6 +368,13 @@ func ParseEndpoint(
 				endpoint = c.ByID()
 				data, err = resourcec.BuildByIDPayload(*resourceByIDIDFlag)
 			}
+		case "auth":
+			c := authc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "authenticate":
+				endpoint = c.Authenticate()
+				data, err = authc.BuildAuthenticatePayload(*authAuthenticateCodeFlag)
+			}
 		}
 	}
 	if err != nil {
@@ -408,30 +407,6 @@ Example:
 `, os.Args[0])
 }
 
-// authUsage displays the usage of the auth command and its subcommands.
-func authUsage() {
-	fmt.Fprintf(os.Stderr, `The auth service exposes endpoint to authenticate User against GitHub OAuth
-Usage:
-    %s [globalflags] auth COMMAND [flags]
-
-COMMAND:
-    authenticate: Authenticates users against GitHub OAuth
-
-Additional help:
-    %s auth COMMAND --help
-`, os.Args[0], os.Args[0])
-}
-func authAuthenticateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] auth authenticate -code STRING
-
-Authenticates users against GitHub OAuth
-    -code STRING: 
-
-Example:
-    `+os.Args[0]+` auth authenticate --code "5628b69ec09c09512eef"
-`, os.Args[0])
-}
-
 // adminUsage displays the usage of the admin command and its subcommands.
 func adminUsage() {
 	fmt.Fprintf(os.Stderr, `Admin service
@@ -455,13 +430,12 @@ Create or Update an agent user with required scopes
 
 Example:
     `+os.Args[0]+` admin update-agent --body '{
-      "name": "Non aut qui dolor.",
+      "name": "Pariatur occaecati voluptas assumenda maiores quaerat consequatur.",
       "scopes": [
-         "Suscipit aut minima autem ut est error.",
-         "Quos commodi.",
-         "Harum ut tenetur."
+         "Nihil officia itaque non.",
+         "Qui dolor consequatur assumenda."
       ]
-   }' --token "Tempore eaque esse fugit."
+   }' --token "Aut minima autem ut est error eaque."
 `, os.Args[0])
 }
 
@@ -475,7 +449,7 @@ Refresh the changes in config file
 Example:
     `+os.Args[0]+` admin refresh-config --body '{
       "force": true
-   }' --token "Magnam illum ut nihil eum placeat."
+   }' --token "Omnis non ut aut quos."
 `, os.Args[0])
 }
 
@@ -501,7 +475,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 18213508041950448663 --token "Quasi illo voluptate."
+    `+os.Args[0]+` rating get --id 14411076152978990455 --token "Rerum repellat aut."
 `, os.Args[0])
 }
 
@@ -515,8 +489,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 2
-   }' --id 17876575713650742907 --token "Porro nulla sunt omnis molestiae."
+      "rating": 0
+   }' --id 9364450849613805321 --token "Beatae reiciendis accusantium distinctio qui."
 `, os.Args[0])
 }
 
@@ -563,7 +537,7 @@ Refreshes Tekton Catalog
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --token "Deleniti voluptatem distinctio distinctio voluptas beatae id."
+    `+os.Args[0]+` catalog refresh --token "Animi sit nulla."
 `, os.Args[0])
 }
 
@@ -603,7 +577,7 @@ Example:
    ]' --tags '[
       "image",
       "build"
-   ]' --limit 100 --match "contains"
+   ]' --limit 100 --match "exact"
 `, os.Args[0])
 }
 
@@ -639,7 +613,7 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -675,5 +649,29 @@ Find a resource using it's id
 
 Example:
     `+os.Args[0]+` resource by-id --id 1
+`, os.Args[0])
+}
+
+// authUsage displays the usage of the auth command and its subcommands.
+func authUsage() {
+	fmt.Fprintf(os.Stderr, `The auth service exposes endpoint to authenticate User against GitHub OAuth
+Usage:
+    %s [globalflags] auth COMMAND [flags]
+
+COMMAND:
+    authenticate: Authenticates users against GitHub OAuth
+
+Additional help:
+    %s auth COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func authAuthenticateUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] auth authenticate -code STRING
+
+Authenticates users against GitHub OAuth
+    -code STRING: 
+
+Example:
+    `+os.Args[0]+` auth authenticate --code "5628b69ec09c09512eef"
 `, os.Args[0])
 }

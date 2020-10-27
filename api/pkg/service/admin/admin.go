@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/tektoncd/hub/api/gen/admin"
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
@@ -36,9 +35,9 @@ type service struct {
 }
 
 type agentRequest struct {
-	db            *gorm.DB
-	log           *log.Logger
-	jwtSigningKey string
+	db        *gorm.DB
+	log       *log.Logger
+	jwtConfig *app.JWTConfig
 }
 
 type refreshRequest struct {
@@ -66,9 +65,9 @@ func New(api app.Config) admin.Service {
 // Create or Update an agent user with required scopes
 func (s *service) UpdateAgent(ctx context.Context, p *admin.UpdateAgentPayload) (*admin.UpdateAgentResult, error) {
 	req := agentRequest{
-		db:            s.DB(ctx),
-		log:           s.Logger(ctx),
-		jwtSigningKey: s.api.JWTSigningKey(),
+		db:        s.DB(ctx),
+		log:       s.Logger(ctx),
+		jwtConfig: s.api.JWTConfig(),
 	}
 
 	return req.run(p.Name, p.Scopes)
@@ -135,7 +134,12 @@ func (r *agentRequest) addNewAgent(name string, scopes []string) (string, error)
 		return "", err
 	}
 
-	return r.createJWT(&agent, scopes)
+	req := token.Request{User: &agent, Scopes: scopes, JWTConfig: r.jwtConfig}
+	token, err := req.AgentJWT()
+	if err != nil {
+		return "", internalError
+	}
+	return token, nil
 }
 
 func (r *agentRequest) updateExistingAgent(agent *model.User, scopes []string) (string, error) {
@@ -152,7 +156,12 @@ func (r *agentRequest) updateExistingAgent(agent *model.User, scopes []string) (
 		return "", err
 	}
 
-	return r.createJWT(agent, scopes)
+	req := token.Request{User: agent, Scopes: scopes, JWTConfig: r.jwtConfig}
+	token, err := req.AgentJWT()
+	if err != nil {
+		return "", internalError
+	}
+	return token, nil
 }
 
 func (r *agentRequest) addScopesForAgent(agent *model.User, scopes []string) error {
@@ -180,24 +189,6 @@ func (r *agentRequest) addScopesForAgent(agent *model.User, scopes []string) err
 	}
 
 	return nil
-}
-
-func (r *agentRequest) createJWT(user *model.User, scopes []string) (string, error) {
-
-	claim := jwt.MapClaims{
-		"id":     user.ID,
-		"name":   user.AgentName,
-		"type":   user.Type,
-		"scopes": scopes,
-	}
-
-	token, err := token.Create(claim, r.jwtSigningKey)
-	if err != nil {
-		r.log.Error(err)
-		return "", internalError
-	}
-
-	return token, nil
 }
 
 func (r *agentRequest) userExistWithAgentName(name string) error {

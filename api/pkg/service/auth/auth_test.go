@@ -21,7 +21,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/auth"
+	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	"github.com/tektoncd/hub/api/pkg/token"
 	"gopkg.in/h2non/gock.v1"
 )
 
@@ -46,17 +48,35 @@ func TestLogin(t *testing.T) {
 			"name":  "test-user",
 		})
 
+	// Mocks the time
+	token.Now = testutils.Now
+
 	authSvc := New(tc)
 	payload := &auth.AuthenticatePayload{Code: "test-code"}
 	res, err := authSvc.Authenticate(context.Background(), payload)
 	assert.NoError(t, err)
 
-	// expected user jwt with default scopes
-	user, token, err := tc.UserWithScopes("test", "rating:read", "rating:write")
+	// expected access jwt for user
+	user, accessToken, err := tc.UserWithScopes("test", "rating:read", "rating:write")
 	assert.Equal(t, user.GithubLogin, "test")
 	assert.NoError(t, err)
 
-	assert.Equal(t, token, res.Token)
+	// expected refresh jwt for user
+	user, refreshToken, err := tc.RefreshTokenForUser("test")
+	assert.Equal(t, user.GithubLogin, "test")
+	assert.NoError(t, err)
+
+	accessExpiryTime := testutils.Now().Add(tc.JWTConfig().AccessExpiresIn).Unix()
+	refreshExpiryTime := testutils.Now().Add(tc.JWTConfig().RefreshExpiresIn).Unix()
+
+	assert.Equal(t, accessToken, res.Data.Access.Token)
+	assert.Equal(t, tc.JWTConfig().AccessExpiresIn.String(), res.Data.Access.RefreshInterval)
+	assert.Equal(t, accessExpiryTime, res.Data.Access.ExpiresAt)
+
+	assert.Equal(t, refreshToken, res.Data.Refresh.Token)
+	assert.Equal(t, tc.JWTConfig().RefreshExpiresIn.String(), res.Data.Refresh.RefreshInterval)
+	assert.Equal(t, refreshExpiryTime, res.Data.Refresh.ExpiresAt)
+
 	assert.Equal(t, gock.IsDone(), true)
 }
 
@@ -82,17 +102,26 @@ func TestLogin_again(t *testing.T) {
 			"name":  "test-user",
 		})
 
+	// Mocks the time
+	token.Now = testutils.Now
+
 	authSvc := New(tc)
 	payload := &auth.AuthenticatePayload{Code: "test-code"}
 	res, err := authSvc.Authenticate(context.Background(), payload)
 	assert.NoError(t, err)
 
-	// expected user jwt with default scopes
-	user, token, err := tc.UserWithScopes("test", "rating:read", "rating:write")
+	// expected access jwt for user
+	user, accessToken, err := tc.UserWithScopes("test", "rating:read", "rating:write")
 	assert.Equal(t, user.GithubLogin, "test")
 	assert.NoError(t, err)
 
-	assert.Equal(t, token, res.Token)
+	// expected refresh jwt for user
+	user, refreshToken, err := tc.RefreshTokenForUser("test")
+	assert.Equal(t, user.GithubLogin, "test")
+	assert.NoError(t, err)
+
+	assert.Equal(t, accessToken, res.Data.Access.Token)
+	assert.Equal(t, refreshToken, res.Data.Refresh.Token)
 
 	gock.New("https://github.com").
 		Post("/login/oauth/access_token").
@@ -104,7 +133,9 @@ func TestLogin_again(t *testing.T) {
 	payloadAgain := &auth.AuthenticatePayload{Code: "test-code-2"}
 	resAgain, err := authSvc.Authenticate(context.Background(), payloadAgain)
 	assert.NoError(t, err)
-	assert.Equal(t, token, resAgain.Token)
+
+	assert.Equal(t, accessToken, resAgain.Data.Access.Token)
+	assert.Equal(t, refreshToken, resAgain.Data.Refresh.Token)
 	assert.Equal(t, gock.IsDone(), true)
 }
 
@@ -147,16 +178,42 @@ func TestLogin_UserWithExtraScope(t *testing.T) {
 			"name":  "foo-bar",
 		})
 
+	// Mocks the time
+	token.Now = testutils.Now
+
+	// foo user is fetched from db to check its existing token checksum
+	user, _, err := tc.UserWithScopes("foo")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	// validate existing checksum
+	ut := &model.User{}
+	err = tc.DB().First(ut, user.ID).Error
+	assert.NoError(t, err)
+	assert.Equal(t, "test-checksum", ut.RefreshTokenChecksum)
+
 	authSvc := New(tc)
 	payload := &auth.AuthenticatePayload{Code: "foo-test"}
 	res, err := authSvc.Authenticate(context.Background(), payload)
 	assert.NoError(t, err)
 
-	// expected user jwt with scopes
-	user, token, err := tc.UserWithScopes("foo", "rating:read", "rating:write", "agent:create")
+	// expected access jwt for user
+	user, accessToken, err := tc.UserWithScopes("foo", "rating:read", "rating:write", "agent:create")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
 
-	assert.Equal(t, token, res.Token)
+	// expected refresh jwt for user
+	user, refreshToken, err := tc.RefreshTokenForUser("foo")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	assert.Equal(t, accessToken, res.Data.Access.Token)
+	assert.Equal(t, refreshToken, res.Data.Refresh.Token)
 	assert.Equal(t, gock.IsDone(), true)
+
+	// validate the new checksum which overrides existing refresh token checksum
+	ut = &model.User{}
+	err = tc.DB().First(ut, user.ID).Error
+	assert.NoError(t, err)
+	assert.Equal(t, ut.RefreshTokenChecksum, createChecksum(refreshToken))
 }

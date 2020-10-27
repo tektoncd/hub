@@ -149,3 +149,32 @@ func DecodeAuthenticateResponse(decoder func(*http.Response) goahttp.Decoder, re
 		}
 	}
 }
+
+// unmarshalAuthTokensResponseBodyToAuthAuthTokens builds a value of type
+// *auth.AuthTokens from a value of type *AuthTokensResponseBody.
+func unmarshalAuthTokensResponseBodyToAuthAuthTokens(v *AuthTokensResponseBody) *auth.AuthTokens {
+	res := &auth.AuthTokens{}
+	if v.Access != nil {
+		res.Access = unmarshalTokenResponseBodyToAuthToken(v.Access)
+	}
+	if v.Refresh != nil {
+		res.Refresh = unmarshalTokenResponseBodyToAuthToken(v.Refresh)
+	}
+
+	return res
+}
+
+// unmarshalTokenResponseBodyToAuthToken builds a value of type *auth.Token
+// from a value of type *TokenResponseBody.
+func unmarshalTokenResponseBodyToAuthToken(v *TokenResponseBody) *auth.Token {
+	if v == nil {
+		return nil
+	}
+	res := &auth.Token{
+		Token:           *v.Token,
+		RefreshInterval: *v.RefreshInterval,
+		ExpiresAt:       *v.ExpiresAt,
+	}
+
+	return res
+}

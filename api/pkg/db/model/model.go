@@ -86,11 +86,12 @@ type (
 
 	User struct {
 		gorm.Model
-		AgentName   string
-		GithubLogin string
-		GithubName  string
-		Type        UserType
-		Scopes      []*Scope `gorm:"many2many:user_scopes;"`
+		AgentName            string
+		GithubLogin          string
+		GithubName           string
+		Type                 UserType
+		Scopes               []*Scope `gorm:"many2many:user_scopes;"`
+		RefreshTokenChecksum string
 	}
 
 	Scope struct {

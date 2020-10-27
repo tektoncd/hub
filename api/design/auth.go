@@ -35,12 +35,8 @@ var _ = Service("auth", func() {
 			Required("code")
 		})
 		Result(func() {
-			Attribute("token", String, "JSON Web Token with user details", func() {
-				Example("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."+
-					"eyJpZCI6MTAwMDEsImxvZ2luIjoidGVzdCIsIm5hbWUiOiJ0ZXN0LXVzZXIiLCJzY29wZXMiOlsicmF0aW5nOnJlYWQiLCJyYXRpbmc6d3JpdGUiXX0."+
-					"zFztueyvZLLCyx3RD7WpzzfVaTrybzxgS5a_pDsq5M8")
-			})
-			Required("token")
+			Attribute("data", AuthTokens, "User Tokens")
+			Required("data")
 		})
 
 		HTTP(func() {

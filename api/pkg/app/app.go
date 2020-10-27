@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
@@ -31,6 +32,7 @@ import (
 	"golang.org/x/oauth2/github"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"maze.io/x/duration"
 )
 
 // BaseConfig defines methods on APIBase
@@ -57,15 +59,22 @@ type APIBase struct {
 type Config interface {
 	BaseConfig
 	OAuthConfig() *oauth2.Config
-	JWTSigningKey() string
+	JWTConfig() *JWTConfig
 }
 
 // APIConfig defines struct on top of APIBase with GitHub Oauth
-// Configuration & JWT Signing Key
+// & JWT Configurations
 type APIConfig struct {
 	*APIBase
-	conf   *oauth2.Config
-	jwtKey string
+	conf      *oauth2.Config
+	jwtConfig *JWTConfig
+}
+
+// JWTConfig defines configuration requires to create token
+type JWTConfig struct {
+	SigningKey       string
+	AccessExpiresIn  time.Duration
+	RefreshExpiresIn time.Duration
 }
 
 var _ BaseConfig = (*APIBase)(nil)
@@ -194,9 +203,9 @@ func (ac *APIConfig) OAuthConfig() *oauth2.Config {
 	return ac.conf
 }
 
-// JWTSigningKey returns JWT Signing key
-func (ac *APIConfig) JWTSigningKey() string {
-	return ac.jwtKey
+// JWTConfig returns JWTConfig Object
+func (ac *APIConfig) JWTConfig() *JWTConfig {
+	return ac.jwtConfig
 }
 
 // FromEnv will initialise APIConfig Object. This is called while starting
@@ -226,7 +235,7 @@ func FromEnvFile(file string) (*APIConfig, error) {
 	if ac.conf, err = initOAuthConfig(); err != nil {
 		return nil, err
 	}
-	if ac.jwtKey, err = jwtSigningKey(); err != nil {
+	if ac.jwtConfig, err = jwtConfig(); err != nil {
 		return nil, err
 	}
 
@@ -377,13 +386,41 @@ func initOAuthConfig() (*oauth2.Config, error) {
 	return conf, nil
 }
 
-// jwtSigningKey will look for JWT_SIGNING_KEY to be defined among
+// jwtConfig will look for jwt configurations to be defined among
 // environment variables
-func jwtSigningKey() (string, error) {
+func jwtConfig() (*JWTConfig, error) {
 
-	val := viper.GetString("JWT_SIGNING_KEY")
-	if val == "" {
-		return "", fmt.Errorf("no JWT_SIGNING_KEY environment variable defined")
+	conf := &JWTConfig{}
+
+	conf.SigningKey = viper.GetString("JWT_SIGNING_KEY")
+	if conf.SigningKey == "" {
+		return nil, fmt.Errorf("no JWT_SIGNING_KEY environment variable defined")
 	}
-	return val, nil
+
+	accessExpiresIn := viper.GetString("ACCESS_JWT_EXPIRES_IN")
+	if accessExpiresIn == "" {
+		return nil, fmt.Errorf("no ACCESS_JWT_EXPIRES_IN environment variable defined")
+	}
+	var err error
+	if conf.AccessExpiresIn, err = computeDuration(accessExpiresIn); err != nil {
+		return nil, fmt.Errorf("invalid time format specified for ACCESS_JWT_EXPIRES_IN: %v", err)
+	}
+
+	refreshExpiresIn := viper.GetString("REFRESH_JWT_EXPIRES_IN")
+	if refreshExpiresIn == "" {
+		return nil, fmt.Errorf("no REFRESH_JWT_EXPIRES_IN environment variable defined")
+	}
+	if conf.RefreshExpiresIn, err = computeDuration(refreshExpiresIn); err != nil {
+		return nil, fmt.Errorf("invalid time format specified for REFRESH_JWT_EXPIRES_IN: %v", err)
+	}
+
+	return conf, nil
+}
+
+func computeDuration(dur string) (time.Duration, error) {
+	d, err := duration.ParseDuration(dur)
+	if err != nil {
+		return 0, err
+	}
+	return time.Duration(d), nil
 }

@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/http/rating/server"
@@ -31,7 +32,7 @@ import (
 )
 
 func GetChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, tc.JWTSigningKey())
+	service := auth.NewService(tc.APIConfig, "rating")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewGetHandler,
 		server.MountGetHandler,
@@ -58,17 +59,48 @@ func TestGet_Http_InvalidToken(t *testing.T) {
 	})
 }
 
+func TestGet_Http_ExpiredToken(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user with rating:read scope
+	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	// Mocks the time
+	// Time after Now when the access token will expire
+	jwt.TimeFunc = testutils.NowAfterDuration(tc.JWTConfig().AccessExpiresIn)
+
+	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
+		WithHeader("Authorization", accessToken).Check().
+		HasStatus(401).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		var err *goa.ServiceError
+		marshallErr := json.Unmarshal([]byte(b), &err)
+		assert.NoError(t, marshallErr)
+
+		assert.Equal(t, "invalid-token", err.Name)
+	})
+}
+
 func TestGet_Http_InvalidScopes(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	// invalid user token, does not have required scopes
-	user, token, err := tc.UserWithScopes("abc", "catalog:refresh")
+	// invalid user access token, does not have required scopes
+	user, accessToken, err := tc.UserWithScopes("abc", "catalog:refresh")
 	assert.Equal(t, user.GithubLogin, "abc")
 	assert.NoError(t, err)
 
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
-		WithHeader("Authorization", token).Check().
+		WithHeader("Authorization", accessToken).Check().
 		HasStatus(403).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -87,12 +119,15 @@ func TestGet_Http(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, token, err := tc.UserWithScopes("foo", "rating:read")
+	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
 
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
-		WithHeader("Authorization", token).Check().
+		WithHeader("Authorization", accessToken).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -111,12 +146,15 @@ func TestGet_Http_RatingNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, token, err := tc.UserWithScopes("foo", "rating:read")
+	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
 
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/3/rating").
-		WithHeader("Authorization", token).Check().
+		WithHeader("Authorization", accessToken).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -135,12 +173,15 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, token, err := tc.UserWithScopes("foo", "rating:read")
+	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
 
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/99/rating").
-		WithHeader("Authorization", token).Check().
+		WithHeader("Authorization", accessToken).Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -155,7 +196,7 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 }
 
 func UpdateChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, tc.JWTSigningKey())
+	service := auth.NewService(tc.APIConfig, "rating")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewUpdateHandler,
 		server.MountUpdateHandler,
@@ -168,14 +209,17 @@ func TestUpdate_Http(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:write scope
-	user, token, err := tc.UserWithScopes("foo", "rating:write")
+	user, accessToken, err := tc.UserWithScopes("foo", "rating:write")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
 
 	data := []byte(`{"rating": 5}`)
 
 	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/3/rating").
-		WithHeader("Authorization", token).
+		WithHeader("Authorization", accessToken).
 		WithBody(data).Check().
 		HasStatus(200)
 
@@ -191,14 +235,17 @@ func TestUpdate_Http_Existing(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:write scope
-	user, token, err := tc.UserWithScopes("foo", "rating:write")
+	user, accessToken, err := tc.UserWithScopes("foo", "rating:write")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
 
 	data := []byte(`{"rating": 2}`)
 
 	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/1/rating").
-		WithHeader("Authorization", token).
+		WithHeader("Authorization", accessToken).
 		WithBody(data).Check().
 		HasStatus(200)
 
@@ -214,14 +261,17 @@ func TestUpdate_Http_ResourceNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:write scope
-	user, token, err := tc.UserWithScopes("foo", "rating:write")
+	user, accessToken, err := tc.UserWithScopes("foo", "rating:write")
 	assert.Equal(t, user.GithubLogin, "foo")
 	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
 
 	data := []byte(`{"rating": 2}`)
 
 	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/99/rating").
-		WithHeader("Authorization", token).
+		WithHeader("Authorization", accessToken).
 		WithBody(data).Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
