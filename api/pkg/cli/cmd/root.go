@@ -19,6 +19,7 @@ import (
 	"github.com/tektoncd/hub/api/pkg/cli/app"
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/get"
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/info"
+	"github.com/tektoncd/hub/api/pkg/cli/cmd/install"
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/search"
 	"github.com/tektoncd/hub/api/pkg/cli/hub"
 )
@@ -46,6 +47,7 @@ func Root(cli app.CLI) *cobra.Command {
 	cmd.AddCommand(
 		get.Command(cli),
 		info.Command(cli),
+		install.Command(cli),
 		search.Command(cli),
 	)
 

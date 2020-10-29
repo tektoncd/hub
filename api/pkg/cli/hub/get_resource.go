@@ -155,3 +155,15 @@ func (rr *ResourceResult) Resource() (interface{}, error) {
 	}
 	return *rr.resourceData, nil
 }
+
+// MinPipelinesVersion returns the minimum pipeline version the resource is compatible
+func (rr *ResourceResult) MinPipelinesVersion() (string, error) {
+	if err := rr.unmarshalData(); err != nil {
+		return "", err
+	}
+
+	if rr.version != "" {
+		return *rr.resourceWithVersionData.MinPipelinesVersion, nil
+	}
+	return *rr.resourceData.LatestVersion.MinPipelinesVersion, nil
+}
