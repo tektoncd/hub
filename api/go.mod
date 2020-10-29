@@ -13,33 +13,29 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.5.1
-	github.com/tektoncd/pipeline v0.15.2
+	github.com/tektoncd/pipeline v0.17.1-0.20201007165454-9611f3e4509e
 	go.uber.org/zap v1.15.0
 	goa.design/goa/v3 v3.2.2
 	goa.design/plugins/v3 v3.1.3
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	golang.org/x/sys v0.0.0-20200812155832-6a926be9bd1d // indirect
-	golang.org/x/tools v0.0.0-20200811215021-48a8ffc5b207 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/h2non/gock.v1 v1.0.15
 	gorm.io/driver/postgres v1.0.2
 	gorm.io/gorm v1.20.7
 	gotest.tools/v3 v3.0.2
-	k8s.io/apimachinery v0.17.6
+	k8s.io/apimachinery v0.19.0
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
-	knative.dev/pkg v0.0.0-20200702222342-ea4d6e985ba0
+	knative.dev/pkg v0.0.0-20200922164940-4bf40ad82aab
 )
 
-// Copied from Catlin
-// Pin k8s deps to 1.17.6
+// Pin k8s deps to 0.18.9
 replace (
-	k8s.io/api => k8s.io/api v0.17.6
-	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.17.6
-	k8s.io/apimachinery => k8s.io/apimachinery v0.17.6
-	k8s.io/apiserver => k8s.io/apiserver v0.17.6
-	k8s.io/client-go => k8s.io/client-go v0.17.6
-	k8s.io/code-generator => k8s.io/code-generator v0.17.6
+	k8s.io/api => k8s.io/api v0.18.9
+	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.18.9
+	k8s.io/apimachinery => k8s.io/apimachinery v0.18.9
+	k8s.io/apiserver => k8s.io/apiserver v0.18.9
+	k8s.io/client-go => k8s.io/client-go v0.18.9
+	k8s.io/code-generator => k8s.io/code-generator v0.18.9
 	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20200410145947-bcb3869e6f29
 )
 
