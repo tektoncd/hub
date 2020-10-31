@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Store Object creates a kind store 1`] = `
+Object {
+  "Task": Object {
+    "name": "Task",
+    "selected": false,
+  },
+}
+`;

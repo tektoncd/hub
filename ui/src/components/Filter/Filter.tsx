@@ -12,19 +12,19 @@ interface Filterable {
 }
 
 interface Store {
-  list: Filterable[];
-  clear(): void;
+  values: Filterable[];
+  clearSelected(): void;
 }
 
-interface FilterList {
+interface Props {
   store: Store;
   header: string;
 }
 
-const checkboxes = (items: Filterable[]) =>
-  items.map((c: Filterable) => (
+const checkboxes = (values: Filterable[]) => {
+  return values.map((c: Filterable) => (
     <Checkbox
-      key={c.id}
+      key={String(c.id)}
       label={c.name}
       isChecked={c.selected}
       onChange={() => c.toggle()}
@@ -33,8 +33,9 @@ const checkboxes = (items: Filterable[]) =>
       name={c.name}
     />
   ));
+};
 
-const Filter: React.FC<FilterList> = ({ store, header }) => {
+const Filter: React.FC<Props> = ({ store, header }) => {
   return useObserver(() => (
     <div className="Filter">
       <Grid sm={6} md={4} lg={3} xl2={1}>
@@ -45,14 +46,14 @@ const Filter: React.FC<FilterList> = ({ store, header }) => {
         </GridItem>
 
         <GridItem rowSpan={2}>
-          <Button variant="plain" aria-label="Clear" onClick={store.clear}>
+          <Button variant="plain" aria-label="Clear" onClick={store.clearSelected}>
             <TimesIcon />
           </Button>
         </GridItem>
       </Grid>
 
       <Grid>
-        <GridItem className="Checkboxes">{checkboxes(store.list)}</GridItem>
+        <GridItem className="Checkboxes">{checkboxes(store.values)}</GridItem>
       </Grid>
     </div>
   ));

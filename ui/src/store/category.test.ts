@@ -1,32 +1,34 @@
 import { when } from 'mobx';
 import { getSnapshot } from 'mobx-state-tree';
 import { FakeHub } from '../api/testutil';
-import { CategoryStore, Category } from './category';
+import { CategoryStore, Category, Tag } from './category';
+import { assert } from './utils';
 
 const TESTDATA_DIR = `${__dirname}/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
 
-describe('Category Object', () => {
+describe('Store Object', () => {
+  it('can create a tag object', () => {
+    const store = Tag.create({
+      id: 1,
+      name: 'cli'
+    });
+    expect(store.name).toBe('cli');
+  });
   it('can create a category object', () => {
     const category = Category.create({
       id: 1,
       name: 'test',
-      tags: [
-        {
-          id: 1,
-          name: 'test-category'
-        }
-      ]
+      tags: ['1']
     });
 
     expect(category.name).toBe('test');
-    expect(category.id).toBe(1);
-    expect(category.tags[0].name).toBe('test-category');
+    expect(category.tags.length).toBe(1);
   });
 });
 
 describe('Store functions', () => {
-  it('can create a store', (done) => {
+  it('can create a category store', (done) => {
     const store = CategoryStore.create({}, { api });
     expect(store.count).toBe(0);
     expect(store.isLoading).toBe(true);
@@ -36,8 +38,6 @@ describe('Store functions', () => {
         expect(store.count).toBe(5);
         expect(store.isLoading).toBe(false);
 
-        expect(store.list[0].id).toBe(1);
-        expect(store.list[0].name).toBe('Build Tools');
         expect(getSnapshot(store)).toMatchSnapshot();
 
         done();
@@ -56,9 +56,39 @@ describe('Store functions', () => {
         expect(store.count).toBe(5);
         expect(store.isLoading).toBe(false);
 
-        store.list[0].toggle();
+        const categories = store.items.get('1');
+        assert(categories);
+        categories.toggle();
 
-        expect(store.list[0].selected).toBe(true);
+        expect(categories.selected).toBe(true);
+
+        done();
+      }
+    );
+  });
+
+  it('can clear all the categories', (done) => {
+    const store = CategoryStore.create({}, { api });
+    expect(store.count).toBe(0);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.count).toBe(5);
+        expect(store.isLoading).toBe(false);
+
+        // Gets the category with id as 1
+        const c1 = store.items.get('1');
+        assert(c1);
+        c1.toggle();
+
+        // Gets the category with id as 2
+        const c2 = store.items.get('2');
+        assert(c2);
+        c2.toggle();
+
+        store.clearSelected();
+        expect(c1.selected).toBe(false);
 
         done();
       }
@@ -76,39 +106,17 @@ describe('Store functions', () => {
         expect(store.count).toBe(5);
         expect(store.isLoading).toBe(false);
 
-        store.list[0].toggle();
-        store.list[1].toggle();
+        // Gets the category with id as 1
+        const c1 = store.items.get('1');
+        assert(c1);
+        c1.toggle();
 
-        const tags = store.tags;
-        expect(tags[0]).toBe('build-tool');
+        // Gets the category with id as 2
+        const c2 = store.items.get('2');
+        assert(c2);
+        c2.toggle();
 
-        done();
-      }
-    );
-  });
-
-  it('clears all the selected categories', (done) => {
-    const store = CategoryStore.create({}, { api });
-    expect(store.count).toBe(0);
-    expect(store.isLoading).toBe(true);
-
-    when(
-      () => !store.isLoading,
-      () => {
-        expect(store.count).toBe(5);
-        expect(store.isLoading).toBe(false);
-
-        store.list[0].toggle();
-        store.list[2].toggle();
-        store.clear();
-
-        expect(store.list).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              selected: false
-            })
-          ])
-        );
+        expect(store.selectedTags.size).toBe(2);
 
         done();
       }

@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Store Object creates a catalog store 1`] = `
+Object {
+  "1": Object {
+    "id": 1,
+    "name": "tekton",
+    "selected": false,
+    "type": "community",
+  },
+}
+`;

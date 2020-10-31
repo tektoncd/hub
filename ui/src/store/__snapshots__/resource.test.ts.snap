@@ -1,0 +1,227 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Store functions creates a catalog store 1`] = `
+Object {
+  "items": Object {
+    "1": Object {
+      "id": 1,
+      "name": "tekton",
+      "selected": false,
+      "type": "community",
+    },
+    "2": Object {
+      "id": 2,
+      "name": "tekton-hub",
+      "selected": false,
+      "type": "official",
+    },
+  },
+}
+`;
+
+exports[`Store functions creates a kind store 1`] = `
+Object {
+  "items": Object {
+    "Pipeline": Object {
+      "name": "Pipeline",
+      "selected": false,
+    },
+    "Task": Object {
+      "name": "Task",
+      "selected": false,
+    },
+  },
+}
+`;
+
+exports[`Store functions creates a resource store 1`] = `
+Object {
+  "1": Object {
+    "catalog": 1,
+    "displayName": "Ansible Runner",
+    "id": 1,
+    "kind": "Task",
+    "latestVersion": 1,
+    "name": "ansible-runner",
+    "rating": 4.5,
+    "tags": Array [
+      2,
+    ],
+    "versions": Array [
+      1,
+    ],
+  },
+  "10": Object {
+    "catalog": 2,
+    "displayName": "Hub Pipeline",
+    "id": 10,
+    "kind": "Pipeline",
+    "latestVersion": 1,
+    "name": "hub",
+    "rating": 4.5,
+    "tags": Array [
+      10,
+    ],
+    "versions": Array [
+      1,
+    ],
+  },
+  "4": Object {
+    "catalog": 1,
+    "displayName": "aws cli",
+    "id": 4,
+    "kind": "Task",
+    "latestVersion": 4,
+    "name": "aws-cli",
+    "rating": 5,
+    "tags": Array [
+      2,
+    ],
+    "versions": Array [
+      4,
+    ],
+  },
+  "44": Object {
+    "catalog": 1,
+    "displayName": "golang build",
+    "id": 44,
+    "kind": "Task",
+    "latestVersion": 47,
+    "name": "golang-build",
+    "rating": 5,
+    "tags": Array [
+      1,
+    ],
+    "versions": Array [
+      47,
+    ],
+  },
+  "54": Object {
+    "catalog": 1,
+    "displayName": "jib maven",
+    "id": 54,
+    "kind": "Task",
+    "latestVersion": 57,
+    "name": "jib-maven",
+    "rating": 5,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      57,
+    ],
+  },
+  "98": Object {
+    "catalog": 1,
+    "displayName": "jenkins operation",
+    "id": 98,
+    "kind": "Task",
+    "latestVersion": 104,
+    "name": "jenkins",
+    "rating": 5,
+    "tags": Array [
+      57,
+      56,
+    ],
+    "versions": Array [
+      104,
+    ],
+  },
+}
+`;
+
+exports[`Store functions makes sure to not add duplicate resources 1`] = `
+Object {
+  "1": Object {
+    "catalog": 1,
+    "displayName": "Ansible Runner",
+    "id": 1,
+    "kind": "Task",
+    "latestVersion": 1,
+    "name": "ansible-runner",
+    "rating": 4.5,
+    "tags": Array [
+      2,
+    ],
+    "versions": Array [
+      1,
+    ],
+  },
+  "10": Object {
+    "catalog": 2,
+    "displayName": "Hub Pipeline",
+    "id": 10,
+    "kind": "Pipeline",
+    "latestVersion": 1,
+    "name": "hub",
+    "rating": 4.5,
+    "tags": Array [
+      10,
+    ],
+    "versions": Array [
+      1,
+    ],
+  },
+  "4": Object {
+    "catalog": 1,
+    "displayName": "aws cli",
+    "id": 4,
+    "kind": "Task",
+    "latestVersion": 4,
+    "name": "aws-cli",
+    "rating": 5,
+    "tags": Array [
+      2,
+    ],
+    "versions": Array [
+      4,
+    ],
+  },
+  "44": Object {
+    "catalog": 1,
+    "displayName": "golang build",
+    "id": 44,
+    "kind": "Task",
+    "latestVersion": 47,
+    "name": "golang-build",
+    "rating": 5,
+    "tags": Array [
+      1,
+    ],
+    "versions": Array [
+      47,
+    ],
+  },
+  "54": Object {
+    "catalog": 1,
+    "displayName": "jib maven",
+    "id": 54,
+    "kind": "Task",
+    "latestVersion": 57,
+    "name": "jib-maven",
+    "rating": 5,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      57,
+    ],
+  },
+  "98": Object {
+    "catalog": 1,
+    "displayName": "jenkins operation",
+    "id": 98,
+    "kind": "Task",
+    "latestVersion": 104,
+    "name": "jenkins",
+    "rating": 5,
+    "tags": Array [
+      57,
+      56,
+    ],
+    "versions": Array [
+      104,
+    ],
+  },
+}
+`;
