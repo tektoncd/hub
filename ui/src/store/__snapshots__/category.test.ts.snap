@@ -1,77 +1,87 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Store functions can create a store 1`] = `
+exports[`Store functions can create a category store 1`] = `
 Object {
   "err": "",
   "isLoading": false,
-  "list": Array [
-    Object {
+  "items": Object {
+    "1": Object {
       "id": 1,
       "name": "Build Tools",
       "selected": false,
       "tags": Array [
-        Object {
-          "id": 1,
-          "name": "build-tool",
-        },
+        1,
       ],
     },
-    Object {
+    "2": Object {
       "id": 2,
       "name": "CLI",
       "selected": false,
       "tags": Array [
-        Object {
-          "id": 2,
-          "name": "cli",
-        },
+        2,
       ],
     },
-    Object {
+    "3": Object {
       "id": 3,
       "name": "Cloud",
       "selected": false,
       "tags": Array [
-        Object {
-          "id": 4,
-          "name": "aws",
-        },
-        Object {
-          "id": 5,
-          "name": "azure",
-        },
-        Object {
-          "id": 6,
-          "name": "cloud",
-        },
-        Object {
-          "id": 3,
-          "name": "gcp",
-        },
+        4,
+        5,
+        6,
+        3,
       ],
     },
-    Object {
+    "4": Object {
       "id": 4,
       "name": "Deploy",
       "selected": false,
       "tags": Array [
-        Object {
-          "id": 7,
-          "name": "deploy",
-        },
+        7,
       ],
     },
-    Object {
+    "5": Object {
       "id": 5,
       "name": "Image Build",
       "selected": false,
       "tags": Array [
-        Object {
-          "id": 8,
-          "name": "image-build",
-        },
+        8,
       ],
     },
-  ],
+  },
+  "tags": Object {
+    "1": Object {
+      "id": 1,
+      "name": "build-tool",
+    },
+    "2": Object {
+      "id": 2,
+      "name": "cli",
+    },
+    "3": Object {
+      "id": 3,
+      "name": "gcp",
+    },
+    "4": Object {
+      "id": 4,
+      "name": "aws",
+    },
+    "5": Object {
+      "id": 5,
+      "name": "azure",
+    },
+    "6": Object {
+      "id": 6,
+      "name": "cloud",
+    },
+    "7": Object {
+      "id": 7,
+      "name": "deploy",
+    },
+    "8": Object {
+      "id": 8,
+      "name": "image-build",
+    },
+  },
 }
 `;
