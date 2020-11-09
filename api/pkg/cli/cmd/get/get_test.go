@@ -38,35 +38,30 @@ Get a Abc of name 'foo' of version '0.3':
 
     tkn hub get abc foo --version 0.3
 `
-
-var resource = &res.ResourceData{
+var pipelineRes = &res.ResourceData{
 	ID:   1,
-	Name: "foo",
-	Kind: "Task",
+	Name: "apple",
+	Kind: "Pipeline",
 	Catalog: &res.Catalog{
 		ID:   1,
-		Name: "tekton",
+		Name: "fruit",
 		Type: "community",
 	},
-	Rating: 4.8,
+	Rating: 2.3,
 	LatestVersion: &res.ResourceVersionData{
-		ID:                  11,
+		ID:                  03,
 		Version:             "0.1",
-		Description:         "Description for task abc version 0.1",
-		DisplayName:         "foo-0.1",
-		MinPipelinesVersion: "0.11",
-		RawURL:              "http://raw.github.url/foo/0.1/foo.yaml",
-		WebURL:              "http://web.github.com/foo/0.1/foo.yaml",
+		Description:         "v0.1 of Pipeline apple",
+		DisplayName:         "Red apple",
+		MinPipelinesVersion: "0.17.1",
+		RawURL:              "http://raw.github.url/apple/0.1/apple.yaml",
+		WebURL:              "http://web.github.com/apple/0.1/apple.yaml",
 		UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
 	},
 	Tags: []*res.Tag{
 		&res.Tag{
 			ID:   3,
-			Name: "tag3",
-		},
-		&res.Tag{
-			ID:   1,
-			Name: "tag1",
+			Name: "fruit",
 		},
 	},
 	Versions: []*res.ResourceVersionData{
@@ -77,33 +72,29 @@ var resource = &res.ResourceData{
 	},
 }
 
-var resVersion = &res.ResourceVersionData{
+var pipelineResWithVersion = &res.ResourceVersionData{
 	ID:                  11,
 	Version:             "0.3",
-	DisplayName:         "foo",
-	Description:         "Description for task abc version 0.3",
+	DisplayName:         "mango",
+	Description:         "v0.3 of Pipeline mango",
 	MinPipelinesVersion: "0.12",
-	RawURL:              "http://raw.github.url/foo/0.3/foo.yaml",
-	WebURL:              "http://web.github.com/foo/0.3/foo.yaml",
+	RawURL:              "http://raw.github.url/mango/0.3/mango.yaml",
+	WebURL:              "http://web.github.com/mango/0.3/mango.yaml",
 	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
 	Resource: &res.ResourceData{
-		ID:   1,
+		ID:   7,
 		Name: "foo",
-		Kind: "Task",
+		Kind: "Pipeline",
 		Catalog: &res.Catalog{
 			ID:   1,
-			Name: "tekton",
+			Name: "fruit",
 			Type: "community",
 		},
-		Rating: 4.8,
+		Rating: 4.3,
 		Tags: []*res.Tag{
 			&res.Tag{
 				ID:   3,
-				Name: "tag3",
-			},
-			&res.Tag{
-				ID:   1,
-				Name: "tag1",
+				Name: "fruit",
 			},
 		},
 	},
@@ -136,25 +127,26 @@ func TestGet_WithoutVersion(t *testing.T) {
 
 	defer gock.Off()
 
-	resource := &res.Resource{Data: resource}
+	resource := &res.Resource{Data: pipelineRes}
 	res := res.NewViewedResource(resource, "default")
 	gock.New(test.API).
-		Get("/resource").
+		Get("/resource/fruit/pipeline/apple").
 		Reply(200).
 		JSON(&res.Projected)
 
 	gock.New("http://raw.github.url").
-		Get("/foo").
+		Get("/apple/0.1/apple.yaml").
 		Reply(200).
-		File("./testdata/foo-v0.1.yaml")
+		File("./testdata/pipeline-apple-v0.1.yaml")
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
 
 	opt := &options{
 		cli:  cli,
-		args: []string{"foo"},
-		from: "tekton",
+		kind: "pipeline",
+		args: []string{"apple"},
+		from: "fruit",
 	}
 
 	err := opt.run()
@@ -168,25 +160,26 @@ func TestGet_WithVersion(t *testing.T) {
 
 	defer gock.Off()
 
-	resVersion := &res.ResourceVersion{Data: resVersion}
+	resVersion := &res.ResourceVersion{Data: pipelineResWithVersion}
 	res := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
-		Get("/resource").
+		Get("/resource/fruit/pipeline/mango/0.3").
 		Reply(200).
 		JSON(&res.Projected)
 
 	gock.New("http://raw.github.url").
-		Get("/foo").
+		Get("/mango/0.3/mango.yaml").
 		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
+		File("./testdata/pipeline-mango-v0.3.yaml")
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
 
 	opt := &options{
 		cli:     cli,
-		args:    []string{"foo"},
-		from:    "tekton",
+		kind:    "pipeline",
+		args:    []string{"mango"},
+		from:    "fruit",
 		version: "0.3",
 	}
 
@@ -202,7 +195,7 @@ func TestGet_ResourceNotFound(t *testing.T) {
 	defer gock.Off()
 
 	gock.New(test.API).
-		Get("/resource").
+		Get("/resource/tekton/pipeline/xyz").
 		Reply(404).
 		JSON(&goa.ServiceError{
 			ID:      "123456",
@@ -215,6 +208,7 @@ func TestGet_ResourceNotFound(t *testing.T) {
 
 	opt := &options{
 		cli:  cli,
+		kind: "pipeline",
 		args: []string{"xyz"},
 		from: "tekton",
 	}
