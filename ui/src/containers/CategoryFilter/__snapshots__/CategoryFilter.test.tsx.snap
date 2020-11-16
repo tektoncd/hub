@@ -4,21 +4,21 @@ exports[`CategoryFilter finds the filter component and matches the count 1`] = `
 "<Provider>
    
   <CategoryFilter>
-    <Filter store={{...}} header=\\"Categories\\">
-      <div className=\\"Filter\\">
-        <Grid sm={6} md={4} lg={3} xl2={1}>
-          <div className=\\"pf-l-grid pf-m-all-6-col-on-sm pf-m-all-4-col-on-md pf-m-all-3-col-on-lg pf-m-all-1-col-on-2xl\\">
-            <GridItem className=\\"Text-Header\\" span={1} rowSpan={2}>
-              <div className=\\"pf-l-grid__item pf-m-1-col pf-m-2-row Text-Header\\">
-                <Text component=\\"h1\\" style={{...}}>
-                  <h1 style={{...}} data-pf-content={true} className=\\"\\">
-                    Categories
+    <Filter store={{...}} header=\\"Category\\">
+      <div>
+        <Grid>
+          <div className=\\"pf-l-grid\\">
+            <GridItem span={6}>
+              <div className=\\"pf-l-grid__item pf-m-6-col\\">
+                <Text component=\\"h1\\" className=\\"hub-filter-header\\">
+                  <h1 data-pf-content={true} className=\\"hub-filter-header\\">
+                    Category
                   </h1>
                 </Text>
               </div>
             </GridItem>
-            <GridItem rowSpan={2}>
-              <div className=\\"pf-l-grid__item pf-m-2-row\\">
+            <GridItem span={3}>
+              <div className=\\"pf-l-grid__item pf-m-3-col\\">
                 <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
                   <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={1}>
                     <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
@@ -30,12 +30,8 @@ exports[`CategoryFilter finds the filter component and matches the count 1`] = `
                 </Button>
               </div>
             </GridItem>
-          </div>
-        </Grid>
-        <Grid>
-          <div className=\\"pf-l-grid\\">
-            <GridItem className=\\"Checkboxes\\">
-              <div className=\\"pf-l-grid__item Checkboxes\\">
+            <GridItem span={12}>
+              <div className=\\"pf-l-grid__item pf-m-12-col\\">
                 <Checkbox label=\\"Build Tools\\" isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"1\\" name=\\"Build Tools\\" className=\\"\\" isValid={true} isDisabled={false}>
                   <div className=\\"pf-c-check\\">
                     <input id=\\"1\\" name=\\"Build Tools\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />

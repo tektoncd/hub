@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LeftPane should find the components and match the count 1`] = `
+"<Grid hasGutter={true} className=\\"hub-leftpane\\">
+  <GridItem span={3}>
+    <Text component=\\"h1\\" className=\\"hub-leftpane-sort\\">
+      Sort
+    </Text>
+  </GridItem>
+  <GridItem span={9}>
+    <Sort />
+  </GridItem>
+  <GridItem>
+    <KindFilter />
+  </GridItem>
+  <GridItem>
+    <CatalogFilter />
+  </GridItem>
+  <GridItem>
+    <CategoryFilter />
+  </GridItem>
+</Grid>"
+`;

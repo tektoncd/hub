@@ -3,8 +3,8 @@ import App from '.';
 import { shallow } from 'enzyme';
 import renderer from 'react-test-renderer';
 import { FakeHub } from '../../api/testutil';
-import CategoryFilter from '../CategoryFilter/CategoryFilter';
 import { createProviderAndStore } from '../../store/root';
+import LeftPane from '../../components/LeftPane';
 
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
@@ -15,7 +15,7 @@ describe('App', () => {
     const app = renderer.create(
       <Provider>
         <div className="App">
-          <CategoryFilter />
+          <LeftPane />
         </div>
       </Provider>
     );
@@ -24,8 +24,8 @@ describe('App', () => {
     done();
   });
 
-  it('should find the categoryFilter component and match the count', () => {
+  it('should find the leftpane component and match the count', () => {
     const component = shallow(<App />);
-    expect(component.find(CategoryFilter).length).toEqual(1);
+    expect(component.find(LeftPane).length).toEqual(1);
   });
 });

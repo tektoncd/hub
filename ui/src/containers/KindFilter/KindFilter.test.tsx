@@ -1,10 +1,10 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import CategoryFilter from './CategoryFilter';
 import { FakeHub } from '../../api/testutil';
 import { createProviderAndStore } from '../../store/root';
 import { when } from 'mobx';
 import { Checkbox } from '@patternfly/react-core';
+import KindFilter from '.';
 
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
@@ -14,26 +14,27 @@ describe('CategoryFilter', () => {
   it('finds the filter component and matches the count', (done) => {
     const component = mount(
       <Provider>
-        <CategoryFilter />
+        <KindFilter />
       </Provider>
     );
 
-    const { categories } = root;
+    const { resources } = root;
     when(
       () => {
-        return !categories.isLoading;
+        return !resources.isLoading;
       },
       () => {
         setTimeout(() => {
-          expect(categories.count).toBe(5);
+          const kinds = resources.kinds;
+          expect(kinds.items.size).toBe(2);
           component.update();
 
-          const cf = component.find(CategoryFilter);
-          expect(cf.length).toEqual(1);
+          const kf = component.find(KindFilter);
+          expect(kf.length).toEqual(1);
 
           expect(component.debug()).toMatchSnapshot();
 
-          expect(component.find(Checkbox).length).toEqual(5);
+          expect(component.find(Checkbox).length).toEqual(2);
 
           done();
         }, 0);

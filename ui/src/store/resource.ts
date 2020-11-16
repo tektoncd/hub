@@ -52,12 +52,18 @@ export const Resource = types.model('Resource', {
 export type IResource = Instance<typeof Resource>;
 export type IVersion = Instance<typeof Version>;
 
+export enum sortByFields {
+  Name = 'Name',
+  Rating = 'Rating'
+}
+
 export const ResourceStore = types
   .model('ResourceStore', {
     resources: types.map(Resource),
     versions: types.map(Version),
     catalogs: types.optional(CatalogStore, {}),
     kinds: types.optional(KindStore, {}),
+    sortBy: types.optional(types.enumeration(Object.values(sortByFields)), sortByFields.Name),
     search: '',
     err: '',
     isLoading: true
@@ -83,6 +89,10 @@ export const ResourceStore = types
     },
     add(item: IResource) {
       self.resources.put(item);
+    },
+    setSortBy(field: string) {
+      const key: sortByFields = sortByFields[field as keyof typeof sortByFields];
+      self.sortBy = key;
     }
   }))
 
