@@ -1,11 +1,4 @@
-.Filter {
-  margin: 3em;
-}
-
-.Text-Header {
-  width: 10em;
-}
-
-.Checkboxes {
-  padding-left: 0.7em;
+.hub-filter-header {
+  font-weight: bold;
+  padding-top: 0.3em;
 }

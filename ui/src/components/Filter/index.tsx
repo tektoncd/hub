@@ -5,7 +5,7 @@ import TimesIcon from '@patternfly/react-icons/dist/js/icons/times-icon';
 import './Filter.css';
 
 interface Filterable {
-  id: number;
+  id?: number;
   name: string;
   selected: boolean;
   toggle(): void;
@@ -24,7 +24,7 @@ interface Props {
 const checkboxes = (values: Filterable[]) => {
   return values.map((c: Filterable) => (
     <Checkbox
-      key={String(c.id)}
+      key={c.name}
       label={c.name}
       isChecked={c.selected}
       onChange={() => c.toggle()}
@@ -37,23 +37,20 @@ const checkboxes = (values: Filterable[]) => {
 
 const Filter: React.FC<Props> = ({ store, header }) => {
   return useObserver(() => (
-    <div className="Filter">
-      <Grid sm={6} md={4} lg={3} xl2={1}>
-        <GridItem className="Text-Header" span={1} rowSpan={2}>
-          <Text component={TextVariants.h1} style={{ fontWeight: 'bold' }}>
+    <div>
+      <Grid>
+        <GridItem span={6}>
+          <Text component={TextVariants.h1} className="hub-filter-header">
             {header}
           </Text>
         </GridItem>
-
-        <GridItem rowSpan={2}>
+        <GridItem span={3}>
           <Button variant="plain" aria-label="Clear" onClick={store.clearSelected}>
             <TimesIcon />
           </Button>
         </GridItem>
-      </Grid>
 
-      <Grid>
-        <GridItem className="Checkboxes">{checkboxes(store.values)}</GridItem>
+        <GridItem span={12}>{checkboxes(store.values)}</GridItem>
       </Grid>
     </div>
   ));
