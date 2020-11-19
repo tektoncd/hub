@@ -50,7 +50,7 @@ func TestGet_Http_InvalidToken(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var err *goa.ServiceError
+		err := goa.ServiceError{}
 		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
@@ -74,7 +74,7 @@ func TestGet_Http_InvalidScopes(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var err *goa.ServiceError
+		err := goa.ServiceError{}
 		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
@@ -98,7 +98,7 @@ func TestGet_Http(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var rat *rating.GetResult
+		rat := rating.GetResult{}
 		marshallErr := json.Unmarshal([]byte(b), &rat)
 		assert.NoError(t, marshallErr)
 
@@ -122,7 +122,7 @@ func TestGet_Http_RatingNotFound(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var rat *rating.GetResult
+		rat := rating.GetResult{}
 		marshallErr := json.Unmarshal([]byte(b), &rat)
 		assert.NoError(t, marshallErr)
 
@@ -146,7 +146,7 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var err *goa.ServiceError
+		err := goa.ServiceError{}
 		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
@@ -179,8 +179,8 @@ func TestUpdate_Http(t *testing.T) {
 		WithBody(data).Check().
 		HasStatus(200)
 
-	r := &model.UserResourceRating{ResourceID: 3, UserID: user.ID}
-	err = tc.DB().First(r).Error
+	r := model.UserResourceRating{ResourceID: 3, UserID: user.ID}
+	err = tc.DB().First(&r).Error
 	assert.NoError(t, err)
 
 	assert.Equal(t, uint(5), r.Rating)
@@ -202,8 +202,8 @@ func TestUpdate_Http_Existing(t *testing.T) {
 		WithBody(data).Check().
 		HasStatus(200)
 
-	r := &model.UserResourceRating{ResourceID: 1, UserID: user.ID}
-	err = tc.DB().First(r).Error
+	r := model.UserResourceRating{ResourceID: 1, UserID: user.ID}
+	err = tc.DB().First(&r).Error
 	assert.NoError(t, err)
 
 	assert.Equal(t, uint(2), r.Rating)
@@ -228,7 +228,7 @@ func TestUpdate_Http_ResourceNotFound(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var err *goa.ServiceError
+		err := goa.ServiceError{}
 		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 

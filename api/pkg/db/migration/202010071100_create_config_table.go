@@ -15,11 +15,10 @@
 package migration
 
 import (
-	"github.com/jinzhu/gorm"
-	"gopkg.in/gormigrate.v1"
-
+	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/db/model"
+	"gorm.io/gorm"
 )
 
 func createConfigTable(log *log.Logger) *gormigrate.Migration {
@@ -27,7 +26,7 @@ func createConfigTable(log *log.Logger) *gormigrate.Migration {
 	return &gormigrate.Migration{
 		ID: "202010071100_create_config_table",
 		Migrate: func(db *gorm.DB) error {
-			if err := db.AutoMigrate(&model.Config{}).Error; err != nil {
+			if err := db.AutoMigrate(&model.Config{}); err != nil {
 				log.Error(err)
 				return err
 			}

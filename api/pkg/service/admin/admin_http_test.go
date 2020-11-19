@@ -60,7 +60,7 @@ func TestUpdateAgent_Http_NewAgent(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		res := &admin.UpdateAgentResult{}
+		res := admin.UpdateAgentResult{}
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
@@ -92,11 +92,11 @@ func TestUpdateAgent_Http_NormalUserExistWithName(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		err := &goa.ServiceError{}
+		err := goa.ServiceError{}
 		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
-		assert.EqualError(t, err, "user exists with name: foo")
+		assert.Equal(t, "user exists with name: foo", err.Message)
 	})
 }
 
@@ -119,11 +119,11 @@ func TestUpdateAgent_Http_InvalidScopeCase(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		err := &goa.ServiceError{}
+		err := goa.ServiceError{}
 		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
-		assert.EqualError(t, err, "scope does not exist: invalid:scope")
+		assert.Equal(t, "scope does not exist: invalid:scope", err.Message)
 	})
 }
 
@@ -146,7 +146,7 @@ func TestUpdateAgent_Http_UpdateCase(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		res := &admin.UpdateAgentResult{}
+		res := admin.UpdateAgentResult{}
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
@@ -192,7 +192,7 @@ func TestRefreshConfig_Http(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		res := &admin.RefreshConfigResult{}
+		res := admin.RefreshConfigResult{}
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
@@ -229,7 +229,7 @@ func TestRefreshConfig_Http_ForceRefresh(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		res := &admin.RefreshConfigResult{}
+		res := admin.RefreshConfigResult{}
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 

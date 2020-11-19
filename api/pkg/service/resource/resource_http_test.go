@@ -23,12 +23,11 @@ import (
 
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
-	goa "goa.design/goa/v3/pkg"
-	"gotest.tools/v3/golden"
-
 	"github.com/tektoncd/hub/api/gen/http/resource/server"
 	"github.com/tektoncd/hub/api/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	goa "goa.design/goa/v3/pkg"
+	"gotest.tools/v3/golden"
 )
 
 func QueryChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
@@ -204,11 +203,11 @@ func TestQuery_Http_ErrorCase(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var jsonMap map[string]interface{}
-		marshallErr := json.Unmarshal([]byte(b), &jsonMap)
+		err := goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, "not-found", jsonMap["name"])
+		assert.Equal(t, "not-found", err.Name)
 	})
 }
 
@@ -291,11 +290,11 @@ func TestVersionsByID_Http_ErrorCase(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var jsonMap map[string]interface{}
-		marshallErr := json.Unmarshal([]byte(b), &jsonMap)
+		err := goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, "not-found", jsonMap["name"])
+		assert.Equal(t, "not-found", err.Name)
 	})
 }
 
@@ -335,11 +334,11 @@ func TestByCatalogKindNameVersion_Http_ErrorCase(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var jsonMap map[string]interface{}
-		marshallErr := json.Unmarshal([]byte(b), &jsonMap)
+		err := goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, "not-found", jsonMap["name"])
+		assert.Equal(t, "not-found", err.Name)
 	})
 }
 
@@ -379,11 +378,11 @@ func TestByVersionID_Http_ErrorCase(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var jsonMap map[string]interface{}
-		marshallErr := json.Unmarshal([]byte(b), &jsonMap)
+		err := goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, "not-found", jsonMap["name"])
+		assert.Equal(t, "not-found", err.Name)
 	})
 }
 
@@ -423,11 +422,11 @@ func TestByCatalogKindName_Http_ErrorCase(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var jsonMap map[string]interface{}
-		marshallErr := json.Unmarshal([]byte(b), &jsonMap)
+		err := goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, "not-found", jsonMap["name"])
+		assert.Equal(t, "not-found", err.Name)
 	})
 }
 
@@ -467,10 +466,10 @@ func TestByID_Http_ErrorCase(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var jsonMap map[string]interface{}
-		marshallErr := json.Unmarshal([]byte(b), &jsonMap)
+		err := goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, "not-found", jsonMap["name"])
+		assert.Equal(t, "not-found", err.Name)
 	})
 }

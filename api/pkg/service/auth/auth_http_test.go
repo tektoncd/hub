@@ -80,7 +80,7 @@ func TestLogin_Http(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equal(t, token, res.Token)
-		assert.Equal(t, gock.IsDone(), true)
+		assert.Equal(t, true, gock.IsDone())
 	})
 }
 
@@ -104,12 +104,12 @@ func TestLogin_Http_InvalidCode(t *testing.T) {
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		err := &goa.ServiceError{}
+		err := goa.ServiceError{}
 		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
 
-		assert.EqualError(t, err, "invalid authorization code")
-		assert.Equal(t, gock.IsDone(), true)
+		assert.Equal(t, "invalid authorization code", err.Message)
+		assert.Equal(t, true, gock.IsDone())
 	})
 }
 
@@ -154,6 +154,6 @@ func TestLogin_Http_UserWithExtraScope(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equal(t, token, res.Token)
-		assert.Equal(t, gock.IsDone(), true)
+		assert.Equal(t, true, gock.IsDone())
 	})
 }

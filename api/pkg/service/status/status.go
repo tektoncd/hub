@@ -38,7 +38,12 @@ func (s *service) Status(ctx context.Context) (*status.StatusResult, error) {
 		&status.HubService{Name: "api", Status: "ok"},
 	}
 
-	db := s.DB(ctx).DB()
+	db, err := s.DB(ctx).DB()
+	if err != nil {
+		e := err.Error()
+		service = append(service, &status.HubService{Name: "db", Status: "Error", Error: &e})
+		return &status.StatusResult{Services: service}, nil
+	}
 
 	if err := db.Ping(); err != nil {
 		e := err.Error()

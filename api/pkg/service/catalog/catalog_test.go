@@ -52,7 +52,7 @@ func TestRefresh(t *testing.T) {
 	payload := &catalog.RefreshPayload{}
 	job, err := catalogSvc.Refresh(ctx, payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 10001, int(job.ID))
+	assert.Equal(t, uint(10001), job.ID)
 	assert.Equal(t, "queued", job.Status)
 }
 
@@ -71,11 +71,11 @@ func TestRefreshAgain(t *testing.T) {
 	payload := &catalog.RefreshPayload{}
 	res, err := catalogSvc.Refresh(ctx, payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 10001, int(res.ID))
+	assert.Equal(t, uint(10001), res.ID)
 	assert.Equal(t, "queued", res.Status)
 
 	res, err = catalogSvc.Refresh(ctx, payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 10001, int(res.ID))
+	assert.Equal(t, uint(10001), res.ID)
 	assert.Equal(t, "queued", res.Status)
 }

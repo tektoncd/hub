@@ -13,7 +13,7 @@
 # limitations under the License.
 
 - id: 1
-  version: 0.1
+  version: "0.1"
   display_name: Tekton CLI
   description: Desc1
   min_pipelines_version: 0.12.1
@@ -24,7 +24,7 @@
   modified_at: 2013-01-01 00:00:01 UTC
 
 - id: 2
-  version: 0.1
+  version: "0.1"
   display_name: Build
   description: Desc2
   min_pipelines_version: 0.12.1
@@ -35,7 +35,7 @@
   modified_at: 2013-01-01 00:00:01 UTC
 
 - id: 3
-  version: 0.1
+  version: "0.1"
   display_name: Image
   description: Desc3
   min_pipelines_version: 0.12.1
@@ -46,7 +46,7 @@
   modified_at: 2013-01-01 00:00:01 UTC
 
 - id: 4
-  version: 0.2
+  version: "0.2"
   display_name: Build
   description: Desc2
   min_pipelines_version: 0.12.1
@@ -58,7 +58,7 @@
 
 
 - id: 5
-  version: 0.2
+  version: "0.2"
   display_name: Tekton CLI
   description: Desc1
   min_pipelines_version: 0.12.1
@@ -69,7 +69,7 @@
   modified_at: 2013-01-01 00:00:01 UTC
 
 - id: 6
-  version: 0.1.1
+  version: "0.1.1"
   display_name: Tekton CLI
   description: Desc1
   min_pipelines_version: 0.12.1
@@ -80,7 +80,7 @@
   modified_at: 2013-01-01 00:00:01 UTC
 
 - id: 7
-  version: 0.1
+  version: "0.1"
   display_name: Buildah
   description: Desc4
   min_pipelines_version: 0.12.1
@@ -91,7 +91,7 @@
   modified_at: 2013-01-01 00:00:01 UTC
 
 - id: 8
-  version: 0.1
+  version: "0.1"
   display_name: Tkn CLI
   description: Desc5
   min_pipelines_version: 0.12.1
@@ -102,7 +102,7 @@
   modified_at: 2013-01-01 00:00:01 UTC
 
 - id: 9
-  version: 0.1
+  version: "0.1"
   display_name: Image
   description: Desc3
   min_pipelines_version: 0.12.1
@@ -113,7 +113,7 @@
   modified_at: 2013-01-01 00:00:01 UTC
 
 - id: 10
-  version: 0.1
+  version: "0.1"
   display_name: Tkn Hub
   description: Desc7
   min_pipelines_version: 0.12.1

@@ -4,12 +4,11 @@ go 1.14
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-testfixtures/testfixtures/v3 v3.2.0
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/ikawaha/goahttpcheck v1.3.1
-	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
-	github.com/lib/pq v1.3.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
@@ -22,8 +21,9 @@ require (
 	golang.org/x/sys v0.0.0-20200812155832-6a926be9bd1d // indirect
 	golang.org/x/tools v0.0.0-20200811215021-48a8ffc5b207 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	gopkg.in/gormigrate.v1 v1.6.0
 	gopkg.in/h2non/gock.v1 v1.0.15
+	gorm.io/driver/postgres v1.0.2
+	gorm.io/gorm v1.20.7
 	gotest.tools/v3 v3.0.2
 	k8s.io/apimachinery v0.17.6
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible

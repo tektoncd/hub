@@ -18,11 +18,10 @@ import (
 	"context"
 	"strings"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
+	"gorm.io/gorm"
 )
 
 // Initializer defines the configuration required for initailizer
@@ -46,8 +45,8 @@ func (i *Initializer) Run(ctx context.Context) (*model.Config, error) {
 	db := i.DB(ctx)
 	logger := i.Logger(ctx)
 
-	config := &model.Config{}
-	if err := db.Model(config).FirstOrInit(config).Error; err != nil {
+	config := model.Config{}
+	if err := db.Model(&model.Config{}).FirstOrInit(&config).Error; err != nil {
 		logger.Error(err)
 		return nil, err
 	}
@@ -55,7 +54,7 @@ func (i *Initializer) Run(ctx context.Context) (*model.Config, error) {
 	data := i.api.Data()
 	if config.Checksum == data.Checksum {
 		logger.Info("SKIP: Config refresh as config file has not changed")
-		return config, nil
+		return &config, nil
 	}
 
 	updateConfig := func(db *gorm.DB, log *log.Logger, data *app.Data) error {
@@ -76,7 +75,7 @@ func (i *Initializer) Run(ctx context.Context) (*model.Config, error) {
 		return nil, err
 	}
 
-	return config, nil
+	return &config, nil
 }
 
 type initFn func(*gorm.DB, *log.Logger, *app.Data) error
@@ -84,14 +83,14 @@ type initFn func(*gorm.DB, *log.Logger, *app.Data) error
 func addCategories(db *gorm.DB, log *log.Logger, data *app.Data) error {
 
 	for _, c := range data.Categories {
-		cat := &model.Category{Name: c.Name}
-		if err := db.Where(cat).FirstOrCreate(cat).Error; err != nil {
+		cat := model.Category{Name: c.Name}
+		if err := db.Where(cat).FirstOrCreate(&cat).Error; err != nil {
 			log.Error(err)
 			return err
 		}
 		for _, t := range c.Tags {
-			tag := &model.Tag{Name: t, CategoryID: cat.ID}
-			if err := db.Where(tag).FirstOrCreate(tag).Error; err != nil {
+			tag := model.Tag{Name: t, CategoryID: cat.ID}
+			if err := db.Where(tag).FirstOrCreate(&tag).Error; err != nil {
 				log.Error(err)
 				return err
 			}
@@ -103,7 +102,7 @@ func addCategories(db *gorm.DB, log *log.Logger, data *app.Data) error {
 func addCatalogs(db *gorm.DB, log *log.Logger, data *app.Data) error {
 
 	for _, c := range data.Catalogs {
-		cat := &model.Catalog{
+		cat := model.Catalog{
 			Name:       c.Name,
 			Org:        c.Org,
 			Type:       c.Type,
@@ -111,7 +110,7 @@ func addCatalogs(db *gorm.DB, log *log.Logger, data *app.Data) error {
 			Revision:   c.Revision,
 			ContextDir: c.ContextDir,
 		}
-		if err := db.Where(&model.Catalog{Name: c.Name, Org: c.Org}).FirstOrCreate(cat).Error; err != nil {
+		if err := db.Where(&model.Catalog{Name: c.Name, Org: c.Org}).FirstOrCreate(&cat).Error; err != nil {
 			log.Error(err)
 			return err
 		}
@@ -126,7 +125,7 @@ func addUsers(db *gorm.DB, log *log.Logger, data *app.Data) error {
 		// Check if scopes exist or create it
 		q := db.Where(&model.Scope{Name: s.Name})
 
-		scope := &model.Scope{}
+		scope := model.Scope{}
 		if err := q.FirstOrCreate(&scope).Error; err != nil {
 			log.Error(err)
 			return err
@@ -137,10 +136,10 @@ func addUsers(db *gorm.DB, log *log.Logger, data *app.Data) error {
 			// Checks if user exists
 			q := db.Where("LOWER(github_login) = ?", strings.ToLower(userID))
 
-			user := &model.User{}
+			user := model.User{}
 			if err := q.First(&user).Error; err != nil {
 				// If user not found then log and continue
-				if gorm.IsRecordNotFoundError(err) {
+				if err == gorm.ErrRecordNotFound {
 					log.Warnf("user %s not found: %s", userID, err)
 					continue
 				}

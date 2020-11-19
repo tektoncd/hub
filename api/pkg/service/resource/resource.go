@@ -19,13 +19,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/parser"
+	"gorm.io/gorm"
 )
 
 type service struct {
@@ -72,7 +71,7 @@ func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (*resourc
 		filterByKinds(p.Kinds),
 		filterResourceName(p.Match, p.Name),
 		withResourceDetails,
-	).Limit(p.Limit)
+	).Limit(int(p.Limit))
 
 	req := request{db: q, log: s.Logger(ctx)}
 	return req.findAllResources()
@@ -84,7 +83,7 @@ func (s *service) List(ctx context.Context, p *resource.ListPayload) (*resource.
 	db := s.DB(ctx)
 
 	q := db.Scopes(withResourceDetails).
-		Limit(p.Limit)
+		Limit(int(p.Limit))
 
 	req := request{db: q, log: s.Logger(ctx)}
 	return req.findAllResources()
@@ -109,6 +108,7 @@ func (s *service) VersionsByID(ctx context.Context, p *resource.VersionsByIDPayl
 	}
 
 	res := &resource.Versions{}
+	res.Versions = []*resource.ResourceVersionData{}
 	for _, r := range all {
 		res.Versions = append(res.Versions, minVersionInfo(r))
 	}
@@ -245,6 +245,7 @@ func initResource(r model.Resource) *resource.ResourceData {
 		RawURL:              replaceGHtoRaw.Replace(lv.URL),
 		UpdatedAt:           lv.ModifiedAt.UTC().String(),
 	}
+	res.Tags = []*resource.Tag{}
 	for _, tag := range r.Tags {
 		res.Tags = append(res.Tags, &resource.Tag{
 			ID:   tag.ID,
@@ -366,7 +367,7 @@ func findOne(db *gorm.DB, log *log.Logger, result interface{}) error {
 
 	err := db.First(result).Error
 	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+		if err == gorm.ErrRecordNotFound {
 			return notFoundError
 		}
 		log.Error(err)

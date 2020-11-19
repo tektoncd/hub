@@ -18,13 +18,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/gen/rating"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"gorm.io/gorm"
 )
 
 var (
@@ -82,8 +81,8 @@ func (r *request) getRating(resID uint) (*rating.GetResult, error) {
 	q := r.db.Where(&model.UserResourceRating{UserID: r.userID, ResourceID: resID})
 
 	userRating := model.UserResourceRating{}
-	if err := q.Find(&userRating).Error; err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+	if err := q.First(&userRating).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
 			return &rating.GetResult{Rating: -1}, nil
 		}
 		r.log.Error(err)
@@ -111,14 +110,14 @@ func (r *request) updateUserRating(resID, rating uint) error {
 
 	q := r.db.Where(&model.UserResourceRating{UserID: r.userID, ResourceID: resID})
 
-	rat := &model.UserResourceRating{}
-	if err := q.FirstOrInit(rat).Error; err != nil {
+	rat := model.UserResourceRating{}
+	if err := q.FirstOrInit(&rat).Error; err != nil {
 		r.log.Error(err)
 		return updateError
 	}
 
 	rat.Rating = rating
-	if err := r.db.Save(rat).Error; err != nil {
+	if err := r.db.Save(&rat).Error; err != nil {
 		r.log.Error(err)
 		return updateError
 	}
@@ -139,7 +138,7 @@ func (r *request) updateResourceRating(res *model.Resource) error {
 	}
 
 	res.Rating = avg
-	if err := r.db.Save(res).Error; err != nil {
+	if err := r.db.Save(&res).Error; err != nil {
 		r.log.Error(err)
 		return updateError
 	}
@@ -149,14 +148,14 @@ func (r *request) updateResourceRating(res *model.Resource) error {
 
 func (r *request) validateResourceID(id uint) (*model.Resource, error) {
 
-	res := &model.Resource{}
-	if err := r.db.First(res, id).Error; err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+	res := model.Resource{}
+	if err := r.db.First(&res, id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
 			return nil, notFoundError
 		}
 		r.log.Error(err)
 		return nil, fetchError
 	}
 
-	return res, nil
+	return &res, nil
 }

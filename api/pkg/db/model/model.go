@@ -17,7 +17,7 @@ package model
 import (
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type (
@@ -37,8 +37,8 @@ type (
 
 	Catalog struct {
 		gorm.Model
-		Name       string `gorm:"unique_index:uix_name_org"`
-		Org        string `gorm:"unique_index:uix_name_org"`
+		Name       string `gorm:"uniqueIndex:uix_name_org"`
+		Org        string `gorm:"uniqueIndex:uix_name_org"`
 		Type       string `gorm:"not null;default:null"`
 		URL        string `gorm:"not null;default:null"`
 		Revision   string `gorm:"not null;default:null"`

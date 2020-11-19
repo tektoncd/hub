@@ -18,11 +18,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
-	"github.com/tektoncd/hub/api/pkg/db/model"
-
 	"github.com/tektoncd/hub/api/gen/category"
 	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/pkg/db/model"
+	"gorm.io/gorm"
 )
 
 type service struct {

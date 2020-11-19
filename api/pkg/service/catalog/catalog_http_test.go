@@ -46,20 +46,17 @@ func TestRefresh_Http(t *testing.T) {
 	assert.Equal(t, agent.AgentName, "agent-001")
 	assert.NoError(t, err)
 
-	data := []byte(`{"name": "catalog-official","org":"tektoncd"}`)
-
 	RefreshChecker(tc).Test(t, http.MethodPost, "/catalog/refresh").
-		WithHeader("Authorization", token).
-		WithBody(data).Check().
+		WithHeader("Authorization", token).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
-		var res *catalog.Job
+		res := catalog.Job{}
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, 10001, int(res.ID))
+		assert.Equal(t, uint(10001), res.ID)
 	})
 }

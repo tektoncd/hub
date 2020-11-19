@@ -22,11 +22,10 @@ import (
 
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
-	"gotest.tools/v3/golden"
-
 	category "github.com/tektoncd/hub/api/gen/category"
 	server "github.com/tektoncd/hub/api/gen/http/category/server"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	"gotest.tools/v3/golden"
 )
 
 func TestCategories_List_Http(t *testing.T) {

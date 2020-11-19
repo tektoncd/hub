@@ -20,14 +20,13 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/go-github/github"
-	"github.com/jinzhu/gorm"
-	"golang.org/x/oauth2"
-
 	"github.com/tektoncd/hub/api/gen/auth"
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/token"
+	"golang.org/x/oauth2"
+	"gorm.io/gorm"
 )
 
 type service struct {
@@ -112,17 +111,17 @@ func (r *request) addUser(user *github.User) (*model.User, error) {
 
 	q := r.db.Model(&model.User{}).Where(&model.User{GithubLogin: user.GetLogin()})
 
-	newUser := &model.User{
+	newUser := model.User{
 		GithubName:  user.GetName(),
 		GithubLogin: user.GetLogin(),
 		Type:        model.NormalUserType,
 	}
-	if err := q.FirstOrCreate(newUser).Error; err != nil {
+	if err := q.FirstOrCreate(&newUser).Error; err != nil {
 		r.log.Error(err)
 		return nil, internalError
 	}
 
-	return newUser, nil
+	return &newUser, nil
 }
 
 func (r *request) userScopes(user *model.User) ([]string, error) {
@@ -131,8 +130,8 @@ func (r *request) userScopes(user *model.User) ([]string, error) {
 
 	q := r.db.Preload("Scopes").Where(&model.User{GithubLogin: user.GithubLogin})
 
-	dbUser := &model.User{}
-	if err := q.Find(dbUser).Error; err != nil {
+	dbUser := model.User{}
+	if err := q.Find(&dbUser).Error; err != nil {
 		r.log.Error(err)
 		return nil, internalError
 	}
