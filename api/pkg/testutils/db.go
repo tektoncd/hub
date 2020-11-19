@@ -27,8 +27,10 @@ import (
 // loads data from fixtures so that each test is executed on new db
 func LoadFixtures(t *testing.T, dir string) {
 	tc := Config()
+	db, err := tc.DB().DB()
+	assert.NoError(t, err)
 	fixtures, err := testfixtures.New(
-		testfixtures.Database(tc.DB().DB()),
+		testfixtures.Database(db),
 		testfixtures.Dialect(app.DBDialect),
 		testfixtures.Directory(dir))
 	assert.NoError(t, err)

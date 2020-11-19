@@ -15,7 +15,7 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // JobState defines the state of Sync Job

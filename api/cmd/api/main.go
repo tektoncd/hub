@@ -66,7 +66,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "FATAL: failed to initialise: %s", err)
 			os.Exit(1)
 		}
-		api.DB().LogMode(true)
+
 		logger = api.Logger("main")
 		defer api.Cleanup()
 	}

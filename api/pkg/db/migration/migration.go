@@ -15,12 +15,10 @@
 package migration
 
 import (
-	"github.com/jinzhu/gorm"
-	"gopkg.in/gormigrate.v1"
-
-	"github.com/tektoncd/hub/api/gen/log"
+	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
+	"gorm.io/gorm"
 )
 
 // Migrate create tables and populates master tables
@@ -51,49 +49,10 @@ func Migrate(api *app.APIBase) error {
 			&model.SyncJob{},
 			&model.Scope{},
 			&model.Config{},
-		).Error; err != nil {
+		); err != nil {
 			log.Error(err)
 			return err
 		}
-
-		if err := fkey(log, db, model.Tag{}, "category_id", "categories"); err != nil {
-			return err
-		}
-
-		if err := fkey(log, db, model.Resource{}, "catalog_id", "catalogs"); err != nil {
-			return err
-		}
-
-		if err := fkey(log, db, model.ResourceVersion{}, "resource_id", "resources"); err != nil {
-			return err
-		}
-
-		if err := fkey(log, db, model.ResourceTag{},
-			"resource_id", "resources",
-			"tag_id", "tags"); err != nil {
-			return err
-		}
-
-		if err := fkey(log, db, model.UserResourceRating{},
-			"resource_id", "resources",
-			"user_id", "users"); err != nil {
-			return err
-		}
-		if err := fkey(log, db, model.SyncJob{},
-			"catalog_id", "catalogs(id)",
-			"user_id", "users(id)",
-		); err != nil {
-			return err
-		}
-
-		if err := fkey(log, db, model.UserScope{},
-			"user_id", "users",
-			"scope_id", "scopes"); err != nil {
-			return err
-		}
-
-		log.Info("Schema initialised successfully !!")
-
 		return nil
 	})
 
@@ -103,18 +62,5 @@ func Migrate(api *app.APIBase) error {
 	}
 
 	log.Info("Migration ran successfully !!")
-	return nil
-}
-
-func fkey(log *log.Logger, db *gorm.DB, model interface{}, args ...string) error {
-	for i := 0; i < len(args); i += 2 {
-		col := args[i]
-		table := args[i+1]
-		err := db.Model(model).AddForeignKey(col, table, "CASCADE", "CASCADE").Error
-		if err != nil {
-			log.Error(err)
-			return err
-		}
-	}
 	return nil
 }

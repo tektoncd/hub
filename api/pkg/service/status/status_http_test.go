@@ -22,15 +22,15 @@ import (
 	"testing"
 
 	"github.com/ikawaha/goahttpcheck"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
-	"gotest.tools/v3/golden"
-
 	"github.com/tektoncd/hub/api/gen/http/status/server"
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/gen/status"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/testutils"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gotest.tools/v3/golden"
 )
 
 type statusTestConfig struct {
@@ -42,7 +42,8 @@ type statusTestConfig struct {
 func newStatusTestConfig(t *testing.T) *statusTestConfig {
 
 	tc := testutils.Setup(t)
-	db, err := gorm.Open(app.DBDialect, tc.Database().ConnectionString())
+
+	db, err := gorm.Open(postgres.Open(tc.Database().ConnectionString()), &gorm.Config{})
 	assert.NoError(t, err)
 
 	return &statusTestConfig{
@@ -108,7 +109,9 @@ func TestDB_NotOK(t *testing.T) {
 		status.NewStatusEndpoint(New(tc)),
 	)
 
-	tc.db.Close()
+	db, err := tc.db.DB()
+	assert.NoError(t, err)
+	db.Close()
 
 	checker.Test(t, http.MethodGet, "/").Check().
 		HasStatus(http.StatusOK).Cb(func(r *http.Response) {
@@ -123,5 +126,7 @@ func TestDB_NotOK(t *testing.T) {
 	})
 
 	// ensure the db connnection is still intact for other tests to execute
-	assert.NoError(t, testutils.Config().DB().DB().Ping())
+	db, err = testutils.Config().DB().DB()
+	assert.NoError(t, err)
+	assert.NoError(t, db.Ping())
 }

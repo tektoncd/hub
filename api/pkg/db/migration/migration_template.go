@@ -15,10 +15,9 @@
 package migration
 
 import (
-	"github.com/jinzhu/gorm"
-	"gopkg.in/gormigrate.v1"
-
+	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/tektoncd/hub/api/gen/log"
+	"gorm.io/gorm"
 )
 
 func migrationTemplate(log *log.Logger) *gormigrate.Migration {

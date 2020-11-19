@@ -17,10 +17,9 @@ package app
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
-	"goa.design/goa/v3/middleware"
-
 	"github.com/tektoncd/hub/api/gen/log"
+	"goa.design/goa/v3/middleware"
+	"gorm.io/gorm"
 )
 
 // Service defines methods on BaseService
@@ -30,20 +29,16 @@ type Service interface {
 	DB(ctx context.Context) *gorm.DB
 }
 
+type environmenter interface {
+	Environment() EnvMode
+}
+
 // BaseService defines configuraition for creating logger and
 // db object with http request id
 type BaseService struct {
+	env    environmenter
 	logger *log.Logger
 	db     *gorm.DB
-}
-
-// adaptor for gorm logger interface
-type gormLogger struct {
-	*log.Logger
-}
-
-func (l *gormLogger) Print(v ...interface{}) {
-	l.Info(v...)
 }
 
 // Logger looks for http request id in passed context and append it to
@@ -63,11 +58,10 @@ func (s *BaseService) LoggerWith(ctx context.Context, args ...interface{}) *log.
 }
 
 // DB gets logger initialized with http request id and creates a gorm db
-// object with replacing default logger with created one, so that each
-// gorm log will have http request id.
+// session replacing writer for gorm logger with log.Logger so that gorm log
+// will have http request id.
 func (s *BaseService) DB(ctx context.Context) *gorm.DB {
-	logger := s.Logger(ctx)
-	db := s.db.New()
-	db.SetLogger(&gormLogger{logger})
-	return db
+	return s.db.Session(&gorm.Session{
+		Logger: newGormLogger(s.env.Environment(), s.Logger(ctx)),
+	})
 }

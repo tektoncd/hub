@@ -20,8 +20,6 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/jinzhu/gorm"
-
 	"github.com/tektoncd/hub/api/gen/admin"
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
@@ -29,6 +27,7 @@ import (
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/service/auth"
 	"github.com/tektoncd/hub/api/pkg/token"
+	"gorm.io/gorm"
 )
 
 type service struct {
@@ -106,11 +105,11 @@ func (r *agentRequest) updateAgent(name string, scopes []string) (string, error)
 	q := r.db.Model(&model.User{}).
 		Where(&model.User{AgentName: name, Type: model.AgentUserType})
 
-	agent := &model.User{}
+	agent := model.User{}
 	if err := q.First(&agent).Error; err != nil {
 
 		// If agent does not exist then create one
-		if gorm.IsRecordNotFoundError(err) {
+		if err == gorm.ErrRecordNotFound {
 			return r.addNewAgent(name, scopes)
 		}
 		r.log.Error(err)
@@ -118,25 +117,25 @@ func (r *agentRequest) updateAgent(name string, scopes []string) (string, error)
 	}
 
 	// If an agent with name already exist, then update the scopes of agent
-	return r.updateExistingAgent(agent, scopes)
+	return r.updateExistingAgent(&agent, scopes)
 }
 
 func (r *agentRequest) addNewAgent(name string, scopes []string) (string, error) {
 
-	agent := &model.User{
+	agent := model.User{
 		AgentName: name,
 		Type:      model.AgentUserType,
 	}
-	if err := r.db.Create(agent).Error; err != nil {
+	if err := r.db.Create(&agent).Error; err != nil {
 		r.log.Error(err)
 		return "", internalError
 	}
 
-	if err := r.addScopesForAgent(agent, scopes); err != nil {
+	if err := r.addScopesForAgent(&agent, scopes); err != nil {
 		return "", err
 	}
 
-	return r.createJWT(agent, scopes)
+	return r.createJWT(&agent, scopes)
 }
 
 func (r *agentRequest) updateExistingAgent(agent *model.User, scopes []string) (string, error) {
@@ -160,12 +159,12 @@ func (r *agentRequest) addScopesForAgent(agent *model.User, scopes []string) err
 
 	for _, sc := range scopes {
 
-		scope := &model.Scope{}
+		scope := model.Scope{}
 		if err := r.db.Where(&model.Scope{Name: sc}).
 			First(&scope).Error; err != nil {
 
 			// If scope in payload does not exist then return
-			if gorm.IsRecordNotFoundError(err) {
+			if err == gorm.ErrRecordNotFound {
 				return admin.MakeInvalidPayload(fmt.Errorf("scope does not exist: %s", sc))
 			}
 			r.log.Error(err)
@@ -174,7 +173,7 @@ func (r *agentRequest) addScopesForAgent(agent *model.User, scopes []string) err
 
 		// Add scopes for agent
 		us := model.UserScope{UserID: agent.ID, ScopeID: scope.ID}
-		if err := r.db.Create(us).Error; err != nil {
+		if err := r.db.Create(&us).Error; err != nil {
 			r.log.Error(err)
 			return internalError
 		}
@@ -203,11 +202,11 @@ func (r *agentRequest) createJWT(user *model.User, scopes []string) (string, err
 
 func (r *agentRequest) userExistWithAgentName(name string) error {
 
-	user := &model.User{}
+	user := model.User{}
 	q := r.db.Where("LOWER(github_name) = ?", strings.ToLower(name))
 
-	if err := q.First(user).Error; err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+	if err := q.First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
 			return nil
 		}
 		r.log.Error(err)
@@ -240,7 +239,8 @@ func (r *refreshRequest) run(ctx context.Context) (*admin.RefreshConfigResult, e
 
 	// Delete existing entry in config for checksum if force refresh is true
 	if r.force {
-		if err := r.db.Unscoped().Delete(&model.Config{}).Error; err != nil {
+		if err := r.db.Unscoped().Where("checksum IS NOT NULL").Delete(&model.Config{}).
+			Error; err != nil {
 			r.log.Error(err)
 			return nil, internalError
 		}

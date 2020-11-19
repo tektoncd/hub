@@ -19,11 +19,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/tektoncd/hub/api/gen/catalog"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"gorm.io/gorm"
 )
 
 type service struct {
@@ -62,7 +62,11 @@ func (s *service) Refresh(ctx context.Context, p *catalog.RefreshPayload) (*cata
 
 	ctg := model.Catalog{}
 	if err := db.Model(&model.Catalog{}).First(&ctg).Error; err != nil {
-		return nil, notFoundOrInternalError(err)
+		if err == gorm.ErrRecordNotFound {
+			return nil, notFoundError
+		}
+		log.Error(err)
+		return nil, internalError
 	}
 
 	job, err := s.wq.Enqueue(auth.UserID(ctx), ctg.ID)
@@ -74,11 +78,4 @@ func (s *service) Refresh(ctx context.Context, p *catalog.RefreshPayload) (*cata
 	log.Infof("job %d queued for refresh", job.ID)
 
 	return ret, nil
-}
-
-func notFoundOrInternalError(err error) error {
-	if gorm.IsRecordNotFoundError(err) {
-		return notFoundError
-	}
-	return internalError
 }
