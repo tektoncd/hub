@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/gen/resource"
@@ -243,7 +244,7 @@ func initResource(r model.Resource) *resource.ResourceData {
 		MinPipelinesVersion: lv.MinPipelinesVersion,
 		WebURL:              lv.URL,
 		RawURL:              replaceGHtoRaw.Replace(lv.URL),
-		UpdatedAt:           lv.ModifiedAt.UTC().String(),
+		UpdatedAt:           lv.ModifiedAt.UTC().Format(time.RFC3339),
 	}
 	res.Tags = []*resource.Tag{}
 	for _, tag := range r.Tags {
@@ -306,7 +307,7 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		MinPipelinesVersion: v.MinPipelinesVersion,
 		WebURL:              v.URL,
 		RawURL:              replaceGHtoRaw.Replace(v.URL),
-		UpdatedAt:           v.ModifiedAt.UTC().String(),
+		UpdatedAt:           v.ModifiedAt.UTC().Format(time.RFC3339),
 		Resource:            res,
 	}
 

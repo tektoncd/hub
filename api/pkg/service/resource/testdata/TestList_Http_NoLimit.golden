@@ -17,7 +17,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.2/tekton.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml",
-				"updatedAt": "2013-01-01 00:00:01 +0000 UTC"
+				"updatedAt": "2013-01-01T00:00:01Z"
 			},
 			"tags": [
 				{
@@ -44,7 +44,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tkn/0.1/tkn.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tkn/0.1/tkn.yaml",
-				"updatedAt": "2013-01-01 00:00:01 +0000 UTC"
+				"updatedAt": "2013-01-01T00:00:01Z"
 			},
 			"tags": [
 				{
@@ -71,7 +71,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog-community/master/task/tkn-hub/0.1/tkn-hub.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-hub/0.1/tkn-hub.yaml",
-				"updatedAt": "2013-01-01 00:00:01 +0000 UTC"
+				"updatedAt": "2013-01-01T00:00:01Z"
 			},
 			"tags": [
 				{
@@ -98,7 +98,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/build/0.2/build.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/build/0.2/build.yaml",
-				"updatedAt": "2013-01-01 00:00:01 +0000 UTC"
+				"updatedAt": "2013-01-01T00:00:01Z"
 			},
 			"tags": [
 				{
@@ -129,7 +129,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog-community/master/task/img/0.1/img.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/img/0.1/img.yaml",
-				"updatedAt": "2013-01-01 00:00:01 +0000 UTC"
+				"updatedAt": "2013-01-01T00:00:01Z"
 			},
 			"tags": [],
 			"rating": 2.3
@@ -151,7 +151,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/img/0.1/img.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/img/0.1/img.yaml",
-				"updatedAt": "2013-01-01 00:00:01 +0000 UTC"
+				"updatedAt": "2013-01-01T00:00:01Z"
 			},
 			"tags": [
 				{
@@ -178,7 +178,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/buildah/0.1/buildah.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/buildah/0.1/buildah.yaml",
-				"updatedAt": "2013-01-01 00:00:01 +0000 UTC"
+				"updatedAt": "2013-01-01T00:00:01Z"
 			},
 			"tags": [
 				{
