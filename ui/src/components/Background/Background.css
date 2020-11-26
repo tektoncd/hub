@@ -1,0 +1,17 @@
+.hub-background-image {
+  background-image: url('../../assets/logo/background.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  padding: 2em;
+}
+
+.hub-background-heading {
+  color: white;
+  text-align: center;
+}
+
+.hub-tag-line {
+  color: white;
+  text-align: center;
+}

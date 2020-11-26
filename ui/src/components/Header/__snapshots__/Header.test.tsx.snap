@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render the header component 1`] = `
+<header
+  className="pf-c-page__header"
+>
+  <div
+    className="pf-c-page__header-brand"
+  >
+    <a
+      className="pf-c-page__header-brand-link"
+    >
+      <img
+        alt="Tekton Hub Logo"
+        className="pf-c-brand"
+        onClick={[Function]}
+        src="logo.png"
+      />
+    </a>
+  </div>
+  <div
+    className="pf-c-page__header-tools"
+  >
+    <div
+      className="pf-l-grid"
+    >
+      <div
+        className="pf-l-grid__item pf-m-11-col"
+      >
+        <input
+          aria-invalid={false}
+          aria-label="text input example"
+          className="pf-c-form-control hub-search"
+          disabled={false}
+          onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          placeholder="Search for resources..."
+          readOnly={false}
+          required={false}
+          spellCheck="false"
+          type="search"
+          value=""
+        />
+      </div>
+    </div>
+    <h3
+      className=""
+      data-pf-content={true}
+    >
+      Login
+    </h3>
+  </div>
+</header>
+`;

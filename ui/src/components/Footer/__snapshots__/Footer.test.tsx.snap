@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render the footer component 1`] = `
+<article
+  className="pf-c-card hub-footer-card"
+  data-ouia-component-id={0}
+  data-ouia-component-type="PF4/Card"
+  data-ouia-safe={true}
+>
+  <div
+    className="pf-l-grid"
+  >
+    <div
+      className="pf-l-grid__item pf-m-12-col hub-footer-info"
+    >
+      <a
+        href="https://cd.foundation"
+        target="_"
+      >
+        <img
+          alt="tekton.dev"
+          src="https://tekton.dev/partner-logos/cdf.png"
+        />
+      </a>
+    </div>
+    <div
+      className="pf-l-grid__item pf-m-12-col hub-footer-info"
+    >
+      <div
+        className="pf-c-content hub-info-color"
+      >
+        <h3
+          className=""
+          data-pf-content={true}
+        >
+          Tekton is a
+           
+          <a
+            className=""
+            data-pf-content={true}
+            href="https://cd.foundation"
+            target="_"
+          >
+            Continuous Delivery Foundation
+          </a>
+           
+          project.
+        </h3>
+      </div>
+    </div>
+    <div
+      className="pf-l-grid__item pf-m-12-col hub-logo-margin"
+    >
+      <img
+        alt="Tekton"
+        className="hub-logo-size"
+        src="tekton.png"
+      />
+    </div>
+    <div
+      className="pf-l-grid__item pf-m-12-col hub-footer-description"
+    >
+      <p
+        className=""
+        data-pf-content={true}
+      >
+        © 2020 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+         
+        <a
+          className=""
+          data-pf-content={true}
+          href="https://www.linuxfoundation.org/trademark-usage/"
+          target="_"
+        >
+          Trademark Usage page
+        </a>
+        . Linux is a registered trademark of Linus Torvalds.
+         
+        <a
+          className=""
+          data-pf-content={true}
+          href="https://www.linuxfoundation.org/privacy/"
+          target="_"
+        >
+          Privacy Policy
+        </a>
+         
+        and
+         
+        <a
+          className=""
+          data-pf-content={true}
+          href="https://www.linuxfoundation.org/terms/"
+          target="_"
+        >
+          Terms of Use
+        </a>
+         
+        .
+      </p>
+    </div>
+  </div>
+</article>
+`;

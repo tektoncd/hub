@@ -1,10 +1,10 @@
 import React from 'react';
-import App from '.';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import renderer from 'react-test-renderer';
 import { FakeHub } from '../../api/testutil';
-import { createProviderAndStore } from '../../store/root';
+import { createProviderAndStore, createProvider } from '../../store/root';
 import LeftPane from '../../components/LeftPane';
+import App from '.';
 
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
@@ -14,9 +14,7 @@ describe('App', () => {
   it('should render the component correctly and match the snapshot', (done) => {
     const app = renderer.create(
       <Provider>
-        <div className="App">
-          <LeftPane />
-        </div>
+        <App />
       </Provider>
     );
 
@@ -24,8 +22,14 @@ describe('App', () => {
     done();
   });
 
-  it('should find the leftpane component and match the count', () => {
-    const component = shallow(<App />);
+  it('should find the component and match the count', () => {
+    const Provider = createProvider();
+    const component = mount(
+      <Provider>
+        <App />
+      </Provider>
+    );
+
     expect(component.find(LeftPane).length).toEqual(1);
   });
 });
