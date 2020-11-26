@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render the background component 1`] = `
+<div
+  className="hub-background-image"
+>
+  <div
+    className="pf-c-content"
+  >
+    <h1
+      className="hub-background-heading"
+      data-pf-content={true}
+    >
+      Welcome to Tekton Hub
+    </h1>
+    <h3
+      className="hub-tag-line"
+      data-pf-content={true}
+    >
+      Discover, search and share reusable Tasks and Pipelines
+    </h3>
+  </div>
+</div>
+`;

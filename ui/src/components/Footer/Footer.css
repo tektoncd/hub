@@ -1,0 +1,32 @@
+.hub-footer-card {
+  padding: 2em;
+  background-color: #151515;
+}
+
+.hub-footer-info {
+  text-align: center;
+}
+
+.hub-footer-info .hub-info-color {
+  color: white;
+}
+
+.hub-footer-info a img {
+  width: 15%;
+}
+
+.hub-footer-description {
+  color: white;
+  text-align: center;
+  max-width: 70em;
+  margin: auto;
+}
+
+.hub-logo-size {
+  height: 6em;
+  padding: 0.8em;
+}
+
+.hub-logo-margin {
+  margin: auto;
+}

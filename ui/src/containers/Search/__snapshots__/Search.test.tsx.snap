@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render the search component 1`] = `
+<input
+  aria-invalid={false}
+  aria-label="text input example"
+  className="pf-c-form-control hub-search"
+  disabled={false}
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder="Search for resources..."
+  readOnly={false}
+  required={false}
+  spellCheck="false"
+  type="search"
+  value=""
+/>
+`;
