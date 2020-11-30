@@ -1,0 +1,15 @@
+📦 Name: foo 
+
+📌 Version: 0.3
+
+📖 Description: v0.3 of Pipeline mango.
+
+🗒  Minimum Pipeline Version: 0.12
+
+⭐ ️Rating: 4.3
+
+🏷 Tags
+  ∙ fruit
+
+⚒ Install Command:
+  tkn hub install pipeline foo --version 0.3 --from fruit

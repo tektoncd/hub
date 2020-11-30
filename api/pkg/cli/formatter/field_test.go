@@ -29,15 +29,15 @@ func TestFormatName(t *testing.T) {
 func TestFormatDesc(t *testing.T) {
 
 	// Description greater than 40 char
-	desc := FormatDesc("Buildah task builds source into a container image and then pushes it to a container registry.")
+	desc := FormatDesc("Buildah task builds source into a container image and then pushes it to a container registry.", 40)
 	assert.Equal(t, "Buildah task builds source into a conta...", desc)
 
 	// Description less than 40 char
-	desc = FormatDesc("Buildah task builds images.")
+	desc = FormatDesc("Buildah task builds images.", 40)
 	assert.Equal(t, "Buildah task builds images.", desc)
 
 	// No Description
-	desc = FormatDesc("")
+	desc = FormatDesc("", 40)
 	assert.Equal(t, "---", desc)
 }
 
@@ -61,4 +61,17 @@ func TestFormatTags(t *testing.T) {
 	// No Tags
 	tags = FormatTags(nil)
 	assert.Equal(t, "---", tags)
+}
+
+func TestFormatVersion(t *testing.T) {
+	got := FormatVersion("0.1", false)
+	assert.Equal(t, "0.1", got)
+
+	got = FormatVersion("0.1", true)
+	assert.Equal(t, "0.1 (Latest)", got)
+}
+
+func TestIcon(t *testing.T) {
+	got := Icon("bullet")
+	assert.Equal(t, "∙ ", got)
 }

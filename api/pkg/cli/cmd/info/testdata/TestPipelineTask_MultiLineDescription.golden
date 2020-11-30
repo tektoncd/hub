@@ -1,0 +1,17 @@
+📦 Name: foo 
+
+📌 Version: 0.3
+
+📖 Description: Fruits are important sources of vitamins and carbohydrates like
+ fiber and sugar.  They are low in calories and naturally sweet.  Fruits and
+ their juices are good sources of water, too.
+
+🗒  Minimum Pipeline Version: 0.12
+
+⭐ ️Rating: 4.3
+
+🏷 Tags
+  ∙ fruit
+
+⚒ Install Command:
+  tkn hub install pipeline foo --version 0.3 --from fruit

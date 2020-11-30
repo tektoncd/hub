@@ -18,6 +18,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tektoncd/hub/api/pkg/cli/app"
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/get"
+	"github.com/tektoncd/hub/api/pkg/cli/cmd/info"
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/search"
 	"github.com/tektoncd/hub/api/pkg/cli/hub"
 )
@@ -43,8 +44,9 @@ func Root(cli app.CLI) *cobra.Command {
 	cli.SetStream(cmd.OutOrStdout(), cmd.OutOrStderr())
 
 	cmd.AddCommand(
-		search.Command(cli),
 		get.Command(cli),
+		info.Command(cli),
+		search.Command(cli),
 	)
 
 	cmd.PersistentFlags().StringVar(&apiURL, "api-server", hub.URL(), "Hub API Server URL")
