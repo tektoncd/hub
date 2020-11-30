@@ -1,0 +1,17 @@
+📦 Name: foo 
+
+🗂 Display Name: foo-bar
+
+📌 Version: 0.1 (Latest)
+
+📖 Description: v0.1 Task to run foo
+
+🗒  Minimum Pipeline Version: 0.11
+
+⭐ ️Rating: 4.8
+
+🏷 Tags
+  ∙ cli
+
+⚒ Install Command:
+  tkn hub install task foo
