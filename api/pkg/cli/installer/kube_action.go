@@ -38,3 +38,31 @@ func (i *Installer) create(object *unstructured.Unstructured, namespace string, 
 	}
 	return obj, nil
 }
+
+func (i *Installer) get(objectName, kind, namespace string, op metav1.GetOptions) (*unstructured.Unstructured, error) {
+
+	gvrObj := schema.GroupVersionResource{Group: tektonGroup, Resource: kind}
+	gvr, err := getGroupVersionResource(gvrObj, i.cs.Tekton().Discovery())
+	if err != nil {
+		return nil, err
+	}
+	obj, err := i.cs.Dynamic().Resource(*gvr).Namespace(namespace).Get(context.Background(), objectName, op)
+	if err != nil {
+		return nil, err
+	}
+	return obj, nil
+}
+
+func (i *Installer) update(object *unstructured.Unstructured, namespace string, op metav1.UpdateOptions) (*unstructured.Unstructured, error) {
+
+	gvrObj := schema.GroupVersionResource{Group: tektonGroup, Resource: object.GetKind()}
+	gvr, err := getGroupVersionResource(gvrObj, i.cs.Tekton().Discovery())
+	if err != nil {
+		return nil, err
+	}
+	obj, err := i.cs.Dynamic().Resource(*gvr).Namespace(namespace).Update(context.Background(), object, op)
+	if err != nil {
+		return nil, err
+	}
+	return obj, nil
+}

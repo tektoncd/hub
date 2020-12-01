@@ -25,19 +25,20 @@ import (
 	"github.com/tektoncd/hub/api/pkg/cli/installer"
 	"github.com/tektoncd/hub/api/pkg/cli/kube"
 	"github.com/tektoncd/hub/api/pkg/cli/printer"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 type options struct {
-	cli      app.CLI
-	from     string
-	version  string
-	kind     string
-	args     []string
-	kc       kube.Config
-	cs       kube.ClientSet
-	resource hub.ResourceResult
+	cli       app.CLI
+	from      string
+	version   string
+	kind      string
+	overwrite bool
+	args      []string
+	kc        kube.Config
+	cs        kube.ClientSet
+	hubRes    hub.ResourceResult
+	resource  *unstructured.Unstructured
 }
 
 var cmdExamples string = `
@@ -71,6 +72,7 @@ func Command(cli app.CLI) *cobra.Command {
 
 	cmd.PersistentFlags().StringVar(&opts.from, "from", "tekton", "Name of Catalog to which resource belongs.")
 	cmd.PersistentFlags().StringVar(&opts.version, "version", "", "Version of Resource")
+	cmd.PersistentFlags().BoolVar(&opts.overwrite, "overwrite", false, "Overwrite an existing resource which is not from a catalog")
 
 	cmd.PersistentFlags().StringVarP(&opts.kc.Path, "kubeconfig", "k", "", "Kubectl config file (default: $HOME/.kube/config)")
 	cmd.PersistentFlags().StringVarP(&opts.kc.Context, "context", "c", "", "Name of the kubeconfig context to use (default: kubectl config current-context)")
@@ -108,14 +110,14 @@ func (opts *options) run() error {
 	}
 
 	hubClient := opts.cli.Hub()
-	opts.resource = hubClient.GetResource(hub.ResourceOption{
+	opts.hubRes = hubClient.GetResource(hub.ResourceOption{
 		Name:    opts.name(),
 		Catalog: opts.from,
 		Kind:    opts.kind,
 		Version: opts.version,
 	})
 
-	manifest, err := opts.resource.Manifest()
+	manifest, err := opts.hubRes.Manifest()
 	if err != nil {
 		return err
 	}
@@ -129,13 +131,13 @@ func (opts *options) run() error {
 	}
 
 	installer := installer.New(opts.cs)
-	res, err := installer.Install(manifest, opts.from, opts.cs.Namespace())
+	opts.resource, err = installer.Install(manifest, opts.from, opts.cs.Namespace(), opts.overwrite)
 	if err != nil {
 		return opts.errors(err)
 	}
 
 	out := opts.cli.Stream().Out
-	return printer.New(out).String(msg(res))
+	return printer.New(out).String(msg(opts.resource))
 }
 
 func msg(res *unstructured.Unstructured) string {
@@ -154,13 +156,19 @@ func (opts *options) name() string {
 
 func (opts *options) errors(err error) error {
 
-	if errors.IsAlreadyExists(err) {
-		return fmt.Errorf("%s %s already exists in %s namespace",
-			strings.Title(opts.kind), opts.name(), opts.cs.Namespace())
+	if err == installer.ErrNotFromCatalog {
+		return fmt.Errorf("%s %s already exists in %s namespace but doesn't seems to be from a catalog. Use --overwrite flag to force install",
+			strings.Title(opts.kind), opts.resource.GetName(), opts.cs.Namespace())
+	}
+
+	if err == installer.ErrAlreadyExist {
+		version := opts.resource.GetLabels()["app.kubernetes.io/version"]
+		return fmt.Errorf("%s %s(%s) already exists in %s namespace",
+			strings.Title(opts.kind), opts.resource.GetName(), version, opts.cs.Namespace())
 	}
 
 	if strings.Contains(err.Error(), "mutation failed: cannot decode incoming new object") {
-		version, vErr := opts.resource.MinPipelinesVersion()
+		version, vErr := opts.hubRes.MinPipelinesVersion()
 		if vErr != nil {
 			return vErr
 		}

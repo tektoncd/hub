@@ -99,7 +99,7 @@ func TestInstall_NewResource(t *testing.T) {
 	assert.Equal(t, gock.IsDone(), true)
 }
 
-func TestInstall_ResourceAlreadyExistError(t *testing.T) {
+func TestInstall_NotFromCatalogErrorAndOverwrite(t *testing.T) {
 	cli := test.NewCLI()
 
 	defer gock.Off()
@@ -143,6 +143,70 @@ func TestInstall_ResourceAlreadyExistError(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Task foo already exists in hub namespace")
+	assert.EqualError(t, err, "Task foo already exists in hub namespace but doesn't seems to be from a catalog. Use --overwrite flag to force install")
+
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.3").
+		Reply(200).
+		JSON(&res.Projected)
+
+	gock.New("http://raw.github.url").
+		Get("/foo/0.3/foo.yaml").
+		Reply(200).
+		File("./testdata/foo-v0.3.yaml")
+
+	opts.overwrite = true
+	err = opts.run()
+	assert.NoError(t, err)
+	assert.Equal(t, "Task foo(0.3) installed in hub namespace\n", buf.String())
+	assert.Equal(t, gock.IsDone(), true)
+}
+
+func TestInstall_ResourceAlreadyExistError(t *testing.T) {
+	cli := test.NewCLI()
+
+	defer gock.Off()
+
+	resVersion := &res.ResourceVersion{Data: resVersion}
+	res := res.NewViewedResourceVersion(resVersion, "default")
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.3").
+		Reply(200).
+		JSON(&res.Projected)
+
+	gock.New("http://raw.github.url").
+		Get("/foo/0.3/foo.yaml").
+		Reply(200).
+		File("./testdata/foo-v0.3.yaml")
+
+	buf := new(bytes.Buffer)
+	cli.SetStream(buf, buf)
+
+	existingTask := &v1beta1.Task{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "foo",
+			Namespace: "hub",
+			Labels:    map[string]string{"app.kubernetes.io/version": "0.1"},
+		},
+	}
+
+	version := "v1beta1"
+	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+
+	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
+	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
+
+	opts := &options{
+		cs:      test.FakeClientSet(cs.Pipeline, dynamic, "hub"),
+		cli:     cli,
+		kind:    "task",
+		args:    []string{"foo"},
+		from:    "tekton",
+		version: "0.3",
+	}
+
+	err := opts.run()
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Task foo(0.1) already exists in hub namespace")
 	assert.Equal(t, gock.IsDone(), true)
 }
