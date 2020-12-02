@@ -26,6 +26,18 @@ import (
 	"github.com/tektoncd/hub/api/pkg/cli/printer"
 )
 
+var cmdExamples string = `
+Display info of a %S of name 'foo':
+
+    tkn hub info %s foo
+
+or
+
+Display info of a %S of name 'foo' of version '0.3':
+
+    tkn hub info %s foo --version 0.3
+`
+
 const resTemplate = `{{ icon "name" }}Name: {{ .Resource.Name }} 
 {{ $n := .ResVersion.DisplayName }}{{ if ne (default $n "") "" }}
 {{ icon "displayName" }}Display Name: {{ $n }}
@@ -107,6 +119,7 @@ func commandForKind(kind string, opts *options) *cobra.Command {
 		Short:        "Describe info of " + kind + " by name, catalog and version",
 		Long:         ``,
 		SilenceUsage: true,
+		Example:      examples(kind),
 		Annotations: map[string]string{
 			"commandType": "main",
 		},
@@ -165,4 +178,9 @@ func (opts *options) validate() error {
 
 func (opts *options) name() string {
 	return strings.TrimSpace(opts.args[0])
+}
+
+func examples(kind string) string {
+	replacer := strings.NewReplacer("%s", kind, "%S", strings.Title(kind))
+	return replacer.Replace(cmdExamples)
 }
