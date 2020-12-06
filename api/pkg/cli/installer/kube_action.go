@@ -52,3 +52,17 @@ func (i *Installer) get(objectName, kind, namespace string, op metav1.GetOptions
 	}
 	return obj, nil
 }
+
+func (i *Installer) update(object *unstructured.Unstructured, namespace string, op metav1.UpdateOptions) (*unstructured.Unstructured, error) {
+
+	gvrObj := schema.GroupVersionResource{Group: tektonGroup, Resource: object.GetKind()}
+	gvr, err := getGroupVersionResource(gvrObj, i.cs.Tekton().Discovery())
+	if err != nil {
+		return nil, err
+	}
+	obj, err := i.cs.Dynamic().Resource(*gvr).Namespace(namespace).Update(context.Background(), object, op)
+	if err != nil {
+		return nil, err
+	}
+	return obj, nil
+}
