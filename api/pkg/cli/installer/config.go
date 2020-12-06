@@ -16,6 +16,7 @@ package installer
 
 import (
 	"github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/client-go/dynamic"
 )
 
@@ -25,9 +26,10 @@ type ClientSet interface {
 }
 
 type Installer struct {
-	cs ClientSet
+	cs          ClientSet
+	existingRes *unstructured.Unstructured
 }
 
 func New(cs ClientSet) *Installer {
-	return &Installer{cs}
+	return &Installer{cs, nil}
 }

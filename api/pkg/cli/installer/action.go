@@ -27,11 +27,16 @@ import (
 
 const (
 	catalogLabel = "hub.tekton.dev/catalog"
+	versionLabel = "app.kubernetes.io/version"
 )
 
 // Errors
 var (
-	ErrAlreadyExist = errors.New("resource already exists")
+	ErrAlreadyExist             = errors.New("resource already exists")
+	ErrNotFound                 = errors.New("resource not found")
+	ErrVersionAndCatalogMissing = errors.New("version and catalog label missing")
+	ErrVersionMissing           = errors.New("version label missing")
+	ErrCatalogMissing           = errors.New("catalog label missing")
 )
 
 // Install a resource
@@ -56,10 +61,91 @@ func (i *Installer) Install(data []byte, catalog, namespace string) (*unstructur
 	return existingRes, ErrAlreadyExist
 }
 
+// LookupInstalled checks if a resource is installed
+func (i *Installer) LookupInstalled(name, kind, namespace string) (*unstructured.Unstructured, error) {
+
+	var err error
+	i.existingRes, err = i.get(name, kind, namespace, metav1.GetOptions{})
+	if err != nil {
+		if kErr.IsNotFound(err) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	if err := checkLabels(i.existingRes); err != nil {
+		return i.existingRes, err
+	}
+
+	return i.existingRes, nil
+}
+
+// Update will updates an existing resource with the passed resource if exist
+func (i *Installer) Update(data []byte, catalog, namespace string) (*unstructured.Unstructured, error) {
+
+	newRes, err := toUnstructured(data)
+	if err != nil {
+		return nil, err
+	}
+
+	if i.existingRes == nil {
+		i.existingRes, err = i.get(newRes.GetName(), newRes.GetKind(), namespace, metav1.GetOptions{})
+		if err != nil {
+			if kErr.IsNotFound(err) {
+				return nil, ErrNotFound
+			}
+			return nil, err
+		}
+	}
+
+	return i.updateRes(i.existingRes, newRes, catalog, namespace)
+}
+
+func checkLabels(res *unstructured.Unstructured) error {
+
+	labels := res.GetLabels()
+	if len(labels) == 0 {
+		return ErrVersionAndCatalogMissing
+	}
+
+	_, versionOk := labels[versionLabel]
+	_, catalogOk := labels[catalogLabel]
+
+	// If both label exist then return nil
+	if versionOk == catalogOk && versionOk {
+		return nil
+	}
+
+	if !catalogOk {
+		return ErrCatalogMissing
+	}
+
+	if !versionOk {
+		return ErrVersionMissing
+	}
+
+	return nil
+}
+
 func (i *Installer) createRes(obj *unstructured.Unstructured, catalog, namespace string) (*unstructured.Unstructured, error) {
 
 	addCatalogLabel(obj, catalog)
 	res, err := i.create(obj, namespace, metav1.CreateOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (i *Installer) updateRes(existing, new *unstructured.Unstructured, catalog, namespace string) (*unstructured.Unstructured, error) {
+
+	addCatalogLabel(new, catalog)
+	// replace label, annotation and spec of old resource with new
+	existing.SetLabels(new.GetLabels())
+	existing.SetAnnotations(new.GetAnnotations())
+	existing.Object["spec"] = new.Object["spec"]
+
+	res, err := i.update(existing, namespace, metav1.UpdateOptions{})
 	if err != nil {
 		return nil, err
 	}
