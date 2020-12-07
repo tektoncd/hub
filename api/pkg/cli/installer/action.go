@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/hashicorp/go-version"
 	kErr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -37,6 +38,8 @@ var (
 	ErrVersionAndCatalogMissing = errors.New("version and catalog label missing")
 	ErrVersionMissing           = errors.New("version label missing")
 	ErrCatalogMissing           = errors.New("catalog label missing")
+	ErrSameVersion              = errors.New("resource already exists with the requested verion")
+	ErrLowerVersion             = errors.New("cannot upgrade resource as requested version is lower than existing")
 )
 
 // Install a resource
@@ -99,6 +102,48 @@ func (i *Installer) Update(data []byte, catalog, namespace string) (*unstructure
 	}
 
 	return i.updateRes(i.existingRes, newRes, catalog, namespace)
+}
+
+// Upgrade an existing resource to a version upper version by passing it
+func (i *Installer) Upgrade(data []byte, catalog, namespace string) (*unstructured.Unstructured, error) {
+
+	newRes, err := toUnstructured(data)
+	if err != nil {
+		return nil, err
+	}
+
+	if i.existingRes == nil {
+		i.existingRes, err = i.get(newRes.GetName(), newRes.GetKind(), namespace, metav1.GetOptions{})
+		if err != nil {
+			if kErr.IsNotFound(err) {
+				return nil, ErrNotFound
+			}
+			return nil, err
+		}
+	}
+
+	existingVersion := i.existingRes.GetLabels()[versionLabel]
+	newVersion := newRes.GetLabels()[versionLabel]
+
+	if err = isUpgradable(existingVersion, newVersion); err != nil {
+		return i.existingRes, err
+	}
+
+	return i.updateRes(i.existingRes, newRes, catalog, namespace)
+}
+
+func isUpgradable(existingVersion, newVersion string) error {
+
+	exVer, _ := version.NewVersion(existingVersion)
+	newVer, _ := version.NewVersion(newVersion)
+
+	if newVer.Equal(exVer) {
+		return ErrSameVersion
+	}
+	if newVer.LessThan(exVer) {
+		return ErrLowerVersion
+	}
+	return nil
 }
 
 func checkLabels(res *unstructured.Unstructured) error {

@@ -22,6 +22,7 @@ import (
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/install"
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/reinstall"
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/search"
+	"github.com/tektoncd/hub/api/pkg/cli/cmd/upgrade"
 	"github.com/tektoncd/hub/api/pkg/cli/hub"
 )
 
@@ -51,6 +52,7 @@ func Root(cli app.CLI) *cobra.Command {
 		install.Command(cli),
 		reinstall.Command(cli),
 		search.Command(cli),
+		upgrade.Command(cli),
 	)
 
 	cmd.PersistentFlags().StringVar(&apiURL, "api-server", hub.URL(), "Hub API Server URL")
