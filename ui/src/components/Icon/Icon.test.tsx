@@ -33,4 +33,9 @@ describe('Icon Component', () => {
     const component = shallow(<Icon id={Icons.Unknown} size="sm" label="CLI" />);
     expect(component.debug()).toMatchSnapshot();
   });
+  it('should render icon for Rating', () => {
+    const component = shallow(<Icon id={Icons.Star} size="sm" label="Rating" />);
+    expect(component.debug()).toMatchSnapshot();
+    expect(component.find('StarIcon[label="Rating"]').length).toEqual(1);
+  });
 });

@@ -1,0 +1,268 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Cards should render the resources on cards 1`] = `
+"<Fragment>
+  <GalleryItem>
+    <Link to={{...}} className=\\"hub-card-link\\">
+      <Card className=\\"hub-resource-card\\">
+        <CardHeader>
+          <span className=\\"hub-kind-icon\\">
+            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+          </span>
+          <span className=\\"hub-catalog-icon\\">
+            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+          </span>
+          <CardActions>
+            <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            <TextContent className=\\"hub-rating\\">
+              5
+            </TextContent>
+          </CardActions>
+        </CardHeader>
+        <CardTitle>
+          <span className=\\"hub-resource-name\\">
+            aws cli
+          </span>
+          <span className=\\"hub-resource-version\\">
+            v
+            0.1
+          </span>
+        </CardTitle>
+        <CardBody className=\\"hub-resource-body fade\\">
+          This task performs operations on Amazon Web Services resources using aws.
+        </CardBody>
+        <CardFooter>
+          <TextContent className=\\"hub-resource-updatedAt\\">
+            Updated 
+            a month ago
+          </TextContent>
+          <div className=\\"hub-tags-container\\">
+            <Badge className=\\"hub-tags\\">
+              cli
+            </Badge>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
+  </GalleryItem>
+  <GalleryItem>
+    <Link to={{...}} className=\\"hub-card-link\\">
+      <Card className=\\"hub-resource-card\\">
+        <CardHeader>
+          <span className=\\"hub-kind-icon\\">
+            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+          </span>
+          <span className=\\"hub-catalog-icon\\">
+            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+          </span>
+          <CardActions>
+            <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            <TextContent className=\\"hub-rating\\">
+              5
+            </TextContent>
+          </CardActions>
+        </CardHeader>
+        <CardTitle>
+          <span className=\\"hub-resource-name\\">
+            golang build
+          </span>
+          <span className=\\"hub-resource-version\\">
+            v
+            0.1
+          </span>
+        </CardTitle>
+        <CardBody className=\\"hub-resource-body fade\\">
+          This Task is Golang task to build Go projects.
+        </CardBody>
+        <CardFooter>
+          <TextContent className=\\"hub-resource-updatedAt\\">
+            Updated 
+            a month ago
+          </TextContent>
+          <div className=\\"hub-tags-container\\">
+            <Badge className=\\"hub-tags\\">
+              build-tool
+            </Badge>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
+  </GalleryItem>
+  <GalleryItem>
+    <Link to={{...}} className=\\"hub-card-link\\">
+      <Card className=\\"hub-resource-card\\">
+        <CardHeader>
+          <span className=\\"hub-kind-icon\\">
+            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+          </span>
+          <span className=\\"hub-catalog-icon\\">
+            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+          </span>
+          <CardActions>
+            <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            <TextContent className=\\"hub-rating\\">
+              5
+            </TextContent>
+          </CardActions>
+        </CardHeader>
+        <CardTitle>
+          <span className=\\"hub-resource-name\\">
+            jenkins operation
+          </span>
+          <span className=\\"hub-resource-version\\">
+            v
+            0.1
+          </span>
+        </CardTitle>
+        <CardBody className=\\"hub-resource-body fade\\">
+          The following task can be used to interact with the the Jenkins REST API.
+        </CardBody>
+        <CardFooter>
+          <TextContent className=\\"hub-resource-updatedAt\\">
+            Updated 
+            a month ago
+          </TextContent>
+          <div className=\\"hub-tags-container\\">
+            <Badge className=\\"hub-tags\\">
+              build
+            </Badge>
+            <Badge className=\\"hub-tags\\">
+              jenkins
+            </Badge>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
+  </GalleryItem>
+  <GalleryItem>
+    <Link to={{...}} className=\\"hub-card-link\\">
+      <Card className=\\"hub-resource-card\\">
+        <CardHeader>
+          <span className=\\"hub-kind-icon\\">
+            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+          </span>
+          <span className=\\"hub-catalog-icon\\">
+            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+          </span>
+          <CardActions>
+            <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            <TextContent className=\\"hub-rating\\">
+              5
+            </TextContent>
+          </CardActions>
+        </CardHeader>
+        <CardTitle>
+          <span className=\\"hub-resource-name\\">
+            jib maven
+          </span>
+          <span className=\\"hub-resource-version\\">
+            v
+            0.1
+          </span>
+        </CardTitle>
+        <CardBody className=\\"hub-resource-body fade\\">
+          This Task builds Java/Kotlin/Groovy/Scala source into a container image using Google’s Jib tool.
+          Jib works with Maven and Gradle projects, and this template is for Maven projects.
+        </CardBody>
+        <CardFooter>
+          <TextContent className=\\"hub-resource-updatedAt\\">
+            Updated 
+            a month ago
+          </TextContent>
+          <div className=\\"hub-tags-container\\">
+            <Badge className=\\"hub-tags\\">
+              image-build
+            </Badge>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
+  </GalleryItem>
+  <GalleryItem>
+    <Link to={{...}} className=\\"hub-card-link\\">
+      <Card className=\\"hub-resource-card\\">
+        <CardHeader>
+          <span className=\\"hub-kind-icon\\">
+            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+          </span>
+          <span className=\\"hub-catalog-icon\\">
+            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+          </span>
+          <CardActions>
+            <Icon id=\\"star\\" size=\\"sm\\" label=\\"4.5\\" />
+            <TextContent className=\\"hub-rating\\">
+              4.5
+            </TextContent>
+          </CardActions>
+        </CardHeader>
+        <CardTitle>
+          <span className=\\"hub-resource-name\\">
+            Ansible Runner
+          </span>
+          <span className=\\"hub-resource-version\\">
+            v
+            0.1
+          </span>
+        </CardTitle>
+        <CardBody className=\\"hub-resource-body fade\\">
+          Hub is a platform which displays all resources
+        </CardBody>
+        <CardFooter>
+          <TextContent className=\\"hub-resource-updatedAt\\">
+            Updated 
+            a month ago
+          </TextContent>
+          <div className=\\"hub-tags-container\\">
+            <Badge className=\\"hub-tags\\">
+              cli
+            </Badge>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
+  </GalleryItem>
+  <GalleryItem>
+    <Link to={{...}} className=\\"hub-card-link\\">
+      <Card className=\\"hub-resource-card\\">
+        <CardHeader>
+          <span className=\\"hub-kind-icon\\">
+            <Icon id=\\"domain\\" size=\\"sm\\" label=\\"Pipeline\\" />
+          </span>
+          <span className=\\"hub-catalog-icon\\">
+            <Icon id=\\"cat\\" size=\\"sm\\" label=\\"tekton-hub\\" />
+          </span>
+          <CardActions>
+            <Icon id=\\"star\\" size=\\"sm\\" label=\\"4.5\\" />
+            <TextContent className=\\"hub-rating\\">
+              4.5
+            </TextContent>
+          </CardActions>
+        </CardHeader>
+        <CardTitle>
+          <span className=\\"hub-resource-name\\">
+            Hub Pipeline
+          </span>
+          <span className=\\"hub-resource-version\\">
+            v
+            0.1
+          </span>
+        </CardTitle>
+        <CardBody className=\\"hub-resource-body fade\\">
+          Hub is a platform which displays all resources
+        </CardBody>
+        <CardFooter>
+          <TextContent className=\\"hub-resource-updatedAt\\">
+            Updated 
+            a month ago
+          </TextContent>
+          <div className=\\"hub-tags-container\\">
+            <Badge className=\\"hub-tags\\">
+              resource
+            </Badge>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
+  </GalleryItem>
+</Fragment>"
+`;

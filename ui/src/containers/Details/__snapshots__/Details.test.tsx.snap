@@ -1,7 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should render the details component 1`] = `
-<span>
-  Add Resources detail here
-</span>
+"<Provider>
+   
+  <Details>
+    <span>
+      Add Resources detail here 
+      ansible-runner
+    </span>
+  </Details>
+   
+</Provider>"
 `;

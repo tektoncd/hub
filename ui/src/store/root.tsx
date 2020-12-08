@@ -20,7 +20,7 @@ type IRoot = Instance<typeof Root>;
 
 const initRootStore = (api: Api) => {
   const categories = CategoryStore.create({}, { api });
-  const resources = ResourceStore.create({}, { api });
+  const resources = ResourceStore.create({}, { api, categories });
   return Root.create({}, { api, categories, resources });
 };
 

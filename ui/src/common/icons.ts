@@ -4,5 +4,6 @@ export enum Icons {
   Certificate = 'certificate',
   User = 'user',
   Build = 'build',
-  Domain = 'domain'
+  Domain = 'domain',
+  Star = 'star'
 }

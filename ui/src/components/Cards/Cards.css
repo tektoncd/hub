@@ -1,0 +1,74 @@
+.hub-resource-card {
+  background-color: white;
+  height: 23em;
+  width: 18.5em;
+  color: black;
+  border-radius: 0.5em;
+}
+
+.hub-rating {
+  margin-top: 0.32em;
+}
+
+.hub-resource-name {
+  font-weight: normal;
+  font-size: 1.3em;
+}
+
+.hub-resource-version {
+  float: right;
+  font-weight: normal;
+  margin-top: 0.3em;
+}
+
+.hub-resource-updatedAt {
+  margin-bottom: 0.5em;
+  margin-top: -0.3em;
+}
+
+.hub-tags-container {
+  height: 2.5em;
+}
+
+.hub-tags {
+  margin-right: 0.3em;
+  margin-bottom: 0.5em;
+}
+
+.hub-kind-icon {
+  margin-right: 0.5em;
+  padding-top: 0.125em;
+}
+
+.hub-catalog-icon {
+  vertical-align: -0.125em;
+}
+
+.hub-card-link {
+  text-decoration: none;
+}
+
+.div {
+  color: black;
+}
+
+.hub-resource-body {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 1em;
+  max-height: 10em;
+}
+
+.fade {
+  position: relative;
+}
+.fade:after {
+  content: '';
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 70%;
+  height: 1.6em;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
+}

@@ -37,17 +37,26 @@ const Version = types.model('Version', {
   updatedAt: updatedAt
 });
 
-export const Resource = types.model('Resource', {
-  id: types.identifierNumber,
-  name: types.optional(types.string, ''),
-  catalog: types.reference(Catalog),
-  kind: types.reference(Kind),
-  latestVersion: types.reference(Version),
-  tags: types.array(types.reference(Tag)), // ["1", "2"]
-  rating: types.number,
-  versions: types.array(types.reference(Version)),
-  displayName: ''
-});
+export const Resource = types
+  .model('Resource', {
+    id: types.number,
+    name: types.identifier,
+    catalog: types.reference(Catalog),
+    kind: types.reference(Kind),
+    latestVersion: types.reference(Version),
+    tags: types.array(types.reference(Tag)), // ["1", "2"]
+    rating: types.number,
+    versions: types.array(types.reference(Version)),
+    displayName: ''
+  })
+  .views((self) => ({
+    get resourceName() {
+      if (self.displayName !== '') {
+        return self.displayName;
+      }
+      return self.name;
+    }
+  }));
 
 export type IResource = Instance<typeof Resource>;
 export type IVersion = Instance<typeof Version>;
@@ -64,6 +73,7 @@ export const ResourceStore = types
     catalogs: types.optional(CatalogStore, {}),
     kinds: types.optional(KindStore, {}),
     sortBy: types.optional(types.enumeration(Object.values(sortByFields)), sortByFields.Name),
+    tags: types.optional(types.map(Tag), {}),
     search: '',
     err: '',
     isLoading: true
@@ -112,13 +122,18 @@ export const ResourceStore = types
           self.versions.put(r.latestVersion);
         });
 
+        // adding the tags to the store - normalized
+        const tags: ITag[] = json.data.flatMap((item: IResource) => item.tags);
+
+        tags.forEach((t) => (t != null ? self.tags.put(t) : null));
+
         const resources: IResource[] = json.data.map((r: IResource) => ({
           id: r.id,
           name: r.name,
           catalog: r.catalog.id,
           kind: r.kind,
           latestVersion: r.latestVersion.id,
-          tags: r.tags.map((tag: ITag) => tag.id),
+          tags: r.tags != null ? r.tags.map((tag: ITag) => tag.id) : [],
           rating: r.rating,
           versions: [],
           displayName: r.latestVersion.displayName

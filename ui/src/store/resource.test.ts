@@ -239,4 +239,27 @@ describe('Store functions', () => {
       }
     );
   });
+
+  it('it should return displayName', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.isLoading).toBe(false);
+        expect(store.resources.size).toBe(6);
+
+        const displayName = store.resources.get('aws-cli')?.resourceName;
+
+        expect(displayName).toBe('aws cli');
+        done();
+      }
+    );
+  });
 });
