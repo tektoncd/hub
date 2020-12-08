@@ -1,559 +1,536 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should render the resources component 1`] = `
-<div
-  className="pf-l-grid"
->
-  <div
-    className="pf-l-grid__item"
-  >
-    <div
-      className="pf-c-pagination pf-m-compact"
-      data-ouia-component-id={0}
-      data-ouia-component-type="PF4/Pagination"
-      data-ouia-safe={true}
-      id="pagination-options-menu-0"
-    >
-      <div
-        className="pf-c-pagination__total-items"
-      >
-        <b>
-          1
-           - 
-          20
-        </b>
-         
-        of 
-        <b>
-          200
-        </b>
-         
-        
-      </div>
-      <div
-        className="pf-c-options-menu"
-        data-ouia-component-id={1}
-        data-ouia-component-type="PF4/PaginationOptionsMenu"
-        data-ouia-safe={true}
-      >
-        <div
-          className="pf-c-options-menu__toggle pf-m-plain pf-m-text"
-        >
-          <span
-            className="pf-c-options-menu__toggle-text"
-          >
-            <b>
-              1
-               - 
-              20
-            </b>
-             
-            of 
-            <b>
-              200
-            </b>
-             
-            
-          </span>
-          <button
-            aria-expanded={false}
-            aria-label="Items per page"
-            className="  pf-c-options-menu__toggle-button"
-            disabled={false}
-            id="pagination-options-menu-toggle-0"
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            type="button"
-          >
-            <span
-              className="pf-c-options-menu__toggle-button-icon"
-            >
-              <svg
-                aria-hidden={true}
-                aria-labelledby={null}
-                fill="currentColor"
-                height="1em"
-                role="img"
-                style={
-                  Object {
-                    "verticalAlign": "-0.125em",
-                  }
-                }
-                viewBox="0 0 320 512"
-                width="1em"
-              >
-                <path
-                  d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                  transform=""
-                />
-              </svg>
-            </span>
-          </button>
-        </div>
-      </div>
-      <nav
-        aria-label="Pagination"
-        className="pf-c-pagination__nav"
-      >
-        <div
-          className="pf-c-pagination__nav-control"
-        >
-          <button
-            aria-disabled={true}
-            aria-label="Go to previous page"
-            className="pf-c-button pf-m-plain pf-m-disabled"
-            data-action="previous"
-            data-ouia-component-id={2}
-            data-ouia-component-type="PF4/Button"
-            data-ouia-safe={true}
-            disabled={true}
-            onClick={[Function]}
-            tabIndex={null}
-            type="button"
-          >
-            <svg
-              aria-hidden={true}
-              aria-labelledby={null}
-              fill="currentColor"
-              height="1em"
-              role="img"
-              style={
-                Object {
-                  "verticalAlign": "-0.125em",
-                }
-              }
-              viewBox="0 0 256 512"
-              width="1em"
-            >
-              <path
-                d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"
-                transform=""
-              />
-            </svg>
-          </button>
-        </div>
-        <div
-          className="pf-c-pagination__nav-control"
-        >
-          <button
-            aria-disabled={false}
-            aria-label="Go to next page"
-            className="pf-c-button pf-m-plain"
-            data-action="next"
-            data-ouia-component-id={3}
-            data-ouia-component-type="PF4/Button"
-            data-ouia-safe={true}
-            disabled={false}
-            onClick={[Function]}
-            type="button"
-          >
-            <svg
-              aria-hidden={true}
-              aria-labelledby={null}
-              fill="currentColor"
-              height="1em"
-              role="img"
-              style={
-                Object {
-                  "verticalAlign": "-0.125em",
-                }
-              }
-              viewBox="0 0 256 512"
-              width="1em"
-            >
-              <path
-                d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
-                transform=""
-              />
-            </svg>
-          </button>
-        </div>
-      </nav>
-    </div>
-    <div
-      className="pf-l-gallery pf-m-gutter"
-    >
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={4}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={5}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={6}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={7}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={8}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={9}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={10}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={11}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={12}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={13}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={14}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={15}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={16}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={17}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={18}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={19}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={20}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={21}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={22}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-      <div>
-        <a
-          href="/tekton/task/name/version"
-          onClick={[Function]}
-        >
-          <article
-            className="pf-c-card pf-m-hoverable hub-resource-card"
-            data-ouia-component-id={23}
-            data-ouia-component-type="PF4/Card"
-            data-ouia-safe={true}
-          >
-            <div
-              className="pf-c-card__body"
-            >
-              Resources
-            </div>
-          </article>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
+exports[`Resource Component should render the resources component 1`] = `
+"<Provider>
+   
+  <BrowserRouter>
+    <Router history={{...}}>
+      <Resources>
+        <Gallery hasGutter={true} className=\\"hub-resource\\">
+          <div className=\\"pf-l-gallery pf-m-gutter hub-resource\\">
+            <Cards items={{...}}>
+              <GalleryItem>
+                <div>
+                  <Link to={{...}} className=\\"hub-card-link\\">
+                    <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/aws-cli\\" navigate={[Function: navigate]}>
+                      <a className=\\"hub-card-link\\" href=\\"tekton/task/aws-cli\\" onClick={[Function: onClick]}>
+                        <Card className=\\"hub-resource-card\\">
+                          <article className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={0}>
+                            <CardHeader>
+                              <div className=\\"pf-c-card__header\\">
+                                <span className=\\"hub-kind-icon\\">
+                                  <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\">
+                                    <BuildIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
+                                        <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                                      </svg>
+                                    </BuildIcon>
+                                  </Icon>
+                                </span>
+                                <span className=\\"hub-catalog-icon\\">
+                                  <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\">
+                                    <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                        <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                      </svg>
+                                    </UserIcon>
+                                  </Icon>
+                                </span>
+                                <CardActions>
+                                  <div className=\\"pf-c-card__actions\\">
+                                    <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\">
+                                      <StarIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"5\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"5\\">
+                                          <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                        </svg>
+                                      </StarIcon>
+                                    </Icon>
+                                    <TextContent className=\\"hub-rating\\">
+                                      <div className=\\"pf-c-content hub-rating\\">
+                                        5
+                                      </div>
+                                    </TextContent>
+                                  </div>
+                                </CardActions>
+                              </div>
+                            </CardHeader>
+                            <CardTitle>
+                              <div className=\\"pf-c-card__title\\">
+                                <span className=\\"hub-resource-name\\">
+                                  aws cli
+                                </span>
+                                <span className=\\"hub-resource-version\\">
+                                  v
+                                  0.1
+                                </span>
+                              </div>
+                            </CardTitle>
+                            <CardBody className=\\"hub-resource-body fade\\">
+                              <div className=\\"pf-c-card__body hub-resource-body fade\\">
+                                This task performs operations on Amazon Web Services resources using aws.
+                              </div>
+                            </CardBody>
+                            <CardFooter>
+                              <div className=\\"pf-c-card__footer\\">
+                                <TextContent className=\\"hub-resource-updatedAt\\">
+                                  <div className=\\"pf-c-content hub-resource-updatedAt\\">
+                                    Updated 
+                                    a month ago
+                                  </div>
+                                </TextContent>
+                                <div className=\\"hub-tags-container\\">
+                                  <Badge className=\\"hub-tags\\">
+                                    <span className=\\"pf-c-badge pf-m-unread hub-tags\\">
+                                      cli
+                                    </span>
+                                  </Badge>
+                                </div>
+                              </div>
+                            </CardFooter>
+                          </article>
+                        </Card>
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </div>
+              </GalleryItem>
+              <GalleryItem>
+                <div>
+                  <Link to={{...}} className=\\"hub-card-link\\">
+                    <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/golang-build\\" navigate={[Function: navigate]}>
+                      <a className=\\"hub-card-link\\" href=\\"tekton/task/golang-build\\" onClick={[Function: onClick]}>
+                        <Card className=\\"hub-resource-card\\">
+                          <article className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={1}>
+                            <CardHeader>
+                              <div className=\\"pf-c-card__header\\">
+                                <span className=\\"hub-kind-icon\\">
+                                  <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\">
+                                    <BuildIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
+                                        <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                                      </svg>
+                                    </BuildIcon>
+                                  </Icon>
+                                </span>
+                                <span className=\\"hub-catalog-icon\\">
+                                  <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\">
+                                    <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                        <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                      </svg>
+                                    </UserIcon>
+                                  </Icon>
+                                </span>
+                                <CardActions>
+                                  <div className=\\"pf-c-card__actions\\">
+                                    <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\">
+                                      <StarIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"5\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"5\\">
+                                          <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                        </svg>
+                                      </StarIcon>
+                                    </Icon>
+                                    <TextContent className=\\"hub-rating\\">
+                                      <div className=\\"pf-c-content hub-rating\\">
+                                        5
+                                      </div>
+                                    </TextContent>
+                                  </div>
+                                </CardActions>
+                              </div>
+                            </CardHeader>
+                            <CardTitle>
+                              <div className=\\"pf-c-card__title\\">
+                                <span className=\\"hub-resource-name\\">
+                                  golang build
+                                </span>
+                                <span className=\\"hub-resource-version\\">
+                                  v
+                                  0.1
+                                </span>
+                              </div>
+                            </CardTitle>
+                            <CardBody className=\\"hub-resource-body fade\\">
+                              <div className=\\"pf-c-card__body hub-resource-body fade\\">
+                                This Task is Golang task to build Go projects.
+                              </div>
+                            </CardBody>
+                            <CardFooter>
+                              <div className=\\"pf-c-card__footer\\">
+                                <TextContent className=\\"hub-resource-updatedAt\\">
+                                  <div className=\\"pf-c-content hub-resource-updatedAt\\">
+                                    Updated 
+                                    a month ago
+                                  </div>
+                                </TextContent>
+                                <div className=\\"hub-tags-container\\">
+                                  <Badge className=\\"hub-tags\\">
+                                    <span className=\\"pf-c-badge pf-m-unread hub-tags\\">
+                                      build-tool
+                                    </span>
+                                  </Badge>
+                                </div>
+                              </div>
+                            </CardFooter>
+                          </article>
+                        </Card>
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </div>
+              </GalleryItem>
+              <GalleryItem>
+                <div>
+                  <Link to={{...}} className=\\"hub-card-link\\">
+                    <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/jenkins\\" navigate={[Function: navigate]}>
+                      <a className=\\"hub-card-link\\" href=\\"tekton/task/jenkins\\" onClick={[Function: onClick]}>
+                        <Card className=\\"hub-resource-card\\">
+                          <article className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={2}>
+                            <CardHeader>
+                              <div className=\\"pf-c-card__header\\">
+                                <span className=\\"hub-kind-icon\\">
+                                  <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\">
+                                    <BuildIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
+                                        <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                                      </svg>
+                                    </BuildIcon>
+                                  </Icon>
+                                </span>
+                                <span className=\\"hub-catalog-icon\\">
+                                  <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\">
+                                    <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                        <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                      </svg>
+                                    </UserIcon>
+                                  </Icon>
+                                </span>
+                                <CardActions>
+                                  <div className=\\"pf-c-card__actions\\">
+                                    <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\">
+                                      <StarIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"5\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"5\\">
+                                          <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                        </svg>
+                                      </StarIcon>
+                                    </Icon>
+                                    <TextContent className=\\"hub-rating\\">
+                                      <div className=\\"pf-c-content hub-rating\\">
+                                        5
+                                      </div>
+                                    </TextContent>
+                                  </div>
+                                </CardActions>
+                              </div>
+                            </CardHeader>
+                            <CardTitle>
+                              <div className=\\"pf-c-card__title\\">
+                                <span className=\\"hub-resource-name\\">
+                                  jenkins operation
+                                </span>
+                                <span className=\\"hub-resource-version\\">
+                                  v
+                                  0.1
+                                </span>
+                              </div>
+                            </CardTitle>
+                            <CardBody className=\\"hub-resource-body fade\\">
+                              <div className=\\"pf-c-card__body hub-resource-body fade\\">
+                                The following task can be used to interact with the the Jenkins REST API.
+                              </div>
+                            </CardBody>
+                            <CardFooter>
+                              <div className=\\"pf-c-card__footer\\">
+                                <TextContent className=\\"hub-resource-updatedAt\\">
+                                  <div className=\\"pf-c-content hub-resource-updatedAt\\">
+                                    Updated 
+                                    a month ago
+                                  </div>
+                                </TextContent>
+                                <div className=\\"hub-tags-container\\">
+                                  <Badge className=\\"hub-tags\\">
+                                    <span className=\\"pf-c-badge pf-m-unread hub-tags\\">
+                                      build
+                                    </span>
+                                  </Badge>
+                                  <Badge className=\\"hub-tags\\">
+                                    <span className=\\"pf-c-badge pf-m-unread hub-tags\\">
+                                      jenkins
+                                    </span>
+                                  </Badge>
+                                </div>
+                              </div>
+                            </CardFooter>
+                          </article>
+                        </Card>
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </div>
+              </GalleryItem>
+              <GalleryItem>
+                <div>
+                  <Link to={{...}} className=\\"hub-card-link\\">
+                    <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/jib-maven\\" navigate={[Function: navigate]}>
+                      <a className=\\"hub-card-link\\" href=\\"tekton/task/jib-maven\\" onClick={[Function: onClick]}>
+                        <Card className=\\"hub-resource-card\\">
+                          <article className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={3}>
+                            <CardHeader>
+                              <div className=\\"pf-c-card__header\\">
+                                <span className=\\"hub-kind-icon\\">
+                                  <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\">
+                                    <BuildIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
+                                        <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                                      </svg>
+                                    </BuildIcon>
+                                  </Icon>
+                                </span>
+                                <span className=\\"hub-catalog-icon\\">
+                                  <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\">
+                                    <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                        <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                      </svg>
+                                    </UserIcon>
+                                  </Icon>
+                                </span>
+                                <CardActions>
+                                  <div className=\\"pf-c-card__actions\\">
+                                    <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\">
+                                      <StarIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"5\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"5\\">
+                                          <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                        </svg>
+                                      </StarIcon>
+                                    </Icon>
+                                    <TextContent className=\\"hub-rating\\">
+                                      <div className=\\"pf-c-content hub-rating\\">
+                                        5
+                                      </div>
+                                    </TextContent>
+                                  </div>
+                                </CardActions>
+                              </div>
+                            </CardHeader>
+                            <CardTitle>
+                              <div className=\\"pf-c-card__title\\">
+                                <span className=\\"hub-resource-name\\">
+                                  jib maven
+                                </span>
+                                <span className=\\"hub-resource-version\\">
+                                  v
+                                  0.1
+                                </span>
+                              </div>
+                            </CardTitle>
+                            <CardBody className=\\"hub-resource-body fade\\">
+                              <div className=\\"pf-c-card__body hub-resource-body fade\\">
+                                This Task builds Java/Kotlin/Groovy/Scala source into a container image using Google’s Jib tool.
+                                Jib works with Maven and Gradle projects, and this template is for Maven projects.
+                              </div>
+                            </CardBody>
+                            <CardFooter>
+                              <div className=\\"pf-c-card__footer\\">
+                                <TextContent className=\\"hub-resource-updatedAt\\">
+                                  <div className=\\"pf-c-content hub-resource-updatedAt\\">
+                                    Updated 
+                                    a month ago
+                                  </div>
+                                </TextContent>
+                                <div className=\\"hub-tags-container\\">
+                                  <Badge className=\\"hub-tags\\">
+                                    <span className=\\"pf-c-badge pf-m-unread hub-tags\\">
+                                      image-build
+                                    </span>
+                                  </Badge>
+                                </div>
+                              </div>
+                            </CardFooter>
+                          </article>
+                        </Card>
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </div>
+              </GalleryItem>
+              <GalleryItem>
+                <div>
+                  <Link to={{...}} className=\\"hub-card-link\\">
+                    <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/ansible-runner\\" navigate={[Function: navigate]}>
+                      <a className=\\"hub-card-link\\" href=\\"tekton/task/ansible-runner\\" onClick={[Function: onClick]}>
+                        <Card className=\\"hub-resource-card\\">
+                          <article className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={4}>
+                            <CardHeader>
+                              <div className=\\"pf-c-card__header\\">
+                                <span className=\\"hub-kind-icon\\">
+                                  <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\">
+                                    <BuildIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
+                                        <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                                      </svg>
+                                    </BuildIcon>
+                                  </Icon>
+                                </span>
+                                <span className=\\"hub-catalog-icon\\">
+                                  <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\">
+                                    <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                        <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                      </svg>
+                                    </UserIcon>
+                                  </Icon>
+                                </span>
+                                <CardActions>
+                                  <div className=\\"pf-c-card__actions\\">
+                                    <Icon id=\\"star\\" size=\\"sm\\" label=\\"4.5\\">
+                                      <StarIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"4.5\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"4.5\\">
+                                          <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                        </svg>
+                                      </StarIcon>
+                                    </Icon>
+                                    <TextContent className=\\"hub-rating\\">
+                                      <div className=\\"pf-c-content hub-rating\\">
+                                        4.5
+                                      </div>
+                                    </TextContent>
+                                  </div>
+                                </CardActions>
+                              </div>
+                            </CardHeader>
+                            <CardTitle>
+                              <div className=\\"pf-c-card__title\\">
+                                <span className=\\"hub-resource-name\\">
+                                  Ansible Runner
+                                </span>
+                                <span className=\\"hub-resource-version\\">
+                                  v
+                                  0.1
+                                </span>
+                              </div>
+                            </CardTitle>
+                            <CardBody className=\\"hub-resource-body fade\\">
+                              <div className=\\"pf-c-card__body hub-resource-body fade\\">
+                                Hub is a platform which displays all resources
+                              </div>
+                            </CardBody>
+                            <CardFooter>
+                              <div className=\\"pf-c-card__footer\\">
+                                <TextContent className=\\"hub-resource-updatedAt\\">
+                                  <div className=\\"pf-c-content hub-resource-updatedAt\\">
+                                    Updated 
+                                    a month ago
+                                  </div>
+                                </TextContent>
+                                <div className=\\"hub-tags-container\\">
+                                  <Badge className=\\"hub-tags\\">
+                                    <span className=\\"pf-c-badge pf-m-unread hub-tags\\">
+                                      cli
+                                    </span>
+                                  </Badge>
+                                </div>
+                              </div>
+                            </CardFooter>
+                          </article>
+                        </Card>
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </div>
+              </GalleryItem>
+              <GalleryItem>
+                <div>
+                  <Link to={{...}} className=\\"hub-card-link\\">
+                    <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton-hub/pipeline/hub\\" navigate={[Function: navigate]}>
+                      <a className=\\"hub-card-link\\" href=\\"tekton-hub/pipeline/hub\\" onClick={[Function: onClick]}>
+                        <Card className=\\"hub-resource-card\\">
+                          <article className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={5}>
+                            <CardHeader>
+                              <div className=\\"pf-c-card__header\\">
+                                <span className=\\"hub-kind-icon\\">
+                                  <Icon id=\\"domain\\" size=\\"sm\\" label=\\"Pipeline\\">
+                                    <DomainIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Pipeline\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Pipeline\\">
+                                        <path d=\\"M866.971 522.743c7.086 7.086 10.743 15.771 10.743 25.829v365.486c0 9.829-3.657 18.286-10.971 26.057-7.086 7.086-15.771 10.743-25.829 10.743h-219.2c-9.829 0-18.286-3.657-25.829-10.971-7.086-7.086-10.743-15.771-10.743-25.829v-365.486c0-9.829 3.429-18.286 10.743-25.829 7.086-7.086 15.771-10.743 25.829-10.743h219.429c9.829 0 18.514 3.429 25.829 10.743zM804.571 658.286h-146.286v73.143h146.286v-73.143zM804.571 804.571h-73.143v73.143h73.143v-73.143zM548.343 438.857h-219.2c-9.829 0-18.286-3.657-25.829-10.971-7.086-7.086-10.743-15.771-10.743-25.6v-439.314c0-9.829 3.429-18.286 10.743-25.6 7.086-7.086 15.771-10.743 25.829-10.743h219.429c9.829 0 18.286 3.429 25.829 10.743 7.086 7.086 10.743 15.771 10.743 25.6v439.543c0 9.829-3.657 18.286-10.971 25.829-7.086 6.857-16 10.514-25.829 10.514zM512 146.286h-146.286v73.143h146.286v-73.143zM512 292.571h-73.143v73.143h73.143v-73.143zM512 0h-146.286v73.143h146.286v-73.143zM292.571 914.057c0 9.829-3.657 18.514-10.971 26.057-7.086 7.086-15.771 10.743-25.6 10.743h-219.886c-9.829 0-18.286-3.657-25.6-10.971-6.857-7.314-10.514-16-10.514-25.829v-292.343c0-9.829 3.429-18.514 10.743-25.829 7.086-7.086 15.771-10.743 25.6-10.743h220.114c9.829 0 18.286 3.429 25.6 10.743 7.086 7.086 10.743 15.771 10.743 25.829v292.343zM219.429 658.286h-146.286v73.143h146.286c0 0 0-73.143 0-73.143zM219.429 804.571h-73.143v73.143h73.143c0 0 0-73.143 0-73.143zM512 808v66.743c-0.457 0-1.143 0-1.6 0-50.743 0-99.429-8.686-144.686-24.457v-72c44.343 18.971 93.257 29.714 144.686 29.714 0.457 0 1.143 0 1.6 0zM150.857 512.228h-71.314c-4.114-24.229-6.4-49.371-6.4-74.971 0-129.829 56.457-246.4 146.286-326.4v107.429c-47.314 61.714-75.429 138.971-75.429 222.857 0 24.229 2.286 48 6.857 71.086zM804.571 222.628v-108.571c88 80 143.314 195.2 143.314 323.657 0 0.229 0 0.686 0 0.914h-70.857c-0.686-81.143-27.429-155.657-72.457-216zM950.857 878.857h73.143v-294.857h-73.143v294.857zM658.286 365.714h73.143v-365.714h-73.143v365.714z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                                      </svg>
+                                    </DomainIcon>
+                                  </Icon>
+                                </span>
+                                <span className=\\"hub-catalog-icon\\">
+                                  <Icon id=\\"cat\\" size=\\"sm\\" label=\\"tekton-hub\\">
+                                    <CatIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton-hub\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 512 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton-hub\\">
+                                        <path d=\\"M290.59 192c-20.18 0-106.82 1.98-162.59 85.95V192c0-52.94-43.06-96-96-96-17.67 0-32 14.33-32 32s14.33 32 32 32c17.64 0 32 14.36 32 32v256c0 35.3 28.7 64 64 64h176c8.84 0 16-7.16 16-16v-16c0-17.67-14.33-32-32-32h-32l128-96v144c0 8.84 7.16 16 16 16h32c8.84 0 16-7.16 16-16V289.86c-10.29 2.67-20.89 4.54-32 4.54-61.81 0-113.52-44.05-125.41-102.4zM448 96h-64l-64-64v134.4c0 53.02 42.98 96 96 96s96-42.98 96-96V32l-64 64zm-72 80c-8.84 0-16-7.16-16-16s7.16-16 16-16 16 7.16 16 16-7.16 16-16 16zm80 0c-8.84 0-16-7.16-16-16s7.16-16 16-16 16 7.16 16 16-7.16 16-16 16z\\" transform=\\"\\" />
+                                      </svg>
+                                    </CatIcon>
+                                  </Icon>
+                                </span>
+                                <CardActions>
+                                  <div className=\\"pf-c-card__actions\\">
+                                    <Icon id=\\"star\\" size=\\"sm\\" label=\\"4.5\\">
+                                      <StarIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"4.5\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"4.5\\">
+                                          <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                        </svg>
+                                      </StarIcon>
+                                    </Icon>
+                                    <TextContent className=\\"hub-rating\\">
+                                      <div className=\\"pf-c-content hub-rating\\">
+                                        4.5
+                                      </div>
+                                    </TextContent>
+                                  </div>
+                                </CardActions>
+                              </div>
+                            </CardHeader>
+                            <CardTitle>
+                              <div className=\\"pf-c-card__title\\">
+                                <span className=\\"hub-resource-name\\">
+                                  Hub Pipeline
+                                </span>
+                                <span className=\\"hub-resource-version\\">
+                                  v
+                                  0.1
+                                </span>
+                              </div>
+                            </CardTitle>
+                            <CardBody className=\\"hub-resource-body fade\\">
+                              <div className=\\"pf-c-card__body hub-resource-body fade\\">
+                                Hub is a platform which displays all resources
+                              </div>
+                            </CardBody>
+                            <CardFooter>
+                              <div className=\\"pf-c-card__footer\\">
+                                <TextContent className=\\"hub-resource-updatedAt\\">
+                                  <div className=\\"pf-c-content hub-resource-updatedAt\\">
+                                    Updated 
+                                    a month ago
+                                  </div>
+                                </TextContent>
+                                <div className=\\"hub-tags-container\\">
+                                  <Badge className=\\"hub-tags\\">
+                                    <span className=\\"pf-c-badge pf-m-unread hub-tags\\">
+                                      resource
+                                    </span>
+                                  </Badge>
+                                </div>
+                              </div>
+                            </CardFooter>
+                          </article>
+                        </Card>
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </div>
+              </GalleryItem>
+            </Cards>
+          </div>
+        </Gallery>
+      </Resources>
+    </Router>
+  </BrowserRouter>
+   
+</Provider>"
 `;

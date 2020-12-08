@@ -23,7 +23,7 @@ const App: React.FC = observer(() => {
           <PageSection>
             <Grid hasGutter>
               <GridItem span={12}>
-                <Route exact path="/tekton/task/name/version" component={Details}></Route>
+                <Route exact path="/:catalog/:kind/:name" component={Details}></Route>
               </GridItem>
               <GridItem span={2}>
                 <Route exact path="/" component={LeftPane}></Route>

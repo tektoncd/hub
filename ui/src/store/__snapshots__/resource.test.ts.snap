@@ -36,7 +36,7 @@ Object {
 
 exports[`Store functions creates a resource store 1`] = `
 Object {
-  "1": Object {
+  "ansible-runner": Object {
     "catalog": 1,
     "displayName": "Ansible Runner",
     "id": 1,
@@ -51,22 +51,7 @@ Object {
       1,
     ],
   },
-  "10": Object {
-    "catalog": 2,
-    "displayName": "Hub Pipeline",
-    "id": 10,
-    "kind": "Pipeline",
-    "latestVersion": 1,
-    "name": "hub",
-    "rating": 4.5,
-    "tags": Array [
-      10,
-    ],
-    "versions": Array [
-      1,
-    ],
-  },
-  "4": Object {
+  "aws-cli": Object {
     "catalog": 1,
     "displayName": "aws cli",
     "id": 4,
@@ -81,7 +66,7 @@ Object {
       4,
     ],
   },
-  "44": Object {
+  "golang-build": Object {
     "catalog": 1,
     "displayName": "golang build",
     "id": 44,
@@ -96,22 +81,22 @@ Object {
       47,
     ],
   },
-  "54": Object {
-    "catalog": 1,
-    "displayName": "jib maven",
-    "id": 54,
-    "kind": "Task",
-    "latestVersion": 57,
-    "name": "jib-maven",
-    "rating": 5,
+  "hub": Object {
+    "catalog": 2,
+    "displayName": "Hub Pipeline",
+    "id": 10,
+    "kind": "Pipeline",
+    "latestVersion": 1,
+    "name": "hub",
+    "rating": 4.5,
     "tags": Array [
-      8,
+      10,
     ],
     "versions": Array [
-      57,
+      1,
     ],
   },
-  "98": Object {
+  "jenkins": Object {
     "catalog": 1,
     "displayName": "jenkins operation",
     "id": 98,
@@ -125,6 +110,21 @@ Object {
     ],
     "versions": Array [
       104,
+    ],
+  },
+  "jib-maven": Object {
+    "catalog": 1,
+    "displayName": "jib maven",
+    "id": 54,
+    "kind": "Task",
+    "latestVersion": 57,
+    "name": "jib-maven",
+    "rating": 5,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      57,
     ],
   },
 }
@@ -132,7 +132,7 @@ Object {
 
 exports[`Store functions makes sure to not add duplicate resources 1`] = `
 Object {
-  "1": Object {
+  "ansible-runner": Object {
     "catalog": 1,
     "displayName": "Ansible Runner",
     "id": 1,
@@ -147,22 +147,7 @@ Object {
       1,
     ],
   },
-  "10": Object {
-    "catalog": 2,
-    "displayName": "Hub Pipeline",
-    "id": 10,
-    "kind": "Pipeline",
-    "latestVersion": 1,
-    "name": "hub",
-    "rating": 4.5,
-    "tags": Array [
-      10,
-    ],
-    "versions": Array [
-      1,
-    ],
-  },
-  "4": Object {
+  "aws-cli": Object {
     "catalog": 1,
     "displayName": "aws cli",
     "id": 4,
@@ -177,7 +162,7 @@ Object {
       4,
     ],
   },
-  "44": Object {
+  "golang-build": Object {
     "catalog": 1,
     "displayName": "golang build",
     "id": 44,
@@ -192,22 +177,22 @@ Object {
       47,
     ],
   },
-  "54": Object {
-    "catalog": 1,
-    "displayName": "jib maven",
-    "id": 54,
-    "kind": "Task",
-    "latestVersion": 57,
-    "name": "jib-maven",
-    "rating": 5,
+  "hub": Object {
+    "catalog": 2,
+    "displayName": "Hub Pipeline",
+    "id": 10,
+    "kind": "Pipeline",
+    "latestVersion": 1,
+    "name": "hub",
+    "rating": 4.5,
     "tags": Array [
-      8,
+      10,
     ],
     "versions": Array [
-      57,
+      1,
     ],
   },
-  "98": Object {
+  "jenkins": Object {
     "catalog": 1,
     "displayName": "jenkins operation",
     "id": 98,
@@ -221,6 +206,21 @@ Object {
     ],
     "versions": Array [
       104,
+    ],
+  },
+  "jib-maven": Object {
+    "catalog": 1,
+    "displayName": "jib maven",
+    "id": 54,
+    "kind": "Task",
+    "latestVersion": 57,
+    "name": "jib-maven",
+    "rating": 5,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      57,
     ],
   },
 }

@@ -8,6 +8,8 @@ exports[`Icon Component should render icon for Official Catalog 1`] = `"<CatIcon
 
 exports[`Icon Component should render icon for Pipeline Kind 1`] = `"<DomainIcon size=\\"md\\" className=\\"hub-icon\\" label=\\"Pipeline\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;
 
+exports[`Icon Component should render icon for Rating 1`] = `"<StarIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Rating\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;
+
 exports[`Icon Component should render icon for Task Kind 1`] = `"<BuildIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;
 
 exports[`Icon Component should render icon for Verified Catalog 1`] = `"<CertificateIcon size=\\"xl\\" className=\\"hub-icon\\" label=\\"Verified\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;
