@@ -76,7 +76,7 @@ func TestReinstall_ResourceNotExist(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Task foo doesn't exists in hub namespace. Use install command to install the resource")
+	assert.EqualError(t, err, "Task foo doesn't exists in hub namespace. Use install command to install the task")
 }
 
 func TestReinstall_VersionCatalogMissing(t *testing.T) {
@@ -104,7 +104,7 @@ func TestReinstall_VersionCatalogMissing(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "existing resource seems to be missing version and catalog label. Use --version & --catalog (Default: tekton) flag to reinstall the resource")
+	assert.EqualError(t, err, "existing task seems to be missing version and catalog label. Use --version & --catalog (Default: tekton) flag to reinstall the task")
 }
 
 func TestReinstall_VersionMissing(t *testing.T) {
@@ -133,7 +133,7 @@ func TestReinstall_VersionMissing(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "existing resource seems to be missing version label. Use --version flag to reinstall the resource")
+	assert.EqualError(t, err, "existing task seems to be missing version label. Use --version flag to reinstall the task")
 }
 
 func TestReinstall_DifferentVersionPassedByFlag(t *testing.T) {

@@ -165,18 +165,20 @@ func (opts *options) lookupError(err error) error {
 
 	switch err {
 	case installer.ErrNotFound:
-		return fmt.Errorf("%s %s doesn't exists in %s namespace. Use install command to install the resource",
-			strings.Title(opts.kind), opts.name(), opts.cs.Namespace())
+		return fmt.Errorf("%s %s doesn't exists in %s namespace. Use install command to install the %s",
+			strings.Title(opts.kind), opts.name(), opts.cs.Namespace(), opts.kind)
 
 	case installer.ErrVersionAndCatalogMissing:
 		if opts.version == "" {
-			return fmt.Errorf("existing resource seems to be missing version and catalog label. Use --version & --catalog (Default: tekton) flag to reinstall the resource")
+			return fmt.Errorf("existing %s seems to be missing version and catalog label. Use --version & --catalog (Default: tekton) flag to reinstall the %s",
+				opts.kind, opts.kind)
 		}
 		return nil
 
 	case installer.ErrVersionMissing:
 		if opts.version == "" {
-			return fmt.Errorf("existing resource seems to be missing version label. Use --version flag to reinstall the resource")
+			return fmt.Errorf("existing %s seems to be missing version label. Use --version flag to reinstall the %s",
+				opts.kind, opts.kind)
 		}
 		return nil
 

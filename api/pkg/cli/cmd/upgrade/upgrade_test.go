@@ -76,7 +76,7 @@ func TestUpgrade_ResourceNotExist(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Task foo doesn't exist in hub namespace. Use install command to install the resource")
+	assert.EqualError(t, err, "Task foo doesn't exist in hub namespace. Use install command to install the task")
 }
 
 func TestUpgrade_VersionCatalogMissing(t *testing.T) {
@@ -104,7 +104,7 @@ func TestUpgrade_VersionCatalogMissing(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Task foo seems to be missing version and catalog label. Use reinstall command to install the resource again")
+	assert.EqualError(t, err, "Task foo seems to be missing version and catalog label. Use reinstall command to overwrite existing task")
 }
 
 func TestUpgrade_VersionMissing(t *testing.T) {
@@ -133,7 +133,7 @@ func TestUpgrade_VersionMissing(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Task foo seems to be missing version label. Use reinstall command to install the resource again")
+	assert.EqualError(t, err, "Task foo seems to be missing version label. Use reinstall command to overwrite existing task")
 }
 
 func TestUpgrade_ToSpecificVersion(t *testing.T) {
@@ -229,7 +229,7 @@ func TestUpgrade_SameVersionError(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "cannot upgrade task foo. existing resource seems to be of same version as requested. Use reinstall command to install it again")
+	assert.EqualError(t, err, "cannot upgrade task foo to v0.3. existing resource seems to be of same version. Use reinstall command to overwrite existing task")
 	assert.Equal(t, gock.IsDone(), true)
 }
 
@@ -276,6 +276,6 @@ func TestUpgrade_LowerVersionError(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "cannot upgrade task foo. existing resource seems to be of lower version than requested")
+	assert.EqualError(t, err, "cannot upgrade task foo to v0.3. existing resource seems to be of higher version(v0.7)")
 	assert.Equal(t, gock.IsDone(), true)
 }

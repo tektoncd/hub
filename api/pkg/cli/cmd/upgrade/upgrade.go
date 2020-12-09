@@ -187,16 +187,16 @@ func (opts *options) lookupError(err error) error {
 
 	switch err {
 	case installer.ErrNotFound:
-		return fmt.Errorf("%s %s doesn't exist in %s namespace. Use install command to install the resource",
-			strings.Title(opts.kind), opts.name(), opts.cs.Namespace())
+		return fmt.Errorf("%s %s doesn't exist in %s namespace. Use install command to install the %s",
+			strings.Title(opts.kind), opts.name(), opts.cs.Namespace(), opts.kind)
 
 	case installer.ErrVersionAndCatalogMissing:
-		return fmt.Errorf("%s %s seems to be missing version and catalog label. Use reinstall command to install the resource again",
-			strings.Title(opts.resource.GetKind()), opts.resource.GetName())
+		return fmt.Errorf("%s %s seems to be missing version and catalog label. Use reinstall command to overwrite existing %s",
+			strings.Title(opts.resource.GetKind()), opts.resource.GetName(), opts.kind)
 
 	case installer.ErrVersionMissing:
-		return fmt.Errorf("%s %s seems to be missing version label. Use reinstall command to install the resource again",
-			strings.Title(opts.resource.GetKind()), opts.resource.GetName())
+		return fmt.Errorf("%s %s seems to be missing version label. Use reinstall command to overwrite existing %s",
+			strings.Title(opts.resource.GetKind()), opts.resource.GetName(), opts.kind)
 
 	// Skip catalog missing error and use default catalog
 	case installer.ErrCatalogMissing:
@@ -209,19 +209,25 @@ func (opts *options) lookupError(err error) error {
 
 func (opts *options) errors(err error) error {
 
+	newVersion, hubErr := opts.hubRes.ResourceVersion()
+	if hubErr != nil {
+		return hubErr
+	}
+
 	if err == installer.ErrNotFound {
-		return fmt.Errorf("%s %s doesn't exists in %s namespace. Use install command to install the resource",
-			strings.Title(opts.kind), opts.name(), opts.cs.Namespace())
+		return fmt.Errorf("%s %s doesn't exists in %s namespace. Use install command to install the %s",
+			strings.Title(opts.kind), opts.name(), opts.cs.Namespace(), opts.kind)
 	}
 
 	if err == installer.ErrSameVersion {
-		return fmt.Errorf("cannot upgrade %s %s. existing resource seems to be of same version as requested. Use reinstall command to install it again",
-			strings.ToLower(opts.resource.GetKind()), opts.resource.GetName())
+		return fmt.Errorf("cannot upgrade %s %s to v%s. existing resource seems to be of same version. Use reinstall command to overwrite existing %s",
+			strings.ToLower(opts.resource.GetKind()), opts.resource.GetName(), newVersion, opts.kind)
 	}
 
 	if err == installer.ErrLowerVersion {
-		return fmt.Errorf("cannot upgrade %s %s. existing resource seems to be of lower version than requested",
-			strings.ToLower(opts.resource.GetKind()), opts.resource.GetName())
+		existingVersion, _ := opts.resource.GetLabels()[versionLabel]
+		return fmt.Errorf("cannot upgrade %s %s to v%s. existing resource seems to be of higher version(v%s)",
+			strings.ToLower(opts.resource.GetKind()), opts.resource.GetName(), newVersion, existingVersion)
 	}
 
 	if strings.Contains(err.Error(), "mutation failed: cannot decode incoming new object") {
