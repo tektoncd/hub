@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/go-version"
 	"github.com/spf13/cobra"
 	"github.com/tektoncd/hub/api/pkg/cli/app"
 	"github.com/tektoncd/hub/api/pkg/cli/flag"
@@ -26,6 +27,12 @@ import (
 	"github.com/tektoncd/hub/api/pkg/cli/kube"
 	"github.com/tektoncd/hub/api/pkg/cli/printer"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+)
+
+const (
+	defaultCatalog = "tekton"
+	versionLabel   = "app.kubernetes.io/version"
+	catalogLabel   = "hub.tekton.dev/catalog"
 )
 
 type options struct {
@@ -69,7 +76,7 @@ func Command(cli app.CLI) *cobra.Command {
 		commandForKind("task", opts),
 	)
 
-	cmd.PersistentFlags().StringVar(&opts.from, "from", "tekton", "Name of Catalog to which resource belongs.")
+	cmd.PersistentFlags().StringVar(&opts.from, "from", defaultCatalog, "Name of Catalog to which resource belongs.")
 	cmd.PersistentFlags().StringVar(&opts.version, "version", "", "Version of Resource")
 
 	cmd.PersistentFlags().StringVarP(&opts.kc.Path, "kubeconfig", "k", "", "Kubectl config file (default: $HOME/.kube/config)")
@@ -117,7 +124,7 @@ func (opts *options) run() error {
 
 	manifest, err := opts.hubRes.Manifest()
 	if err != nil {
-		return err
+		return opts.isResourceNotFoundError(err)
 	}
 
 	// This allows fake clients to be inserted while testing
@@ -139,7 +146,7 @@ func (opts *options) run() error {
 }
 
 func msg(res *unstructured.Unstructured) string {
-	version := res.GetLabels()["app.kubernetes.io/version"]
+	version := res.GetLabels()[versionLabel]
 	return fmt.Sprintf("%s %s(%s) installed in %s namespace",
 		strings.Title(res.GetKind()), res.GetName(), version, res.GetNamespace())
 }
@@ -152,16 +159,48 @@ func (opts *options) name() string {
 	return strings.TrimSpace(opts.args[0])
 }
 
+func (opts *options) isResourceNotFoundError(err error) error {
+	if err.Error() == "No Resource Found" {
+		res := opts.name()
+		if opts.version != "" {
+			res = res + fmt.Sprintf("(%s)", opts.version)
+		}
+		return fmt.Errorf("%s %s from %s catalog not found in Hub", strings.Title(opts.kind), res, opts.from)
+	}
+	return err
+}
+
 func (opts *options) errors(err error) error {
 
 	if err == installer.ErrAlreadyExist {
-		res := opts.resource.GetName()
-		version, ok := opts.resource.GetLabels()["app.kubernetes.io/version"]
+		existingVersion, ok := opts.resource.GetLabels()[versionLabel]
 		if ok {
-			res = res + fmt.Sprintf("(%s)", version)
+			newVersion, err := opts.hubRes.ResourceVersion()
+			if err != nil {
+				return err
+			}
+			switch {
+			case existingVersion == newVersion:
+				return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use reinstall command to overwrite existing",
+					strings.Title(opts.resource.GetKind()), opts.resource.GetName(), existingVersion, opts.cs.Namespace())
+
+			case isUpgradable(existingVersion, newVersion):
+				if opts.version == "" {
+					newVersion = newVersion + "(latest)"
+				}
+				return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use upgrade command to install v%s",
+					strings.Title(opts.resource.GetKind()), opts.resource.GetName(), existingVersion, opts.cs.Namespace(), newVersion)
+
+			// TODO: If version expected is lower than existing then ask user to use downgrade
+			default:
+				return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use reinstall command to overwrite existing",
+					strings.Title(opts.resource.GetKind()), opts.resource.GetName(), existingVersion, opts.cs.Namespace())
+			}
+
+		} else {
+			return fmt.Errorf("%s %s already exists in %s namespace but seems to be missing version label. Use reinstall command to overwrite existing",
+				strings.Title(opts.resource.GetKind()), opts.resource.GetName(), opts.cs.Namespace())
 		}
-		return fmt.Errorf("%s %s already exists in %s namespace",
-			strings.Title(opts.resource.GetKind()), res, opts.cs.Namespace())
 	}
 
 	if strings.Contains(err.Error(), "mutation failed: cannot decode incoming new object") {
@@ -173,6 +212,18 @@ func (opts *options) errors(err error) error {
 			err, version, opts.kind)
 	}
 	return err
+}
+
+func isUpgradable(existingVersion, newVersion string) bool {
+	exVer, _ := version.NewVersion(existingVersion)
+	newVer, _ := version.NewVersion(newVersion)
+	if newVer.LessThan(exVer) {
+		return false
+	}
+	if newVer.Equal(exVer) {
+		return false
+	}
+	return true
 }
 
 func examples(kind string) string {
