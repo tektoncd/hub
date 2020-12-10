@@ -40,6 +40,15 @@ var (
 	ErrCatalogMissing           = errors.New("catalog label missing")
 	ErrSameVersion              = errors.New("resource already exists with the requested verion")
 	ErrLowerVersion             = errors.New("cannot upgrade resource as requested version is lower than existing")
+	ErrHigherVersion            = errors.New("cannot downgrade resource as requested version is higher than existing")
+)
+
+type action string
+
+const (
+	update    action = "update"
+	upgrade   action = "upgrade"
+	downgrade action = " downgrade"
 )
 
 // Install a resource
@@ -85,27 +94,20 @@ func (i *Installer) LookupInstalled(name, kind, namespace string) (*unstructured
 
 // Update will updates an existing resource with the passed resource if exist
 func (i *Installer) Update(data []byte, catalog, namespace string) (*unstructured.Unstructured, error) {
-
-	newRes, err := toUnstructured(data)
-	if err != nil {
-		return nil, err
-	}
-
-	if i.existingRes == nil {
-		i.existingRes, err = i.get(newRes.GetName(), newRes.GetKind(), namespace, metav1.GetOptions{})
-		if err != nil {
-			if kErr.IsNotFound(err) {
-				return nil, ErrNotFound
-			}
-			return nil, err
-		}
-	}
-
-	return i.updateRes(i.existingRes, newRes, catalog, namespace)
+	return i.updateByAction(data, catalog, namespace, update)
 }
 
 // Upgrade an existing resource to a version upper version by passing it
 func (i *Installer) Upgrade(data []byte, catalog, namespace string) (*unstructured.Unstructured, error) {
+	return i.updateByAction(data, catalog, namespace, upgrade)
+}
+
+// Downgrade an existing resource to a version lower version by passing it
+func (i *Installer) Downgrade(data []byte, catalog, namespace string) (*unstructured.Unstructured, error) {
+	return i.updateByAction(data, catalog, namespace, downgrade)
+}
+
+func (i *Installer) updateByAction(data []byte, catalog, namespace string, action action) (*unstructured.Unstructured, error) {
 
 	newRes, err := toUnstructured(data)
 	if err != nil {
@@ -125,8 +127,15 @@ func (i *Installer) Upgrade(data []byte, catalog, namespace string) (*unstructur
 	existingVersion := i.existingRes.GetLabels()[versionLabel]
 	newVersion := newRes.GetLabels()[versionLabel]
 
-	if err = isUpgradable(existingVersion, newVersion); err != nil {
-		return i.existingRes, err
+	switch action {
+	case upgrade:
+		if err = isUpgradable(existingVersion, newVersion); err != nil {
+			return i.existingRes, err
+		}
+	case downgrade:
+		if err = isDowngradable(existingVersion, newVersion); err != nil {
+			return i.existingRes, err
+		}
 	}
 
 	return i.updateRes(i.existingRes, newRes, catalog, namespace)
@@ -142,6 +151,20 @@ func isUpgradable(existingVersion, newVersion string) error {
 	}
 	if newVer.LessThan(exVer) {
 		return ErrLowerVersion
+	}
+	return nil
+}
+
+func isDowngradable(existingVersion, newVersion string) error {
+
+	exVer, _ := version.NewVersion(existingVersion)
+	newVer, _ := version.NewVersion(newVersion)
+
+	if newVer.Equal(exVer) {
+		return ErrSameVersion
+	}
+	if newVer.GreaterThan(exVer) {
+		return ErrHigherVersion
 	}
 	return nil
 }

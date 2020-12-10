@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package upgrade
+package downgrade
 
 import (
 	"bytes"
@@ -58,7 +58,20 @@ var resVersion = &res.ResourceVersionData{
 	},
 }
 
-func TestUpgrade_ResourceNotExist(t *testing.T) {
+var ver03 = &res.ResourceVersionData{
+	ID:      111,
+	Version: "0.3",
+	RawURL:  "http://raw.github.url/foo/0.3/foo.yaml",
+	WebURL:  "http://web.github.com/foo/0.3/foo.yaml",
+}
+var ver02 = &res.ResourceVersionData{
+	ID:      113,
+	Version: "0.2",
+	RawURL:  "http://raw.github.url/foo/0.2/foo.yaml",
+	WebURL:  "http://web.github.com/foo/0.2/foo.yaml",
+}
+
+func TestDowngrade_ResourceNotExist(t *testing.T) {
 	cli := test.NewCLI()
 
 	version := "v1beta1"
@@ -79,7 +92,7 @@ func TestUpgrade_ResourceNotExist(t *testing.T) {
 	assert.EqualError(t, err, "Task foo doesn't exist in hub namespace. Use install command to install the task")
 }
 
-func TestUpgrade_VersionCatalogMissing(t *testing.T) {
+func TestDowngrade_VersionCatalogMissing(t *testing.T) {
 	cli := test.NewCLI()
 
 	existingTask := &v1beta1.Task{
@@ -107,7 +120,7 @@ func TestUpgrade_VersionCatalogMissing(t *testing.T) {
 	assert.EqualError(t, err, "Task foo seems to be missing version and catalog label. Use reinstall command to overwrite existing task")
 }
 
-func TestUpgrade_VersionMissing(t *testing.T) {
+func TestDowngrade_VersionMissing(t *testing.T) {
 	cli := test.NewCLI()
 
 	existingTask := &v1beta1.Task{
@@ -136,22 +149,30 @@ func TestUpgrade_VersionMissing(t *testing.T) {
 	assert.EqualError(t, err, "Task foo seems to be missing version label. Use reinstall command to overwrite existing task")
 }
 
-func TestUpgrade_ToSpecificVersion(t *testing.T) {
+func TestDowngrade(t *testing.T) {
 	cli := test.NewCLI()
 
 	defer gock.Off()
 
 	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
+	resource := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(200).
-		JSON(&res.Projected)
+		JSON(&resource.Projected)
+
+	versions := &res.ResourceVersions{Data: &res.Versions{Latest: ver03, Versions: []*res.ResourceVersionData{ver02, ver03}}}
+	ver := res.NewViewedResourceVersions(versions, "default")
+
+	gock.New(test.API).
+		Get("/resource/1/versions").
+		Reply(200).
+		JSON(&ver.Projected)
 
 	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
+		Get("/foo/0.2/foo.yaml").
 		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
+		File("./testdata/foo-v0.2.yaml")
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
@@ -162,7 +183,64 @@ func TestUpgrade_ToSpecificVersion(t *testing.T) {
 			Namespace: "hub",
 			Labels: map[string]string{
 				"hub.tekton.dev/catalog":    "tekton",
-				"app.kubernetes.io/version": "0.1",
+				"app.kubernetes.io/version": "0.3",
+			}},
+	}
+
+	version := "v1beta1"
+	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+
+	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
+	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
+
+	opts := &options{
+		cs:   test.FakeClientSet(cs.Pipeline, dynamic, "hub"),
+		cli:  cli,
+		kind: "task",
+		args: []string{"foo"},
+	}
+
+	err := opts.run()
+	assert.NoError(t, err)
+	assert.Equal(t, "Task foo downgraded to v0.2 in hub namespace\n", buf.String())
+	assert.Equal(t, gock.IsDone(), true)
+}
+
+func TestDowngrade_ToSpecificVersion(t *testing.T) {
+	cli := test.NewCLI()
+
+	defer gock.Off()
+
+	resVersion := &res.ResourceVersion{Data: resVersion}
+	resource := res.NewViewedResourceVersion(resVersion, "default")
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.3").
+		Reply(200).
+		JSON(&resource.Projected)
+
+	versions := &res.ResourceVersions{Data: &res.Versions{Latest: ver03, Versions: []*res.ResourceVersionData{ver02, ver03}}}
+	ver := res.NewViewedResourceVersions(versions, "default")
+
+	gock.New(test.API).
+		Get("/resource/1/versions").
+		Reply(200).
+		JSON(&ver.Projected)
+
+	gock.New("http://raw.github.url").
+		Get("/foo/0.2/foo.yaml").
+		Reply(200).
+		File("./testdata/foo-v0.2.yaml")
+
+	buf := new(bytes.Buffer)
+	cli.SetStream(buf, buf)
+
+	existingTask := &v1beta1.Task{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "foo",
+			Namespace: "hub",
+			Labels: map[string]string{
+				"hub.tekton.dev/catalog":    "tekton",
+				"app.kubernetes.io/version": "0.3",
 			}},
 	}
 
@@ -177,26 +255,34 @@ func TestUpgrade_ToSpecificVersion(t *testing.T) {
 		cli:     cli,
 		kind:    "task",
 		args:    []string{"foo"},
-		version: "0.3",
+		version: "0.2",
 	}
 
 	err := opts.run()
 	assert.NoError(t, err)
-	assert.Equal(t, "Task foo upgraded to v0.3 in hub namespace\n", buf.String())
+	assert.Equal(t, "Task foo downgraded to v0.2 in hub namespace\n", buf.String())
 	assert.Equal(t, gock.IsDone(), true)
 }
 
-func TestUpgrade_SameVersionError(t *testing.T) {
+func TestDowngrade_SameVersionError(t *testing.T) {
 	cli := test.NewCLI()
 
 	defer gock.Off()
 
 	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
+	resource := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(200).
-		JSON(&res.Projected)
+		JSON(&resource.Projected)
+
+	versions := &res.ResourceVersions{Data: &res.Versions{Latest: ver03, Versions: []*res.ResourceVersionData{ver02, ver03}}}
+	ver := res.NewViewedResourceVersions(versions, "default")
+
+	gock.New(test.API).
+		Get("/resource/1/versions").
+		Reply(200).
+		JSON(&ver.Projected)
 
 	gock.New("http://raw.github.url").
 		Get("/foo/0.3/foo.yaml").
@@ -229,26 +315,29 @@ func TestUpgrade_SameVersionError(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "cannot upgrade task foo to v0.3. existing resource seems to be of same version. Use reinstall command to overwrite existing task")
+	assert.EqualError(t, err, "cannot downgrade task foo to v0.3. existing resource seems to be of same version. Use reinstall command to overwrite existing task")
 	assert.Equal(t, gock.IsDone(), true)
 }
 
-func TestUpgrade_LowerVersionError(t *testing.T) {
+func TestDowngrade_HigherVersionError(t *testing.T) {
 	cli := test.NewCLI()
 
 	defer gock.Off()
 
 	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
+	resource := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(200).
-		JSON(&res.Projected)
+		JSON(&resource.Projected)
 
-	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
+	versions := &res.ResourceVersions{Data: &res.Versions{Latest: ver03, Versions: []*res.ResourceVersionData{ver02, ver03}}}
+	ver := res.NewViewedResourceVersions(versions, "default")
+
+	gock.New(test.API).
+		Get("/resource/1/versions").
 		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
+		JSON(&ver.Projected)
 
 	existingTask := &v1beta1.Task{
 		ObjectMeta: metav1.ObjectMeta{
@@ -256,7 +345,7 @@ func TestUpgrade_LowerVersionError(t *testing.T) {
 			Namespace: "hub",
 			Labels: map[string]string{
 				"hub.tekton.dev/catalog":    "tekton",
-				"app.kubernetes.io/version": "0.7",
+				"app.kubernetes.io/version": "0.3",
 			}},
 	}
 
@@ -271,11 +360,11 @@ func TestUpgrade_LowerVersionError(t *testing.T) {
 		cli:     cli,
 		kind:    "task",
 		args:    []string{"foo"},
-		version: "0.3",
+		version: "0.4",
 	}
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "cannot upgrade task foo to v0.3. existing resource seems to be of higher version(v0.7). Use downgrade command")
+	assert.EqualError(t, err, "cannot downgrade task foo to v0.4. existing resource seems to be of lower version(v0.3). Use upgrade command")
 	assert.Equal(t, gock.IsDone(), true)
 }

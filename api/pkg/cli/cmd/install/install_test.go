@@ -318,6 +318,6 @@ func TestInstall_LowerVersionError(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Task foo(0.7) already exists in hub namespace. Use reinstall command to overwrite existing")
+	assert.EqualError(t, err, "Task foo(0.7) already exists in hub namespace. Use downgrade command to install v0.3")
 	assert.Equal(t, gock.IsDone(), true)
 }

@@ -175,23 +175,30 @@ func (opts *options) errors(err error) error {
 	if err == installer.ErrAlreadyExist {
 		existingVersion, ok := opts.resource.GetLabels()[versionLabel]
 		if ok {
-			newVersion, err := opts.hubRes.ResourceVersion()
-			if err != nil {
-				return err
+			newVersion, hubErr := opts.hubRes.ResourceVersion()
+			if hubErr != nil {
+				return hubErr
 			}
+
+			exVer, _ := version.NewVersion(existingVersion)
+			newVer, _ := version.NewVersion(newVersion)
+
 			switch {
-			case existingVersion == newVersion:
+			case exVer.Equal(newVer):
 				return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use reinstall command to overwrite existing",
 					strings.Title(opts.resource.GetKind()), opts.resource.GetName(), existingVersion, opts.cs.Namespace())
 
-			case isUpgradable(existingVersion, newVersion):
+			case exVer.LessThan(newVer):
 				if opts.version == "" {
 					newVersion = newVersion + "(latest)"
 				}
 				return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use upgrade command to install v%s",
 					strings.Title(opts.resource.GetKind()), opts.resource.GetName(), existingVersion, opts.cs.Namespace(), newVersion)
 
-			// TODO: If version expected is lower than existing then ask user to use downgrade
+			case exVer.GreaterThan(newVer):
+				return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use downgrade command to install v%s",
+					strings.Title(opts.resource.GetKind()), opts.resource.GetName(), existingVersion, opts.cs.Namespace(), newVersion)
+
 			default:
 				return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use reinstall command to overwrite existing",
 					strings.Title(opts.resource.GetKind()), opts.resource.GetName(), existingVersion, opts.cs.Namespace())
@@ -212,18 +219,6 @@ func (opts *options) errors(err error) error {
 			err, version, opts.kind)
 	}
 	return err
-}
-
-func isUpgradable(existingVersion, newVersion string) bool {
-	exVer, _ := version.NewVersion(existingVersion)
-	newVer, _ := version.NewVersion(newVersion)
-	if newVer.LessThan(exVer) {
-		return false
-	}
-	if newVer.Equal(exVer) {
-		return false
-	}
-	return true
 }
 
 func examples(kind string) string {
