@@ -30,7 +30,7 @@ describe('Resource Component', () => {
       () => {
         setTimeout(() => {
           const resource = resources.filteredResources;
-          expect(resource.length).toBe(6);
+          expect(resource.length).toBe(7);
 
           component.update();
 
@@ -40,7 +40,7 @@ describe('Resource Component', () => {
           expect(component.debug()).toMatchSnapshot();
 
           const c = component.find(Cards);
-          expect(c.find(GalleryItem).length).toBe(6);
+          expect(c.find(GalleryItem).length).toBe(7);
 
           done();
         }, 0);

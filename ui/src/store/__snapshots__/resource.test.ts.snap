@@ -39,6 +39,7 @@ Object {
   "ansible-runner": Object {
     "catalog": 1,
     "displayName": "Ansible Runner",
+    "displayVersion": 1,
     "id": 1,
     "kind": "Task",
     "latestVersion": 1,
@@ -54,6 +55,7 @@ Object {
   "aws-cli": Object {
     "catalog": 1,
     "displayName": "aws cli",
+    "displayVersion": 4,
     "id": 4,
     "kind": "Task",
     "latestVersion": 4,
@@ -66,9 +68,26 @@ Object {
       4,
     ],
   },
+  "buildah": Object {
+    "catalog": 1,
+    "displayName": "",
+    "displayVersion": 105,
+    "id": 13,
+    "kind": "Task",
+    "latestVersion": 105,
+    "name": "buildah",
+    "rating": 4,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      105,
+    ],
+  },
   "golang-build": Object {
     "catalog": 1,
     "displayName": "golang build",
+    "displayVersion": 47,
     "id": 44,
     "kind": "Task",
     "latestVersion": 47,
@@ -84,6 +103,7 @@ Object {
   "hub": Object {
     "catalog": 2,
     "displayName": "Hub Pipeline",
+    "displayVersion": 1,
     "id": 10,
     "kind": "Pipeline",
     "latestVersion": 1,
@@ -99,6 +119,7 @@ Object {
   "jenkins": Object {
     "catalog": 1,
     "displayName": "jenkins operation",
+    "displayVersion": 104,
     "id": 98,
     "kind": "Task",
     "latestVersion": 104,
@@ -115,6 +136,125 @@ Object {
   "jib-maven": Object {
     "catalog": 1,
     "displayName": "jib maven",
+    "displayVersion": 57,
+    "id": 54,
+    "kind": "Task",
+    "latestVersion": 57,
+    "name": "jib-maven",
+    "rating": 5,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      57,
+    ],
+  },
+}
+`;
+
+exports[`Store functions fetch 0.1 version details for buildah resource 1`] = `
+Object {
+  "ansible-runner": Object {
+    "catalog": 1,
+    "displayName": "Ansible Runner",
+    "displayVersion": 1,
+    "id": 1,
+    "kind": "Task",
+    "latestVersion": 1,
+    "name": "ansible-runner",
+    "rating": 4.5,
+    "tags": Array [
+      2,
+    ],
+    "versions": Array [
+      1,
+    ],
+  },
+  "aws-cli": Object {
+    "catalog": 1,
+    "displayName": "aws cli",
+    "displayVersion": 4,
+    "id": 4,
+    "kind": "Task",
+    "latestVersion": 4,
+    "name": "aws-cli",
+    "rating": 5,
+    "tags": Array [
+      2,
+    ],
+    "versions": Array [
+      4,
+    ],
+  },
+  "buildah": Object {
+    "catalog": 1,
+    "displayName": "",
+    "displayVersion": 105,
+    "id": 13,
+    "kind": "Task",
+    "latestVersion": 105,
+    "name": "buildah",
+    "rating": 4,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      105,
+    ],
+  },
+  "golang-build": Object {
+    "catalog": 1,
+    "displayName": "golang build",
+    "displayVersion": 47,
+    "id": 44,
+    "kind": "Task",
+    "latestVersion": 47,
+    "name": "golang-build",
+    "rating": 5,
+    "tags": Array [
+      1,
+    ],
+    "versions": Array [
+      47,
+    ],
+  },
+  "hub": Object {
+    "catalog": 2,
+    "displayName": "Hub Pipeline",
+    "displayVersion": 1,
+    "id": 10,
+    "kind": "Pipeline",
+    "latestVersion": 1,
+    "name": "hub",
+    "rating": 4.5,
+    "tags": Array [
+      10,
+    ],
+    "versions": Array [
+      1,
+    ],
+  },
+  "jenkins": Object {
+    "catalog": 1,
+    "displayName": "jenkins operation",
+    "displayVersion": 104,
+    "id": 98,
+    "kind": "Task",
+    "latestVersion": 104,
+    "name": "jenkins",
+    "rating": 5,
+    "tags": Array [
+      57,
+      56,
+    ],
+    "versions": Array [
+      104,
+    ],
+  },
+  "jib-maven": Object {
+    "catalog": 1,
+    "displayName": "jib maven",
+    "displayVersion": 57,
     "id": 54,
     "kind": "Task",
     "latestVersion": 57,
@@ -135,6 +275,7 @@ Object {
   "ansible-runner": Object {
     "catalog": 1,
     "displayName": "Ansible Runner",
+    "displayVersion": 1,
     "id": 1,
     "kind": "Task",
     "latestVersion": 1,
@@ -150,6 +291,7 @@ Object {
   "aws-cli": Object {
     "catalog": 1,
     "displayName": "aws cli",
+    "displayVersion": 4,
     "id": 4,
     "kind": "Task",
     "latestVersion": 4,
@@ -162,9 +304,26 @@ Object {
       4,
     ],
   },
+  "buildah": Object {
+    "catalog": 1,
+    "displayName": "",
+    "displayVersion": 105,
+    "id": 13,
+    "kind": "Task",
+    "latestVersion": 105,
+    "name": "buildah",
+    "rating": 4,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      105,
+    ],
+  },
   "golang-build": Object {
     "catalog": 1,
     "displayName": "golang build",
+    "displayVersion": 47,
     "id": 44,
     "kind": "Task",
     "latestVersion": 47,
@@ -180,6 +339,7 @@ Object {
   "hub": Object {
     "catalog": 2,
     "displayName": "Hub Pipeline",
+    "displayVersion": 1,
     "id": 10,
     "kind": "Pipeline",
     "latestVersion": 1,
@@ -195,6 +355,7 @@ Object {
   "jenkins": Object {
     "catalog": 1,
     "displayName": "jenkins operation",
+    "displayVersion": 104,
     "id": 98,
     "kind": "Task",
     "latestVersion": 104,
@@ -211,6 +372,243 @@ Object {
   "jib-maven": Object {
     "catalog": 1,
     "displayName": "jib maven",
+    "displayVersion": 57,
+    "id": 54,
+    "kind": "Task",
+    "latestVersion": 57,
+    "name": "jib-maven",
+    "rating": 5,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      57,
+    ],
+  },
+}
+`;
+
+exports[`Store functions set 0.1 as display version for buildah 1`] = `
+Object {
+  "ansible-runner": Object {
+    "catalog": 1,
+    "displayName": "Ansible Runner",
+    "displayVersion": 1,
+    "id": 1,
+    "kind": "Task",
+    "latestVersion": 1,
+    "name": "ansible-runner",
+    "rating": 4.5,
+    "tags": Array [
+      2,
+    ],
+    "versions": Array [
+      1,
+    ],
+  },
+  "aws-cli": Object {
+    "catalog": 1,
+    "displayName": "aws cli",
+    "displayVersion": 4,
+    "id": 4,
+    "kind": "Task",
+    "latestVersion": 4,
+    "name": "aws-cli",
+    "rating": 5,
+    "tags": Array [
+      2,
+    ],
+    "versions": Array [
+      4,
+    ],
+  },
+  "buildah": Object {
+    "catalog": 1,
+    "displayName": "",
+    "displayVersion": 105,
+    "id": 13,
+    "kind": "Task",
+    "latestVersion": 105,
+    "name": "buildah",
+    "rating": 4,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      105,
+    ],
+  },
+  "golang-build": Object {
+    "catalog": 1,
+    "displayName": "golang build",
+    "displayVersion": 47,
+    "id": 44,
+    "kind": "Task",
+    "latestVersion": 47,
+    "name": "golang-build",
+    "rating": 5,
+    "tags": Array [
+      1,
+    ],
+    "versions": Array [
+      47,
+    ],
+  },
+  "hub": Object {
+    "catalog": 2,
+    "displayName": "Hub Pipeline",
+    "displayVersion": 1,
+    "id": 10,
+    "kind": "Pipeline",
+    "latestVersion": 1,
+    "name": "hub",
+    "rating": 4.5,
+    "tags": Array [
+      10,
+    ],
+    "versions": Array [
+      1,
+    ],
+  },
+  "jenkins": Object {
+    "catalog": 1,
+    "displayName": "jenkins operation",
+    "displayVersion": 104,
+    "id": 98,
+    "kind": "Task",
+    "latestVersion": 104,
+    "name": "jenkins",
+    "rating": 5,
+    "tags": Array [
+      57,
+      56,
+    ],
+    "versions": Array [
+      104,
+    ],
+  },
+  "jib-maven": Object {
+    "catalog": 1,
+    "displayName": "jib maven",
+    "displayVersion": 57,
+    "id": 54,
+    "kind": "Task",
+    "latestVersion": 57,
+    "name": "jib-maven",
+    "rating": 5,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      57,
+    ],
+  },
+}
+`;
+
+exports[`Store functions update versions list for buildah resource 1`] = `
+Object {
+  "ansible-runner": Object {
+    "catalog": 1,
+    "displayName": "Ansible Runner",
+    "displayVersion": 1,
+    "id": 1,
+    "kind": "Task",
+    "latestVersion": 1,
+    "name": "ansible-runner",
+    "rating": 4.5,
+    "tags": Array [
+      2,
+    ],
+    "versions": Array [
+      1,
+    ],
+  },
+  "aws-cli": Object {
+    "catalog": 1,
+    "displayName": "aws cli",
+    "displayVersion": 4,
+    "id": 4,
+    "kind": "Task",
+    "latestVersion": 4,
+    "name": "aws-cli",
+    "rating": 5,
+    "tags": Array [
+      2,
+    ],
+    "versions": Array [
+      4,
+    ],
+  },
+  "buildah": Object {
+    "catalog": 1,
+    "displayName": "",
+    "displayVersion": 105,
+    "id": 13,
+    "kind": "Task",
+    "latestVersion": 105,
+    "name": "buildah",
+    "rating": 4,
+    "tags": Array [
+      8,
+    ],
+    "versions": Array [
+      105,
+    ],
+  },
+  "golang-build": Object {
+    "catalog": 1,
+    "displayName": "golang build",
+    "displayVersion": 47,
+    "id": 44,
+    "kind": "Task",
+    "latestVersion": 47,
+    "name": "golang-build",
+    "rating": 5,
+    "tags": Array [
+      1,
+    ],
+    "versions": Array [
+      47,
+    ],
+  },
+  "hub": Object {
+    "catalog": 2,
+    "displayName": "Hub Pipeline",
+    "displayVersion": 1,
+    "id": 10,
+    "kind": "Pipeline",
+    "latestVersion": 1,
+    "name": "hub",
+    "rating": 4.5,
+    "tags": Array [
+      10,
+    ],
+    "versions": Array [
+      1,
+    ],
+  },
+  "jenkins": Object {
+    "catalog": 1,
+    "displayName": "jenkins operation",
+    "displayVersion": 104,
+    "id": 98,
+    "kind": "Task",
+    "latestVersion": 104,
+    "name": "jenkins",
+    "rating": 5,
+    "tags": Array [
+      57,
+      56,
+    ],
+    "versions": Array [
+      104,
+    ],
+  },
+  "jib-maven": Object {
+    "catalog": 1,
+    "displayName": "jib maven",
+    "displayVersion": 57,
     "id": 54,
     "kind": "Task",
     "latestVersion": 57,
