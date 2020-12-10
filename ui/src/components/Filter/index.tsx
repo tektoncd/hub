@@ -38,12 +38,13 @@ const labelWithIcon = (label: string, icon?: Icons) => (
 const checkboxes = (values: Filterable[]) => {
   return values.map((c: Filterable) => (
     <Checkbox
+      className="hub-filter-checkbox"
       key={c.name}
       label={labelWithIcon(c.name, c.icon)}
       isChecked={c.selected}
       onChange={() => c.toggle()}
       aria-label="controlled checkbox"
-      id={`${c.id}`}
+      id={`${c.name}`}
       name={c.name}
     />
   ));
