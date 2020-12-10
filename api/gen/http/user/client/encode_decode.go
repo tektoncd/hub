@@ -141,6 +141,128 @@ func DecodeRefreshAccessTokenResponse(decoder func(*http.Response) goahttp.Decod
 	}
 }
 
+// BuildNewRefreshTokenRequest instantiates a HTTP request object with method
+// and path set to call the "user" service "NewRefreshToken" endpoint
+func (c *Client) BuildNewRefreshTokenRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: NewRefreshTokenUserPath()}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("user", "NewRefreshToken", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeNewRefreshTokenRequest returns an encoder for requests sent to the
+// user NewRefreshToken server.
+func EncodeNewRefreshTokenRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*user.NewRefreshTokenPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("user", "NewRefreshToken", "*user.NewRefreshTokenPayload", v)
+		}
+		{
+			head := p.RefreshToken
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
+		return nil
+	}
+}
+
+// DecodeNewRefreshTokenResponse returns a decoder for responses returned by
+// the user NewRefreshToken endpoint. restoreBody controls whether the response
+// body should be restored after having been read.
+// DecodeNewRefreshTokenResponse may return the following errors:
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
+//	- "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
+//	- error: internal error
+func DecodeNewRefreshTokenResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body NewRefreshTokenResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("user", "NewRefreshToken", err)
+			}
+			err = ValidateNewRefreshTokenResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("user", "NewRefreshToken", err)
+			}
+			res := NewNewRefreshTokenResultOK(&body)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body NewRefreshTokenInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("user", "NewRefreshToken", err)
+			}
+			err = ValidateNewRefreshTokenInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("user", "NewRefreshToken", err)
+			}
+			return nil, NewNewRefreshTokenInternalError(&body)
+		case http.StatusUnauthorized:
+			var (
+				body NewRefreshTokenInvalidTokenResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("user", "NewRefreshToken", err)
+			}
+			err = ValidateNewRefreshTokenInvalidTokenResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("user", "NewRefreshToken", err)
+			}
+			return nil, NewNewRefreshTokenInvalidToken(&body)
+		case http.StatusForbidden:
+			var (
+				body NewRefreshTokenInvalidScopesResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("user", "NewRefreshToken", err)
+			}
+			err = ValidateNewRefreshTokenInvalidScopesResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("user", "NewRefreshToken", err)
+			}
+			return nil, NewNewRefreshTokenInvalidScopes(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("user", "NewRefreshToken", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalAccessTokenResponseBodyToUserAccessToken builds a value of type
 // *user.AccessToken from a value of type *AccessTokenResponseBody.
 func unmarshalAccessTokenResponseBodyToUserAccessToken(v *AccessTokenResponseBody) *user.AccessToken {
@@ -162,6 +284,17 @@ func unmarshalTokenResponseBodyToUserToken(v *TokenResponseBody) *user.Token {
 		Token:           *v.Token,
 		RefreshInterval: *v.RefreshInterval,
 		ExpiresAt:       *v.ExpiresAt,
+	}
+
+	return res
+}
+
+// unmarshalRefreshTokenResponseBodyToUserRefreshToken builds a value of type
+// *user.RefreshToken from a value of type *RefreshTokenResponseBody.
+func unmarshalRefreshTokenResponseBodyToUserRefreshToken(v *RefreshTokenResponseBody) *user.RefreshToken {
+	res := &user.RefreshToken{}
+	if v.Refresh != nil {
+		res.Refresh = unmarshalTokenResponseBodyToUserToken(v.Refresh)
 	}
 
 	return res

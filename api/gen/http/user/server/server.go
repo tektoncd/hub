@@ -21,6 +21,7 @@ import (
 type Server struct {
 	Mounts             []*MountPoint
 	RefreshAccessToken http.Handler
+	NewRefreshToken    http.Handler
 	CORS               http.Handler
 }
 
@@ -58,9 +59,12 @@ func New(
 	return &Server{
 		Mounts: []*MountPoint{
 			{"RefreshAccessToken", "POST", "/user/refresh/accesstoken"},
+			{"NewRefreshToken", "POST", "/user/refresh/refreshtoken"},
 			{"CORS", "OPTIONS", "/user/refresh/accesstoken"},
+			{"CORS", "OPTIONS", "/user/refresh/refreshtoken"},
 		},
 		RefreshAccessToken: NewRefreshAccessTokenHandler(e.RefreshAccessToken, mux, decoder, encoder, errhandler, formatter),
+		NewRefreshToken:    NewNewRefreshTokenHandler(e.NewRefreshToken, mux, decoder, encoder, errhandler, formatter),
 		CORS:               NewCORSHandler(),
 	}
 }
@@ -71,12 +75,14 @@ func (s *Server) Service() string { return "user" }
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.RefreshAccessToken = m(s.RefreshAccessToken)
+	s.NewRefreshToken = m(s.NewRefreshToken)
 	s.CORS = m(s.CORS)
 }
 
 // Mount configures the mux to serve the user endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountRefreshAccessTokenHandler(mux, h.RefreshAccessToken)
+	MountNewRefreshTokenHandler(mux, h.NewRefreshToken)
 	MountCORSHandler(mux, h.CORS)
 }
 
@@ -131,6 +137,57 @@ func NewRefreshAccessTokenHandler(
 	})
 }
 
+// MountNewRefreshTokenHandler configures the mux to serve the "user" service
+// "NewRefreshToken" endpoint.
+func MountNewRefreshTokenHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := handleUserOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/user/refresh/refreshtoken", f)
+}
+
+// NewNewRefreshTokenHandler creates a HTTP handler which loads the HTTP
+// request and calls the "user" service "NewRefreshToken" endpoint.
+func NewNewRefreshTokenHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeNewRefreshTokenRequest(mux, decoder)
+		encodeResponse = EncodeNewRefreshTokenResponse(encoder)
+		encodeError    = EncodeNewRefreshTokenError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "NewRefreshToken")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "user")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
 // MountCORSHandler configures the mux to serve the CORS endpoints for the
 // service user.
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
@@ -142,6 +199,7 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("OPTIONS", "/user/refresh/accesstoken", f)
+	mux.Handle("OPTIONS", "/user/refresh/refreshtoken", f)
 }
 
 // NewCORSHandler creates a HTTP handler which returns a simple 200 response.

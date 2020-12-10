@@ -363,3 +363,8 @@ var AccessToken = Type("AccessToken", func() {
 	Description("Access Token for User")
 	Attribute("access", Token, "Access Token for user")
 })
+
+var RefreshToken = Type("RefreshToken", func() {
+	Description("Refresh Token for User")
+	Attribute("refresh", Token, "Refresh Token for user")
+})

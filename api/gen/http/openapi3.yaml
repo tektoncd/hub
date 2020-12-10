@@ -1368,6 +1368,73 @@ paths:
         - catalog:refresh
         - config:refresh
         - refresh:token
+  /user/refresh/refreshtoken:
+    post:
+      tags:
+      - user
+      summary: NewRefreshToken user
+      description: Get a new refresh token of User
+      operationId: user#NewRefreshToken
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewRefreshTokenResponseBody'
+              example:
+                data:
+                  refresh:
+                    expiresAt: 0
+                    refreshInterval: 1h30m
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
+        "401":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: true
+                timeout: false
+        "403":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: true
+                timeout: true
+        "500":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: false
+      security:
+      - jwt_header_Authorization:
+        - rating:read
+        - rating:write
+        - agent:create
+        - catalog:refresh
+        - config:refresh
+        - refresh:token
   /v1:
     get:
       tags:
@@ -1717,6 +1784,19 @@ components:
             name: image-build
           - id: 2
             name: kaniko
+    NewRefreshTokenResponseBody:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RefreshToken'
+      example:
+        data:
+          refresh:
+            expiresAt: 0
+            refreshInterval: 1h30m
+            token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
+      required:
+      - data
     RefreshAccessTokenResponseBody:
       type: object
       properties:
@@ -1752,6 +1832,17 @@ components:
         checksum: Consequatur numquam id aut illum ut rerum.
       required:
       - checksum
+    RefreshToken:
+      type: object
+      properties:
+        refresh:
+          $ref: '#/components/schemas/Token'
+      description: Refresh Token for User
+      example:
+        refresh:
+          expiresAt: 0
+          refreshInterval: 1h30m
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
     Resource:
       type: object
       properties:
@@ -2253,25 +2344,23 @@ components:
         name:
           type: string
           description: Name of Agent
-          example: Dolorem neque maxime nesciunt.
+          example: Molestiae beatae dicta itaque possimus reiciendis aut.
         scopes:
           type: array
           items:
             type: string
-            example: Debitis laboriosam incidunt neque asperiores reiciendis hic.
+            example: Veritatis qui accusantium nulla.
           description: Scopes required for Agent
           example:
-          - Dicta itaque possimus.
-          - Aut repellat.
-          - Qui accusantium nulla ea rem.
-          - Ipsam sapiente labore assumenda qui sequi officiis.
+          - Aperiam ipsam sapiente labore assumenda.
+          - Sequi officiis mollitia.
+          - Laudantium quidem amet suscipit fuga nam.
       example:
-        name: Dolorem laudantium quidem amet suscipit fuga.
+        name: Eveniet qui sint omnis consequatur omnis.
         scopes:
-        - Eveniet qui sint omnis consequatur omnis.
-        - Aut sed voluptas animi molestiae nam.
-        - Veniam optio accusamus ut dolorum sapiente modi.
-        - Vitae ducimus.
+        - Sed voluptas animi molestiae nam quas.
+        - Optio accusamus ut.
+        - Sapiente modi occaecati.
       required:
       - name
       - scopes
@@ -2281,7 +2370,7 @@ components:
         token:
           type: string
           description: Agent JWT
-          example: Natus autem.
+          example: Ducimus ab natus autem.
       example:
         token: Id porro placeat et et at itaque.
       required:

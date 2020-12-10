@@ -23,3 +23,16 @@ func BuildRefreshAccessTokenPayload(userRefreshAccessTokenRefreshToken string) (
 
 	return v, nil
 }
+
+// BuildNewRefreshTokenPayload builds the payload for the user NewRefreshToken
+// endpoint from CLI flags.
+func BuildNewRefreshTokenPayload(userNewRefreshTokenRefreshToken string) (*user.NewRefreshTokenPayload, error) {
+	var refreshToken string
+	{
+		refreshToken = userNewRefreshTokenRefreshToken
+	}
+	v := &user.NewRefreshTokenPayload{}
+	v.RefreshToken = refreshToken
+
+	return v, nil
+}

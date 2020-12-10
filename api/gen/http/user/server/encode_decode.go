@@ -107,6 +107,96 @@ func EncodeRefreshAccessTokenError(encoder func(context.Context, http.ResponseWr
 	}
 }
 
+// EncodeNewRefreshTokenResponse returns an encoder for responses returned by
+// the user NewRefreshToken endpoint.
+func EncodeNewRefreshTokenResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*user.NewRefreshTokenResult)
+		enc := encoder(ctx, w)
+		body := NewNewRefreshTokenResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeNewRefreshTokenRequest returns a decoder for requests sent to the user
+// NewRefreshToken endpoint.
+func DecodeNewRefreshTokenRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			refreshToken string
+			err          error
+		)
+		refreshToken = r.Header.Get("Authorization")
+		if refreshToken == "" {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewNewRefreshTokenPayload(refreshToken)
+		if strings.Contains(payload.RefreshToken, " ") {
+			// Remove authorization scheme prefix (e.g. "Bearer")
+			cred := strings.SplitN(payload.RefreshToken, " ", 2)[1]
+			payload.RefreshToken = cred
+		}
+
+		return payload, nil
+	}
+}
+
+// EncodeNewRefreshTokenError returns an encoder for errors returned by the
+// NewRefreshToken user endpoint.
+func EncodeNewRefreshTokenError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "internal-error":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewNewRefreshTokenInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "internal-error")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		case "invalid-token":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewNewRefreshTokenInvalidTokenResponseBody(res)
+			}
+			w.Header().Set("goa-error", "invalid-token")
+			w.WriteHeader(http.StatusUnauthorized)
+			return enc.Encode(body)
+		case "invalid-scopes":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewNewRefreshTokenInvalidScopesResponseBody(res)
+			}
+			w.Header().Set("goa-error", "invalid-scopes")
+			w.WriteHeader(http.StatusForbidden)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // marshalUserAccessTokenToAccessTokenResponseBody builds a value of type
 // *AccessTokenResponseBody from a value of type *user.AccessToken.
 func marshalUserAccessTokenToAccessTokenResponseBody(v *user.AccessToken) *AccessTokenResponseBody {
@@ -128,6 +218,17 @@ func marshalUserTokenToTokenResponseBody(v *user.Token) *TokenResponseBody {
 		Token:           v.Token,
 		RefreshInterval: v.RefreshInterval,
 		ExpiresAt:       v.ExpiresAt,
+	}
+
+	return res
+}
+
+// marshalUserRefreshTokenToRefreshTokenResponseBody builds a value of type
+// *RefreshTokenResponseBody from a value of type *user.RefreshToken.
+func marshalUserRefreshTokenToRefreshTokenResponseBody(v *user.RefreshToken) *RefreshTokenResponseBody {
+	res := &RefreshTokenResponseBody{}
+	if v.Refresh != nil {
+		res.Refresh = marshalUserTokenToTokenResponseBody(v.Refresh)
 	}
 
 	return res

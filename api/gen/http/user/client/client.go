@@ -21,6 +21,10 @@ type Client struct {
 	// RefreshAccessToken endpoint.
 	RefreshAccessTokenDoer goahttp.Doer
 
+	// NewRefreshToken Doer is the HTTP client used to make requests to the
+	// NewRefreshToken endpoint.
+	NewRefreshTokenDoer goahttp.Doer
+
 	// CORS Doer is the HTTP client used to make requests to the  endpoint.
 	CORSDoer goahttp.Doer
 
@@ -45,6 +49,7 @@ func NewClient(
 ) *Client {
 	return &Client{
 		RefreshAccessTokenDoer: doer,
+		NewRefreshTokenDoer:    doer,
 		CORSDoer:               doer,
 		RestoreResponseBody:    restoreBody,
 		scheme:                 scheme,
@@ -73,6 +78,30 @@ func (c *Client) RefreshAccessToken() goa.Endpoint {
 		resp, err := c.RefreshAccessTokenDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("user", "RefreshAccessToken", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// NewRefreshToken returns an endpoint that makes HTTP requests to the user
+// service NewRefreshToken server.
+func (c *Client) NewRefreshToken() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeNewRefreshTokenRequest(c.encoder)
+		decodeResponse = DecodeNewRefreshTokenResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildNewRefreshTokenRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.NewRefreshTokenDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("user", "NewRefreshToken", err)
 		}
 		return decodeResponse(resp)
 	}
