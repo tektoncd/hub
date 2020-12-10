@@ -16,6 +16,7 @@ describe('Store Object', () => {
       catalog: '1',
       kind: 'Task',
       latestVersion: 1,
+      displayVersion: 1,
       tags: ['1'],
       rating: 5
     });
@@ -39,7 +40,7 @@ describe('Store functions', () => {
     when(
       () => !store.isLoading,
       () => {
-        expect(store.resources.size).toBe(6);
+        expect(store.resources.size).toBe(7);
         expect(getSnapshot(store.resources)).toMatchSnapshot();
         done();
       }
@@ -59,7 +60,7 @@ describe('Store functions', () => {
     when(
       () => !store.isLoading,
       () => {
-        expect(store.resources.size).toBe(6);
+        expect(store.resources.size).toBe(7);
         expect(getSnapshot(store.catalogs)).toMatchSnapshot();
         done();
       }
@@ -80,7 +81,7 @@ describe('Store functions', () => {
     when(
       () => !store.isLoading,
       () => {
-        expect(store.resources.size).toBe(6);
+        expect(store.resources.size).toBe(7);
         expect(getSnapshot(store.kinds)).toMatchSnapshot();
         done();
       }
@@ -100,7 +101,7 @@ describe('Store functions', () => {
     when(
       () => !store.isLoading,
       () => {
-        expect(store.resources.size).toBe(6);
+        expect(store.resources.size).toBe(7);
         const { items } = store.catalogs;
 
         const catalogs = items.get('2');
@@ -130,7 +131,7 @@ describe('Store functions', () => {
     when(
       () => !store.isLoading,
       () => {
-        expect(store.resources.size).toBe(6);
+        expect(store.resources.size).toBe(7);
 
         const kind = store.kinds.items.get('Pipeline');
         assert(kind);
@@ -158,7 +159,7 @@ describe('Store functions', () => {
     when(
       () => !store.isLoading,
       () => {
-        expect(store.resources.size).toBe(6);
+        expect(store.resources.size).toBe(7);
 
         const kinds = store.kinds.items.get('Task');
         assert(kinds);
@@ -200,6 +201,7 @@ describe('Store functions', () => {
           catalog: 1,
           kind: 'Task',
           latestVersion: 47,
+          displayVersion: 47,
           tags: [1],
           rating: 5,
           versions: [47],
@@ -207,7 +209,7 @@ describe('Store functions', () => {
         });
 
         store.add(item);
-        expect(store.resources.size).toBe(6);
+        expect(store.resources.size).toBe(7);
 
         expect(getSnapshot(store.resources)).toMatchSnapshot();
 
@@ -229,7 +231,7 @@ describe('Store functions', () => {
       () => !store.isLoading,
       () => {
         expect(store.isLoading).toBe(false);
-        expect(store.resources.size).toBe(6);
+        expect(store.resources.size).toBe(7);
 
         const versions = store.versions.get('1');
         assert(versions);
@@ -273,11 +275,12 @@ describe('Store functions', () => {
       () => !store.isLoading,
       () => {
         expect(store.isLoading).toBe(false);
-        expect(store.resources.size).toBe(6);
+        expect(store.resources.size).toBe(7);
 
-        const displayName = store.resources.get('aws-cli')?.resourceName;
+        const resource = store.resources.get('aws-cli');
+        assert(resource);
 
-        expect(displayName).toBe('aws cli');
+        expect(resource.resourceName).toBe('aws cli');
         done();
       }
     );
@@ -307,6 +310,216 @@ describe('Store functions', () => {
         expect(store.filteredResources[0].name).toBe('ansible-runner');
 
         done();
+      }
+    );
+  });
+
+  it('it should return webURL', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.isLoading).toBe(false);
+        expect(store.resources.size).toBe(7);
+
+        const resource = store.resources.get('aws-cli');
+        assert(resource);
+
+        expect(resource.webURL).toBe(
+          'https://github.com/tektoncd/catalog/tree/master/task/aws-cli/0.1/'
+        );
+        done();
+      }
+    );
+  });
+
+  it('it should return summary', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.isLoading).toBe(false);
+        expect(store.resources.size).toBe(7);
+
+        const resource = store.resources.get('aws-cli');
+        assert(resource);
+
+        expect(resource.summary).toBe(
+          'This task performs operations on Amazon Web Services resources using aws.'
+        );
+        done();
+      }
+    );
+  });
+
+  it('it should return detail description', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.isLoading).toBe(false);
+        expect(store.resources.size).toBe(7);
+
+        const resource = store.resources.get('buildah');
+        assert(resource);
+
+        expect(resource.detailDescription).toBe(
+          "Buildah Task builds source into a container image using Project Atomic's Buildah build tool.It uses Buildah's support for building from Dockerfiles, using its buildah bud command.This command executes the directives in the Dockerfile to assemble a container image, then pushes that image to a container registry."
+        );
+        done();
+      }
+    );
+  });
+
+  it('it should return install command', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.isLoading).toBe(false);
+        expect(store.resources.size).toBe(7);
+
+        const resource = store.resources.get('aws-cli');
+        assert(resource);
+
+        expect(resource.installCommand).toBe(
+          'kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/aws-cli/0.1/aws-cli.yaml'
+        );
+        done();
+      }
+    );
+  });
+
+  it('update versions list for buildah resource', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.resources.size).toBe(7);
+        expect(getSnapshot(store.resources)).toMatchSnapshot();
+        store.versionInfo('buildah');
+        when(
+          () => !store.isLoading,
+          () => {
+            const resource = store.resources.get('buildah');
+            assert(resource);
+            expect(resource.versions.length).toBe(2);
+            done();
+          }
+        );
+      }
+    );
+  });
+
+  it('fetch 0.1 version details for buildah resource', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.resources.size).toBe(7);
+        expect(getSnapshot(store.resources)).toMatchSnapshot();
+        store.versionInfo('buildah');
+        when(
+          () => !store.isLoading,
+          () => {
+            const resource = store.resources.get('buildah');
+            assert(resource);
+            expect(resource.versions.length).toBe(2);
+            store.versionUpdate(13);
+            when(
+              () => !store.isLoading,
+              () => {
+                expect(resource.versions[1].minPipelinesVersion).toBe('0.12.1');
+                expect(resource.versions[1].version).toBe('0.1');
+                done();
+              }
+            );
+          }
+        );
+      }
+    );
+  });
+
+  it('set 0.1 as display version for buildah', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.resources.size).toBe(7);
+        expect(getSnapshot(store.resources)).toMatchSnapshot();
+        store.versionInfo('buildah');
+        when(
+          () => !store.isLoading,
+          () => {
+            const resource = store.resources.get('buildah');
+            assert(resource);
+            expect(resource.versions.length).toBe(2);
+            store.setDisplayVersion('buildah', '13');
+            when(
+              () => !store.isLoading,
+              () => {
+                expect(resource.versions[1].minPipelinesVersion).toBe('0.12.1');
+                expect(resource.versions[1].version).toBe('0.1');
+                done();
+              }
+            );
+          }
+        );
       }
     );
   });

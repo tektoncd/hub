@@ -1,6 +1,33 @@
 {
   "data": [
     {
+      "id": 13,
+      "name": "buildah",
+      "catalog": {
+        "id": 1,
+        "name": "tekton",
+        "type": "community"
+      },
+      "kind": "Task",
+      "latestVersion": {
+        "id": 105,
+        "version": "0.2",
+        "displayName": "",
+        "description": "Buildah task builds source into a container image and then pushes it to a container registry.\nBuildah Task builds source into a container image using Project Atomic's Buildah build tool.It uses Buildah's support for building from Dockerfiles, using its buildah bud command.This command executes the directives in the Dockerfile to assemble a container image, then pushes that image to a container registry.",
+        "minPipelinesVersion": "0.17.0",
+        "rawURL": "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml",
+        "webURL": "https://github.com/tektoncd/catalog/tree/master/task/buildah/0.2/buildah.yaml",
+        "updatedAt": "2020-10-28 09:55:21 +0000 UTC"
+      },
+      "tags": [
+        {
+          "id": 8,
+          "name": "image-build"
+        }
+      ],
+      "rating": 4
+    },
+    {
       "id": 4,
       "name": "aws-cli",
       "catalog": {

@@ -34,7 +34,7 @@ it('should render the details component', (done) => {
     () => {
       setTimeout(() => {
         const resource = resources.filteredResources;
-        expect(resource.length).toBe(6);
+        expect(resource.length).toBe(7);
 
         component.update();
 
