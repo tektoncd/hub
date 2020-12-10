@@ -17,6 +17,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/tektoncd/hub/api/pkg/cli/app"
+	"github.com/tektoncd/hub/api/pkg/cli/cmd/downgrade"
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/get"
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/info"
 	"github.com/tektoncd/hub/api/pkg/cli/cmd/install"
@@ -47,6 +48,7 @@ func Root(cli app.CLI) *cobra.Command {
 	cli.SetStream(cmd.OutOrStdout(), cmd.OutOrStderr())
 
 	cmd.AddCommand(
+		downgrade.Command(cli),
 		get.Command(cli),
 		info.Command(cli),
 		install.Command(cli),

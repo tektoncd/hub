@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package reinstall
+package downgrade
 
 import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/go-version"
 	"github.com/spf13/cobra"
 	"github.com/tektoncd/hub/api/pkg/cli/app"
 	"github.com/tektoncd/hub/api/pkg/cli/flag"
@@ -35,22 +36,27 @@ const (
 )
 
 type options struct {
-	cli      app.CLI
-	from     string
-	version  string
-	kind     string
-	args     []string
-	kc       kube.Config
-	cs       kube.ClientSet
-	hubRes   hub.ResourceResult
-	resource *unstructured.Unstructured
+	cli            app.CLI
+	version        string
+	kind           string
+	args           []string
+	kc             kube.Config
+	cs             kube.ClientSet
+	hubRes         hub.ResourceVersionResult
+	hubResVersions *hub.ResVersions
+	resource       *unstructured.Unstructured
 }
 
 var cmdExamples string = `
-Reinstall a %S of name 'foo':
+Downgrade a %S of name 'foo' to previous version:
 
-    tkn hub reinstall %s foo
+    tkn hub downgrade %s foo
 
+or
+
+Downgrade a %S of name 'foo' to version '0.3':
+
+    tkn hub downgrade %s foo --to 0.3
 `
 
 func Command(cli app.CLI) *cobra.Command {
@@ -58,8 +64,8 @@ func Command(cli app.CLI) *cobra.Command {
 	opts := &options{cli: cli}
 
 	cmd := &cobra.Command{
-		Use:   "reinstall",
-		Short: "Reinstall a resource by its kind and name",
+		Use:   "downgrade",
+		Short: "Downgrade an installed resource",
 		Long:  ``,
 		Annotations: map[string]string{
 			"commandType": "main",
@@ -70,8 +76,7 @@ func Command(cli app.CLI) *cobra.Command {
 		commandForKind("task", opts),
 	)
 
-	cmd.PersistentFlags().StringVar(&opts.from, "from", defaultCatalog, "Name of Catalog to which resource belongs.")
-	cmd.PersistentFlags().StringVar(&opts.version, "version", "", "Version of Resource")
+	cmd.PersistentFlags().StringVar(&opts.version, "to", "", "Version of Resource")
 
 	cmd.PersistentFlags().StringVarP(&opts.kc.Path, "kubeconfig", "k", "", "Kubectl config file (default: $HOME/.kube/config)")
 	cmd.PersistentFlags().StringVarP(&opts.kc.Context, "context", "c", "", "Name of the kubeconfig context to use (default: kubectl config current-context)")
@@ -86,7 +91,7 @@ func commandForKind(kind string, opts *options) *cobra.Command {
 
 	return &cobra.Command{
 		Use:          kind,
-		Short:        "Reinstall " + kind + " from its name",
+		Short:        "Downgrade an installed " + strings.Title(kind) + " by its name to a lower version",
 		Long:         ``,
 		SilenceUsage: true,
 		Example:      examples(kind),
@@ -125,20 +130,33 @@ func (opts *options) run() error {
 		}
 	}
 
+	catalog := opts.resCatalog()
+	existingVersion := opts.resVersion()
+
 	hubClient := opts.cli.Hub()
-	opts.hubRes = hubClient.GetResource(hub.ResourceOption{
+	opts.hubRes = hubClient.GetResourceVersions(hub.ResourceOption{
 		Name:    opts.name(),
-		Catalog: opts.resCatalog(),
+		Catalog: catalog,
 		Kind:    opts.kind,
-		Version: opts.resVersion(),
+		Version: existingVersion,
 	})
 
-	manifest, err := opts.hubRes.Manifest()
+	opts.hubResVersions, err = opts.hubRes.ResourceVersions()
 	if err != nil {
-		return opts.isResourceNotFoundError(err)
+		return err
 	}
 
-	opts.resource, err = installer.Update(manifest, opts.from, opts.cs.Namespace())
+	opts.version, err = opts.findLowerVersion(existingVersion)
+	if err != nil {
+		return err
+	}
+
+	manifest, err := opts.hubRes.VersionManifest(opts.version)
+	if err != nil {
+		return err
+	}
+
+	opts.resource, err = installer.Downgrade(manifest, catalog, opts.cs.Namespace())
 	if err != nil {
 		return opts.errors(err)
 	}
@@ -148,9 +166,32 @@ func (opts *options) run() error {
 }
 
 func msg(res *unstructured.Unstructured) string {
-	version := res.GetLabels()["app.kubernetes.io/version"]
-	return fmt.Sprintf("%s %s(%s) reinstalled in %s namespace",
+	version := res.GetLabels()[versionLabel]
+	return fmt.Sprintf("%s %s downgraded to v%s in %s namespace",
 		strings.Title(res.GetKind()), res.GetName(), version, res.GetNamespace())
+}
+
+func (opts *options) findLowerVersion(current string) (string, error) {
+	if opts.version != "" {
+		currentVer, _ := version.NewVersion(current)
+		newVer, _ := version.NewVersion(opts.version)
+		if currentVer.LessThan(newVer) {
+			return "", fmt.Errorf("cannot downgrade %s %s to v%s. existing resource seems to be of lower version(v%s). Use upgrade command",
+				opts.kind, opts.name(), opts.version, current)
+		}
+		return opts.version, nil
+	}
+
+	for i, v := range opts.hubResVersions.Versions {
+		if current == *v.Version {
+			if i == 0 {
+				return "", fmt.Errorf("cannot downgrade %s %s, it seems to be at its lowest version(v%s)",
+					opts.kind, opts.name(), current)
+			}
+			return *opts.hubResVersions.Versions[i-1].Version, nil
+		}
+	}
+	return "", fmt.Errorf("resource version not found")
 }
 
 func (opts *options) validate() error {
@@ -161,37 +202,42 @@ func (opts *options) name() string {
 	return strings.TrimSpace(opts.args[0])
 }
 
-func (opts *options) isResourceNotFoundError(err error) error {
-	if err.Error() == "No Resource Found" {
-		res := opts.name()
-		if opts.version != "" {
-			res = res + fmt.Sprintf("(%s)", opts.version)
-		}
-		return fmt.Errorf("%s %s from %s catalog not found in Hub", strings.Title(opts.kind), res, opts.from)
+func examples(kind string) string {
+	replacer := strings.NewReplacer("%s", kind, "%S", strings.Title(kind))
+	return replacer.Replace(cmdExamples)
+}
+
+func (opts *options) resCatalog() string {
+	labels := opts.resource.GetLabels()
+	if len(labels) == 0 {
+		return defaultCatalog
 	}
-	return err
+	catalog, ok := labels[catalogLabel]
+	if ok {
+		return catalog
+	}
+	return defaultCatalog
+}
+
+func (opts *options) resVersion() string {
+	version, _ := opts.resource.GetLabels()[versionLabel]
+	return version
 }
 
 func (opts *options) lookupError(err error) error {
 
 	switch err {
 	case installer.ErrNotFound:
-		return fmt.Errorf("%s %s doesn't exists in %s namespace. Use install command to install the %s",
+		return fmt.Errorf("%s %s doesn't exist in %s namespace. Use install command to install the %s",
 			strings.Title(opts.kind), opts.name(), opts.cs.Namespace(), opts.kind)
 
 	case installer.ErrVersionAndCatalogMissing:
-		if opts.version == "" {
-			return fmt.Errorf("existing %s seems to be missing version and catalog label. Use --version & --catalog (Default: tekton) flag to reinstall the %s",
-				opts.kind, opts.kind)
-		}
-		return nil
+		return fmt.Errorf("%s %s seems to be missing version and catalog label. Use reinstall command to overwrite existing %s",
+			strings.Title(opts.resource.GetKind()), opts.resource.GetName(), opts.kind)
 
 	case installer.ErrVersionMissing:
-		if opts.version == "" {
-			return fmt.Errorf("existing %s seems to be missing version label. Use --version flag to reinstall the %s",
-				opts.kind, opts.kind)
-		}
-		return nil
+		return fmt.Errorf("%s %s seems to be missing version label. Use reinstall command to overwrite existing %s",
+			strings.Title(opts.resource.GetKind()), opts.resource.GetName(), opts.kind)
 
 	// Skip catalog missing error and use default catalog
 	case installer.ErrCatalogMissing:
@@ -209,48 +255,16 @@ func (opts *options) errors(err error) error {
 			strings.Title(opts.kind), opts.name(), opts.cs.Namespace())
 	}
 
-	if strings.Contains(err.Error(), "mutation failed: cannot decode incoming new object") {
-		version, vErr := opts.hubRes.MinPipelinesVersion()
-		if vErr != nil {
-			return vErr
-		}
-		return fmt.Errorf("%v \nMake sure the pipeline version you are running is not lesser than %s and %s have correct spec fields",
-			err, version, opts.kind)
+	if err == installer.ErrSameVersion {
+		return fmt.Errorf("cannot downgrade %s %s to v%s. existing resource seems to be of same version. Use reinstall command to overwrite existing %s",
+			strings.ToLower(opts.resource.GetKind()), opts.resource.GetName(), opts.version, opts.kind)
 	}
+
+	if err == installer.ErrHigherVersion {
+		existingVersion, _ := opts.resource.GetLabels()[versionLabel]
+		return fmt.Errorf("cannot downgrade %s %s to v%s. existing resource seems to be of lower version(v%s). Use upgrade command",
+			strings.ToLower(opts.resource.GetKind()), opts.resource.GetName(), opts.version, existingVersion)
+	}
+
 	return err
-}
-
-func (opts *options) resCatalog() string {
-	labels := opts.resource.GetLabels()
-	if len(labels) == 0 {
-		return opts.from
-	}
-	catalog, ok := labels[catalogLabel]
-	if ok {
-		if catalog != opts.from && opts.from != "" {
-			return opts.from
-		}
-		return catalog
-	}
-	return opts.from
-}
-
-func (opts *options) resVersion() string {
-	labels := opts.resource.GetLabels()
-	if len(labels) == 0 {
-		return opts.version
-	}
-	version, ok := labels[versionLabel]
-	if ok {
-		if version != opts.version && opts.version != "" {
-			return opts.version
-		}
-		return version
-	}
-	return opts.version
-}
-
-func examples(kind string) string {
-	replacer := strings.NewReplacer("%s", kind, "%S", strings.Title(kind))
-	return replacer.Replace(cmdExamples)
 }
