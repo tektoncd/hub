@@ -44,7 +44,7 @@ type request struct {
 
 var (
 	invalidRefreshToken = user.MakeInvalidToken(fmt.Errorf("invalid refresh token"))
-	refreshError        = user.MakeInternalError(fmt.Errorf("failed to refresh access token"))
+	refreshError        = user.MakeInternalError(fmt.Errorf("failed to refresh token"))
 )
 
 // New returns the user service implementation.
@@ -52,27 +52,39 @@ func New(api app.Config) user.Service {
 	return &service{auth.NewService(api, "user"), api}
 }
 
-// Refreshes the access token of User
-func (s *service) RefreshAccessToken(ctx context.Context, p *user.RefreshAccessTokenPayload) (*user.RefreshAccessTokenResult, error) {
-
-	user, err := s.User(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if user.RefreshTokenChecksum != createChecksum(p.RefreshToken) {
-		return nil, invalidRefreshToken
-	}
-
-	req := request{
+func (s *service) newRequest(ctx context.Context, user *model.User) *request {
+	return &request{
 		db:            s.DB(ctx),
 		log:           s.Logger(ctx),
 		user:          user,
 		defaultScopes: s.api.Data().Default.Scopes,
 		jwtConfig:     s.api.JWTConfig(),
 	}
+}
 
-	return req.refreshAccessToken()
+// Refreshes the access token of User
+func (s *service) RefreshAccessToken(ctx context.Context, p *user.RefreshAccessTokenPayload) (*user.RefreshAccessTokenResult, error) {
+
+	user, err := s.validateRefreshToken(ctx, p.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.newRequest(ctx, user).refreshAccessToken()
+}
+
+func (s *service) validateRefreshToken(ctx context.Context, token string) (*model.User, error) {
+
+	user, err := s.User(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if user.RefreshTokenChecksum != createChecksum(token) {
+		return nil, invalidRefreshToken
+	}
+
+	return user, nil
 }
 
 func (r *request) refreshAccessToken() (*user.RefreshAccessTokenResult, error) {
@@ -127,4 +139,45 @@ func (r *request) userScopes() ([]string, error) {
 func createChecksum(token string) string {
 	hash := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(hash[:])
+}
+
+// Refreshes the refresh token of User
+func (s *service) NewRefreshToken(ctx context.Context, p *user.NewRefreshTokenPayload) (*user.NewRefreshTokenResult, error) {
+
+	user, err := s.validateRefreshToken(ctx, p.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.newRequest(ctx, user).newRefreshToken()
+}
+
+func (r *request) newRefreshToken() (*user.NewRefreshTokenResult, error) {
+
+	req := token.Request{
+		User:      r.user,
+		JWTConfig: r.jwtConfig,
+	}
+
+	refreshToken, refreshExpiresAt, err := req.RefreshJWT()
+	if err != nil {
+		r.log.Error(err)
+		return nil, refreshError
+	}
+
+	err = r.db.Model(r.user).UpdateColumn("refresh_token_checksum", createChecksum(refreshToken)).Error
+	if err != nil {
+		r.log.Error(err)
+		return nil, refreshError
+	}
+
+	data := &user.RefreshToken{
+		Refresh: &user.Token{
+			Token:           refreshToken,
+			RefreshInterval: r.jwtConfig.RefreshExpiresIn.String(),
+			ExpiresAt:       refreshExpiresAt,
+		},
+	}
+
+	return &user.NewRefreshTokenResult{Data: data}, nil
 }

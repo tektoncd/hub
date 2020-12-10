@@ -18,6 +18,8 @@ import (
 type Service interface {
 	// Refresh the access token of User
 	RefreshAccessToken(context.Context, *RefreshAccessTokenPayload) (res *RefreshAccessTokenResult, err error)
+	// Get a new refresh token of User
+	NewRefreshToken(context.Context, *NewRefreshTokenPayload) (res *NewRefreshTokenResult, err error)
 }
 
 // Auther defines the authorization functions to be implemented by the service.
@@ -34,7 +36,7 @@ const ServiceName = "user"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [1]string{"RefreshAccessToken"}
+var MethodNames = [2]string{"RefreshAccessToken", "NewRefreshToken"}
 
 // RefreshAccessTokenPayload is the payload type of the user service
 // RefreshAccessToken method.
@@ -48,6 +50,20 @@ type RefreshAccessTokenPayload struct {
 type RefreshAccessTokenResult struct {
 	// User Access JWT
 	Data *AccessToken
+}
+
+// NewRefreshTokenPayload is the payload type of the user service
+// NewRefreshToken method.
+type NewRefreshTokenPayload struct {
+	// Refresh Token of User
+	RefreshToken string
+}
+
+// NewRefreshTokenResult is the result type of the user service NewRefreshToken
+// method.
+type NewRefreshTokenResult struct {
+	// User Refresh JWT
+	Data *RefreshToken
 }
 
 // Access Token for User
@@ -64,6 +80,12 @@ type Token struct {
 	RefreshInterval string
 	// Time the token will expires at
 	ExpiresAt int64
+}
+
+// Refresh Token for User
+type RefreshToken struct {
+	// Refresh Token for user
+	Refresh *Token
 }
 
 // MakeInvalidToken builds a goa.ServiceError from an error.

@@ -71,3 +71,50 @@ func TestRefreshAccessToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 	assert.Error(t, err)
 	assert.EqualError(t, err, "invalid refresh token")
 }
+
+func TestNewRefreshToken(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user refresh token
+	testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
+	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.NoError(t, err)
+
+	// Mocks the time
+	token.Now = testutils.Now
+
+	userSvc := New(tc)
+	ctx := auth.WithUserID(context.Background(), testUser.ID)
+	payload := &user.NewRefreshTokenPayload{RefreshToken: refreshToken}
+	res, err := userSvc.NewRefreshToken(ctx, payload)
+	assert.NoError(t, err)
+
+	// user refresh token
+	testUser, refreshToken, err = tc.RefreshTokenForUser("abc")
+	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.NoError(t, err)
+
+	refreshExpiryTime := testutils.Now().Add(tc.JWTConfig().RefreshExpiresIn).Unix()
+
+	assert.Equal(t, refreshToken, res.Data.Refresh.Token)
+	assert.Equal(t, tc.JWTConfig().RefreshExpiresIn.String(), res.Data.Refresh.RefreshInterval)
+	assert.Equal(t, refreshExpiryTime, res.Data.Refresh.ExpiresAt)
+}
+
+func TestNewRefreshToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user refresh token
+	testUser, refreshToken, err := tc.RefreshTokenForUser("foo")
+	assert.Equal(t, testUser.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	userSvc := New(tc)
+	ctx := auth.WithUserID(context.Background(), testUser.ID)
+	payload := &user.NewRefreshTokenPayload{RefreshToken: refreshToken}
+	_, err = userSvc.NewRefreshToken(ctx, payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "invalid refresh token")
+}

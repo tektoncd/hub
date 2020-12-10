@@ -11,3 +11,8 @@ package server
 func RefreshAccessTokenUserPath() string {
 	return "/user/refresh/accesstoken"
 }
+
+// NewRefreshTokenUserPath returns the URL path to the user service NewRefreshToken HTTP endpoint.
+func NewRefreshTokenUserPath() string {
+	return "/user/refresh/refreshtoken"
+}

@@ -37,7 +37,7 @@ category list
 rating (get|update)
 resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
 status status
-user refresh-access-token
+user (refresh-access-token|new-refresh-token)
 `
 }
 
@@ -142,6 +142,9 @@ func ParseEndpoint(
 
 		userRefreshAccessTokenFlags            = flag.NewFlagSet("refresh-access-token", flag.ExitOnError)
 		userRefreshAccessTokenRefreshTokenFlag = userRefreshAccessTokenFlags.String("refresh-token", "REQUIRED", "")
+
+		userNewRefreshTokenFlags            = flag.NewFlagSet("new-refresh-token", flag.ExitOnError)
+		userNewRefreshTokenRefreshTokenFlag = userNewRefreshTokenFlags.String("refresh-token", "REQUIRED", "")
 	)
 	adminFlags.Usage = adminUsage
 	adminUpdateAgentFlags.Usage = adminUpdateAgentUsage
@@ -174,6 +177,7 @@ func ParseEndpoint(
 
 	userFlags.Usage = userUsage
 	userRefreshAccessTokenFlags.Usage = userRefreshAccessTokenUsage
+	userNewRefreshTokenFlags.Usage = userNewRefreshTokenUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -299,6 +303,9 @@ func ParseEndpoint(
 			case "refresh-access-token":
 				epf = userRefreshAccessTokenFlags
 
+			case "new-refresh-token":
+				epf = userNewRefreshTokenFlags
+
 			}
 
 		}
@@ -400,6 +407,9 @@ func ParseEndpoint(
 			case "refresh-access-token":
 				endpoint = c.RefreshAccessToken()
 				data, err = userc.BuildRefreshAccessTokenPayload(*userRefreshAccessTokenRefreshTokenFlag)
+			case "new-refresh-token":
+				endpoint = c.NewRefreshToken()
+				data, err = userc.BuildNewRefreshTokenPayload(*userNewRefreshTokenRefreshTokenFlag)
 			}
 		}
 	}
@@ -710,6 +720,7 @@ Usage:
 
 COMMAND:
     refresh-access-token: Refresh the access token of User
+    new-refresh-token: Get a new refresh token of User
 
 Additional help:
     %s user COMMAND --help
@@ -723,5 +734,16 @@ Refresh the access token of User
 
 Example:
     `+os.Args[0]+` user refresh-access-token --refresh-token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODM2MDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJlZnJlc2g6dG9rZW4iXSwidHlwZSI6InJlZnJlc2gtdG9rZW4ifQ.4RdUk5ttHdDiymurlZ_f7Uy5Pas3Lq9w04BjKQKRiCE"
+`, os.Args[0])
+}
+
+func userNewRefreshTokenUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] user new-refresh-token -refresh-token STRING
+
+Get a new refresh token of User
+    -refresh-token STRING: 
+
+Example:
+    `+os.Args[0]+` user new-refresh-token --refresh-token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODM2MDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJlZnJlc2g6dG9rZW4iXSwidHlwZSI6InJlZnJlc2gtdG9rZW4ifQ.4RdUk5ttHdDiymurlZ_f7Uy5Pas3Lq9w04BjKQKRiCE"
 `, os.Args[0])
 }

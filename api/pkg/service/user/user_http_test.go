@@ -124,3 +124,75 @@ func TestRefreshAccessToken_Http_RefreshTokenChecksumIsDifferent(t *testing.T) {
 		assert.EqualError(t, err, "invalid refresh token")
 	})
 }
+
+func NewRefreshTokenChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	service := auth.NewService(tc.APIConfig, "admin")
+	checker := goahttpcheck.New()
+	checker.Mount(server.NewNewRefreshTokenHandler,
+		server.MountNewRefreshTokenHandler,
+		user.NewNewRefreshTokenEndpoint(New(tc), service.JWTAuth))
+	return checker
+}
+
+func TestNewRefreshToken_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user refresh token
+	testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
+	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+	token.Now = testutils.Now
+
+	NewRefreshTokenChecker(tc).Test(t, http.MethodPost, "/user/refresh/refreshtoken").
+		WithHeader("Authorization", refreshToken).Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res := &user.NewRefreshTokenResult{}
+		marshallErr := json.Unmarshal([]byte(b), &res)
+		assert.NoError(t, marshallErr)
+
+		// user refresh token
+		testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
+		assert.Equal(t, testUser.GithubLogin, "abc")
+		assert.NoError(t, err)
+
+		refreshExpiryTime := testutils.Now().Add(tc.JWTConfig().RefreshExpiresIn).Unix()
+
+		assert.Equal(t, refreshToken, res.Data.Refresh.Token)
+		assert.Equal(t, tc.JWTConfig().RefreshExpiresIn.String(), res.Data.Refresh.RefreshInterval)
+		assert.Equal(t, refreshExpiryTime, res.Data.Refresh.ExpiresAt)
+	})
+}
+
+func TestNewRefreshToken_Http_RefreshTokenChecksumIsDifferent(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user refresh token
+	testUser, refreshToken, err := tc.RefreshTokenForUser("foo")
+	assert.Equal(t, testUser.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
+	NewRefreshTokenChecker(tc).Test(t, http.MethodPost, "/user/refresh/refreshtoken").
+		WithHeader("Authorization", refreshToken).Check().
+		HasStatus(401).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		err := &goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
+		assert.NoError(t, marshallErr)
+		assert.EqualError(t, err, "invalid refresh token")
+	})
+}

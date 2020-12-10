@@ -54,4 +54,33 @@ var _ = Service("user", func() {
 			Response("invalid-scopes", StatusForbidden)
 		})
 	})
+
+	Method("NewRefreshToken", func() {
+		Description("Get a new refresh token of User")
+		Security(types.JWTAuth, func() {
+			Scope("refresh:token")
+		})
+		Payload(func() {
+			Token("refreshToken", String, "Refresh Token of User", func() {
+				Example("refreshToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."+
+					"eyJleHAiOjE1Nzc4ODM2MDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJlZnJlc2g6dG9rZW4iXSwidHlwZSI6InJlZnJlc2gtdG9rZW4ifQ."+
+					"4RdUk5ttHdDiymurlZ_f7Uy5Pas3Lq9w04BjKQKRiCE")
+			})
+			Required("refreshToken")
+		})
+		Result(func() {
+			Attribute("data", types.RefreshToken, "User Refresh JWT")
+			Required("data")
+		})
+
+		HTTP(func() {
+			POST("/user/refresh/refreshtoken")
+			Header("refreshToken:Authorization")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("invalid-token", StatusUnauthorized)
+			Response("invalid-scopes", StatusForbidden)
+		})
+	})
 })
