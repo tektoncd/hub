@@ -1,4 +1,9 @@
-.hub-sort-dropdown {
+.hub-sort *,
+input {
   outline: none;
-  background-color: white;
+}
+
+.hub-sort *,
+button {
+  outline: none;
 }

@@ -41,6 +41,7 @@ Array [
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
+              onKeyPress={[Function]}
               placeholder="Search for resources..."
               readOnly={false}
               required={false}
@@ -98,46 +99,56 @@ Array [
               className="pf-l-grid pf-m-gutter hub-leftpane"
             >
               <div
-                className="pf-l-grid__item pf-m-3-col"
+                className="pf-l-grid__item pf-m-8-col"
               >
-                <h1
-                  className="hub-leftpane-sort"
-                  data-pf-content={true}
+                <div
+                  className="hub-sort"
                 >
-                  Sort
-                </h1>
-              </div>
-              <div
-                className="pf-l-grid__item pf-m-9-col"
-              >
-                <div>
                   <div
-                    className="pf-c-dropdown hub-sort-dropdown"
+                    className="pf-c-select"
                     data-ouia-component-id={0}
-                    data-ouia-component-type="PF4/Dropdown"
+                    data-ouia-component-type="PF4/Select"
                     data-ouia-safe={true}
                   >
-                    <button
-                      aria-expanded={false}
-                      aria-haspopup={true}
-                      className="pf-c-dropdown__toggle"
-                      disabled={false}
-                      id="pf-dropdown-toggle-id-0"
+                    <div
+                      className="pf-c-select__toggle pf-m-typeahead"
                       onClick={[Function]}
                       onKeyDown={[Function]}
-                      type="button"
                     >
-                      <span
-                        className="pf-c-dropdown__toggle-text"
+                      <div
+                        className="pf-c-select__toggle-wrapper"
                       >
-                        Name
-                      </span>
-                      <span
-                        className="pf-c-dropdown__toggle-icon"
+                        <input
+                          aria-activedescendant={null}
+                          aria-label="Sort By"
+                          autoComplete="off"
+                          className="pf-c-form-control pf-c-select__toggle-typeahead"
+                          disabled={false}
+                          id="pf-select-toggle-id-0-select-typeahead"
+                          onChange={[Function]}
+                          onClick={[Function]}
+                          onFocus={[Function]}
+                          placeholder="Sort By"
+                          type="text"
+                          value=""
+                        />
+                      </div>
+                      <button
+                        aria-expanded={false}
+                        aria-haspopup="listbox"
+                        aria-label="Options menu"
+                        aria-labelledby=" pf-select-toggle-id-0"
+                        className="pf-c-button pf-c-select__toggle-button pf-m-plain"
+                        disabled={false}
+                        id="pf-select-toggle-id-0"
+                        onClick={[Function]}
+                        tabIndex={-1}
+                        type="button"
                       >
                         <svg
                           aria-hidden={true}
                           aria-labelledby={null}
+                          className="pf-c-select__toggle-arrow"
                           fill="currentColor"
                           height="1em"
                           role="img"
@@ -154,8 +165,8 @@ Array [
                             transform=""
                           />
                         </svg>
-                      </span>
-                    </button>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

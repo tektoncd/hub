@@ -1,39 +1,66 @@
 import React, { useState } from 'react';
-import { DropdownItem, Dropdown, DropdownToggle } from '@patternfly/react-core';
+import { Select, SelectVariant, SelectOption, SelectOptionObject } from '@patternfly/react-core';
 import { useObserver } from 'mobx-react';
-import './SortDropDown.css';
 import { useMst } from '../../store/root';
-import { sortByFields } from '../../store/resource';
+import { SortByFields } from '../../store/resource';
+import './SortDropDown.css';
 
 const Sort: React.FC = () => {
   const { resources } = useMst();
 
-  const items: Array<string> = Object.values(sortByFields);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState('');
 
-  const [isOpen, set] = useState(false);
-
-  const dropDownItems = items.map((value) => (
-    <DropdownItem id={value} key={value} onClick={(e) => resources.setSortBy(e.currentTarget.id)}>
-      {value}
-    </DropdownItem>
+  const items: Array<string> = Object.values(SortByFields);
+  const keys = items.slice(1).map((value) => (
+    <SelectOption
+      key={value}
+      id={value}
+      value={value}
+      inputId={value}
+      onClick={(e) => {
+        resources.setSortBy(e.currentTarget.id.substr(0, e.currentTarget.id.length - 2));
+      }}
+    />
   ));
 
-  const onToggle = (isOpen: React.SetStateAction<boolean>) => set(isOpen);
-  const onSelect = () => set(!isOpen);
+  const clearSelection = () => {
+    setIsOpen(false);
+    setSelected('');
+    resources.setSortBy('');
+  };
+
+  const onToggle = () => setIsOpen(!isOpen);
+
+  const onSelect = (
+    _: React.MouseEvent | React.ChangeEvent,
+    value: string | SelectOptionObject,
+    isPlaceholder: boolean | undefined
+  ) => {
+    if (isPlaceholder) clearSelection();
+    else {
+      setSelected(value.toString());
+      setIsOpen(false);
+    }
+  };
 
   return useObserver(() => {
     return (
-      <div>
-        <Dropdown
+      <div className="hub-sort">
+        <Select
+          variant={SelectVariant.typeahead}
+          typeAheadAriaLabel="Sort By"
+          onToggle={onToggle}
           onSelect={onSelect}
-          toggle={<DropdownToggle onToggle={onToggle}>{resources.sortBy}</DropdownToggle>}
+          onClear={clearSelection}
           isOpen={isOpen}
-          dropdownItems={dropDownItems}
-          className="hub-sort-dropdown"
-        />
+          selections={selected}
+          placeholderText="Sort By"
+        >
+          {keys}
+        </Select>
       </div>
     );
   });
 };
-
 export default Sort;
