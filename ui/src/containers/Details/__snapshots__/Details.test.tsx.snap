@@ -1,13 +1,518 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`should render the BasicDetails on details component 1`] = `
+"<Provider>
+   
+  <Details>
+    <BasicDetails>
+      <Card className=\\"hub-header-card\\">
+        <article className=\\"pf-c-card hub-header-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={9}>
+          <Grid>
+            <div className=\\"pf-l-grid\\">
+              <GridItem span={1}>
+                <div className=\\"pf-l-grid__item pf-m-1-col\\">
+                  <div className=\\"hub-details-kind-icon\\">
+                    <Icon id=\\"build\\" size=\\"xl\\" label=\\"Task\\">
+                      <BuildIcon size=\\"xl\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                        <svg style={{...}} fill=\\"currentColor\\" height=\\"3em\\" width=\\"3em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
+                          <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                        </svg>
+                      </BuildIcon>
+                    </Icon>
+                  </div>
+                </div>
+              </GridItem>
+              <GridItem span={9} className=\\"hub-details-card-header\\">
+                <div className=\\"pf-l-grid__item pf-m-9-col hub-details-card-header\\">
+                  <CardHeader>
+                    <div className=\\"pf-c-card__header\\">
+                      <TextContent className=\\"hub-details-card-body\\">
+                        <div className=\\"pf-c-content hub-details-card-body\\">
+                          <Grid className=\\"hub-details-title\\">
+                            <div className=\\"pf-l-grid hub-details-title\\">
+                              <GridItem span={11}>
+                                <div className=\\"pf-l-grid__item pf-m-11-col\\">
+                                  <List variant=\\"inline\\" style={{...}}>
+                                    <ul style={{...}} className=\\"pf-c-list pf-m-inline\\">
+                                      <ListItem>
+                                        <li>
+                                          <Text className=\\"hub-details-resource-name\\">
+                                            <p data-pf-content={true} className=\\"hub-details-resource-name\\">
+                                              buildah
+                                            </p>
+                                          </Text>
+                                        </li>
+                                      </ListItem>
+                                      <ListItem>
+                                        <li>
+                                          <Icon id=\\"user\\" size=\\"lg\\" label=\\"tekton\\">
+                                            <UserIcon size=\\"lg\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"2em\\" width=\\"2em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                                <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                              </svg>
+                                            </UserIcon>
+                                          </Icon>
+                                        </li>
+                                      </ListItem>
+                                    </ul>
+                                  </List>
+                                </div>
+                              </GridItem>
+                            </div>
+                          </Grid>
+                          <a href=\\"https://github.com/tektoncd/catalog/tree/master/task/buildah/0.2/\\" target=\\"_\\" className=\\"hub-details-hyperlink\\">
+                            <List variant=\\"inline\\" style={{...}}>
+                              <ul style={{...}} className=\\"pf-c-list pf-m-inline\\">
+                                <ListItem>
+                                  <li>
+                                    <Icon id=\\"github\\" size=\\"md\\" label=\\"Github\\">
+                                      <GithubIcon size=\\"md\\" className=\\"hub-icon\\" label=\\"Github\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1.5em\\" width=\\"1.5em\\" viewBox=\\"0 0 496 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Github\\">
+                                          <path d=\\"M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z\\" transform=\\"\\" />
+                                        </svg>
+                                      </GithubIcon>
+                                    </Icon>
+                                  </li>
+                                </ListItem>
+                                <ListItem>
+                                  <li>
+                                    <Text className=\\"hub-details-github\\">
+                                      <p data-pf-content={true} className=\\"hub-details-github\\">
+                                        Open 
+                                        buildah
+                                         in Github
+                                      </p>
+                                    </Text>
+                                  </li>
+                                </ListItem>
+                              </ul>
+                            </List>
+                          </a>
+                          <Grid>
+                            <div className=\\"pf-l-grid\\">
+                              <GridItem span={10} className=\\"hub-details-description\\">
+                                <div className=\\"pf-l-grid__item pf-m-10-col hub-details-description\\">
+                                  <div className=\\"line\\">
+                                    Buildah task builds source into a container image and then pushes it to a container registry.
+                                  </div>
+                                  <div>
+                                    Buildah Task builds source into a container image using Project Atomic&#39;s Buildah build tool.It uses Buildah&#39;s support for building from Dockerfiles, using its buildah bud command.This command executes the directives in the Dockerfile to assemble a container image, then pushes that image to a container registry.
+                                  </div>
+                                </div>
+                              </GridItem>
+                              <GridItem>
+                                <div className=\\"pf-l-grid__item\\">
+                                  <Badge className=\\"hub-tags\\">
+                                    <span className=\\"pf-c-badge pf-m-unread hub-tags\\">
+                                      image-build
+                                    </span>
+                                  </Badge>
+                                </div>
+                              </GridItem>
+                            </div>
+                          </Grid>
+                        </div>
+                      </TextContent>
+                      <CardActions className=\\"hub-details-card-action\\">
+                        <div className=\\"pf-c-card__actions hub-details-card-action\\">
+                          <Grid hasGutter={true}>
+                            <div className=\\"pf-l-grid pf-m-gutter\\">
+                              <GridItem span={3}>
+                                <div className=\\"pf-l-grid__item pf-m-3-col\\">
+                                  <div className=\\"hub-details-average-rating\\">
+                                    <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average-Rating\\">
+                                      <StarIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Average-Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Average-Rating\\">
+                                          <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                        </svg>
+                                      </StarIcon>
+                                    </Icon>
+                                  </div>
+                                </div>
+                              </GridItem>
+                              <GridItem span={2}>
+                                <div className=\\"pf-l-grid__item pf-m-2-col\\">
+                                  <Text>
+                                    <p data-pf-content={true} className=\\"\\">
+                                      4
+                                    </p>
+                                  </Text>
+                                </div>
+                              </GridItem>
+                              <GridItem span={12}>
+                                <div className=\\"pf-l-grid__item pf-m-12-col\\">
+                                  <Rating>
+                                    <div className=\\"hub-details-rating\\">
+                                      <form>
+                                        <ul>
+                                          <li className=\\"hub-rate-area\\">
+                                            <input type=\\"radio\\" id=\\"0-star\\" name=\\"rating\\" value=\\"0\\" />
+                                            <label htmlFor=\\"0-star\\">
+                                              <StarIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                  <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                </svg>
+                                              </StarIcon>
+                                            </label>
+                                          </li>
+                                          <li className=\\"hub-rate-area\\">
+                                            <input type=\\"radio\\" id=\\"1-star\\" name=\\"rating\\" value=\\"1\\" />
+                                            <label htmlFor=\\"1-star\\">
+                                              <StarIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                  <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                </svg>
+                                              </StarIcon>
+                                            </label>
+                                          </li>
+                                          <li className=\\"hub-rate-area\\">
+                                            <input type=\\"radio\\" id=\\"2-star\\" name=\\"rating\\" value=\\"2\\" />
+                                            <label htmlFor=\\"2-star\\">
+                                              <StarIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                  <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                </svg>
+                                              </StarIcon>
+                                            </label>
+                                          </li>
+                                          <li className=\\"hub-rate-area\\">
+                                            <input type=\\"radio\\" id=\\"3-star\\" name=\\"rating\\" value=\\"3\\" />
+                                            <label htmlFor=\\"3-star\\">
+                                              <StarIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                  <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                </svg>
+                                              </StarIcon>
+                                            </label>
+                                          </li>
+                                          <li className=\\"hub-rate-area\\">
+                                            <input type=\\"radio\\" id=\\"4-star\\" name=\\"rating\\" value=\\"4\\" />
+                                            <label htmlFor=\\"4-star\\">
+                                              <StarIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                  <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                </svg>
+                                              </StarIcon>
+                                            </label>
+                                          </li>
+                                        </ul>
+                                      </form>
+                                    </div>
+                                  </Rating>
+                                </div>
+                              </GridItem>
+                              <GridItem>
+                                <div className=\\"pf-l-grid__item\\">
+                                  <Button variant=\\"primary\\" className=\\"hub-details-button\\" onClick={[Function: onModalToggle]}>
+                                    <button onClick={[Function: onModalToggle]} aria-disabled={false} aria-label={{...}} className=\\"pf-c-button pf-m-primary hub-details-button\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={10}>
+                                      Install
+                                    </button>
+                                  </Button>
+                                </div>
+                              </GridItem>
+                              <GridItem>
+                                <div className=\\"pf-l-grid__item\\">
+                                  <Dropdown toggle={{...}} dropdownItems={{...}} onSelect={[Function: onSelect]} isOpen={false}>
+                                    <DropdownWithContext toggle={{...}} dropdownItems={{...}} isOpen={false} className=\\"\\" isPlain={false} isGrouped={false} position=\\"left\\" direction=\\"down\\" onSelect={[Function: onSelect]} autoFocus={true} menuAppendTo=\\"inline\\">
+                                      <div className=\\"pf-c-dropdown\\" data-ouia-component-type=\\"PF4/Dropdown\\" data-ouia-safe={true} data-ouia-component-id={11}>
+                                        <DropdownToggle onToggle={[Function: onToggle]} className=\\"hub-details-dropdown-item\\" parentRef={{...}} getMenuRef={[Function (anonymous)]} isOpen={false} id=\\"pf-dropdown-toggle-id-3\\" isPlain={false} aria-haspopup={true} onEnter={[Function: onEnter]}>
+                                          <Toggle onEnter={[Function: onEnter]} id=\\"pf-dropdown-toggle-id-3\\" className=\\"hub-details-dropdown-item\\" isOpen={false} parentRef={{...}} getMenuRef={[Function (anonymous)]} isActive={false} isDisabled={false} isPlain={false} isPrimary={false} onToggle={[Function: onToggle]} aria-haspopup={true} isSplitButton={false} bubbleEvent={false}>
+                                            <button id=\\"pf-dropdown-toggle-id-3\\" className=\\"pf-c-dropdown__toggle hub-details-dropdown-item\\" type=\\"button\\" onClick={[Function: onClick]} aria-expanded={false} aria-haspopup={true} onKeyDown={[Function: onKeyDown]} disabled={false}>
+                                              <span className=\\"pf-c-dropdown__toggle-text\\">
+                                                0.2 (latest)
+                                              </span>
+                                              <span className=\\"pf-c-dropdown__toggle-icon\\">
+                                                <CaretDownIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                  <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 320 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                    <path d=\\"M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z\\" transform=\\"\\" />
+                                                  </svg>
+                                                </CaretDownIcon>
+                                              </span>
+                                            </button>
+                                          </Toggle>
+                                        </DropdownToggle>
+                                      </div>
+                                    </DropdownWithContext>
+                                  </Dropdown>
+                                </div>
+                              </GridItem>
+                            </div>
+                          </Grid>
+                        </div>
+                      </CardActions>
+                    </div>
+                  </CardHeader>
+                </div>
+              </GridItem>
+              <Modal width=\\"60%\\" title=\\"buildah\\" isOpen={false} onClose={[Function: onModalToggle]} className=\\"\\" aria-label=\\"\\" showClose={true} aria-describedby=\\"\\" aria-labelledby=\\"\\" id={[undefined]} actions={{...}} variant=\\"default\\" hasNoBodyWrapper={false} appendTo={[Function: appendTo]} ouiaSafe={true}>
+                <Portal containerInfo={{...}}>
+                  <ModalContent width=\\"60%\\" isOpen={false} onClose={[Function: onModalToggle]} className=\\"\\" showClose={true} id={[undefined]} actions={{...}} variant=\\"default\\" hasNoBodyWrapper={false} boxId=\\"pf-modal-part-1\\" labelId=\\"pf-modal-part-2\\" descriptorId=\\"pf-modal-part-3\\" title=\\"buildah\\" aria-label=\\"\\" aria-describedby=\\"\\" aria-labelledby=\\"\\" ouiaId={[undefined]} ouiaSafe={true} />
+                </Portal>
+              </Modal>
+            </div>
+          </Grid>
+        </article>
+      </Card>
+    </BasicDetails>
+  </Details>
+   
+</Provider>"
+`;
+
 exports[`should render the details component 1`] = `
 "<Provider>
    
   <Details>
-    <span>
-      Add Resources detail here 
-      ansible-runner
-    </span>
+    <BasicDetails>
+      <Card className=\\"hub-header-card\\">
+        <article className=\\"pf-c-card hub-header-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={0}>
+          <Grid>
+            <div className=\\"pf-l-grid\\">
+              <GridItem span={1}>
+                <div className=\\"pf-l-grid__item pf-m-1-col\\">
+                  <div className=\\"hub-details-kind-icon\\">
+                    <Icon id=\\"build\\" size=\\"xl\\" label=\\"Task\\">
+                      <BuildIcon size=\\"xl\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                        <svg style={{...}} fill=\\"currentColor\\" height=\\"3em\\" width=\\"3em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
+                          <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                        </svg>
+                      </BuildIcon>
+                    </Icon>
+                  </div>
+                </div>
+              </GridItem>
+              <GridItem span={9} className=\\"hub-details-card-header\\">
+                <div className=\\"pf-l-grid__item pf-m-9-col hub-details-card-header\\">
+                  <CardHeader>
+                    <div className=\\"pf-c-card__header\\">
+                      <TextContent className=\\"hub-details-card-body\\">
+                        <div className=\\"pf-c-content hub-details-card-body\\">
+                          <Grid className=\\"hub-details-title\\">
+                            <div className=\\"pf-l-grid hub-details-title\\">
+                              <GridItem span={11}>
+                                <div className=\\"pf-l-grid__item pf-m-11-col\\">
+                                  <List variant=\\"inline\\" style={{...}}>
+                                    <ul style={{...}} className=\\"pf-c-list pf-m-inline\\">
+                                      <ListItem>
+                                        <li>
+                                          <Text className=\\"hub-details-resource-name\\">
+                                            <p data-pf-content={true} className=\\"hub-details-resource-name\\">
+                                              buildah
+                                            </p>
+                                          </Text>
+                                        </li>
+                                      </ListItem>
+                                      <ListItem>
+                                        <li>
+                                          <Icon id=\\"user\\" size=\\"lg\\" label=\\"tekton\\">
+                                            <UserIcon size=\\"lg\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"2em\\" width=\\"2em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                                <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                              </svg>
+                                            </UserIcon>
+                                          </Icon>
+                                        </li>
+                                      </ListItem>
+                                    </ul>
+                                  </List>
+                                </div>
+                              </GridItem>
+                            </div>
+                          </Grid>
+                          <a href=\\"https://github.com/tektoncd/catalog/tree/master/task/buildah/0.2/\\" target=\\"_\\" className=\\"hub-details-hyperlink\\">
+                            <List variant=\\"inline\\" style={{...}}>
+                              <ul style={{...}} className=\\"pf-c-list pf-m-inline\\">
+                                <ListItem>
+                                  <li>
+                                    <Icon id=\\"github\\" size=\\"md\\" label=\\"Github\\">
+                                      <GithubIcon size=\\"md\\" className=\\"hub-icon\\" label=\\"Github\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1.5em\\" width=\\"1.5em\\" viewBox=\\"0 0 496 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Github\\">
+                                          <path d=\\"M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z\\" transform=\\"\\" />
+                                        </svg>
+                                      </GithubIcon>
+                                    </Icon>
+                                  </li>
+                                </ListItem>
+                                <ListItem>
+                                  <li>
+                                    <Text className=\\"hub-details-github\\">
+                                      <p data-pf-content={true} className=\\"hub-details-github\\">
+                                        Open 
+                                        buildah
+                                         in Github
+                                      </p>
+                                    </Text>
+                                  </li>
+                                </ListItem>
+                              </ul>
+                            </List>
+                          </a>
+                          <Grid>
+                            <div className=\\"pf-l-grid\\">
+                              <GridItem span={10} className=\\"hub-details-description\\">
+                                <div className=\\"pf-l-grid__item pf-m-10-col hub-details-description\\">
+                                  <div className=\\"line\\">
+                                    Buildah task builds source into a container image and then pushes it to a container registry.
+                                  </div>
+                                  <div>
+                                    Buildah Task builds source into a container image using Project Atomic&#39;s Buildah build tool.It uses Buildah&#39;s support for building from Dockerfiles, using its buildah bud command.This command executes the directives in the Dockerfile to assemble a container image, then pushes that image to a container registry.
+                                  </div>
+                                </div>
+                              </GridItem>
+                              <GridItem>
+                                <div className=\\"pf-l-grid__item\\">
+                                  <Badge className=\\"hub-tags\\">
+                                    <span className=\\"pf-c-badge pf-m-unread hub-tags\\">
+                                      image-build
+                                    </span>
+                                  </Badge>
+                                </div>
+                              </GridItem>
+                            </div>
+                          </Grid>
+                        </div>
+                      </TextContent>
+                      <CardActions className=\\"hub-details-card-action\\">
+                        <div className=\\"pf-c-card__actions hub-details-card-action\\">
+                          <Grid hasGutter={true}>
+                            <div className=\\"pf-l-grid pf-m-gutter\\">
+                              <GridItem span={3}>
+                                <div className=\\"pf-l-grid__item pf-m-3-col\\">
+                                  <div className=\\"hub-details-average-rating\\">
+                                    <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average-Rating\\">
+                                      <StarIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Average-Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Average-Rating\\">
+                                          <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                        </svg>
+                                      </StarIcon>
+                                    </Icon>
+                                  </div>
+                                </div>
+                              </GridItem>
+                              <GridItem span={2}>
+                                <div className=\\"pf-l-grid__item pf-m-2-col\\">
+                                  <Text>
+                                    <p data-pf-content={true} className=\\"\\">
+                                      4
+                                    </p>
+                                  </Text>
+                                </div>
+                              </GridItem>
+                              <GridItem span={12}>
+                                <div className=\\"pf-l-grid__item pf-m-12-col\\">
+                                  <Rating>
+                                    <div className=\\"hub-details-rating\\">
+                                      <form>
+                                        <ul>
+                                          <li className=\\"hub-rate-area\\">
+                                            <input type=\\"radio\\" id=\\"0-star\\" name=\\"rating\\" value=\\"0\\" />
+                                            <label htmlFor=\\"0-star\\">
+                                              <StarIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                  <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                </svg>
+                                              </StarIcon>
+                                            </label>
+                                          </li>
+                                          <li className=\\"hub-rate-area\\">
+                                            <input type=\\"radio\\" id=\\"1-star\\" name=\\"rating\\" value=\\"1\\" />
+                                            <label htmlFor=\\"1-star\\">
+                                              <StarIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                  <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                </svg>
+                                              </StarIcon>
+                                            </label>
+                                          </li>
+                                          <li className=\\"hub-rate-area\\">
+                                            <input type=\\"radio\\" id=\\"2-star\\" name=\\"rating\\" value=\\"2\\" />
+                                            <label htmlFor=\\"2-star\\">
+                                              <StarIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                  <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                </svg>
+                                              </StarIcon>
+                                            </label>
+                                          </li>
+                                          <li className=\\"hub-rate-area\\">
+                                            <input type=\\"radio\\" id=\\"3-star\\" name=\\"rating\\" value=\\"3\\" />
+                                            <label htmlFor=\\"3-star\\">
+                                              <StarIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                  <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                </svg>
+                                              </StarIcon>
+                                            </label>
+                                          </li>
+                                          <li className=\\"hub-rate-area\\">
+                                            <input type=\\"radio\\" id=\\"4-star\\" name=\\"rating\\" value=\\"4\\" />
+                                            <label htmlFor=\\"4-star\\">
+                                              <StarIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                  <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                </svg>
+                                              </StarIcon>
+                                            </label>
+                                          </li>
+                                        </ul>
+                                      </form>
+                                    </div>
+                                  </Rating>
+                                </div>
+                              </GridItem>
+                              <GridItem>
+                                <div className=\\"pf-l-grid__item\\">
+                                  <Button variant=\\"primary\\" className=\\"hub-details-button\\" onClick={[Function: onModalToggle]}>
+                                    <button onClick={[Function: onModalToggle]} aria-disabled={false} aria-label={{...}} className=\\"pf-c-button pf-m-primary hub-details-button\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={1}>
+                                      Install
+                                    </button>
+                                  </Button>
+                                </div>
+                              </GridItem>
+                              <GridItem>
+                                <div className=\\"pf-l-grid__item\\">
+                                  <Dropdown toggle={{...}} dropdownItems={{...}} onSelect={[Function: onSelect]} isOpen={false}>
+                                    <DropdownWithContext toggle={{...}} dropdownItems={{...}} isOpen={false} className=\\"\\" isPlain={false} isGrouped={false} position=\\"left\\" direction=\\"down\\" onSelect={[Function: onSelect]} autoFocus={true} menuAppendTo=\\"inline\\">
+                                      <div className=\\"pf-c-dropdown\\" data-ouia-component-type=\\"PF4/Dropdown\\" data-ouia-safe={true} data-ouia-component-id={2}>
+                                        <DropdownToggle onToggle={[Function: onToggle]} className=\\"hub-details-dropdown-item\\" parentRef={{...}} getMenuRef={[Function (anonymous)]} isOpen={false} id=\\"pf-dropdown-toggle-id-0\\" isPlain={false} aria-haspopup={true} onEnter={[Function: onEnter]}>
+                                          <Toggle onEnter={[Function: onEnter]} id=\\"pf-dropdown-toggle-id-0\\" className=\\"hub-details-dropdown-item\\" isOpen={false} parentRef={{...}} getMenuRef={[Function (anonymous)]} isActive={false} isDisabled={false} isPlain={false} isPrimary={false} onToggle={[Function: onToggle]} aria-haspopup={true} isSplitButton={false} bubbleEvent={false}>
+                                            <button id=\\"pf-dropdown-toggle-id-0\\" className=\\"pf-c-dropdown__toggle hub-details-dropdown-item\\" type=\\"button\\" onClick={[Function: onClick]} aria-expanded={false} aria-haspopup={true} onKeyDown={[Function: onKeyDown]} disabled={false}>
+                                              <span className=\\"pf-c-dropdown__toggle-text\\">
+                                                0.2 (latest)
+                                              </span>
+                                              <span className=\\"pf-c-dropdown__toggle-icon\\">
+                                                <CaretDownIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                  <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 320 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                    <path d=\\"M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z\\" transform=\\"\\" />
+                                                  </svg>
+                                                </CaretDownIcon>
+                                              </span>
+                                            </button>
+                                          </Toggle>
+                                        </DropdownToggle>
+                                      </div>
+                                    </DropdownWithContext>
+                                  </Dropdown>
+                                </div>
+                              </GridItem>
+                            </div>
+                          </Grid>
+                        </div>
+                      </CardActions>
+                    </div>
+                  </CardHeader>
+                </div>
+              </GridItem>
+              <Modal width=\\"60%\\" title=\\"buildah\\" isOpen={false} onClose={[Function: onModalToggle]} className=\\"\\" aria-label=\\"\\" showClose={true} aria-describedby=\\"\\" aria-labelledby=\\"\\" id={[undefined]} actions={{...}} variant=\\"default\\" hasNoBodyWrapper={false} appendTo={[Function: appendTo]} ouiaSafe={true}>
+                <Portal containerInfo={{...}}>
+                  <ModalContent width=\\"60%\\" isOpen={false} onClose={[Function: onModalToggle]} className=\\"\\" showClose={true} id={[undefined]} actions={{...}} variant=\\"default\\" hasNoBodyWrapper={false} boxId=\\"pf-modal-part-0\\" labelId=\\"pf-modal-part-1\\" descriptorId=\\"pf-modal-part-2\\" title=\\"buildah\\" aria-label=\\"\\" aria-describedby=\\"\\" aria-labelledby=\\"\\" ouiaId={[undefined]} ouiaSafe={true} />
+                </Portal>
+              </Modal>
+            </div>
+          </Grid>
+        </article>
+      </Card>
+    </BasicDetails>
   </Details>
    
 </Provider>"

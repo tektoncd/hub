@@ -1,0 +1,91 @@
+.hub-header-card {
+  margin-left: -2em;
+  margin-right: -2em;
+  margin-top: -2em;
+  width: 115%;
+  padding-bottom: 2em;
+}
+
+.hub-details-kind-icon {
+  left: 8em;
+  position: relative;
+  top: 0.5em;
+  margin-left: 2em;
+}
+
+.hub-details-kind-icon svg {
+  height: 10em;
+}
+
+.hub-details-resource-name {
+  font-size: 2em;
+}
+
+.hub-icon {
+  margin-top: 0.2em;
+}
+
+.hub-details-card-header {
+  position: relative;
+  left: 4em;
+  margin-left: 0.5em;
+}
+
+.hub-details-card-body {
+  padding-top: 2.5em;
+  width: 70%;
+}
+
+.hub-details-title {
+  margin-top: -0.5em;
+  margin-left: -3em;
+}
+
+.hub-details-github {
+  font-size: 1em;
+  margin-left: -0.5em;
+  margin-bottom: -0.3em;
+  margin-top: 0.25em;
+}
+
+.hub-details-hyperlink {
+  left: -2.8em;
+  position: relative;
+}
+
+.hub-details-hyperlink-resource-url {
+  margin-top: 0.2em;
+}
+
+.hub-details-description {
+  padding-bottom: 1.5em;
+  padding-top: 0.5em;
+  text-align: justify;
+}
+
+.line:after {
+  content: '\A\A';
+  white-space: pre;
+}
+
+.hub-tags {
+  margin-right: 0.3em;
+  margin-bottom: 0.2em;
+}
+
+.hub-details-button {
+  width: 8.5em;
+}
+
+.hub-details-card-action {
+  padding-top: 2em;
+}
+
+.hub-details-dropdown-item {
+  width: 8.5em;
+}
+
+.hub-details-average-rating {
+  position: relative;
+  left: 3em;
+}
