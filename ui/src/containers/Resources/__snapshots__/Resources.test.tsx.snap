@@ -75,7 +75,7 @@ exports[`Resource Component should render the resources component 1`] = `
                                 <TextContent className=\\"hub-resource-updatedAt\\">
                                   <div className=\\"pf-c-content hub-resource-updatedAt\\">
                                     Updated 
-                                    a month ago
+                                    2 months ago
                                   </div>
                                 </TextContent>
                                 <div className=\\"hub-tags-container\\">
@@ -160,7 +160,7 @@ exports[`Resource Component should render the resources component 1`] = `
                                 <TextContent className=\\"hub-resource-updatedAt\\">
                                   <div className=\\"pf-c-content hub-resource-updatedAt\\">
                                     Updated 
-                                    a month ago
+                                    2 months ago
                                   </div>
                                 </TextContent>
                                 <div className=\\"hub-tags-container\\">
@@ -245,7 +245,7 @@ exports[`Resource Component should render the resources component 1`] = `
                                 <TextContent className=\\"hub-resource-updatedAt\\">
                                   <div className=\\"pf-c-content hub-resource-updatedAt\\">
                                     Updated 
-                                    a month ago
+                                    2 months ago
                                   </div>
                                 </TextContent>
                                 <div className=\\"hub-tags-container\\">
@@ -336,7 +336,7 @@ exports[`Resource Component should render the resources component 1`] = `
                                 <TextContent className=\\"hub-resource-updatedAt\\">
                                   <div className=\\"pf-c-content hub-resource-updatedAt\\">
                                     Updated 
-                                    a month ago
+                                    2 months ago
                                   </div>
                                 </TextContent>
                                 <div className=\\"hub-tags-container\\">
@@ -421,7 +421,7 @@ exports[`Resource Component should render the resources component 1`] = `
                                 <TextContent className=\\"hub-resource-updatedAt\\">
                                   <div className=\\"pf-c-content hub-resource-updatedAt\\">
                                     Updated 
-                                    a month ago
+                                    2 months ago
                                   </div>
                                 </TextContent>
                                 <div className=\\"hub-tags-container\\">
@@ -506,7 +506,7 @@ exports[`Resource Component should render the resources component 1`] = `
                                 <TextContent className=\\"hub-resource-updatedAt\\">
                                   <div className=\\"pf-c-content hub-resource-updatedAt\\">
                                     Updated 
-                                    a month ago
+                                    2 months ago
                                   </div>
                                 </TextContent>
                                 <div className=\\"hub-tags-container\\">

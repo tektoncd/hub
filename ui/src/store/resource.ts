@@ -61,7 +61,8 @@ export const Resource = types
 export type IResource = Instance<typeof Resource>;
 export type IVersion = Instance<typeof Version>;
 
-export enum sortByFields {
+export enum SortByFields {
+  Unknown = '',
   Name = 'Name',
   Rating = 'Rating'
 }
@@ -72,7 +73,7 @@ export const ResourceStore = types
     versions: types.map(Version),
     catalogs: types.optional(CatalogStore, {}),
     kinds: types.optional(KindStore, {}),
-    sortBy: types.optional(types.enumeration(Object.values(sortByFields)), sortByFields.Name),
+    sortBy: types.optional(types.enumeration(Object.values(SortByFields)), SortByFields.Unknown),
     tags: types.optional(types.map(Tag), {}),
     search: '',
     err: '',
@@ -101,7 +102,7 @@ export const ResourceStore = types
       self.resources.put(item);
     },
     setSortBy(field: string) {
-      const key: sortByFields = sortByFields[field as keyof typeof sortByFields];
+      const key: SortByFields = SortByFields[field as keyof typeof SortByFields];
       self.sortBy = key;
     }
   }))
@@ -158,26 +159,40 @@ export const ResourceStore = types
 
   .views((self) => ({
     get filteredResources() {
-      const { resources, kinds, catalogs, categories, search } = self;
+      const { resources, kinds, catalogs, categories, search, sortBy } = self;
       const { selectedTags } = categories;
 
-      const filtered: IResource[] = [];
+      let filteredItems: IResource[] = [];
       resources.forEach((r: IResource) => {
         const matchesKind = kinds.selected.size === 0 || kinds.selected.has(r.kind.name);
         const matchesCatalogs = catalogs.selected.size === 0 || catalogs.selected.has(r.catalog.id);
         const matchesTags = selectedTags.size === 0 || r.tags.some((t) => selectedTags.has(t.id));
 
         if (matchesKind && matchesCatalogs && matchesTags) {
-          filtered.push(r);
+          filteredItems.push(r);
         }
       });
 
       if (search.trim() !== '') {
-        return fuzzysort
-          .go(search, filtered, { keys: ['name', 'displayName'] })
+        filteredItems = fuzzysort
+          .go(search, filteredItems, { keys: ['name', 'displayName'] })
           .map((resource: Fuzzysort.KeysResult<IResource>) => resource.obj);
       }
-      return filtered;
+
+      switch (sortBy) {
+        case SortByFields.Rating:
+          return filteredItems.sort((first: IResource, second: IResource) =>
+            first.rating < second.rating ? 1 : first.rating > second.rating ? -1 : 0
+          );
+
+        case SortByFields.Name:
+          return filteredItems.sort((first: IResource, second: IResource) =>
+            first.name > second.name ? 1 : first.name < second.name ? -1 : 0
+          );
+
+        default:
+          return filteredItems;
+      }
     }
   }));
 

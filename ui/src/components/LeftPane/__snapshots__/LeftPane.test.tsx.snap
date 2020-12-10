@@ -2,12 +2,7 @@
 
 exports[`LeftPane should find the components and match the count 1`] = `
 "<Grid hasGutter={true} className=\\"hub-leftpane\\">
-  <GridItem span={3}>
-    <Text component=\\"h1\\" className=\\"hub-leftpane-sort\\">
-      Sort
-    </Text>
-  </GridItem>
-  <GridItem span={9}>
+  <GridItem span={8}>
     <Sort />
   </GridItem>
   <GridItem>
