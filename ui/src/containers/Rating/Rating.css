@@ -1,0 +1,58 @@
+.hub-details-rating {
+  width: 20em;
+}
+
+.hub-rate-area {
+  float: left;
+  border-style: none;
+}
+
+.hub-rate-area:not(:checked) > input {
+  position: absolute;
+  top: -9999px;
+}
+
+.hub-rate-area:not(:checked) > label {
+  float: right;
+  width: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  font-size: 170%;
+  line-height: 1.2;
+  color: lightgrey;
+}
+
+.hub-rate-area > label > svg {
+  color: #484848;
+}
+
+.hub-rate-area:not(:checked) > label:before {
+  content: '';
+}
+
+.hub-rate-area > input:checked ~ label {
+  color: #484848;
+  text-shadow: 1px 1px #484848;
+  font-size: 170% !important;
+}
+
+.hub-rate-area:not(:checked) > label:hover,
+.hub-rate-area:not(:checked) > label:hover ~ label {
+  color: #484848;
+}
+
+.hub-rate-area > input:checked + label:hover,
+.hub-rate-area > input:checked + label:hover ~ label,
+.hub-rate-area > input:checked ~ label:hover,
+.hub-rate-area > input:checked ~ label:hover ~ label,
+.hub-rate-area > label:hover ~ input:checked ~ label {
+  color: #484848;
+  text-shadow: 1px 1px #484848;
+}
+
+.hub-rate-area > label:active {
+  position: relative;
+  top: 2px;
+  left: 2px;
+}

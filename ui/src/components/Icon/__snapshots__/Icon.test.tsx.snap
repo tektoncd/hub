@@ -4,6 +4,8 @@ exports[`Icon Component should render icon for Category Filter 1`] = `"<div />"`
 
 exports[`Icon Component should render icon for Community Catalog 1`] = `"<UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Community\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;
 
+exports[`Icon Component should render icon for Github 1`] = `"<GithubIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Github\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;
+
 exports[`Icon Component should render icon for Official Catalog 1`] = `"<CatIcon size=\\"lg\\" className=\\"hub-icon\\" label=\\"Official\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;
 
 exports[`Icon Component should render icon for Pipeline Kind 1`] = `"<DomainIcon size=\\"md\\" className=\\"hub-icon\\" label=\\"Pipeline\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;

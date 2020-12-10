@@ -6,7 +6,8 @@ import {
   DomainIcon,
   UserIcon,
   IconSize,
-  StarIcon
+  StarIcon,
+  GithubIcon
 } from '@patternfly/react-icons';
 import { Icons } from '../../common/icons';
 import './Icon.css';
@@ -34,6 +35,8 @@ const Icon: React.FC<Props> = (props: Props) => {
       return <DomainIcon size={size} className="hub-icon" label={label} />;
     case Icons.Star:
       return <StarIcon size={size} className="hub-icon" label={label} />;
+    case Icons.Github:
+      return <GithubIcon size={size} className="hub-icon" label={label} />;
   }
 };
 
