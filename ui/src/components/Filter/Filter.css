@@ -2,3 +2,13 @@
   font-weight: bold;
   padding-top: 0.3em;
 }
+
+.hub-filter-checkbox svg {
+  height: 0.75em;
+  margin-bottom: 0.1em;
+  padding-right: 0.2em;
+}
+
+.hub-filter-checkbox input {
+  margin-bottom: -0.15em;
+}

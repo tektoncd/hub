@@ -32,10 +32,10 @@ exports[`KindFilter finds the filter component and matches the count 1`] = `
             </GridItem>
             <GridItem span={12}>
               <div className=\\"pf-l-grid__item pf-m-12-col\\">
-                <Checkbox label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"undefined\\" name=\\"Task\\" className=\\"\\" isValid={true} isDisabled={false}>
-                  <div className=\\"pf-c-check\\">
-                    <input id=\\"undefined\\" name=\\"Task\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
-                    <label className=\\"pf-c-check__label\\" htmlFor=\\"undefined\\">
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Task\\" name=\\"Task\\" isValid={true} isDisabled={false}>
+                  <div className=\\"pf-c-check hub-filter-checkbox\\">
+                    <input id=\\"Task\\" name=\\"Task\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <label className=\\"pf-c-check__label\\" htmlFor=\\"Task\\">
                       <div>
                         <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\">
                           <BuildIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
@@ -49,10 +49,10 @@ exports[`KindFilter finds the filter component and matches the count 1`] = `
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"undefined\\" name=\\"Pipeline\\" className=\\"\\" isValid={true} isDisabled={false}>
-                  <div className=\\"pf-c-check\\">
-                    <input id=\\"undefined\\" name=\\"Pipeline\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
-                    <label className=\\"pf-c-check__label\\" htmlFor=\\"undefined\\">
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Pipeline\\" name=\\"Pipeline\\" isValid={true} isDisabled={false}>
+                  <div className=\\"pf-c-check hub-filter-checkbox\\">
+                    <input id=\\"Pipeline\\" name=\\"Pipeline\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <label className=\\"pf-c-check__label\\" htmlFor=\\"Pipeline\\">
                       <div>
                         <Icon id=\\"domain\\" size=\\"sm\\" label=\\"Pipeline\\">
                           <DomainIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"Pipeline\\" color=\\"currentColor\\" noVerticalAlign={false}>

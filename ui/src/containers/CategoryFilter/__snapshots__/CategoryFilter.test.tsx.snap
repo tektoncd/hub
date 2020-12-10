@@ -32,50 +32,50 @@ exports[`CategoryFilter finds the filter component and matches the count 1`] = `
             </GridItem>
             <GridItem span={12}>
               <div className=\\"pf-l-grid__item pf-m-12-col\\">
-                <Checkbox label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"1\\" name=\\"Build Tools\\" className=\\"\\" isValid={true} isDisabled={false}>
-                  <div className=\\"pf-c-check\\">
-                    <input id=\\"1\\" name=\\"Build Tools\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
-                    <label className=\\"pf-c-check__label\\" htmlFor=\\"1\\">
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Build Tools\\" name=\\"Build Tools\\" isValid={true} isDisabled={false}>
+                  <div className=\\"pf-c-check hub-filter-checkbox\\">
+                    <input id=\\"Build Tools\\" name=\\"Build Tools\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <label className=\\"pf-c-check__label\\" htmlFor=\\"Build Tools\\">
                       <div>
                         Build Tools
                       </div>
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"2\\" name=\\"CLI\\" className=\\"\\" isValid={true} isDisabled={false}>
-                  <div className=\\"pf-c-check\\">
-                    <input id=\\"2\\" name=\\"CLI\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
-                    <label className=\\"pf-c-check__label\\" htmlFor=\\"2\\">
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"CLI\\" name=\\"CLI\\" isValid={true} isDisabled={false}>
+                  <div className=\\"pf-c-check hub-filter-checkbox\\">
+                    <input id=\\"CLI\\" name=\\"CLI\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <label className=\\"pf-c-check__label\\" htmlFor=\\"CLI\\">
                       <div>
                         Cli
                       </div>
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"3\\" name=\\"Cloud\\" className=\\"\\" isValid={true} isDisabled={false}>
-                  <div className=\\"pf-c-check\\">
-                    <input id=\\"3\\" name=\\"Cloud\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
-                    <label className=\\"pf-c-check__label\\" htmlFor=\\"3\\">
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Cloud\\" name=\\"Cloud\\" isValid={true} isDisabled={false}>
+                  <div className=\\"pf-c-check hub-filter-checkbox\\">
+                    <input id=\\"Cloud\\" name=\\"Cloud\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <label className=\\"pf-c-check__label\\" htmlFor=\\"Cloud\\">
                       <div>
                         Cloud
                       </div>
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"4\\" name=\\"Deploy\\" className=\\"\\" isValid={true} isDisabled={false}>
-                  <div className=\\"pf-c-check\\">
-                    <input id=\\"4\\" name=\\"Deploy\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
-                    <label className=\\"pf-c-check__label\\" htmlFor=\\"4\\">
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Deploy\\" name=\\"Deploy\\" isValid={true} isDisabled={false}>
+                  <div className=\\"pf-c-check hub-filter-checkbox\\">
+                    <input id=\\"Deploy\\" name=\\"Deploy\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <label className=\\"pf-c-check__label\\" htmlFor=\\"Deploy\\">
                       <div>
                         Deploy
                       </div>
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"5\\" name=\\"Image Build\\" className=\\"\\" isValid={true} isDisabled={false}>
-                  <div className=\\"pf-c-check\\">
-                    <input id=\\"5\\" name=\\"Image Build\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
-                    <label className=\\"pf-c-check__label\\" htmlFor=\\"5\\">
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Image Build\\" name=\\"Image Build\\" isValid={true} isDisabled={false}>
+                  <div className=\\"pf-c-check hub-filter-checkbox\\">
+                    <input id=\\"Image Build\\" name=\\"Image Build\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <label className=\\"pf-c-check__label\\" htmlFor=\\"Image Build\\">
                       <div>
                         Image Build
                       </div>
