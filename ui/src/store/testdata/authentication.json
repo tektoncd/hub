@@ -1,0 +1,14 @@
+{
+	"data": {
+			"access": {
+					"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDYyODA2MzEsImlhdCI6MTYwNjE5NDIzMSwiaWQiOjEsImlzcyI6IlRla3RvbiBIdWIiLCJzY29wZXMiOlsicmF0aW5nOnJlYWQiLCJyYXRpbmc6d3JpdGUiXSwidHlwZSI6ImFjY2Vzcy10b2tlbiJ9.IDFQ5RHbWp8LlawDYKHJJQ5PNv79F8evf2M4dOWdg1E",
+					"refreshInterval": "24h0m0s",
+					"expiresAt": 1606280631
+			},
+			"refresh": {
+					"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDYyODA2MzEsImlhdCI6MTYwNjE5NDIzMSwiaWQiOjEsImlzcyI6IlRla3RvbiBIdWIiLCJzY29wZXMiOlsicmVmcmVzaDp0b2tlbiJdLCJ0eXBlIjoicmVmcmVzaC10b2tlbiJ9.1IHCA0DAkg4TgCVmgTggBQx9JwKnUjTzfQvcRjQS9kI",
+					"refreshInterval": "24h0m0s",
+					"expiresAt": 1606280631
+			}
+	}
+}

@@ -1,0 +1,17 @@
+.hub-authentication-card__size {
+  max-width: 30em;
+  margin: auto;
+}
+
+.hub-authentication-card__header {
+  font-size: 2em;
+  justify-content: center;
+}
+
+.hub-authentication-card__body {
+  text-align: center;
+}
+
+.hub-authentication-card__body button {
+  background-color: #1e66cc;
+}

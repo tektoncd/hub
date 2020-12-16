@@ -55,7 +55,21 @@ Array [
           className=""
           data-pf-content={true}
         >
-          Login
+          <a
+            href="/login"
+            onClick={[Function]}
+            style={
+              Object {
+                "textDecoration": "none",
+              }
+            }
+          >
+            <span
+              className="hub-header-login"
+            >
+              Login
+            </span>
+          </a>
         </h3>
       </div>
     </header>

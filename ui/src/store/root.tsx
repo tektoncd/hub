@@ -1,8 +1,10 @@
 import React, { ReactChild, ReactChildren } from 'react';
 import { types, getEnv, Instance } from 'mobx-state-tree';
+import { persist } from 'mst-persist';
 import { CategoryStore } from './category';
 import { ResourceStore } from './resource';
 import { Hub, Api } from '../api';
+import { AuthStore } from './auth';
 
 export const Root = types.model('Root', {}).views((self) => ({
   get api(): Api {
@@ -13,6 +15,9 @@ export const Root = types.model('Root', {}).views((self) => ({
   },
   get resources() {
     return getEnv(self).resources;
+  },
+  get user() {
+    return getEnv(self).user;
   }
 }));
 
@@ -21,7 +26,17 @@ type IRoot = Instance<typeof Root>;
 const initRootStore = (api: Api) => {
   const categories = CategoryStore.create({}, { api });
   const resources = ResourceStore.create({}, { api, categories });
-  return Root.create({}, { api, categories, resources });
+  const user = AuthStore.create({ accessTokenInfo: {}, refreshTokenInfo: {} }, { api });
+
+  // This peristently stores user auth details
+  persist('authStore', user, {
+    storage: localStorage,
+
+    // This adds fields from the store for which data needs to be stored persistently
+    whitelist: ['accessTokenInfo', 'refreshTokenInfo', 'isAuthenticated', 'isLoading']
+  });
+
+  return Root.create({}, { api, categories, resources, user });
 };
 
 interface Props {
