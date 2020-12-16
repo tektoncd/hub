@@ -45,12 +45,14 @@ Object {
     "latestVersion": 1,
     "name": "ansible-runner",
     "rating": 4.5,
+    "readme": "",
     "tags": Array [
       2,
     ],
     "versions": Array [
       1,
     ],
+    "yaml": "",
   },
   "aws-cli": Object {
     "catalog": 1,
@@ -61,12 +63,14 @@ Object {
     "latestVersion": 4,
     "name": "aws-cli",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       2,
     ],
     "versions": Array [
       4,
     ],
+    "yaml": "",
   },
   "buildah": Object {
     "catalog": 1,
@@ -77,12 +81,14 @@ Object {
     "latestVersion": 105,
     "name": "buildah",
     "rating": 4,
+    "readme": "",
     "tags": Array [
       8,
     ],
     "versions": Array [
       105,
     ],
+    "yaml": "",
   },
   "golang-build": Object {
     "catalog": 1,
@@ -93,12 +99,14 @@ Object {
     "latestVersion": 47,
     "name": "golang-build",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       1,
     ],
     "versions": Array [
       47,
     ],
+    "yaml": "",
   },
   "hub": Object {
     "catalog": 2,
@@ -109,12 +117,14 @@ Object {
     "latestVersion": 1,
     "name": "hub",
     "rating": 4.5,
+    "readme": "",
     "tags": Array [
       10,
     ],
     "versions": Array [
       1,
     ],
+    "yaml": "",
   },
   "jenkins": Object {
     "catalog": 1,
@@ -125,6 +135,7 @@ Object {
     "latestVersion": 104,
     "name": "jenkins",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       57,
       56,
@@ -132,6 +143,7 @@ Object {
     "versions": Array [
       104,
     ],
+    "yaml": "",
   },
   "jib-maven": Object {
     "catalog": 1,
@@ -142,12 +154,14 @@ Object {
     "latestVersion": 57,
     "name": "jib-maven",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       8,
     ],
     "versions": Array [
       57,
     ],
+    "yaml": "",
   },
 }
 `;
@@ -163,12 +177,14 @@ Object {
     "latestVersion": 1,
     "name": "ansible-runner",
     "rating": 4.5,
+    "readme": "",
     "tags": Array [
       2,
     ],
     "versions": Array [
       1,
     ],
+    "yaml": "",
   },
   "aws-cli": Object {
     "catalog": 1,
@@ -179,12 +195,14 @@ Object {
     "latestVersion": 4,
     "name": "aws-cli",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       2,
     ],
     "versions": Array [
       4,
     ],
+    "yaml": "",
   },
   "buildah": Object {
     "catalog": 1,
@@ -195,12 +213,14 @@ Object {
     "latestVersion": 105,
     "name": "buildah",
     "rating": 4,
+    "readme": "",
     "tags": Array [
       8,
     ],
     "versions": Array [
       105,
     ],
+    "yaml": "",
   },
   "golang-build": Object {
     "catalog": 1,
@@ -211,12 +231,14 @@ Object {
     "latestVersion": 47,
     "name": "golang-build",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       1,
     ],
     "versions": Array [
       47,
     ],
+    "yaml": "",
   },
   "hub": Object {
     "catalog": 2,
@@ -227,12 +249,14 @@ Object {
     "latestVersion": 1,
     "name": "hub",
     "rating": 4.5,
+    "readme": "",
     "tags": Array [
       10,
     ],
     "versions": Array [
       1,
     ],
+    "yaml": "",
   },
   "jenkins": Object {
     "catalog": 1,
@@ -243,6 +267,7 @@ Object {
     "latestVersion": 104,
     "name": "jenkins",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       57,
       56,
@@ -250,6 +275,7 @@ Object {
     "versions": Array [
       104,
     ],
+    "yaml": "",
   },
   "jib-maven": Object {
     "catalog": 1,
@@ -260,12 +286,14 @@ Object {
     "latestVersion": 57,
     "name": "jib-maven",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       8,
     ],
     "versions": Array [
       57,
     ],
+    "yaml": "",
   },
 }
 `;
@@ -281,12 +309,14 @@ Object {
     "latestVersion": 1,
     "name": "ansible-runner",
     "rating": 4.5,
+    "readme": "",
     "tags": Array [
       2,
     ],
     "versions": Array [
       1,
     ],
+    "yaml": "",
   },
   "aws-cli": Object {
     "catalog": 1,
@@ -297,12 +327,14 @@ Object {
     "latestVersion": 4,
     "name": "aws-cli",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       2,
     ],
     "versions": Array [
       4,
     ],
+    "yaml": "",
   },
   "buildah": Object {
     "catalog": 1,
@@ -313,12 +345,14 @@ Object {
     "latestVersion": 105,
     "name": "buildah",
     "rating": 4,
+    "readme": "",
     "tags": Array [
       8,
     ],
     "versions": Array [
       105,
     ],
+    "yaml": "",
   },
   "golang-build": Object {
     "catalog": 1,
@@ -329,12 +363,14 @@ Object {
     "latestVersion": 47,
     "name": "golang-build",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       1,
     ],
     "versions": Array [
       47,
     ],
+    "yaml": "",
   },
   "hub": Object {
     "catalog": 2,
@@ -345,12 +381,14 @@ Object {
     "latestVersion": 1,
     "name": "hub",
     "rating": 4.5,
+    "readme": "",
     "tags": Array [
       10,
     ],
     "versions": Array [
       1,
     ],
+    "yaml": "",
   },
   "jenkins": Object {
     "catalog": 1,
@@ -361,6 +399,7 @@ Object {
     "latestVersion": 104,
     "name": "jenkins",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       57,
       56,
@@ -368,6 +407,7 @@ Object {
     "versions": Array [
       104,
     ],
+    "yaml": "",
   },
   "jib-maven": Object {
     "catalog": 1,
@@ -378,12 +418,14 @@ Object {
     "latestVersion": 57,
     "name": "jib-maven",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       8,
     ],
     "versions": Array [
       57,
     ],
+    "yaml": "",
   },
 }
 `;
@@ -399,12 +441,14 @@ Object {
     "latestVersion": 1,
     "name": "ansible-runner",
     "rating": 4.5,
+    "readme": "",
     "tags": Array [
       2,
     ],
     "versions": Array [
       1,
     ],
+    "yaml": "",
   },
   "aws-cli": Object {
     "catalog": 1,
@@ -415,12 +459,14 @@ Object {
     "latestVersion": 4,
     "name": "aws-cli",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       2,
     ],
     "versions": Array [
       4,
     ],
+    "yaml": "",
   },
   "buildah": Object {
     "catalog": 1,
@@ -431,12 +477,14 @@ Object {
     "latestVersion": 105,
     "name": "buildah",
     "rating": 4,
+    "readme": "",
     "tags": Array [
       8,
     ],
     "versions": Array [
       105,
     ],
+    "yaml": "",
   },
   "golang-build": Object {
     "catalog": 1,
@@ -447,12 +495,14 @@ Object {
     "latestVersion": 47,
     "name": "golang-build",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       1,
     ],
     "versions": Array [
       47,
     ],
+    "yaml": "",
   },
   "hub": Object {
     "catalog": 2,
@@ -463,12 +513,14 @@ Object {
     "latestVersion": 1,
     "name": "hub",
     "rating": 4.5,
+    "readme": "",
     "tags": Array [
       10,
     ],
     "versions": Array [
       1,
     ],
+    "yaml": "",
   },
   "jenkins": Object {
     "catalog": 1,
@@ -479,6 +531,7 @@ Object {
     "latestVersion": 104,
     "name": "jenkins",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       57,
       56,
@@ -486,6 +539,7 @@ Object {
     "versions": Array [
       104,
     ],
+    "yaml": "",
   },
   "jib-maven": Object {
     "catalog": 1,
@@ -496,12 +550,14 @@ Object {
     "latestVersion": 57,
     "name": "jib-maven",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       8,
     ],
     "versions": Array [
       57,
     ],
+    "yaml": "",
   },
 }
 `;
@@ -517,12 +573,14 @@ Object {
     "latestVersion": 1,
     "name": "ansible-runner",
     "rating": 4.5,
+    "readme": "",
     "tags": Array [
       2,
     ],
     "versions": Array [
       1,
     ],
+    "yaml": "",
   },
   "aws-cli": Object {
     "catalog": 1,
@@ -533,12 +591,14 @@ Object {
     "latestVersion": 4,
     "name": "aws-cli",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       2,
     ],
     "versions": Array [
       4,
     ],
+    "yaml": "",
   },
   "buildah": Object {
     "catalog": 1,
@@ -549,12 +609,14 @@ Object {
     "latestVersion": 105,
     "name": "buildah",
     "rating": 4,
+    "readme": "",
     "tags": Array [
       8,
     ],
     "versions": Array [
       105,
     ],
+    "yaml": "",
   },
   "golang-build": Object {
     "catalog": 1,
@@ -565,12 +627,14 @@ Object {
     "latestVersion": 47,
     "name": "golang-build",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       1,
     ],
     "versions": Array [
       47,
     ],
+    "yaml": "",
   },
   "hub": Object {
     "catalog": 2,
@@ -581,12 +645,14 @@ Object {
     "latestVersion": 1,
     "name": "hub",
     "rating": 4.5,
+    "readme": "",
     "tags": Array [
       10,
     ],
     "versions": Array [
       1,
     ],
+    "yaml": "",
   },
   "jenkins": Object {
     "catalog": 1,
@@ -597,6 +663,7 @@ Object {
     "latestVersion": 104,
     "name": "jenkins",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       57,
       56,
@@ -604,6 +671,7 @@ Object {
     "versions": Array [
       104,
     ],
+    "yaml": "",
   },
   "jib-maven": Object {
     "catalog": 1,
@@ -614,12 +682,14 @@ Object {
     "latestVersion": 57,
     "name": "jib-maven",
     "rating": 5,
+    "readme": "",
     "tags": Array [
       8,
     ],
     "versions": Array [
       57,
     ],
+    "yaml": "",
   },
 }
 `;

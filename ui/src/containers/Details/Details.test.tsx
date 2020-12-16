@@ -2,10 +2,12 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { when } from 'mobx';
 import { Card } from '@patternfly/react-core';
+import ReactMarkdown from 'react-markdown';
 import { FakeHub } from '../../api/testutil';
 import { createProviderAndStore } from '../../store/root';
 import Details from '.';
 import BasicDetails from '../BasicDetails';
+import Description from '../../components/Description';
 
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
@@ -21,65 +23,96 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-it('should render the details component', (done) => {
-  const component = mount(
-    <Provider>
-      <Details />
-    </Provider>
-  );
+describe('Details component', () => {
+  it('should render the details component', (done) => {
+    const component = mount(
+      <Provider>
+        <Details />
+      </Provider>
+    );
 
-  const { resources } = root;
-  when(
-    () => {
-      return !resources.isLoading;
-    },
-    () => {
-      setTimeout(() => {
-        const resource = resources.filteredResources;
-        expect(resource.length).toBe(7);
+    const { resources } = root;
+    when(
+      () => {
+        return !resources.isLoading;
+      },
+      () => {
+        setTimeout(() => {
+          const resource = resources.filteredResources;
+          expect(resource.length).toBe(7);
 
-        component.update();
+          component.update();
 
-        const r = component.find(Details);
-        expect(r.length).toEqual(1);
+          const r = component.find(Details);
+          expect(r.length).toEqual(1);
 
-        expect(component.debug()).toMatchSnapshot();
+          expect(component.debug()).toMatchSnapshot();
 
-        done();
-      }, 1000);
-    }
-  );
-});
+          done();
+        }, 1000);
+      }
+    );
+  });
 
-it('should render the BasicDetails on details component', (done) => {
-  const component = mount(
-    <Provider>
-      <Details />
-    </Provider>
-  );
+  it('should render the BasicDetails on details component', (done) => {
+    const component = mount(
+      <Provider>
+        <Details />
+      </Provider>
+    );
 
-  const { resources } = root;
-  when(
-    () => {
-      return !resources.isLoading;
-    },
-    () => {
-      setTimeout(() => {
-        const resource = resources.filteredResources;
-        expect(resource.length).toBe(7);
+    const { resources } = root;
+    when(
+      () => {
+        return !resources.isLoading;
+      },
+      () => {
+        setTimeout(() => {
+          const resource = resources.filteredResources;
+          expect(resource.length).toBe(7);
 
-        component.update();
+          component.update();
 
-        const r = component.find(Details);
-        expect(r.length).toEqual(1);
+          const r = component.find(Details);
+          expect(r.length).toEqual(1);
 
-        expect(component.debug()).toMatchSnapshot();
+          const c = component.find(BasicDetails);
+          expect(c.find(Card).length).toBe(1);
 
-        const c = component.find(BasicDetails);
-        expect(c.find(Card).length).toBe(1);
+          done();
+        }, 1000);
+      }
+    );
+  });
 
-        done();
-      }, 1000);
-    }
-  );
+  it('should render the Description on details component', (done) => {
+    const component = mount(
+      <Provider>
+        <Details />
+      </Provider>
+    );
+
+    const { resources } = root;
+    when(
+      () => {
+        return !resources.isLoading;
+      },
+      () => {
+        setTimeout(() => {
+          const resource = resources.filteredResources;
+          expect(resource.length).toBe(7);
+
+          component.update();
+
+          const r = component.find(Details);
+          expect(r.length).toEqual(1);
+
+          const c = component.find(Description);
+          expect(c.find(ReactMarkdown).length).toBe(2);
+
+          done();
+        }, 1000);
+      }
+    );
+  });
 });

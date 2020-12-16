@@ -523,4 +523,64 @@ describe('Store functions', () => {
       }
     );
   });
+
+  it('should display the readme for buildah', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.resources.size).toBe(7);
+        store.loadReadme('buildah');
+        when(
+          () => !store.isLoading,
+          () => {
+            const resource = store.resources.get('buildah');
+            assert(resource);
+
+            expect(typeof resource.readme).toBe('string');
+            done();
+          }
+        );
+      }
+    );
+  });
+
+  it('should display the yaml for buildah', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.resources.size).toBe(7);
+        store.loadYaml('buildah');
+        when(
+          () => !store.isLoading,
+          () => {
+            const resource = store.resources.get('buildah');
+            assert(resource);
+
+            expect(typeof resource.readme).toBe('string');
+            done();
+          }
+        );
+      }
+    );
+  });
 });
