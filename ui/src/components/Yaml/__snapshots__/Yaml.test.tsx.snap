@@ -1,0 +1,581 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render the YAML file 1`] = `
+"<Yaml value=\\"apiVersion: tekton.dev/v1beta1\\\\nkind: Task\\\\nmetadata:\\\\n  name: az\\\\n  labels:\\\\n    app.kubernetes.io/version: \\"0.1\\"\\\\n  annotations:\\\\n    tekton.dev/pipelines.minVersion: \\"0.12.1\\"\\\\n    tekton.dev/tags: cli\\\\n    tekton.dev/displayName: \\"azure cli\\"\\\\nspec:\\\\n  description: >-\\\\n    This task performs operations on Microsoft Azure resources using az.\\\\n\\\\n    After creating the task, you should now be able to execute az commands by\\\\n    specifying the command you would like to run as the ARGS param. The ARGS\\\\n    param takes an array of az subcommands that will be executed as part of\\\\n    this task.\\\\n\\\\n  params:\\\\n  - name: az-image\\\\n    description: Azure CLI container image to run this task\\\\n    default: mcr.microsoft.com/azure-cli:2.0.78\\\\n  - name: ARGS\\\\n    type: array\\\\n    description: Azure CLI arguments to run\\\\n  steps:\\\\n  - name: az\\\\n    image: \\"$(params.az-image)\\"\\\\n    command: [\\"az\\"]\\\\n\\\\t\\\\targs: [\\"$(params.ARGS)\\"]\\">
+  <SyntaxHighlighter language=\\"yaml\\" showLineNumbers={true} wrapLines={true}>
+    <pre style={{...}}>
+      <code className=\\"language-yaml\\" style={{...}}>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            1
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            apiVersion
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             tekton.dev/v1beta1
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            2
+          </span>
+          <span className={[undefined]} style={{...}} />
+          <span className=\\"token key\\" style={{...}}>
+            kind
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             Task
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            3
+          </span>
+          <span className={[undefined]} style={{...}} />
+          <span className=\\"token key\\" style={{...}}>
+            metadata
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            4
+          </span>
+          <span className={[undefined]} style={{...}}>
+              
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            name
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             az
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            5
+          </span>
+          <span className={[undefined]} style={{...}}>
+              
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            labels
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            6
+          </span>
+          <span className={[undefined]} style={{...}}>
+                
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            app.kubernetes.io/version
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            &quot;0.1&quot;
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            7
+          </span>
+          <span className={[undefined]} style={{...}}>
+              
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            annotations
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            8
+          </span>
+          <span className={[undefined]} style={{...}}>
+                
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            tekton.dev/pipelines.minVersion
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            &quot;0.12.1&quot;
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            9
+          </span>
+          <span className={[undefined]} style={{...}}>
+                
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            tekton.dev/tags
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             cli
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            10
+          </span>
+          <span className={[undefined]} style={{...}}>
+                
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            tekton.dev/displayName
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            &quot;azure cli&quot;
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            11
+          </span>
+          <span className={[undefined]} style={{...}} />
+          <span className=\\"token key\\" style={{...}}>
+            spec
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            12
+          </span>
+          <span className={[undefined]} style={{...}}>
+              
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            description
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            &gt;
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            -
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            13
+          </span>
+              This task performs operations on Microsoft Azure resources using az.
+          
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            14
+          </span>
+          
+          
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            15
+          </span>
+          <span className={[undefined]} style={{...}}>
+                After creating the task
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            ,
+          </span>
+          <span className={[undefined]} style={{...}}>
+             you should now be able to execute az commands by
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            16
+          </span>
+              specifying the command you would like to run as the ARGS param. The ARGS
+          
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            17
+          </span>
+              param takes an array of az subcommands that will be executed as part of
+          
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            18
+          </span>
+              this task.
+          
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            19
+          </span>
+          
+          
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            20
+          </span>
+          <span className={[undefined]} style={{...}}>
+              
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            params
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            21
+          </span>
+          <span className={[undefined]} style={{...}}>
+              
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            -
+          </span>
+          <span className={[undefined]} style={{...}}>
+             
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            name
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             az
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            -
+          </span>
+          <span className={[undefined]} style={{...}}>
+            image
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            22
+          </span>
+          <span className={[undefined]} style={{...}}>
+                
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            description
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             Azure CLI container image to run this task
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            23
+          </span>
+          <span className={[undefined]} style={{...}}>
+                
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            default
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             mcr.microsoft.com/azure
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            -
+          </span>
+          <span className={[undefined]} style={{...}}>
+            cli
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+            2.0.78
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            24
+          </span>
+          <span className={[undefined]} style={{...}}>
+              
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            -
+          </span>
+          <span className={[undefined]} style={{...}}>
+             
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            name
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             ARGS
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            25
+          </span>
+          <span className={[undefined]} style={{...}}>
+                
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            type
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             array
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            26
+          </span>
+          <span className={[undefined]} style={{...}}>
+                
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            description
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             Azure CLI arguments to run
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            27
+          </span>
+          <span className={[undefined]} style={{...}}>
+              
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            steps
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            28
+          </span>
+          <span className={[undefined]} style={{...}}>
+              
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            -
+          </span>
+          <span className={[undefined]} style={{...}}>
+             
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            name
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             az
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            29
+          </span>
+          <span className={[undefined]} style={{...}}>
+                
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            image
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            &quot;$(params.az-image)&quot;
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            30
+          </span>
+          <span className={[undefined]} style={{...}}>
+                
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            command
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            [
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            &quot;az&quot;
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            ]
+          </span>
+          <span className={[undefined]} style={{...}}>
+            
+            
+          </span>
+        </span>
+        <span className={[undefined]} style={{...}}>
+          <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
+            31
+          </span>
+          <span className={[undefined]} style={{...}}>
+            		
+          </span>
+          <span className=\\"token key\\" style={{...}}>
+            args
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            :
+          </span>
+          <span className={[undefined]} style={{...}}>
+             
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            [
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            &quot;$(params.ARGS)&quot;
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            ]
+          </span>
+        </span>
+      </code>
+    </pre>
+  </SyntaxHighlighter>
+</Yaml>"
+`;

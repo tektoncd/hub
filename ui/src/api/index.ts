@@ -24,6 +24,8 @@ export interface Api {
   resourceVersion(resourceId: number): Promise<IVersion>;
   versionUpdate(versionId: number): Promise<IVersion>;
   authentication(authCode: string): Promise<AuthResponse>;
+  readme(rawURL: string): Promise<string>;
+  yaml(rawURL: string): Promise<string>;
 }
 
 export class Hub implements Api {
@@ -66,6 +68,24 @@ export class Hub implements Api {
       return axios
         .get(`${API_URL}/resource/version/${versionId}`)
         .then((response) => response.data);
+    } catch (err) {
+      return err.response;
+    }
+  }
+
+  async readme(rawURL: string) {
+    try {
+      const URL = rawURL.substring(0, rawURL.lastIndexOf('/') + 1);
+      return axios.get(`${URL}/README.md`).then((response) => response.data);
+    } catch (err) {
+      return err.response;
+    }
+  }
+
+  async yaml(rawURL: string) {
+    try {
+      const newLine = '\n';
+      return axios.get(`${rawURL}`).then((response) => '```yaml' + newLine + response.data);
     } catch (err) {
       return err.response;
     }

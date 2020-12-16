@@ -1,0 +1,79 @@
+.hub-description {
+  max-width: 90em;
+  margin: auto;
+  margin-top: 2em;
+}
+
+.hub-description-header {
+  padding-top: 2em;
+}
+
+.hub-tabs {
+  width: 90em;
+  background: white;
+}
+
+.hub-horizontal-line {
+  background-color: #ededed;
+  margin-bottom: 1em;
+}
+
+.hub-readme > h2:first-child,
+.hub-readme > h1:first-child {
+  font-weight: bold;
+  font-size: 1.3em;
+  padding-bottom: 0.5em;
+}
+
+.hub-readme > h2,
+h3 {
+  font-weight: bold;
+  padding-top: 1em;
+  padding-bottom: 0.5em;
+}
+
+.hub-readme > h2:first-child {
+  padding-top: 0em;
+  padding-bottom: 0.5em;
+}
+.hub-readme > ul {
+  list-style-type: disc;
+  padding-left: 2em;
+}
+.hub-readme > ol {
+  padding-left: 2em;
+  font-family: Helvetica;
+  padding-bottom: 0.5em;
+}
+.hub-readme > ul > li {
+  padding-bottom: 0.5em;
+}
+.hub-readme > p {
+  padding-bottom: 0.5em;
+}
+.hub-readme {
+  font-family: Helvetica;
+}
+
+code {
+  font-family: Consolas, 'courier new';
+  font-weight: bold;
+  color: crimson;
+  padding: 2px;
+  font-size: 100%;
+}
+
+.a > code {
+  background-color: #f1f1f1;
+  padding: 2px;
+  font-size: 90%;
+}
+
+.hub-details-spinner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 2em;
+  bottom: 0;
+  margin: auto;
+}

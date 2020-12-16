@@ -53,4 +53,26 @@ export class FakeHub implements Api {
       setTimeout(() => resolve(ret()), 1000);
     });
   }
+
+  async readme(rawURL: string) {
+    const splitRawUrl = rawURL.split('/');
+    const resourceName = splitRawUrl[splitRawUrl.length - 3];
+    const data = `${this.dataDir}/${resourceName}-Readme.md`;
+
+    const ret = () => fs.readFileSync(data).toString();
+    return new Promise<string>((resolve) => {
+      setTimeout(() => resolve(ret()), 1000);
+    });
+  }
+
+  async yaml(rawURL: string) {
+    const splitRawUrl = rawURL.split('/');
+    const resourceName = splitRawUrl[splitRawUrl.length - 3];
+    const data = `${this.dataDir}/${resourceName}.yaml`;
+
+    const ret = () => fs.readFileSync(data).toString();
+    return new Promise<string>((resolve) => {
+      setTimeout(() => resolve(ret()), 1000);
+    });
+  }
 }

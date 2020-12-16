@@ -4,13 +4,16 @@ import { useParams } from 'react-router-dom';
 import { Spinner } from '@patternfly/react-core';
 import { useMst } from '../../store/root';
 import BasicDetails from '../BasicDetails';
+import Description from '../../components/Description';
 
 const Details: React.FC = () => {
   const { resources } = useMst();
   const { name } = useParams();
 
-  const updateVersions = () => {
+  const resourceDetails = () => {
     resources.versionInfo(name);
+    resources.loadReadme(name);
+    resources.loadYaml(name);
   };
 
   return useObserver(() =>
@@ -18,8 +21,9 @@ const Details: React.FC = () => {
       <Spinner className="hub-spinner" />
     ) : (
       <React.Fragment>
-        {updateVersions()}
+        {resourceDetails()}
         <BasicDetails />
+        <Description name={name} />
       </React.Fragment>
     )
   );

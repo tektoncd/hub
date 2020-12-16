@@ -49,7 +49,9 @@ export const Resource = types
     tags: types.array(types.reference(Tag)), // ["1", "2"]
     rating: types.number,
     versions: types.array(types.reference(Version)),
-    displayName: ''
+    displayName: '',
+    readme: '',
+    yaml: ''
   })
   .views((self) => ({
     get resourceName() {
@@ -228,6 +230,42 @@ export const ResourceStore = types
         self.err = err.toString();
       }
       self.setLoading(false);
+    }),
+
+    loadReadme: flow(function* (name: string) {
+      try {
+        self.setLoading(true);
+
+        const { api, resources } = self;
+        const resource = resources.get(name);
+        assert(resource);
+        const url = resource.displayVersion.rawURL;
+        assert(url);
+
+        const readme = yield api.readme(url);
+        resource.readme = readme;
+      } catch (err) {
+        self.err = err.toString();
+      }
+      self.setLoading(false);
+    }),
+
+    loadYaml: flow(function* (name: string) {
+      try {
+        self.setLoading(true);
+
+        const { api, resources } = self;
+        const resource = resources.get(name);
+        assert(resource);
+        const url = resource.displayVersion.rawURL;
+        assert(url);
+
+        const yaml = yield api.yaml(url);
+        resource.yaml = yaml;
+      } catch (err) {
+        self.err = err.toString();
+      }
+      self.setLoading(false);
     })
   }))
 
@@ -243,6 +281,8 @@ export const ResourceStore = types
       if (version.id !== resource.displayVersion.id) {
         resource.displayVersion = version;
         self.versionUpdate(version.id);
+        self.loadReadme(resourceName);
+        self.loadYaml(resourceName);
       }
     }
   }))
