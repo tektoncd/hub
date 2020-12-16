@@ -1,0 +1,22 @@
+.hub-userlogo-size {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.hub-userProfile {
+  margin-right: -1em;
+  outline: none;
+}
+
+.hub-userProfile svg {
+  margin-left: -0.5em;
+  margin-right: 0em;
+}
+
+.hub-userProfile-modal {
+  width: 50%;
+}
+
+.hub-userProfile a {
+  outline: none;
+}

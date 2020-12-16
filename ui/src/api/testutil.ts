@@ -1,7 +1,7 @@
-import { Api } from './';
 import * as fs from 'fs';
 import { ICategory } from '../store/category';
 import { IResource, IVersion } from '../store/resource';
+import { Api, AuthResponse } from './';
 
 export class FakeHub implements Api {
   dataDir: string;
@@ -41,6 +41,15 @@ export class FakeHub implements Api {
 
     const ret = () => JSON.parse(fs.readFileSync(data).toString());
     return new Promise<IVersion>((resolve) => {
+      setTimeout(() => resolve(ret()), 1000);
+    });
+  }
+
+  async authentication() {
+    const data = `${this.dataDir}/authentication.json`;
+
+    const ret = () => JSON.parse(fs.readFileSync(data).toString());
+    return new Promise<AuthResponse>((resolve) => {
       setTimeout(() => resolve(ret()), 1000);
     });
   }
