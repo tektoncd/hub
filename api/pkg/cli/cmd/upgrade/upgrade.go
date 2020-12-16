@@ -63,7 +63,7 @@ func Command(cli app.CLI) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "upgrade",
-		Short: "Upgrade a installed resource",
+		Short: "Upgrade an installed resource",
 		Long:  ``,
 		Annotations: map[string]string{
 			"commandType": "main",
@@ -89,7 +89,7 @@ func commandForKind(kind string, opts *options) *cobra.Command {
 
 	return &cobra.Command{
 		Use:          kind,
-		Short:        "Upgrade " + kind + " by its name",
+		Short:        "Upgrade a " + strings.Title(kind) + " by its name",
 		Long:         ``,
 		SilenceUsage: true,
 		Example:      examples(kind),

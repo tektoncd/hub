@@ -51,6 +51,11 @@ Reinstall a %S of name 'foo':
 
     tkn hub reinstall %s foo
 
+or
+
+Reinstall a %S of name 'foo' of version '0.3' from Catalog 'Tekton':
+	
+	tkn hub reinstall %s foo --version 0.3 --from tekton
 `
 
 func Command(cli app.CLI) *cobra.Command {
@@ -86,7 +91,7 @@ func commandForKind(kind string, opts *options) *cobra.Command {
 
 	return &cobra.Command{
 		Use:          kind,
-		Short:        "Reinstall " + kind + " from its name",
+		Short:        "Reinstall a " + strings.Title(kind) + " by its name",
 		Long:         ``,
 		SilenceUsage: true,
 		Example:      examples(kind),

@@ -92,7 +92,7 @@ func commandForKind(kind string, opts *options) *cobra.Command {
 
 	return &cobra.Command{
 		Use:          kind,
-		Short:        "Install " + kind + " from a catalog by its name and version",
+		Short:        "Install " + strings.Title(kind) + " from a catalog by its name and version",
 		Long:         ``,
 		SilenceUsage: true,
 		Example:      examples(kind),

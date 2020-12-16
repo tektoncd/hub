@@ -93,7 +93,7 @@ func Command(cli app.CLI) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "info",
-		Short: "Describe info of resource by its name, kind, catalog, and version",
+		Short: "Display info of resource by its name, kind, catalog, and version",
 		Long:  ``,
 		Annotations: map[string]string{
 			"commandType": "main",
@@ -116,7 +116,7 @@ func commandForKind(kind string, opts *options) *cobra.Command {
 
 	return &cobra.Command{
 		Use:          kind,
-		Short:        "Describe info of " + kind + " by name, catalog and version",
+		Short:        "Display info of " + strings.Title(kind) + " by its name, catalog and version",
 		Long:         ``,
 		SilenceUsage: true,
 		Example:      examples(kind),
