@@ -75,4 +75,12 @@ export class FakeHub implements Api {
       setTimeout(() => resolve(ret()), 1000);
     });
   }
+
+  async getRating() {
+    return { rating: 2 };
+  }
+
+  async setRating() {
+    return null;
+  }
 }
