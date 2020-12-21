@@ -18,6 +18,10 @@ export interface AuthResponse {
   data: TokenData;
 }
 
+export interface Rating {
+  rating: number;
+}
+
 export interface Api {
   categories(): Promise<ICategory>;
   resources(): Promise<IResource>;
@@ -26,6 +30,8 @@ export interface Api {
   authentication(authCode: string): Promise<AuthResponse>;
   readme(rawURL: string): Promise<string>;
   yaml(rawURL: string): Promise<string>;
+  getRating(resourceId: number, token: string): Promise<Rating>;
+  setRating(resourceId: number, token: string, rating: number): Promise<void | null>;
 }
 
 export class Hub implements Api {
@@ -86,6 +92,38 @@ export class Hub implements Api {
     try {
       const newLine = '\n';
       return axios.get(`${rawURL}`).then((response) => '```yaml' + newLine + response.data);
+    } catch (err) {
+      return err.response;
+    }
+  }
+
+  async getRating(resourceId: number, token: string) {
+    try {
+      return axios
+        .get(`${API_URL}/resource/${resourceId}/rating`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then((response) => response.data);
+    } catch (err) {
+      return err.response;
+    }
+  }
+
+  async setRating(resourceId: number, token: string, rating: number) {
+    try {
+      return axios
+        .put(
+          `${API_URL}/resource/${resourceId}/rating`,
+          { rating: rating },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+        .then((response) => response.data);
     } catch (err) {
       return err.response;
     }

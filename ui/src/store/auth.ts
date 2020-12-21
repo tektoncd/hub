@@ -23,7 +23,9 @@ export const AuthStore = types
     refreshTokenInfo: types.optional(TokenInfo, {}),
     isLoading: true,
     isAuthenticated: false,
-    err: ''
+    userRating: types.optional(types.number, 0),
+    authErr: '',
+    ratingErr: ''
   })
   .actions((self) => ({
     addAccessTokenInfo(item: ITokenInfo) {
@@ -39,11 +41,14 @@ export const AuthStore = types
     setIsAuthenticated(l: boolean) {
       self.isAuthenticated = l;
     },
+    setUserRating(rating: number) {
+      self.userRating = rating;
+    },
     setLoading(l: boolean) {
       self.isLoading = l;
     },
     onFailure(err: Error) {
-      self.err = err.toString();
+      self.authErr = err.toString();
     }
   }))
   .views((self) => ({
@@ -68,7 +73,38 @@ export const AuthStore = types
         assert(refresh);
         refresh();
       } catch (err) {
-        self.err = err.toString();
+        self.authErr = err.toString();
+      }
+      self.setLoading(false);
+    }),
+
+    getRating: flow(function* (resourceId: number) {
+      try {
+        self.setLoading(true);
+        const { api } = self;
+
+        if (self.isAuthenticated) {
+          const json = yield api.getRating(resourceId, self.accessTokenInfo.token);
+          self.setUserRating(json.rating);
+        }
+      } catch (err) {
+        self.ratingErr = err.toString();
+      }
+      self.setLoading(false);
+    }),
+
+    setRating: flow(function* (resourceId: number, rating: number) {
+      try {
+        self.setLoading(true);
+
+        const { api } = self;
+
+        if (self.isAuthenticated) {
+          yield api.setRating(resourceId, self.accessTokenInfo.token, rating);
+          self.setUserRating(rating);
+        }
+      } catch (err) {
+        self.ratingErr = err.toString();
       }
       self.setLoading(false);
     })
