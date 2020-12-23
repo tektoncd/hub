@@ -1,0 +1,13 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ui
+  namespace: tekton-hub
+spec:
+  to:
+    kind: Service
+    name: ui
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
