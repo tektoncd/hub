@@ -89,3 +89,7 @@
   position: relative;
   left: 3em;
 }
+
+.hub-details-average-rating svg {
+  color: #484848;
+}

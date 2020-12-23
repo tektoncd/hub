@@ -56,6 +56,10 @@ describe('Store functions', () => {
         store.setLoading(false);
         expect(store.isLoading).toBe(false);
 
+        store.logout();
+        expect(store.isAuthenticated).toBe(false);
+        expect(store.userRating).toBe(0);
+
         done();
       }
     );

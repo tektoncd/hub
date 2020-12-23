@@ -7,7 +7,7 @@
 }
 
 .hub-rating {
-  margin-top: 0.32em;
+  margin-top: 0.1em;
 }
 
 .hub-resource-name {
@@ -42,6 +42,10 @@
 
 .hub-catalog-icon {
   vertical-align: -0.125em;
+}
+
+.hub-rating-icon svg {
+  color: #484848;
 }
 
 .hub-card-link {

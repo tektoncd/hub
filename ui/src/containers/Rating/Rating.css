@@ -23,10 +23,6 @@
   color: lightgrey;
 }
 
-.hub-rate-area > label > svg {
-  color: #484848;
-}
-
 .hub-rate-area:not(:checked) > label:before {
   content: '';
 }

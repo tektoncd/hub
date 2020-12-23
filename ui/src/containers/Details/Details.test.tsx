@@ -15,6 +15,11 @@ const { Provider, root } = createProviderAndStore(api);
 
 jest.mock('react-router-dom', () => {
   return {
+    useHistory: () => {
+      return {
+        history: ''
+      };
+    },
     useParams: () => {
       return {
         name: 'buildah'
