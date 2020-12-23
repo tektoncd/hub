@@ -48,7 +48,9 @@ const Cards: React.FC<Props> = (resources) => {
                 </span>
 
                 <CardActions>
-                  <Icon id={Icons.Star} size={IconSize.sm} label={String(resource.rating)} />
+                  <span className="hub-rating-icon">
+                    <Icon id={Icons.Star} size={IconSize.sm} label={String(resource.rating)} />
+                  </span>
                   <TextContent className="hub-rating">{resource.rating}</TextContent>
                 </CardActions>
               </CardHeader>

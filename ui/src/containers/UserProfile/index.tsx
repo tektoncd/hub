@@ -15,12 +15,6 @@ import './UserProfile.css';
 const UserProfile: React.FC = () => {
   const { user } = useMst();
 
-  const logout = () => {
-    localStorage.clear();
-    user.setIsAuthenticated(false);
-    user.setLoading(true);
-  };
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpen, set] = useState(false);
 
@@ -30,7 +24,7 @@ const UserProfile: React.FC = () => {
     <DropdownItem key="copyToken" onClick={() => setIsModalOpen(!isModalOpen)}>
       Copy Hub Token
     </DropdownItem>,
-    <DropdownItem key="logout" onClick={logout}>
+    <DropdownItem key="logout" onClick={user.logout}>
       Logout
     </DropdownItem>
   ];

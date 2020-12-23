@@ -49,6 +49,12 @@ export const AuthStore = types
     },
     onFailure(err: Error) {
       self.authErr = err.toString();
+    },
+    logout() {
+      localStorage.clear();
+      self.isAuthenticated = false;
+      self.isLoading = false;
+      self.userRating = 0;
     }
   }))
   .views((self) => ({

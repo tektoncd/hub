@@ -13,7 +13,9 @@ exports[`Cards should render the resources on cards 1`] = `
             <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
           </span>
           <CardActions>
-            <Icon id=\\"star\\" size=\\"sm\\" label=\\"4\\" />
+            <span className=\\"hub-rating-icon\\">
+              <Icon id=\\"star\\" size=\\"sm\\" label=\\"4\\" />
+            </span>
             <TextContent className=\\"hub-rating\\">
               4
             </TextContent>
@@ -57,7 +59,9 @@ exports[`Cards should render the resources on cards 1`] = `
             <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
           </span>
           <CardActions>
-            <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            <span className=\\"hub-rating-icon\\">
+              <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            </span>
             <TextContent className=\\"hub-rating\\">
               5
             </TextContent>
@@ -100,7 +104,9 @@ exports[`Cards should render the resources on cards 1`] = `
             <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
           </span>
           <CardActions>
-            <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            <span className=\\"hub-rating-icon\\">
+              <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            </span>
             <TextContent className=\\"hub-rating\\">
               5
             </TextContent>
@@ -143,7 +149,9 @@ exports[`Cards should render the resources on cards 1`] = `
             <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
           </span>
           <CardActions>
-            <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            <span className=\\"hub-rating-icon\\">
+              <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            </span>
             <TextContent className=\\"hub-rating\\">
               5
             </TextContent>
@@ -189,7 +197,9 @@ exports[`Cards should render the resources on cards 1`] = `
             <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
           </span>
           <CardActions>
-            <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            <span className=\\"hub-rating-icon\\">
+              <Icon id=\\"star\\" size=\\"sm\\" label=\\"5\\" />
+            </span>
             <TextContent className=\\"hub-rating\\">
               5
             </TextContent>
@@ -233,7 +243,9 @@ exports[`Cards should render the resources on cards 1`] = `
             <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
           </span>
           <CardActions>
-            <Icon id=\\"star\\" size=\\"sm\\" label=\\"4.5\\" />
+            <span className=\\"hub-rating-icon\\">
+              <Icon id=\\"star\\" size=\\"sm\\" label=\\"4.5\\" />
+            </span>
             <TextContent className=\\"hub-rating\\">
               4.5
             </TextContent>
@@ -276,7 +288,9 @@ exports[`Cards should render the resources on cards 1`] = `
             <Icon id=\\"cat\\" size=\\"sm\\" label=\\"tekton-hub\\" />
           </span>
           <CardActions>
-            <Icon id=\\"star\\" size=\\"sm\\" label=\\"4.5\\" />
+            <span className=\\"hub-rating-icon\\">
+              <Icon id=\\"star\\" size=\\"sm\\" label=\\"4.5\\" />
+            </span>
             <TextContent className=\\"hub-rating\\">
               4.5
             </TextContent>

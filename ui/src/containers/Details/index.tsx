@@ -5,15 +5,20 @@ import { Spinner } from '@patternfly/react-core';
 import { useMst } from '../../store/root';
 import BasicDetails from '../BasicDetails';
 import Description from '../../components/Description';
+import { assert } from '../../store/utils';
 
 const Details: React.FC = () => {
-  const { resources } = useMst();
+  const { resources, user } = useMst();
   const { name } = useParams();
 
   const resourceDetails = () => {
     resources.versionInfo(name);
     resources.loadReadme(name);
     resources.loadYaml(name);
+
+    const resource = resources.resources.get(name);
+    assert(resource);
+    user.getRating(resource.id);
   };
 
   return useObserver(() =>

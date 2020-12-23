@@ -34,7 +34,7 @@ const Icon: React.FC<Props> = (props: Props) => {
     case Icons.Domain:
       return <DomainIcon size={size} className="hub-icon" label={label} />;
     case Icons.Star:
-      return <StarIcon size={size} className="hub-icon" label={label} />;
+      return <StarIcon size={size} label={label} />;
     case Icons.Github:
       return <GithubIcon size={size} className="hub-icon" label={label} />;
   }
