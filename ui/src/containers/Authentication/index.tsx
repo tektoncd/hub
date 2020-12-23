@@ -45,7 +45,7 @@ const Authentication: React.FC = observer(() => {
         </CardBody>
       </Card>
       {user.authErr ? (
-        <AlertGroup isToast>
+        <AlertGroup isToast className="hub-authentication-alert">
           <Alert
             isLiveRegion
             variant="info"

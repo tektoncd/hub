@@ -94,7 +94,7 @@ const Rating: React.FC = observer(() => {
     <div className="hub-details-rating">
       <form onClick={rateResource}>{starList}</form>
       {ratingError ? (
-        <AlertGroup isToast>
+        <AlertGroup isToast className="hub-rating-alert">
           <Alert
             isLiveRegion
             variant="info"

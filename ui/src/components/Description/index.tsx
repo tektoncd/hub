@@ -27,7 +27,7 @@ const Description: React.FC<Props> = (props) => {
     ) : (
       <React.Fragment>
         <Grid className="hub-description">
-          <GridItem span={12}>
+          <GridItem offset={1} span={10}>
             <Card>
               <CardHeader className="hub-description-header">
                 <Grid className="hub-tabs">

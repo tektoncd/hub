@@ -16,6 +16,7 @@ import { IResource } from '../../store/resource';
 import { ITag } from '../../store/category';
 import Icon from '../Icon';
 import { Icons } from '../../common/icons';
+import TooltipDisplay from '../TooltipDisplay';
 import './Cards.css';
 
 interface Props {
@@ -36,17 +37,11 @@ const Cards: React.FC<Props> = (resources) => {
             <Card className="hub-resource-card">
               <CardHeader>
                 <span className="hub-kind-icon">
-                  <Icon id={resource.kind.icon} size={IconSize.sm} label={resource.kind.name} />
+                  <TooltipDisplay name={resource.kind.name} id={resource.kind.icon} />
                 </span>
-
                 <span className="hub-catalog-icon">
-                  <Icon
-                    id={resource.catalog.icon}
-                    size={IconSize.sm}
-                    label={resource.catalog.name}
-                  />
+                  <TooltipDisplay name={resource.catalog.name} id={resource.catalog.icon} />
                 </span>
-
                 <CardActions>
                   <span className="hub-rating-icon">
                     <Icon id={Icons.Star} size={IconSize.sm} label={String(resource.rating)} />

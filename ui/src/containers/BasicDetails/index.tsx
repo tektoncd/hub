@@ -29,6 +29,7 @@ import { IResource } from '../../store/resource';
 import { ITag } from '../../store/category';
 import { Icons } from '../../common/icons';
 import Icon from '../../components/Icon';
+import TooltipDisplay from '../../components/TooltipDisplay';
 import Rating from '../Rating';
 import './BasicDetails.css';
 
@@ -110,19 +111,19 @@ const BasicDetails: React.FC = () => {
                 </Grid>
               </TextContent>
               <CardActions className="hub-details-card-action">
-                <Grid hasGutter>
-                  <GridItem span={3}>
+                <Grid>
+                  <GridItem offset={2} span={1}>
                     <div className="hub-details-average-rating">
-                      <Icon id={Icons.Star} size={IconSize.sm} label="Average-Rating" />
+                      <TooltipDisplay id={Icons.Star} name="Average Rating" />
                     </div>
                   </GridItem>
-                  <GridItem span={2}>
-                    <Text>{resource.rating}</Text>
+                  <GridItem span={1}>
+                    <Text className="hub-details-rating-value"> {resource.rating}</Text>
                   </GridItem>
-                  <GridItem span={12}>
+                  <GridItem className="hub-details-rating__margin">
                     <Rating />
                   </GridItem>
-                  <GridItem>
+                  <GridItem className="hub-details-rating__margin">
                     <Button
                       variant="primary"
                       className="hub-details-button"
@@ -131,7 +132,7 @@ const BasicDetails: React.FC = () => {
                       Install
                     </Button>
                   </GridItem>
-                  <GridItem>
+                  <GridItem className="hub-details-rating__margin">
                     <Dropdown
                       toggle={
                         <DropdownToggle onToggle={onToggle} className="hub-details-dropdown-item">
