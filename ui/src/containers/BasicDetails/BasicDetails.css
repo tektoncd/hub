@@ -87,9 +87,16 @@
 
 .hub-details-average-rating {
   position: relative;
-  left: 3em;
 }
 
 .hub-details-average-rating svg {
   color: #484848;
+}
+
+.hub-details-rating__margin {
+  margin-top: 1em;
+}
+
+.hub-details-rating-value {
+  margin-left: -0.3em;
 }

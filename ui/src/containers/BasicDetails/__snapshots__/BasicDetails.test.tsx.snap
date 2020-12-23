@@ -114,32 +114,41 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                     </TextContent>
                     <CardActions className=\\"hub-details-card-action\\">
                       <div className=\\"pf-c-card__actions hub-details-card-action\\">
-                        <Grid hasGutter={true}>
-                          <div className=\\"pf-l-grid pf-m-gutter\\">
-                            <GridItem span={3}>
-                              <div className=\\"pf-l-grid__item pf-m-3-col\\">
+                        <Grid>
+                          <div className=\\"pf-l-grid\\">
+                            <GridItem offset={2} span={1}>
+                              <div className=\\"pf-l-grid__item pf-m-1-col pf-m-offset-2-col\\">
                                 <div className=\\"hub-details-average-rating\\">
-                                  <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average-Rating\\">
-                                    <StarIcon size=\\"sm\\" label=\\"Average-Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" label=\\"Average-Rating\\">
-                                        <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
-                                      </svg>
-                                    </StarIcon>
-                                  </Icon>
+                                  <TooltipDisplay id=\\"star\\" name=\\"Average Rating\\">
+                                    <Tooltip content={{...}}>
+                                      <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
+                                        <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
+                                          <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average Rating\\" aria-describedby=\\"pf-tooltip-2\\">
+                                            <StarIcon size=\\"sm\\" label=\\"Average Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" label=\\"Average Rating\\">
+                                                <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                              </svg>
+                                            </StarIcon>
+                                          </Icon>
+                                        </FindRefWrapper>
+                                      </Popper>
+                                    </Tooltip>
+                                  </TooltipDisplay>
                                 </div>
                               </div>
                             </GridItem>
-                            <GridItem span={2}>
-                              <div className=\\"pf-l-grid__item pf-m-2-col\\">
-                                <Text>
-                                  <p data-pf-content={true} className=\\"\\">
+                            <GridItem span={1}>
+                              <div className=\\"pf-l-grid__item pf-m-1-col\\">
+                                <Text className=\\"hub-details-rating-value\\">
+                                  <p data-pf-content={true} className=\\"hub-details-rating-value\\">
+                                     
                                     4
                                   </p>
                                 </Text>
                               </div>
                             </GridItem>
-                            <GridItem span={12}>
-                              <div className=\\"pf-l-grid__item pf-m-12-col\\">
+                            <GridItem className=\\"hub-details-rating__margin\\">
+                              <div className=\\"pf-l-grid__item hub-details-rating__margin\\">
                                 <Memo(wrappedComponent)>
                                   <div className=\\"hub-details-rating\\">
                                     <form onClick={[Function: rateResource]}>
@@ -200,8 +209,8 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                                 </Memo(wrappedComponent)>
                               </div>
                             </GridItem>
-                            <GridItem>
-                              <div className=\\"pf-l-grid__item\\">
+                            <GridItem className=\\"hub-details-rating__margin\\">
+                              <div className=\\"pf-l-grid__item hub-details-rating__margin\\">
                                 <Button variant=\\"primary\\" className=\\"hub-details-button\\" onClick={[Function: onModalToggle]}>
                                   <button onClick={[Function: onModalToggle]} aria-disabled={false} aria-label={{...}} className=\\"pf-c-button pf-m-primary hub-details-button\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={4}>
                                     Install
@@ -209,8 +218,8 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                                 </Button>
                               </div>
                             </GridItem>
-                            <GridItem>
-                              <div className=\\"pf-l-grid__item\\">
+                            <GridItem className=\\"hub-details-rating__margin\\">
+                              <div className=\\"pf-l-grid__item hub-details-rating__margin\\">
                                 <Dropdown toggle={{...}} dropdownItems={{...}} onSelect={[Function: onSelect]} isOpen={false}>
                                   <DropdownWithContext toggle={{...}} dropdownItems={{...}} isOpen={false} className=\\"\\" isPlain={false} isGrouped={false} position=\\"left\\" direction=\\"down\\" onSelect={[Function: onSelect]} autoFocus={true} menuAppendTo=\\"inline\\">
                                     <div className=\\"pf-c-dropdown\\" data-ouia-component-type=\\"PF4/Dropdown\\" data-ouia-safe={true} data-ouia-component-id={5}>
@@ -371,32 +380,41 @@ exports[`should render the BasicDetails component 1`] = `
                     </TextContent>
                     <CardActions className=\\"hub-details-card-action\\">
                       <div className=\\"pf-c-card__actions hub-details-card-action\\">
-                        <Grid hasGutter={true}>
-                          <div className=\\"pf-l-grid pf-m-gutter\\">
-                            <GridItem span={3}>
-                              <div className=\\"pf-l-grid__item pf-m-3-col\\">
+                        <Grid>
+                          <div className=\\"pf-l-grid\\">
+                            <GridItem offset={2} span={1}>
+                              <div className=\\"pf-l-grid__item pf-m-1-col pf-m-offset-2-col\\">
                                 <div className=\\"hub-details-average-rating\\">
-                                  <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average-Rating\\">
-                                    <StarIcon size=\\"sm\\" label=\\"Average-Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" label=\\"Average-Rating\\">
-                                        <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
-                                      </svg>
-                                    </StarIcon>
-                                  </Icon>
+                                  <TooltipDisplay id=\\"star\\" name=\\"Average Rating\\">
+                                    <Tooltip content={{...}}>
+                                      <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
+                                        <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
+                                          <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average Rating\\" aria-describedby=\\"pf-tooltip-1\\">
+                                            <StarIcon size=\\"sm\\" label=\\"Average Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" label=\\"Average Rating\\">
+                                                <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                              </svg>
+                                            </StarIcon>
+                                          </Icon>
+                                        </FindRefWrapper>
+                                      </Popper>
+                                    </Tooltip>
+                                  </TooltipDisplay>
                                 </div>
                               </div>
                             </GridItem>
-                            <GridItem span={2}>
-                              <div className=\\"pf-l-grid__item pf-m-2-col\\">
-                                <Text>
-                                  <p data-pf-content={true} className=\\"\\">
+                            <GridItem span={1}>
+                              <div className=\\"pf-l-grid__item pf-m-1-col\\">
+                                <Text className=\\"hub-details-rating-value\\">
+                                  <p data-pf-content={true} className=\\"hub-details-rating-value\\">
+                                     
                                     4
                                   </p>
                                 </Text>
                               </div>
                             </GridItem>
-                            <GridItem span={12}>
-                              <div className=\\"pf-l-grid__item pf-m-12-col\\">
+                            <GridItem className=\\"hub-details-rating__margin\\">
+                              <div className=\\"pf-l-grid__item hub-details-rating__margin\\">
                                 <Memo(wrappedComponent)>
                                   <div className=\\"hub-details-rating\\">
                                     <form onClick={[Function: rateResource]}>
@@ -457,8 +475,8 @@ exports[`should render the BasicDetails component 1`] = `
                                 </Memo(wrappedComponent)>
                               </div>
                             </GridItem>
-                            <GridItem>
-                              <div className=\\"pf-l-grid__item\\">
+                            <GridItem className=\\"hub-details-rating__margin\\">
+                              <div className=\\"pf-l-grid__item hub-details-rating__margin\\">
                                 <Button variant=\\"primary\\" className=\\"hub-details-button\\" onClick={[Function: onModalToggle]}>
                                   <button onClick={[Function: onModalToggle]} aria-disabled={false} aria-label={{...}} className=\\"pf-c-button pf-m-primary hub-details-button\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={1}>
                                     Install
@@ -466,8 +484,8 @@ exports[`should render the BasicDetails component 1`] = `
                                 </Button>
                               </div>
                             </GridItem>
-                            <GridItem>
-                              <div className=\\"pf-l-grid__item\\">
+                            <GridItem className=\\"hub-details-rating__margin\\">
+                              <div className=\\"pf-l-grid__item hub-details-rating__margin\\">
                                 <Dropdown toggle={{...}} dropdownItems={{...}} onSelect={[Function: onSelect]} isOpen={false}>
                                   <DropdownWithContext toggle={{...}} dropdownItems={{...}} isOpen={false} className=\\"\\" isPlain={false} isGrouped={false} position=\\"left\\" direction=\\"down\\" onSelect={[Function: onSelect]} autoFocus={true} menuAppendTo=\\"inline\\">
                                     <div className=\\"pf-c-dropdown\\" data-ouia-component-type=\\"PF4/Dropdown\\" data-ouia-safe={true} data-ouia-component-id={2}>

@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TooltipDisplay component should render Tooltip for resource Avergae Rating icon 1`] = `
+"<Tooltip content={{...}}>
+  <Icon id=\\"star\\" size=\\"sm\\" label=\\"Avergae Rating\\" />
+</Tooltip>"
+`;
+
+exports[`TooltipDisplay component should render Tooltip for resource catalog icon 1`] = `
+"<Tooltip content={{...}}>
+  <Icon id=\\"user\\" size=\\"sm\\" label=\\"Tekton\\" />
+</Tooltip>"
+`;
+
+exports[`TooltipDisplay component should render Tooltip for resource kind icon 1`] = `
+"<Tooltip content={{...}}>
+  <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+</Tooltip>"
+`;

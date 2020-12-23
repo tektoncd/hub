@@ -7,10 +7,10 @@ exports[`Cards should render the resources on cards 1`] = `
       <Card className=\\"hub-resource-card\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
-            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+            <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -53,10 +53,10 @@ exports[`Cards should render the resources on cards 1`] = `
       <Card className=\\"hub-resource-card\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
-            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+            <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -98,10 +98,10 @@ exports[`Cards should render the resources on cards 1`] = `
       <Card className=\\"hub-resource-card\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
-            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+            <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -143,10 +143,10 @@ exports[`Cards should render the resources on cards 1`] = `
       <Card className=\\"hub-resource-card\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
-            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+            <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -191,10 +191,10 @@ exports[`Cards should render the resources on cards 1`] = `
       <Card className=\\"hub-resource-card\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
-            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+            <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -237,10 +237,10 @@ exports[`Cards should render the resources on cards 1`] = `
       <Card className=\\"hub-resource-card\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
-            <Icon id=\\"build\\" size=\\"sm\\" label=\\"Task\\" />
+            <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -282,10 +282,10 @@ exports[`Cards should render the resources on cards 1`] = `
       <Card className=\\"hub-resource-card\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
-            <Icon id=\\"domain\\" size=\\"sm\\" label=\\"Pipeline\\" />
+            <TooltipDisplay name=\\"Pipeline\\" id=\\"domain\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <Icon id=\\"cat\\" size=\\"sm\\" label=\\"tekton-hub\\" />
+            <TooltipDisplay name=\\"tekton-hub\\" id=\\"cat\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
