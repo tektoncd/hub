@@ -1,6 +1,6 @@
 import { flow, getEnv, Instance, types } from 'mobx-state-tree';
 import { Api } from '../api';
-import { assert } from './utils';
+import { titleCase } from '../common/titlecase';
 
 export const TokenInfo = types.model('TokenInfo', {
   token: types.optional(types.string, ''),
@@ -8,7 +8,15 @@ export const TokenInfo = types.model('TokenInfo', {
   refreshInterval: types.optional(types.string, '')
 });
 
+export const Error = types.model('Error', {
+  status: types.optional(types.number, 0),
+  customMessage: types.optional(types.string, ''),
+  serverMessage: types.optional(types.string, '')
+});
+
 export type ITokenInfo = Instance<typeof TokenInfo>;
+export type IError = Instance<typeof Error>;
+
 export interface AuthCodeProps {
   code: string;
 }
@@ -24,8 +32,8 @@ export const AuthStore = types
     isLoading: true,
     isAuthenticated: false,
     userRating: types.optional(types.number, 0),
-    authErr: '',
-    ratingErr: ''
+    authErr: types.optional(Error, {}),
+    ratingErr: types.optional(Error, {})
   })
   .actions((self) => ({
     addAccessTokenInfo(item: ITokenInfo) {
@@ -47,8 +55,28 @@ export const AuthStore = types
     setLoading(l: boolean) {
       self.isLoading = l;
     },
+    setErrorMessage(error: IError) {
+      switch (error.status) {
+        case 400:
+          error.customMessage = 'Bad Request';
+          break;
+        case 401:
+          error.customMessage = 'Unauthorized. Please login again!';
+          break;
+        case 404:
+          error.customMessage = 'Requested resource not found';
+          break;
+        case 500:
+          error.customMessage = 'Internal server error. Please try again after some time!';
+          break;
+        default:
+          error.customMessage = '';
+      }
+    },
     onFailure(err: Error) {
-      self.authErr = err.toString();
+      self.authErr.serverMessage = err.toString();
+      self.authErr.status = 400;
+      self.authErr.customMessage = 'GitHub login failed';
     },
     logout() {
       localStorage.clear();
@@ -76,10 +104,17 @@ export const AuthStore = types
 
         self.setIsAuthenticated(true);
 
-        assert(refresh);
-        refresh();
+        if (refresh) {
+          refresh();
+        }
       } catch (err) {
-        self.authErr = err.toString();
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data.message),
+          customMessage: ''
+        };
+        self.setErrorMessage(error);
+        self.authErr = error;
       }
       self.setLoading(false);
     }),
@@ -94,7 +129,13 @@ export const AuthStore = types
           self.setUserRating(json.rating);
         }
       } catch (err) {
-        self.ratingErr = err.toString();
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data.message),
+          customMessage: ''
+        };
+        self.setErrorMessage(error);
+        self.ratingErr = error;
       }
       self.setLoading(false);
     }),
@@ -110,7 +151,13 @@ export const AuthStore = types
           self.setUserRating(rating);
         }
       } catch (err) {
-        self.ratingErr = err.toString();
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data.message),
+          customMessage: ''
+        };
+        self.setErrorMessage(error);
+        self.ratingErr = error;
       }
       self.setLoading(false);
     })

@@ -49,7 +49,7 @@ describe('Header', () => {
     const code = {
       code: 'foo'
     };
-    user.authenticate(code, 'baar');
+    user.authenticate(code);
     when(
       () => {
         return !user.isLoading;
