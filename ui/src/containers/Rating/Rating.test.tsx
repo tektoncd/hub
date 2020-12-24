@@ -51,7 +51,7 @@ describe('Rating ', () => {
       code: 'foo'
     };
 
-    user.authenticate(code, 'baar');
+    user.authenticate(code);
 
     when(
       () => !user.isLoading,
@@ -87,7 +87,7 @@ describe('Rating ', () => {
     const code = {
       code: 'foo'
     };
-    user.authenticate(code, 'baar');
+    user.authenticate(code);
     when(
       () => !user.isLoading,
       () => {

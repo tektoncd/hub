@@ -53,9 +53,12 @@ export class Hub implements Api {
 
   async authentication(authCode: string) {
     try {
-      return axios.post(`${API_URL}/auth/login?code=${authCode}`).then((response) => response.data);
+      return axios
+        .post(`${API_URL}/auth/login?code=${authCode}`)
+        .then((response) => response.data)
+        .catch((err) => Promise.reject(err.response));
     } catch (err) {
-      return err.response;
+      return err;
     }
   }
 
@@ -105,9 +108,10 @@ export class Hub implements Api {
             Authorization: `Bearer ${token}`
           }
         })
-        .then((response) => response.data);
+        .then((response) => response.data)
+        .catch((err) => Promise.reject(err.response));
     } catch (err) {
-      return err.response;
+      return err;
     }
   }
 
@@ -123,9 +127,10 @@ export class Hub implements Api {
             }
           }
         )
-        .then((response) => response.data);
+        .then((response) => response.data)
+        .catch((err) => Promise.reject(err.response));
     } catch (err) {
-      return err.response;
+      return err;
     }
   }
 }

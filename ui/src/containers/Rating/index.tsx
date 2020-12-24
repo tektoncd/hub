@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react';
 import { useHistory, useParams } from 'react-router-dom';
+import { AlertVariant } from '@patternfly/react-core';
 import { IconSize } from '@patternfly/react-icons';
-import { Alert, AlertActionCloseButton, AlertGroup } from '@patternfly/react-core';
 import { useMst } from '../../store/root';
 import { assert } from '../../store/utils';
 import { Icons } from '../../common/icons';
 import Icon from '../../components/Icon';
+import AlertDisplay from '../../components/AlertDisplay';
 import './Rating.css';
 
 const Rating: React.FC = observer(() => {
@@ -79,7 +80,7 @@ const Rating: React.FC = observer(() => {
         if (user.ratingErr === '') {
           highlightStar(Number(rating));
         } else {
-          setRatingError(user.ratingErr);
+          setRatingError(user.ratingErr.serverMessage);
         }
       }
     }
@@ -94,20 +95,7 @@ const Rating: React.FC = observer(() => {
     <div className="hub-details-rating">
       <form onClick={rateResource}>{starList}</form>
       {ratingError ? (
-        <AlertGroup isToast className="hub-rating-alert">
-          <Alert
-            isLiveRegion
-            variant="info"
-            title={ratingError}
-            actionClose={
-              <AlertActionCloseButton
-                onClose={() => {
-                  window.location.reload();
-                }}
-              />
-            }
-          ></Alert>
-        </AlertGroup>
+        <AlertDisplay message={user.ratingErr} alertVariant={AlertVariant.danger} />
       ) : null}
     </div>
   );

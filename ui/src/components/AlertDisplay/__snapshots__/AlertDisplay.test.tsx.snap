@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render the Alert component 1`] = `
+"<AlertGroup isToast={true} className=\\"hub-alert\\">
+  <Alert isLiveRegion={true} variant=\\"danger\\" title=\\"Test message\\" actionClose={{...}}>
+    Test server message
+  </Alert>
+</AlertGroup>"
+`;

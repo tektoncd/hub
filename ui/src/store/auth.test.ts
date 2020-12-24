@@ -1,6 +1,6 @@
 import { when } from 'mobx';
 import { FakeHub } from '../api/testutil';
-import { AuthStore, TokenInfo } from './auth';
+import { AuthStore, TokenInfo, Error, IError } from './auth';
 
 const TESTDATA_DIR = `${__dirname}/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
@@ -14,6 +14,15 @@ describe('Store Object', () => {
     });
 
     expect(store.refreshInterval).toBe('1h0m0s');
+  });
+  it('can create Error object', () => {
+    const error = Error.create({
+      status: 400,
+      customMessage: 'Test Custom Message',
+      serverMessage: 'Test Server Message'
+    });
+
+    expect(error.status).toBe(400);
   });
 });
 
@@ -117,5 +126,19 @@ describe('Store functions', () => {
         );
       }
     );
+  });
+
+  it('can get the custom error message for status code 400', (done)=>{
+    const store = AuthStore.create({ accessTokenInfo: {}, refreshTokenInfo: {} }, { api });
+
+    const error: IError = {
+      status: 400,
+      serverMessage: 'Github Login Failed',
+      customMessage: ''
+    }
+    store.setErrorMessage(error);
+    expect(error.customMessage).toBe('Bad Request');
+
+    done();
   });
 });
