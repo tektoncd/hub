@@ -1,17 +1,19 @@
-# Development 
+# Development
 
 - [Getting Started](#getting-started)
-- [Checkout repository](#checkout-your-fork) 
+- [Checkout repository](#checkout-your-fork)
 - [Requirements](#requirements)
 - [API Service](#api-service)
-  * [Running Database](#running-database)
-  * [Running Database Migration](#database-migration)
-  * [Adding GitHub OAuth Configuration](#adding-github-oAuth-configuration)
-  * [Running API Service](#running-api-service)
-  * [Running Tests](#running-tests) 
-  * [Creating JWT for testing](#creating-jwt-for-testing)
-  * [API Documentation](#api-documentation)
-
+  - [Running Database](#running-database)
+  - [Running Database Migration](#database-migration)
+  - [Adding GitHub OAuth Configuration](#adding-github-oAuth-configuration)
+  - [Running API Service](#running-api-service)
+  - [Running Tests](#running-tests)
+  - [Creating JWT for testing](#creating-jwt-for-testing)
+  - [API Documentation](#api-documentation)
+- [UI](#ui)
+  - [Running UI](#running-ui)
+  - [Running UI Tests](#running-ui-tests)
 
 ## Getting Started
 
@@ -43,23 +45,24 @@ You must install these tools:
 
 1. [`go`][install-go]: The language hub apis are built in.
 1. [`git`][install-git]: For source control
+1. [`node`][install-node]: To publish and install packages to and from the public npm registry
 
 You may need to install more tools depending on the way you want to run the hub.
-
 
 ## API Service
 
 ### Running database
 
 Two ways to run postgresql database:
+
 - [Install postgresql][install-pg] on your local machine, or
 - Run a postgresql container using [docker][install-docker] / [podman][install-podman]
 
 If you have installed postgresql locally, you need to create a `hub` database.
 
-  **NOTE:** Use the same configuration mentioned in `.env.dev` or
-  update `.env.dev` with the configuration you used. The api service
-  and db migration uses the db configuration from `.env.dev`.
+**NOTE:** Use the same configuration mentioned in `.env.dev` or
+update `.env.dev` with the configuration you used. The api service
+and db migration uses the db configuration from `.env.dev`.
 
 - If you want to run a postgres container, source the `.env.dev` so that
   `docker` can use the same database configuration as in `.env.dev` to create a container.
@@ -77,7 +80,6 @@ If you have installed postgresql locally, you need to create a `hub` database.
     postgres
   ```
 
-
 ### Database Migration
 
 Once the database is up and running, you can run migration to create tables.
@@ -90,12 +92,11 @@ go run ./cmd/db
 
 Wait until the migration completes and logs to show
 
-  > DB initialisation successful !!
-
+> DB initialisation successful !!
 
 ### Adding GitHub OAuth Configuration
 
-Create a GitHub OAuth. You can find the steps to create it [here][gh-oauth]. 
+Create a GitHub OAuth. You can find the steps to create it [here][gh-oauth].
 
 Use `http://localhost:8080` as the `Homepage URL` and `Authorization callback URL`.
 
@@ -114,6 +115,7 @@ go run ./cmd/api
 ### Running tests
 
 To run the tests, we need a test db.
+
 - If you have installed postgresql, create a `hub_test` database.
 - If you are running a container, create `hub_test` database in the same container.
 
@@ -136,25 +138,28 @@ To re-generate the golden files use the below command
 ```bash
 go test $(go list -f '{{ .ImportPath }} {{ .TestImports }}' ./... | grep gotest.tools/v3/golden | awk '{print $1}' | tr '\n' ' ') -test.update-golden=true
 ```
+
 This will run `go test a/package -test.update-golden=true` on all packages that are importing `gotest.tools/v3/golden`
 
 **NOTE:** `tests` use the database configurations from [test/config/env.test][env-test-file]
 
 ### Creating JWT for testing
 
-To create a JWT, Open below URL in a browser. 
+To create a JWT, Open below URL in a browser.
+
 ```
 https://github.com/login/oauth/authorize?client_id=<Add Client ID here>
 ```
+
 Add your OAuth Client ID from [.env.dev][env-dev] in place of `<Add Client ID here>`.
 
 It will redirect you to GitHub. Login using your GitHub Credentials and Once you authorize, it will redirect you to `localhost:8080`.
 
 for ex. `http://localhost:8080/?code=32d4a0b4eb6e9fbea731`
 
-Use the `code` from url in `/auth/login` API. It will add you as a user in db and return a JWT. 
+Use the `code` from url in `/auth/login` API. It will add you as a user in db and return a JWT.
 
-#### JWT with Additional Scopes:
+#### JWT with Additional Scopes
 
 By default, the JWT has only defaut scopes. If you need additional scopes in your JWT then add your GitHub username with required scopes in your local [config.yaml][config-yaml]
 
@@ -168,20 +173,48 @@ Also, you can call the API `/swagger/swagger.json` to get the documentaion.
 
 You can paste file content or API response in [swagger client][swagger].
 
+## UI
 
-[join-github]:https://github.com/join
-[gh-ssh]:https://help.github.com/articles/connecting-to-github-with-ssh/
-[fork-repo]:https://help.github.com/articles/fork-a-repo/
-[sync-fork]:https://help.github.com/articles/syncing-a-fork/
-[install-go]:https://golang.org/doc/install
-[install-goa]:https://github.com/goadesign/goa
-[install-git]:https://help.github.com/articles/set-up-git/
+### Running UI
+
+Ensure you are in `hub/ui` directory
+
+Run the following command to install the dependencies
+
+```
+npm install
+```
+
+To start the application run the following command
+
+```
+npm start
+```
+
+You will see Hub running at `http://localhost:3000`
+
+### Running UI Tests
+
+Run the following command to run all the tests
+
+```
+npm test
+```
+
+[join-github]: https://github.com/join
+[gh-ssh]: https://help.github.com/articles/connecting-to-github-with-ssh/
+[fork-repo]: https://help.github.com/articles/fork-a-repo/
+[sync-fork]: https://help.github.com/articles/syncing-a-fork/
+[install-go]: https://golang.org/doc/install
+[install-goa]: https://github.com/goadesign/goa
+[install-git]: https://help.github.com/articles/set-up-git/
 [install-pg]: https://www.postgresql.org/docs/12/tutorial-install.html
 [install-docker]: https://docs.docker.com/engine/install/
 [install-podman]: https://podman.io/getting-started/installation.html
-[env-dev]:https://github.com/tektoncd/hub/blob/master/api/.env.dev
+[env-dev]: https://github.com/tektoncd/hub/blob/master/api/.env.dev
 [env-test-file]: https://github.com/tektoncd/hub/blob/master/api/test/config/env.test
-[gh-oauth]:https://docs.github.com/en/developers/apps/creating-an-oauth-app
-[config-yaml]:https://github.com/tektoncd/hub/blob/master/config.yaml
-[swagger]:https://editor.swagger.io
-[swagger-doc]:https://github.com/tektoncd/hub/blob/master/api/gen/http/openapi.yaml
+[gh-oauth]: https://docs.github.com/en/developers/apps/creating-an-oauth-app
+[config-yaml]: https://github.com/tektoncd/hub/blob/master/config.yaml
+[swagger]: https://editor.swagger.io
+[swagger-doc]: https://github.com/tektoncd/hub/blob/master/api/gen/http/openapi.yaml
+[install-node]: https://nodejs.org/en/download

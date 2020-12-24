@@ -6,11 +6,14 @@
   - You can also deploy on [Minkube][minikube], [kind][kind] or [OpenShift][openshift].
 - [kubectl][kubectl]
 - [ko][ko]
+
   - You can find installation steps [here][ko].
 
   ```
   go get github.com/google/ko/cmd/ko
   ```
+
+- [docker][docker]
 
 ### Deploy API Service
 
@@ -91,8 +94,57 @@ The migration logs at the end should show
 curl -k -X GET -I $(oc get routes api --template='https://{{ .spec.host }}/categories')
 ```
 
+### Deploy UI
+
+```
+cd ui
+```
+
+#### Build and Publish Image
+
+```
+docker build -t <image> . && docker push <image>
+```
+
+#### Update the deployment image
+
+Update `config/11-deployement` to use the image built above
+
+#### Update the GitHub OAuth Client ID
+
+Edit `config/10-config.yaml` and set your GitHub OAuth Client ID
+
+```
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ui
+  namespace: tekton-hub
+data:
+  API_URL: API URL   <<< update this by api routes
+  GH_CLIENT_ID: GH OAuth Client ID   <<< update this
+```
+
+#### Apply the manifests
+
+```
+kubectl apply -f config
+```
+
+#### Ensure pods are up and running
+
+```
+kubectl get pods
+```
+
+If on openshift verify if the ui route is accessible
+
+Open: oc get routes ui --template='https://{{ .spec.host }} '
+
 [ko]: https://github.com/google/ko
 [kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 [kind]: https://kind.sigs.k8s.io/docs/user/quick-start/
 [minikube]: https://kubernetes.io/docs/tasks/tools/install-minikube/
 [openshift]: https://www.openshift.com/try
+[docker]: https://docs.docker.com/engine/install/
