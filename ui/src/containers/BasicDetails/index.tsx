@@ -61,13 +61,17 @@ const BasicDetails: React.FC = () => {
       <Spinner />
     ) : (
       <Card className="hub-header-card">
-        <Grid>
+        <Grid className="hub-header-card__margin">
           <GridItem span={1}>
-            <div className="hub-details-kind-icon">
-              <Icon id={resource.kind.icon} size={IconSize.xl} label={resource.kind.name} />
-            </div>
+            <Grid>
+              <GridItem offset={8}>
+                <div className="hub-details-kind-icon">
+                  <Icon id={resource.kind.icon} size={IconSize.xl} label={resource.kind.name} />
+                </div>
+              </GridItem>
+            </Grid>
           </GridItem>
-          <GridItem span={9} className="hub-details-card-header">
+          <GridItem span={10}>
             <CardHeader>
               <TextContent className="hub-details-card-body">
                 <Grid className="hub-details-title">
@@ -113,12 +117,14 @@ const BasicDetails: React.FC = () => {
               <CardActions className="hub-details-card-action">
                 <Grid>
                   <GridItem offset={2} span={1}>
-                    <div className="hub-details-average-rating">
-                      <TooltipDisplay id={Icons.Star} name="Average Rating" />
-                    </div>
+                    <Grid>
+                      <GridItem offset={3}>
+                        <TooltipDisplay id={Icons.Star} name="Average Rating" />
+                      </GridItem>
+                    </Grid>
                   </GridItem>
                   <GridItem span={1}>
-                    <Text className="hub-details-rating-value"> {resource.rating}</Text>
+                    <Text> {resource.rating}</Text>
                   </GridItem>
                   <GridItem className="hub-details-rating__margin">
                     <Rating />
