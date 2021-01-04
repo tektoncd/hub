@@ -95,3 +95,13 @@ spec:
                 secretKeyRef:
                   name: api
                   key: JWT_SIGNING_KEY
+            - name: ACCESS_JWT_EXPIRES_IN
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: ACCESS_JWT_EXPIRES_IN
+            - name: REFRESH_JWT_EXPIRES_IN
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: REFRESH_JWT_EXPIRES_IN

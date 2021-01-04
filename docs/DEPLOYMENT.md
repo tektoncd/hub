@@ -33,7 +33,7 @@ kubectl apply -f config/00-config
 
 Navigate to the `config/00-config/` and edit `31-api-secret.yaml` . Set GitHub `oauth` client id and client secret.
 
-```
+```yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -44,6 +44,8 @@ stringData:
   GH_CLIENT_ID: Oauth client id
   GH_CLIENT_SECRET: Oauth secret
   JWT_SIGNING_KEY: a-long-signing-key
+  ACCESS_JWT_EXPIRES_IN: time such as 15m
+  REFRESH_JWT_EXPIRES_IN: time such as 15m
 ```
 
 **NOTE:** DO NOT commit and push
@@ -94,6 +96,24 @@ The migration logs at the end should show
 curl -k -X GET -I $(oc get routes api --template='https://{{ .spec.host }}/categories')
 ```
 
+#### In case of refreshing the catalog
+
+1. Get the Hub Token
+2. Navigate to `config/99-post-deploy` and edit `34-catalog-refresh-secret.yaml`. Set the Hub Token
+
+   ```yaml
+   apiVersion: v1
+   kind: Secret
+   metadata:
+     name: catalog-refresh
+     namespace: tekton-hub
+   type: Opaque
+   stringData:
+     HUB_TOKEN: hub token
+   ```
+
+3. `kubectl apply -f config/99-post-deploy/34-catalog-refresh-secret.yaml`
+
 ### Deploy UI
 
 ```
@@ -114,7 +134,7 @@ Update `config/11-deployement` to use the image built above
 
 Edit `config/10-config.yaml` and set your GitHub OAuth Client ID
 
-```
+```yaml
 ---
 apiVersion: v1
 kind: ConfigMap
