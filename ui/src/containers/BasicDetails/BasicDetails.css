@@ -7,10 +7,8 @@
 }
 
 .hub-details-kind-icon {
-  left: 8em;
   position: relative;
   top: 0.5em;
-  margin-left: 2em;
 }
 
 .hub-details-kind-icon svg {
@@ -23,12 +21,6 @@
 
 .hub-icon {
   margin-top: 0.2em;
-}
-
-.hub-details-card-header {
-  position: relative;
-  left: 4em;
-  margin-left: 0.5em;
 }
 
 .hub-details-card-body {
@@ -85,10 +77,6 @@
   width: 8.5em;
 }
 
-.hub-details-average-rating {
-  position: relative;
-}
-
 .hub-details-average-rating svg {
   color: #484848;
 }
@@ -97,6 +85,6 @@
   margin-top: 1em;
 }
 
-.hub-details-rating-value {
-  margin-left: -0.3em;
+.hub-header-card__margin {
+  margin-left: 5em;
 }

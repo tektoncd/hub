@@ -6,23 +6,31 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
   <BasicDetails>
     <Card className=\\"hub-header-card\\">
       <article className=\\"pf-c-card hub-header-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={3}>
-        <Grid>
-          <div className=\\"pf-l-grid\\">
+        <Grid className=\\"hub-header-card__margin\\">
+          <div className=\\"pf-l-grid hub-header-card__margin\\">
             <GridItem span={1}>
               <div className=\\"pf-l-grid__item pf-m-1-col\\">
-                <div className=\\"hub-details-kind-icon\\">
-                  <Icon id=\\"build\\" size=\\"xl\\" label=\\"Task\\">
-                    <BuildIcon size=\\"xl\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                      <svg style={{...}} fill=\\"currentColor\\" height=\\"3em\\" width=\\"3em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
-                        <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
-                      </svg>
-                    </BuildIcon>
-                  </Icon>
-                </div>
+                <Grid>
+                  <div className=\\"pf-l-grid\\">
+                    <GridItem offset={8}>
+                      <div className=\\"pf-l-grid__item pf-m-offset-8-col\\">
+                        <div className=\\"hub-details-kind-icon\\">
+                          <Icon id=\\"build\\" size=\\"xl\\" label=\\"Task\\">
+                            <BuildIcon size=\\"xl\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                              <svg style={{...}} fill=\\"currentColor\\" height=\\"3em\\" width=\\"3em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
+                                <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                              </svg>
+                            </BuildIcon>
+                          </Icon>
+                        </div>
+                      </div>
+                    </GridItem>
+                  </div>
+                </Grid>
               </div>
             </GridItem>
-            <GridItem span={9} className=\\"hub-details-card-header\\">
-              <div className=\\"pf-l-grid__item pf-m-9-col hub-details-card-header\\">
+            <GridItem span={10}>
+              <div className=\\"pf-l-grid__item pf-m-10-col\\">
                 <CardHeader>
                   <div className=\\"pf-c-card__header\\">
                     <TextContent className=\\"hub-details-card-body\\">
@@ -118,29 +126,35 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                           <div className=\\"pf-l-grid\\">
                             <GridItem offset={2} span={1}>
                               <div className=\\"pf-l-grid__item pf-m-1-col pf-m-offset-2-col\\">
-                                <div className=\\"hub-details-average-rating\\">
-                                  <TooltipDisplay id=\\"star\\" name=\\"Average Rating\\">
-                                    <Tooltip content={{...}}>
-                                      <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
-                                        <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
-                                          <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average Rating\\" aria-describedby=\\"pf-tooltip-2\\">
-                                            <StarIcon size=\\"sm\\" label=\\"Average Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" label=\\"Average Rating\\">
-                                                <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
-                                              </svg>
-                                            </StarIcon>
-                                          </Icon>
-                                        </FindRefWrapper>
-                                      </Popper>
-                                    </Tooltip>
-                                  </TooltipDisplay>
-                                </div>
+                                <Grid>
+                                  <div className=\\"pf-l-grid\\">
+                                    <GridItem offset={3}>
+                                      <div className=\\"pf-l-grid__item pf-m-offset-3-col\\">
+                                        <TooltipDisplay id=\\"star\\" name=\\"Average Rating\\">
+                                          <Tooltip content={{...}}>
+                                            <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
+                                              <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
+                                                <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average Rating\\" aria-describedby=\\"pf-tooltip-2\\">
+                                                  <StarIcon size=\\"sm\\" label=\\"Average Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                                    <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" label=\\"Average Rating\\">
+                                                      <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                    </svg>
+                                                  </StarIcon>
+                                                </Icon>
+                                              </FindRefWrapper>
+                                            </Popper>
+                                          </Tooltip>
+                                        </TooltipDisplay>
+                                      </div>
+                                    </GridItem>
+                                  </div>
+                                </Grid>
                               </div>
                             </GridItem>
                             <GridItem span={1}>
                               <div className=\\"pf-l-grid__item pf-m-1-col\\">
-                                <Text className=\\"hub-details-rating-value\\">
-                                  <p data-pf-content={true} className=\\"hub-details-rating-value\\">
+                                <Text>
+                                  <p data-pf-content={true} className=\\"\\">
                                      
                                     4
                                   </p>
@@ -272,23 +286,31 @@ exports[`should render the BasicDetails component 1`] = `
   <BasicDetails>
     <Card className=\\"hub-header-card\\">
       <article className=\\"pf-c-card hub-header-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={0}>
-        <Grid>
-          <div className=\\"pf-l-grid\\">
+        <Grid className=\\"hub-header-card__margin\\">
+          <div className=\\"pf-l-grid hub-header-card__margin\\">
             <GridItem span={1}>
               <div className=\\"pf-l-grid__item pf-m-1-col\\">
-                <div className=\\"hub-details-kind-icon\\">
-                  <Icon id=\\"build\\" size=\\"xl\\" label=\\"Task\\">
-                    <BuildIcon size=\\"xl\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                      <svg style={{...}} fill=\\"currentColor\\" height=\\"3em\\" width=\\"3em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
-                        <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
-                      </svg>
-                    </BuildIcon>
-                  </Icon>
-                </div>
+                <Grid>
+                  <div className=\\"pf-l-grid\\">
+                    <GridItem offset={8}>
+                      <div className=\\"pf-l-grid__item pf-m-offset-8-col\\">
+                        <div className=\\"hub-details-kind-icon\\">
+                          <Icon id=\\"build\\" size=\\"xl\\" label=\\"Task\\">
+                            <BuildIcon size=\\"xl\\" className=\\"hub-icon\\" label=\\"Task\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                              <svg style={{...}} fill=\\"currentColor\\" height=\\"3em\\" width=\\"3em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"Task\\">
+                                <path d=\\"M1010.971 279.771c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 53.029-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.857c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457-0.229c-1.829 13.029-6.4 25.143-14.171 36.343zM1010.971 520.914c-9.371 13.486-21.943 23.314-37.486 29.029l-30.171 10.971-129.829-51.886 85.714-31.771-384.229-140.343-0.914 0.229-382.171 139.657 83.2 31.086-132.8 52.8-30.171-10.971c-15.543-5.714-28.114-15.314-37.486-29.029-8.229-11.886-13.029-24.914-13.943-39.086h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l433.6-174.629c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l433.829 175.086c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v14.857l-0.457-0.229c-1.829 13.257-6.4 25.371-14.171 36.571zM780.571 675.2l-115.886-42.514 31.771-87.543 98.057 35.429-0.457 0.229 18.286 6.629zM359.314 633.6l-115.886 42.514-32.229-89.143 116.114-42.057zM1024.686 722.743c-1.371 13.029-5.943 25.371-13.714 36.571-9.371 13.486-21.943 23.314-37.486 29.029l-433.829 157.714c-8.686 3.2-17.371 4.8-26.057 4.8v0c-0.229 0-0.457 0-0.686 0 0 0-0.229 0-0.229 0s-0.229 0-0.229 0-0.457 0-0.686 0v0c-8.686-0.229-17.371-1.829-26.057-4.8l-433.829-157.714c-15.314-5.943-27.886-15.543-37.486-29.029-8.229-12.114-12.8-25.143-13.943-39.314h-0.229v-12.343l0.457-0.229c1.143-11.657 4.571-22.4 10.743-32.686 7.314-12.343 17.371-21.943 30.171-29.029l98.743-39.771 0.229 0.686 32.229 89.371 4.8 1.829-45.943 16.686 383.086 142.629 384.229-142.4-50.057-18.286 2.057-1.829 31.771-88 2.057-1.371 98.971 40c12.8 7.086 22.857 16.686 30.171 29.029 6.171 10.286 9.6 21.029 10.743 32.686l0.457 0.229v15.086l-0.457 0.457zM512.229 577.828l-82.514 30.171-32-88.457 32.914-11.886h-1.829l44.114-17.829c11.2-6.4 23.314-9.6 36.571-9.829v0c0.229 0 0.457 0 0.686 0 0 0 0.229 0 0.229 0s0.229 0 0.229 0 0.457 0 0.686 0v0c13.029 0.229 25.371 3.429 36.571 9.829l44.114 17.829 34.286 12.343-32 87.086-81.143-29.714-0.914 0.457z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                              </svg>
+                            </BuildIcon>
+                          </Icon>
+                        </div>
+                      </div>
+                    </GridItem>
+                  </div>
+                </Grid>
               </div>
             </GridItem>
-            <GridItem span={9} className=\\"hub-details-card-header\\">
-              <div className=\\"pf-l-grid__item pf-m-9-col hub-details-card-header\\">
+            <GridItem span={10}>
+              <div className=\\"pf-l-grid__item pf-m-10-col\\">
                 <CardHeader>
                   <div className=\\"pf-c-card__header\\">
                     <TextContent className=\\"hub-details-card-body\\">
@@ -384,29 +406,35 @@ exports[`should render the BasicDetails component 1`] = `
                           <div className=\\"pf-l-grid\\">
                             <GridItem offset={2} span={1}>
                               <div className=\\"pf-l-grid__item pf-m-1-col pf-m-offset-2-col\\">
-                                <div className=\\"hub-details-average-rating\\">
-                                  <TooltipDisplay id=\\"star\\" name=\\"Average Rating\\">
-                                    <Tooltip content={{...}}>
-                                      <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
-                                        <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
-                                          <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average Rating\\" aria-describedby=\\"pf-tooltip-1\\">
-                                            <StarIcon size=\\"sm\\" label=\\"Average Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" label=\\"Average Rating\\">
-                                                <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
-                                              </svg>
-                                            </StarIcon>
-                                          </Icon>
-                                        </FindRefWrapper>
-                                      </Popper>
-                                    </Tooltip>
-                                  </TooltipDisplay>
-                                </div>
+                                <Grid>
+                                  <div className=\\"pf-l-grid\\">
+                                    <GridItem offset={3}>
+                                      <div className=\\"pf-l-grid__item pf-m-offset-3-col\\">
+                                        <TooltipDisplay id=\\"star\\" name=\\"Average Rating\\">
+                                          <Tooltip content={{...}}>
+                                            <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
+                                              <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
+                                                <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average Rating\\" aria-describedby=\\"pf-tooltip-1\\">
+                                                  <StarIcon size=\\"sm\\" label=\\"Average Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                                    <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" label=\\"Average Rating\\">
+                                                      <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
+                                                    </svg>
+                                                  </StarIcon>
+                                                </Icon>
+                                              </FindRefWrapper>
+                                            </Popper>
+                                          </Tooltip>
+                                        </TooltipDisplay>
+                                      </div>
+                                    </GridItem>
+                                  </div>
+                                </Grid>
                               </div>
                             </GridItem>
                             <GridItem span={1}>
                               <div className=\\"pf-l-grid__item pf-m-1-col\\">
-                                <Text className=\\"hub-details-rating-value\\">
-                                  <p data-pf-content={true} className=\\"hub-details-rating-value\\">
+                                <Text>
+                                  <p data-pf-content={true} className=\\"\\">
                                      
                                     4
                                   </p>
