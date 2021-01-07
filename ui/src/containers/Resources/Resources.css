@@ -10,3 +10,7 @@
   bottom: 0;
   margin: auto;
 }
+
+.hub-resource-emptystate__margin {
+  margin-left: -12em;
+}
