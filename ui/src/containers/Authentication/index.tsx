@@ -38,7 +38,9 @@ const Authentication: React.FC = observer(() => {
           />
         </CardBody>
       </Card>
-      {user.authErr.serverMessage ? <AlertDisplay message={user.authErr} alertVariant={AlertVariant.danger} /> : null}
+      {user.authErr.serverMessage ? (
+        <AlertDisplay message={user.authErr} alertVariant={AlertVariant.danger} />
+      ) : null}
     </React.Fragment>
   );
 });

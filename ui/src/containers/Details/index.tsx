@@ -21,12 +21,19 @@ const Details: React.FC = () => {
     user.getRating(resource.id);
   };
 
+  const scrollToTop = () => {
+    const scroller = document.querySelector('main');
+    assert(scroller);
+    if (scroller) scroller.scrollTo(0, 0);
+  };
+
   return useObserver(() =>
     resources.resources.size === 0 ? (
       <Spinner className="hub-spinner" />
     ) : (
       <React.Fragment>
         {resourceDetails()}
+        {scrollToTop()}
         <BasicDetails />
         <Description name={name} />
       </React.Fragment>

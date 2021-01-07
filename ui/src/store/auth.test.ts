@@ -128,14 +128,14 @@ describe('Store functions', () => {
     );
   });
 
-  it('can get the custom error message for status code 400', (done)=>{
+  it('can get the custom error message for status code 400', (done) => {
     const store = AuthStore.create({ accessTokenInfo: {}, refreshTokenInfo: {} }, { api });
 
     const error: IError = {
       status: 400,
       serverMessage: 'Github Login Failed',
       customMessage: ''
-    }
+    };
     store.setErrorMessage(error);
     expect(error.customMessage).toBe('Bad Request');
 
