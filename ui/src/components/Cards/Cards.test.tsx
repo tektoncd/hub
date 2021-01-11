@@ -9,6 +9,14 @@ import Cards from '.';
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
 
+beforeEach(() => {
+  global.Date.now = jest.fn(() => new Date('2020-12-22T10:20:30Z').getTime());
+});
+
+afterEach(() => {
+  global.Date = Date;
+});
+
 describe('Cards', () => {
   it('should render the resources on cards', (done) => {
     const store = ResourceStore.create({}, { api, categories: CategoryStore.create({}, { api }) });

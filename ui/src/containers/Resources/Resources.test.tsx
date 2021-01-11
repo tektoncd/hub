@@ -12,6 +12,14 @@ const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
 const { Provider, root } = createProviderAndStore(api);
 
+beforeEach(() => {
+  global.Date.now = jest.fn(() => new Date('2020-12-22T10:20:30Z').getTime());
+});
+
+afterEach(() => {
+  global.Date = Date;
+});
+
 describe('Resource Component', () => {
   it('should render the resources component', (done) => {
     const component = mount(
