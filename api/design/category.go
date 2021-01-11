@@ -21,10 +21,6 @@ import (
 var _ = Service("category", func() {
 	Description("The category service provides details about category")
 
-	HTTP(func() {
-		Path("/categories")
-	})
-
 	Error("internal-error", ErrorResult, "Internal Server Error")
 
 	Method("list", func() {
@@ -34,7 +30,8 @@ var _ = Service("category", func() {
 		})
 
 		HTTP(func() {
-			GET("/")
+			GET("/categories")
+			GET("/v1/categories")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)

@@ -54,6 +54,8 @@ var _ = Service("resource", func() {
 
 		HTTP(func() {
 			GET("/query")
+			GET("/v1/query")
+
 			Param("name")
 			Param("kinds")
 			Param("tags")
@@ -79,6 +81,8 @@ var _ = Service("resource", func() {
 
 		HTTP(func() {
 			GET("/resources")
+			GET("/v1/resources")
+
 			Param("limit")
 
 			Response(StatusOK)
@@ -98,6 +102,7 @@ var _ = Service("resource", func() {
 
 		HTTP(func() {
 			GET("/resource/{id}/versions")
+			GET("/v1/resource/{id}/versions")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
@@ -127,6 +132,7 @@ var _ = Service("resource", func() {
 
 		HTTP(func() {
 			GET("/resource/{catalog}/{kind}/{name}/{version}")
+			GET("/v1/resource/{catalog}/{kind}/{name}/{version}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
@@ -146,6 +152,7 @@ var _ = Service("resource", func() {
 
 		HTTP(func() {
 			GET("/resource/version/{versionID}")
+			GET("/v1/resource/version/{versionID}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
@@ -171,6 +178,7 @@ var _ = Service("resource", func() {
 
 		HTTP(func() {
 			GET("/resource/{catalog}/{kind}/{name}")
+			GET("/v1/resource/{catalog}/{kind}/{name}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
@@ -190,6 +198,7 @@ var _ = Service("resource", func() {
 
 		HTTP(func() {
 			GET("/resource/{id}")
+			GET("/v1/resource/{id}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
