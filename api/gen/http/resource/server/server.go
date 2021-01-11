@@ -64,19 +64,33 @@ func New(
 	return &Server{
 		Mounts: []*MountPoint{
 			{"Query", "GET", "/query"},
+			{"Query", "GET", "/v1/query"},
 			{"List", "GET", "/resources"},
+			{"List", "GET", "/v1/resources"},
 			{"VersionsByID", "GET", "/resource/{id}/versions"},
+			{"VersionsByID", "GET", "/v1/resource/{id}/versions"},
 			{"ByCatalogKindNameVersion", "GET", "/resource/{catalog}/{kind}/{name}/{version}"},
+			{"ByCatalogKindNameVersion", "GET", "/v1/resource/{catalog}/{kind}/{name}/{version}"},
 			{"ByVersionID", "GET", "/resource/version/{versionID}"},
+			{"ByVersionID", "GET", "/v1/resource/version/{versionID}"},
 			{"ByCatalogKindName", "GET", "/resource/{catalog}/{kind}/{name}"},
+			{"ByCatalogKindName", "GET", "/v1/resource/{catalog}/{kind}/{name}"},
 			{"ByID", "GET", "/resource/{id}"},
+			{"ByID", "GET", "/v1/resource/{id}"},
 			{"CORS", "OPTIONS", "/query"},
+			{"CORS", "OPTIONS", "/v1/query"},
 			{"CORS", "OPTIONS", "/resources"},
+			{"CORS", "OPTIONS", "/v1/resources"},
 			{"CORS", "OPTIONS", "/resource/{id}/versions"},
+			{"CORS", "OPTIONS", "/v1/resource/{id}/versions"},
 			{"CORS", "OPTIONS", "/resource/{catalog}/{kind}/{name}/{version}"},
+			{"CORS", "OPTIONS", "/v1/resource/{catalog}/{kind}/{name}/{version}"},
 			{"CORS", "OPTIONS", "/resource/version/{versionID}"},
+			{"CORS", "OPTIONS", "/v1/resource/version/{versionID}"},
 			{"CORS", "OPTIONS", "/resource/{catalog}/{kind}/{name}"},
+			{"CORS", "OPTIONS", "/v1/resource/{catalog}/{kind}/{name}"},
 			{"CORS", "OPTIONS", "/resource/{id}"},
+			{"CORS", "OPTIONS", "/v1/resource/{id}"},
 		},
 		Query:                    NewQueryHandler(e.Query, mux, decoder, encoder, errhandler, formatter),
 		List:                     NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
@@ -126,6 +140,7 @@ func MountQueryHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("GET", "/query", f)
+	mux.Handle("GET", "/v1/query", f)
 }
 
 // NewQueryHandler creates a HTTP handler which loads the HTTP request and
@@ -177,6 +192,7 @@ func MountListHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("GET", "/resources", f)
+	mux.Handle("GET", "/v1/resources", f)
 }
 
 // NewListHandler creates a HTTP handler which loads the HTTP request and calls
@@ -228,6 +244,7 @@ func MountVersionsByIDHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("GET", "/resource/{id}/versions", f)
+	mux.Handle("GET", "/v1/resource/{id}/versions", f)
 }
 
 // NewVersionsByIDHandler creates a HTTP handler which loads the HTTP request
@@ -279,6 +296,7 @@ func MountByCatalogKindNameVersionHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("GET", "/resource/{catalog}/{kind}/{name}/{version}", f)
+	mux.Handle("GET", "/v1/resource/{catalog}/{kind}/{name}/{version}", f)
 }
 
 // NewByCatalogKindNameVersionHandler creates a HTTP handler which loads the
@@ -331,6 +349,7 @@ func MountByVersionIDHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("GET", "/resource/version/{versionID}", f)
+	mux.Handle("GET", "/v1/resource/version/{versionID}", f)
 }
 
 // NewByVersionIDHandler creates a HTTP handler which loads the HTTP request
@@ -382,6 +401,7 @@ func MountByCatalogKindNameHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("GET", "/resource/{catalog}/{kind}/{name}", f)
+	mux.Handle("GET", "/v1/resource/{catalog}/{kind}/{name}", f)
 }
 
 // NewByCatalogKindNameHandler creates a HTTP handler which loads the HTTP
@@ -433,6 +453,7 @@ func MountByIDHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("GET", "/resource/{id}", f)
+	mux.Handle("GET", "/v1/resource/{id}", f)
 }
 
 // NewByIDHandler creates a HTTP handler which loads the HTTP request and calls
@@ -485,12 +506,19 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("OPTIONS", "/query", f)
+	mux.Handle("OPTIONS", "/v1/query", f)
 	mux.Handle("OPTIONS", "/resources", f)
+	mux.Handle("OPTIONS", "/v1/resources", f)
 	mux.Handle("OPTIONS", "/resource/{id}/versions", f)
+	mux.Handle("OPTIONS", "/v1/resource/{id}/versions", f)
 	mux.Handle("OPTIONS", "/resource/{catalog}/{kind}/{name}/{version}", f)
+	mux.Handle("OPTIONS", "/v1/resource/{catalog}/{kind}/{name}/{version}", f)
 	mux.Handle("OPTIONS", "/resource/version/{versionID}", f)
+	mux.Handle("OPTIONS", "/v1/resource/version/{versionID}", f)
 	mux.Handle("OPTIONS", "/resource/{catalog}/{kind}/{name}", f)
+	mux.Handle("OPTIONS", "/v1/resource/{catalog}/{kind}/{name}", f)
 	mux.Handle("OPTIONS", "/resource/{id}", f)
+	mux.Handle("OPTIONS", "/v1/resource/{id}", f)
 }
 
 // NewCORSHandler creates a HTTP handler which returns a simple 200 response.

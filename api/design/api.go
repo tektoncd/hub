@@ -25,7 +25,7 @@ import (
 var _ = API("hub", func() {
 	Title("Tekton Hub")
 	Description("HTTP services for managing Tekton Hub")
-	Version("0.1")
+	Version("1.0")
 	Meta("swagger:example", "false")
 	Server("hub", func() {
 		Host("production", func() {
