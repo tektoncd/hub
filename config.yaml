@@ -13,22 +13,38 @@
 # limitations under the License.
 ---
 categories:
+  - name: Automation
+    tags: [ansible, boskos, ci, jenkins, operator, release-automation, tekton]
   - name: Build Tools
-    tags: [build-tool]
+    tags: [build-tool, docker]
   - name: CLI
-    tags: [cli]
+    tags: [cli, docker, kubectl]
   - name: Cloud
-    tags: [gcp, aws, azure, cloud]
+    tags: [aws, azure, cloud, gcp, gke, openshift]
   - name: Deploy
-    tags: [deploy]
+    tags: [canary, deploy, deployment, helm, istio]
+  - name: Editor
+    tags: [editor, formatter, lint, linter, pylint]
+  - name: Git
+    tags: [git, github, gitlab, scm]
   - name: Image Build
-    tags: [image-build]
+    tags: [docker, image-build, build, build-image]
+  - name: Language
+    tags: [golang, python]
+  - name: Messaging
+    tags: [mail, messaging]
+  - name: Monitoring
+    tags: [prometheus]
   - name: Notification
     tags: [notification]
   - name: Others
-    tags: []
+    tags: [annotations, delete, dind, download, gate, generic, package, powershell, pwsh, remote, search, scorecard]
+  - name: Security
+    Tags: [security, ssh, tokens]
+  - name: Storage
+    Tags: [gcs]
   - name: Test Framework
-    tags: [test]
+    tags: [coverage, test, pytest]
 
 catalogs:
   - name: tekton
