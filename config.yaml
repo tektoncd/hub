@@ -16,9 +16,9 @@ categories:
   - name: Automation
     tags: [ansible, boskos, ci, jenkins, operator, release-automation, tekton]
   - name: Build Tools
-    tags: [build-tool, docker]
+    tags: [build-tool]
   - name: CLI
-    tags: [cli, docker, kubectl]
+    tags: [cli, kubectl]
   - name: Cloud
     tags: [aws, azure, cloud, gcp, gke, openshift]
   - name: Deploy
