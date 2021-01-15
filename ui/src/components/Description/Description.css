@@ -55,6 +55,22 @@ h3 {
   font-family: Helvetica;
 }
 
+.hub-readme > table,
+tr,
+th {
+  text-align: center !important;
+  border: 1px solid black;
+  padding: 1em 1em 1em 1em;
+}
+
+.hub-readme > table,
+th,
+td {
+  border: 1px solid black;
+  text-align: justify;
+  padding: 1em 1em 1em 1em;
+}
+
 code {
   font-family: Consolas, 'courier new';
   font-weight: bold;

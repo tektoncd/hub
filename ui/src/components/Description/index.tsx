@@ -1,6 +1,7 @@
 import React, { ReactText } from 'react';
 import { useObserver } from 'mobx-react';
 import ReactMarkDown from 'react-markdown';
+import gfm from 'remark-gfm';
 import { Grid, Card, Tabs, Tab, GridItem, CardHeader, Spinner } from '@patternfly/react-core';
 import { useMst } from '../../store/root';
 import Readme from '../Readme';
@@ -36,6 +37,7 @@ const Description: React.FC<Props> = (props) => {
                       <Tab eventKey={0} title="Description" id={props.name}>
                         <hr className="hub-horizontal-line"></hr>
                         <ReactMarkDown
+                          plugins={[[gfm, { tablePipeAlign: false }]]}
                           source={resource.readme}
                           escapeHtml={true}
                           renderers={{ code: Readme }}
