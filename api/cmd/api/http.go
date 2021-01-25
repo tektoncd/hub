@@ -38,10 +38,12 @@ import (
 	resourcesvr "github.com/tektoncd/hub/api/gen/http/resource/server"
 	statussvr "github.com/tektoncd/hub/api/gen/http/status/server"
 	swaggersvr "github.com/tektoncd/hub/api/gen/http/swagger/server"
+	usersvr "github.com/tektoncd/hub/api/gen/http/user/server"
 	"github.com/tektoncd/hub/api/gen/log"
 	rating "github.com/tektoncd/hub/api/gen/rating"
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	status "github.com/tektoncd/hub/api/gen/status"
+	user "github.com/tektoncd/hub/api/gen/user"
 	v1resourcesvr "github.com/tektoncd/hub/api/v1/gen/http/resource/server"
 	v1swaggersvr "github.com/tektoncd/hub/api/v1/gen/http/swagger/server"
 	v1resource "github.com/tektoncd/hub/api/v1/gen/resource"
@@ -59,6 +61,7 @@ func handleHTTPServer(
 	resourceEndpoints *resource.Endpoints,
 	v1resourceEndpoints *v1resource.Endpoints,
 	statusEndpoints *status.Endpoints,
+	userEndpoints *user.Endpoints,
 	wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
@@ -100,6 +103,7 @@ func handleHTTPServer(
 		statusServer     *statussvr.Server
 		swaggerServer    *swaggersvr.Server
 		v1swaggerServer  *v1swaggersvr.Server
+		userServer       *usersvr.Server
 	)
 	{
 		eh := errorHandler(logger)
@@ -113,6 +117,7 @@ func handleHTTPServer(
 		statusServer = statussvr.New(statusEndpoints, mux, dec, enc, eh, nil)
 		swaggerServer = swaggersvr.New(nil, mux, dec, enc, eh, nil)
 		v1swaggerServer = v1swaggersvr.New(nil, mux, dec, enc, eh, nil)
+		userServer = usersvr.New(userEndpoints, mux, dec, enc, eh, nil)
 
 		if debug {
 			servers := goahttp.Servers{
@@ -126,6 +131,7 @@ func handleHTTPServer(
 				statusServer,
 				swaggerServer,
 				v1swaggerServer,
+				userServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
@@ -141,6 +147,7 @@ func handleHTTPServer(
 	statussvr.Mount(mux, statusServer)
 	swaggersvr.Mount(mux, swaggerServer)
 	v1swaggersvr.Mount(mux, v1swaggerServer)
+	usersvr.Mount(mux, userServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.
@@ -181,6 +188,9 @@ func handleHTTPServer(
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range v1swaggerServer.Mounts {
+		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range userServer.Mounts {
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 

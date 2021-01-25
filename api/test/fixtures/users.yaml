@@ -20,6 +20,14 @@
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
 
+- id: 13
+  github_name: abc
+  github_login: abc
+  type: user
+  refresh_token_checksum: 7bd024c1d9a3009dd4208891f2ffd49cb5e972c034bce46883a7c1d982ba9b39
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+
 - id: 21
   agent_name: agent-001
   type: agent

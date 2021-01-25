@@ -41,6 +41,7 @@ var _ = API("hub", func() {
 			"resource",
 			"status",
 			"swagger",
+			"user",
 		)
 	})
 

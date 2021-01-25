@@ -171,6 +171,7 @@ paths:
         - agent:create
         - catalog:refresh
         - config:refresh
+        - refresh:token
   /categories:
     get:
       tags:
@@ -254,7 +255,7 @@ paths:
           type: array
           items:
             type: string
-            example: Et nam pariatur corrupti atque.
+            example: Aliquam possimus tempore non.
           description: Kinds of resource to filter by
           example:
           - task
@@ -270,7 +271,7 @@ paths:
           type: array
           items:
             type: string
-            example: Expedita sit repellendus magnam.
+            example: Voluptatibus voluptatem voluptates sint est officia.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -296,11 +297,11 @@ paths:
           type: string
           description: Strategy used to find matching resources
           default: contains
-          example: contains
+          example: exact
           enum:
           - exact
           - contains
-        example: exact
+        example: contains
       responses:
         "200":
           description: ""
@@ -449,7 +450,7 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: task
+          example: pipeline
           enum:
           - task
           - pipeline
@@ -548,7 +549,7 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: pipeline
+          example: task
           enum:
           - task
           - pipeline
@@ -718,8 +719,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 9293410832204462916
-        example: 15595973357138799589
+          example: 3078878078453162771
+        example: 837001675168035242
       responses:
         "200":
           description: ""
@@ -788,6 +789,7 @@ paths:
         - agent:create
         - catalog:refresh
         - config:refresh
+        - refresh:token
     put:
       tags:
       - rating
@@ -802,8 +804,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 5038586986718798316
-        example: 12822747110185372831
+          example: 7956349260887148895
+        example: 11092447930406954788
       requestBody:
         required: true
         content:
@@ -877,6 +879,7 @@ paths:
         - agent:create
         - catalog:refresh
         - config:refresh
+        - refresh:token
   /resource/{id}/versions:
     get:
       tags:
@@ -1210,6 +1213,7 @@ paths:
         - agent:create
         - catalog:refresh
         - config:refresh
+        - refresh:token
   /system/user/agent:
     put:
       tags:
@@ -1296,6 +1300,74 @@ paths:
         - agent:create
         - catalog:refresh
         - config:refresh
+        - refresh:token
+  /user/refresh/accesstoken:
+    post:
+      tags:
+      - user
+      summary: RefreshAccessToken user
+      description: Refresh the access token of User
+      operationId: user#RefreshAccessToken
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshAccessTokenResponseBody'
+              example:
+                data:
+                  access:
+                    expiresAt: 0
+                    refreshInterval: 1h30m
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
+        "401":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: false
+        "403":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: true
+                timeout: true
+        "500":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                fault: false
+                id: 123abc
+                message: parameter 'p' must be an integer
+                name: bad_request
+                temporary: false
+                timeout: true
+      security:
+      - jwt_header_Authorization:
+        - rating:read
+        - rating:write
+        - agent:create
+        - catalog:refresh
+        - config:refresh
+        - refresh:token
   /v1:
     get:
       tags:
@@ -1383,6 +1455,17 @@ paths:
                 timeout: true
 components:
   schemas:
+    AccessToken:
+      type: object
+      properties:
+        access:
+          $ref: '#/components/schemas/Token'
+      description: Access Token for User
+      example:
+        access:
+          expiresAt: 0
+          refreshInterval: 1h30m
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
     AuthTokens:
       type: object
       properties:
@@ -1482,7 +1565,7 @@ components:
         fault:
           type: boolean
           description: Is the error a server-side fault?
-          example: true
+          example: false
         id:
           type: string
           description: ID is a unique identifier for this particular occurrence of
@@ -1512,7 +1595,7 @@ components:
         message: parameter 'p' must be an integer
         name: bad_request
         temporary: true
-        timeout: true
+        timeout: false
       required:
       - name
       - id
@@ -1564,14 +1647,14 @@ components:
         id:
           type: integer
           description: id of the job
-          example: 8451480480088601963
+          example: 14381081816862842907
         status:
           type: string
           description: status of the job
-          example: Vitae ducimus.
+          example: Quia at impedit.
       example:
-        id: 3463136335453028454
-        status: Autem aut id.
+        id: 10579553497869499435
+        status: Omnis recusandae accusantium fugiat alias ipsa.
       required:
       - id
       - status
@@ -1597,6 +1680,20 @@ components:
               name: image-build
             - id: 2
               name: kaniko
+          - id: 1
+            name: Image Builder
+            tags:
+            - id: 1
+              name: image-build
+            - id: 2
+              name: kaniko
+          - id: 1
+            name: Image Builder
+            tags:
+            - id: 1
+              name: image-build
+            - id: 2
+              name: kaniko
       example:
         data:
         - id: 1
@@ -1613,15 +1710,35 @@ components:
             name: image-build
           - id: 2
             name: kaniko
+        - id: 1
+          name: Image Builder
+          tags:
+          - id: 1
+            name: image-build
+          - id: 2
+            name: kaniko
+    RefreshAccessTokenResponseBody:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AccessToken'
+      example:
+        data:
+          access:
+            expiresAt: 0
+            refreshInterval: 1h30m
+            token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
+      required:
+      - data
     RefreshConfigRequestBody:
       type: object
       properties:
         force:
           type: boolean
           description: Force Refresh the config file
-          example: true
+          example: false
       example:
-        force: false
+        force: true
       required:
       - force
     RefreshConfigResponseBody:
@@ -1630,9 +1747,9 @@ components:
         checksum:
           type: string
           description: Config file checksum
-          example: Quas veniam.
+          example: Corrupti atque odit expedita sit repellendus.
       example:
-        checksum: Accusamus ut dolorum sapiente.
+        checksum: Consequatur numquam id aut illum ut rerum.
       required:
       - checksum
     Resource:
@@ -2088,9 +2205,6 @@ components:
         - error: unable to reach db
           name: api
           status: ok
-        - error: unable to reach db
-          name: api
-          status: ok
     Tag:
       type: object
       properties:
@@ -2139,23 +2253,25 @@ components:
         name:
           type: string
           description: Name of Agent
-          example: Et nam quia incidunt accusamus.
+          example: Dolorem neque maxime nesciunt.
         scopes:
           type: array
           items:
             type: string
-            example: Non eum praesentium corrupti et qui nam.
+            example: Debitis laboriosam incidunt neque asperiores reiciendis hic.
           description: Scopes required for Agent
           example:
-          - Enim sint tempora.
-          - Neque maxime nesciunt.
+          - Dicta itaque possimus.
+          - Aut repellat.
+          - Qui accusantium nulla ea rem.
+          - Ipsam sapiente labore assumenda qui sequi officiis.
       example:
-        name: Debitis laboriosam incidunt neque asperiores reiciendis hic.
+        name: Dolorem laudantium quidem amet suscipit fuga.
         scopes:
-        - Dicta itaque possimus.
-        - Aut repellat.
-        - Qui accusantium nulla ea rem.
-        - Ipsam sapiente labore assumenda qui sequi officiis.
+        - Eveniet qui sint omnis consequatur omnis.
+        - Aut sed voluptas animi molestiae nam.
+        - Veniam optio accusamus ut dolorum sapiente modi.
+        - Vitae ducimus.
       required:
       - name
       - scopes
@@ -2165,9 +2281,9 @@ components:
         token:
           type: string
           description: Agent JWT
-          example: Dolorem laudantium quidem amet suscipit fuga.
+          example: Natus autem.
       example:
-        token: Dolorem eveniet qui sint omnis.
+        token: Id porro placeat et et at itaque.
       required:
       - token
     UpdateRequestBody:
