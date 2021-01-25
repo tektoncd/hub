@@ -284,6 +284,7 @@ var JWTAuth = JWTSecurity("jwt", func() {
 	Scope("agent:create", "Access to create or update an agent")
 	Scope("catalog:refresh", "Access to refresh catalog")
 	Scope("config:refresh", "Access to refresh config file")
+	Scope("refresh:token", "Access to refresh user access token")
 })
 
 var HubService = Type("HubService", func() {
@@ -356,4 +357,9 @@ var AuthTokens = Type("AuthTokens", func() {
 	Description("Auth tokens have access and refresh token for user")
 	Attribute("access", Token, "Access Token")
 	Attribute("refresh", Token, "Refresh Token")
+})
+
+var AccessToken = Type("AccessToken", func() {
+	Description("Access Token for User")
+	Attribute("access", Token, "Access Token for user")
 })

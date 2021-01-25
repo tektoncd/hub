@@ -41,7 +41,7 @@ func NewRefreshEndpoint(s Service, authJWTFn security.AuthJWTFunc) goa.Endpoint 
 		var err error
 		sc := security.JWTScheme{
 			Name:           "jwt",
-			Scopes:         []string{"rating:read", "rating:write", "agent:create", "catalog:refresh", "config:refresh"},
+			Scopes:         []string{"rating:read", "rating:write", "agent:create", "catalog:refresh", "config:refresh", "refresh:token"},
 			RequiredScopes: []string{"catalog:refresh"},
 		}
 		ctx, err = authJWTFn(ctx, p.Token, &sc)
