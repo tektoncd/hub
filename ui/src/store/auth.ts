@@ -79,7 +79,6 @@ export const AuthStore = types
       self.authErr.customMessage = 'GitHub login failed';
     },
     logout() {
-      localStorage.clear();
       self.isAuthenticated = false;
       self.isLoading = false;
       self.userRating = 0;
@@ -99,11 +98,11 @@ export const AuthStore = types
         const json = yield api.authentication(authCode.code);
 
         const userDetails = json.data;
+
         self.addAccessTokenInfo(userDetails.access);
         self.addRefreshTokenInfo(userDetails.refresh);
 
         self.setIsAuthenticated(true);
-
         if (refresh) {
           refresh();
         }
@@ -160,6 +159,40 @@ export const AuthStore = types
         self.ratingErr = error;
       }
       self.setLoading(false);
+    }),
+
+    updateRefreshToken: flow(function* () {
+      try {
+        const { api } = self;
+
+        const refresh = yield api.getRefreshToken(self.refreshTokenInfo.token);
+        const newRefreshToken = refresh.data;
+        self.addRefreshTokenInfo(newRefreshToken.refresh);
+      } catch (err) {
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data.message),
+          customMessage: 'Refresh token has been expired please login again !'
+        };
+        self.setErrorMessage(error);
+      }
+    }),
+
+    updateAccessToken: flow(function* () {
+      try {
+        const { api } = self;
+
+        const access = yield api.getAccessToken(self.refreshTokenInfo.token);
+        const newAccessToken = access.data;
+        self.addAccessTokenInfo(newAccessToken.access);
+      } catch (err) {
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data.message),
+          customMessage: 'Refresh token has been expired please login again !'
+        };
+        self.setErrorMessage(error);
+      }
     })
   }));
 export type IAuthStore = Instance<typeof AuthStore>;

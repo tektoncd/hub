@@ -7,10 +7,17 @@ import Search from '../../containers/Search';
 import UserProfile from '../UserProfile';
 import { FakeHub } from '../../api/testutil';
 import { createProviderAndStore } from '../../store/root';
+import { ActualDate, FakeDate } from '../../common/testutils';
 
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
 const { Provider, root } = createProviderAndStore(api);
+
+// Assign a dummy date to global Date inorder to avoid test failue
+FakeDate();
+
+// Assign current Date once test is over
+ActualDate();
 
 describe('Header', () => {
   it('should render the header component and find Search component', () => {
@@ -50,6 +57,7 @@ describe('Header', () => {
       code: 'foo'
     };
     user.authenticate(code);
+    user.updateRefreshToken();
     when(
       () => {
         return !user.isLoading;

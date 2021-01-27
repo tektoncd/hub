@@ -2,6 +2,7 @@ import axios from 'axios';
 import { API_URL } from '../config/constants';
 import { ICategory } from '../store/category';
 import { IResource, IVersion } from '../store/resource';
+import { ITokenInfo } from '../store/auth';
 
 interface Token {
   token: string;
@@ -32,6 +33,8 @@ export interface Api {
   yaml(rawURL: string): Promise<string>;
   getRating(resourceId: number, token: string): Promise<Rating>;
   setRating(resourceId: number, token: string, rating: number): Promise<void | null>;
+  getRefreshToken(refreshToken: string): Promise<ITokenInfo>;
+  getAccessToken(accessToken: string): Promise<ITokenInfo>;
 }
 
 export class Hub implements Api {
@@ -127,6 +130,38 @@ export class Hub implements Api {
             }
           }
         )
+        .then((response) => response.data)
+        .catch((err) => Promise.reject(err.response));
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async getRefreshToken(refreshToken: string) {
+    try {
+      return axios({
+        method: 'post',
+        url: `${API_URL}/user/refresh/refreshtoken`,
+        headers: {
+          Authorization: `Bearer ${refreshToken}`
+        }
+      })
+        .then((response) => response.data)
+        .catch((err) => Promise.reject(err.response));
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async getAccessToken(refreshToken: string) {
+    try {
+      return axios({
+        method: 'post',
+        url: `${API_URL}/user/refresh/accesstoken`,
+        headers: {
+          Authorization: `Bearer ${refreshToken}`
+        }
+      })
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
     } catch (err) {

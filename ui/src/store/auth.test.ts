@@ -141,4 +141,29 @@ describe('Store functions', () => {
 
     done();
   });
+
+  it('can update refresh and access token', (done) => {
+    const store = AuthStore.create({ accessTokenInfo: {}, refreshTokenInfo: {} }, { api });
+
+    const code = {
+      code: 'foo'
+    };
+    store.authenticate(code);
+    store.updateAccessToken();
+    store.updateRefreshToken();
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        setTimeout(() => {
+          expect(store.isAuthenticated).toBe(true);
+
+          expect(store.accessTokenInfo.refreshInterval).toBe('6h0m0s');
+          expect(store.refreshTokenInfo.refreshInterval).toBe('24h0m0s');
+
+          done();
+        }, 0);
+      }
+    );
+  });
 });
