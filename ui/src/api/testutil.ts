@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { ICategory } from '../store/category';
 import { IResource, IVersion } from '../store/resource';
+import { ITokenInfo } from '../store/auth';
 import { Api, AuthResponse } from './';
 
 export class FakeHub implements Api {
@@ -82,5 +83,23 @@ export class FakeHub implements Api {
 
   async setRating() {
     return null;
+  }
+
+  async getRefreshToken() {
+    const data = `${this.dataDir}/refresh_token.json`;
+
+    const ret = () => JSON.parse(fs.readFileSync(data).toString());
+    return new Promise<ITokenInfo>((resolve) => {
+      setTimeout(() => resolve(ret()), 1000);
+    });
+  }
+
+  async getAccessToken() {
+    const data = `${this.dataDir}/access_token.json`;
+
+    const ret = () => JSON.parse(fs.readFileSync(data).toString());
+    return new Promise<ITokenInfo>((resolve) => {
+      setTimeout(() => resolve(ret()), 1000);
+    });
   }
 }

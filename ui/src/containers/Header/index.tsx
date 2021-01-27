@@ -28,7 +28,7 @@ const Header: React.FC = observer(() => {
           <Search />
         </GridItem>
       </Grid>
-      {user.isAuthenticated ? (
+      {user.isAuthenticated && user.refreshTokenInfo.expiresAt * 1000 > global.Date.now() ? (
         <UserProfile />
       ) : (
         <Text component={TextVariants.h3}>

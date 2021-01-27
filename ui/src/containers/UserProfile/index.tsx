@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Avatar,
   ClipboardCopy,
@@ -15,8 +15,41 @@ import './UserProfile.css';
 const UserProfile: React.FC = () => {
   const { user } = useMst();
 
+  const [refreshId, setRefreshId] = useState<number>(0);
+  const [accessId, setAccessId] = useState<number>(0);
+
+  const triggerInterval = useCallback(() => {
+    const accessTokenInterval = user.accessTokenInfo.expiresAt * 1000 - new Date().getTime();
+    const refreshTokenInterval = user.refreshTokenInfo.expiresAt * 1000 - new Date().getTime();
+
+    // To get a new refresh token
+    // Update the refresh token before 10 seconds of current refresh token's expiry time
+    const tempRefreshId = window.setInterval(() => {
+      user.updateRefreshToken();
+    }, refreshTokenInterval - 10000);
+    setRefreshId(tempRefreshId);
+
+    // To get a new access token
+    // Update the access token before 10 seconds of current access token's expiry time
+    const tempAccessId = window.setInterval(() => {
+      user.updateAccessToken();
+    }, accessTokenInterval - 10000);
+    setAccessId(tempAccessId);
+  }, [user]);
+
+  useEffect(() => {
+    triggerInterval();
+  }, [triggerInterval]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpen, set] = useState(false);
+
+  const hubLogout = () => {
+    user.logout();
+    localStorage.clear();
+    clearInterval(refreshId);
+    clearInterval(accessId);
+  };
 
   const onToggle = (isOpen: React.SetStateAction<boolean>) => set(isOpen);
 
@@ -24,7 +57,7 @@ const UserProfile: React.FC = () => {
     <DropdownItem key="copyToken" onClick={() => setIsModalOpen(!isModalOpen)}>
       Copy Hub Token
     </DropdownItem>,
-    <DropdownItem key="logout" onClick={user.logout}>
+    <DropdownItem key="logout" onClick={hubLogout}>
       Logout
     </DropdownItem>
   ];
