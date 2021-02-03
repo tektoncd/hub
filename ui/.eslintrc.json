@@ -13,6 +13,7 @@
     "jest": true
   },
   "rules": {
+    "prettier/prettier": ["error", { "endOfLine": "auto" }],
     "no-console": "warn",
     "@typescript-eslint/explicit-module-boundary-types": "off"
   },

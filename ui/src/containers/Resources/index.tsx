@@ -33,7 +33,7 @@ const Resources = () => {
   };
 
   return useObserver(() =>
-    resources.isLoading ? (
+    resources.resources.size === 0 ? (
       <Spinner className="hub-spinner" />
     ) : (
       <React.Fragment>{checkResources(resources.filteredResources)}</React.Fragment>

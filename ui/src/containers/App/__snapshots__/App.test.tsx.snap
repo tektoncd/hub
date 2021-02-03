@@ -1,489 +1,350 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`App should render the component correctly and match the snapshot 1`] = `
-Array [
-  " ",
-  " ",
-  <div
-    className="pf-c-page hub-page"
-  >
-    <header
-      className="pf-c-page__header"
-    >
-      <div
-        className="pf-c-page__header-brand"
-      >
-        <a
-          className="pf-c-page__header-brand-link"
-        >
-          <img
-            alt="Tekton Hub Logo"
-            className="pf-c-brand"
-            onClick={[Function]}
-            src="logo.png"
-          />
-        </a>
-      </div>
-      <div
-        className="pf-c-page__header-tools"
-      >
-        <div
-          className="pf-l-grid"
-        >
-          <div
-            className="pf-l-grid__item pf-m-11-col"
-          >
-            <input
-              aria-invalid={false}
-              aria-label="text input example"
-              className="pf-c-form-control hub-search"
-              disabled={false}
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              onKeyPress={[Function]}
-              placeholder="Search for resources..."
-              readOnly={false}
-              required={false}
-              spellCheck="false"
-              type="search"
-              value=""
-            />
-          </div>
-        </div>
-        <h3
-          className=""
-          data-pf-content={true}
-        >
-          <a
-            href="/login"
-            onClick={[Function]}
-            style={
-              Object {
-                "textDecoration": "none",
-              }
-            }
-          >
-            <span
-              className="hub-header-login"
-            >
-              Login
-            </span>
-          </a>
-        </h3>
-      </div>
-    </header>
-    <main
-      className="pf-c-page__main"
-      tabIndex={-1}
-    >
-      <div
-        className="hub-background-image"
-      >
-        <div
-          className="pf-c-content"
-        >
-          <h1
-            className="hub-background-heading"
-            data-pf-content={true}
-          >
-            Welcome to Tekton Hub
-          </h1>
-          <h3
-            className="hub-tag-line"
-            data-pf-content={true}
-          >
-            Discover, search and share reusable Tasks and Pipelines
-          </h3>
-        </div>
-      </div>
-      <section
-        className="pf-c-page__main-section"
-      >
-        <div
-          className="pf-l-grid pf-m-gutter"
-        >
-          <div
-            className="pf-l-grid__item pf-m-12-col"
-          />
-          <div
-            className="pf-l-grid__item pf-m-2-col"
-          >
-            <div
-              className="pf-l-grid pf-m-gutter hub-leftpane"
-            >
-              <div
-                className="pf-l-grid__item pf-m-8-col"
-              >
-                <div
-                  className="hub-sort"
-                >
-                  <div
-                    className="pf-c-select"
-                    data-ouia-component-id={0}
-                    data-ouia-component-type="PF4/Select"
-                    data-ouia-safe={true}
-                  >
-                    <div
-                      className="pf-c-select__toggle pf-m-typeahead"
-                      onClick={[Function]}
-                      onKeyDown={[Function]}
-                    >
-                      <div
-                        className="pf-c-select__toggle-wrapper"
-                      >
-                        <input
-                          aria-activedescendant={null}
-                          aria-label="Sort By"
-                          autoComplete="off"
-                          className="pf-c-form-control pf-c-select__toggle-typeahead"
-                          disabled={false}
-                          id="pf-select-toggle-id-0-select-typeahead"
-                          onChange={[Function]}
-                          onClick={[Function]}
-                          onFocus={[Function]}
-                          placeholder="Sort By"
-                          type="text"
-                          value=""
-                        />
+"<Provider>
+   
+  <Memo(wrappedComponent)>
+    <Provider>
+       
+      <BrowserRouter>
+        <Router history={{...}}>
+          <Page header={{...}} className=\\"hub-page\\" isManagedSidebar={false} isBreadcrumbWidthLimited={false} defaultManagedSidebarIsOpen={true} onPageResize={[Function: onPageResize]} mainTabIndex={-1} isNotificationDrawerExpanded={false} onNotificationDrawerExpand={[Function: onNotificationDrawerExpand]}>
+            <div className=\\"pf-c-page hub-page\\">
+              <Memo(wrappedComponent)>
+                <PageHeader logo={{...}} headerTools={{...}}>
+                  <header role={[undefined]} className=\\"pf-c-page__header\\">
+                    <div className=\\"pf-c-page__header-brand\\">
+                      <a className=\\"pf-c-page__header-brand-link\\">
+                        <Brand src=\\"logo.png\\" alt=\\"Tekton Hub Logo\\" onClick={[Function: onClick]}>
+                          <img onClick={[Function: onClick]} className=\\"pf-c-brand\\" src=\\"logo.png\\" alt=\\"Tekton Hub Logo\\" />
+                        </Brand>
+                      </a>
+                    </div>
+                    <PageHeaderTools>
+                      <div className=\\"pf-c-page__header-tools\\">
+                        <Grid>
+                          <div className=\\"pf-l-grid\\">
+                            <GridItem span={11}>
+                              <div className=\\"pf-l-grid__item pf-m-11-col\\">
+                                <Search>
+                                  <ForwardRef value=\\"\\" type=\\"search\\" onChange={[Function: onSearchChange]} onKeyPress={[Function: onSearchKeyPress]} aria-label=\\"text input example\\" placeholder=\\"Search for resources...\\" spellCheck=\\"false\\" className=\\"hub-search\\">
+                                    <TextInputBase value=\\"\\" type=\\"search\\" onChange={[Function: onSearchChange]} onKeyPress={[Function: onSearchKeyPress]} aria-label=\\"text input example\\" placeholder=\\"Search for resources...\\" spellCheck=\\"false\\" className=\\"hub-search\\" innerRef={{...}} isRequired={false} validated=\\"default\\" isDisabled={false} isReadOnly={false} isLeftTruncated={false}>
+                                      <input onKeyPress={[Function: onSearchKeyPress]} aria-label=\\"text input example\\" placeholder=\\"Search for resources...\\" spellCheck=\\"false\\" onFocus={[Function (anonymous)]} onBlur={[Function (anonymous)]} className=\\"pf-c-form-control hub-search\\" onChange={[Function (anonymous)]} type=\\"search\\" value=\\"\\" aria-invalid={false} required={false} disabled={false} readOnly={false} />
+                                    </TextInputBase>
+                                  </ForwardRef>
+                                </Search>
+                              </div>
+                            </GridItem>
+                          </div>
+                        </Grid>
+                        <Text component=\\"h3\\">
+                          <h3 data-pf-content={true} className=\\"\\">
+                            <Link to=\\"/login\\" style={{...}}>
+                              <LinkAnchor style={{...}} href=\\"/login\\" navigate={[Function: navigate]}>
+                                <a style={{...}} href=\\"/login\\" onClick={[Function: onClick]}>
+                                  <span className=\\"hub-header-login\\">
+                                    Login
+                                  </span>
+                                </a>
+                              </LinkAnchor>
+                            </Link>
+                          </h3>
+                        </Text>
                       </div>
-                      <button
-                        aria-expanded={false}
-                        aria-haspopup="listbox"
-                        aria-label="Options menu"
-                        aria-labelledby=" pf-select-toggle-id-0"
-                        className="pf-c-button pf-c-select__toggle-button pf-m-plain"
-                        disabled={false}
-                        id="pf-select-toggle-id-0"
-                        onClick={[Function]}
-                        tabIndex={-1}
-                        type="button"
-                      >
-                        <svg
-                          aria-hidden={true}
-                          aria-labelledby={null}
-                          className="pf-c-select__toggle-arrow"
-                          fill="currentColor"
-                          height="1em"
-                          role="img"
-                          style={
-                            Object {
-                              "verticalAlign": "-0.125em",
-                            }
-                          }
-                          viewBox="0 0 320 512"
-                          width="1em"
-                        >
-                          <path
-                            d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
-                            transform=""
-                          />
-                        </svg>
-                      </button>
+                    </PageHeaderTools>
+                  </header>
+                </PageHeader>
+              </Memo(wrappedComponent)>
+              <main role={[undefined]} id={[undefined]} className=\\"pf-c-page__main\\" tabIndex={-1} aria-label={[undefined]}>
+                <Route exact={true} path=\\"/\\" component={[Function: Background]}>
+                  <Background history={{...}} location={{...}} match={{...}} staticContext={[undefined]}>
+                    <div className=\\"hub-background-image\\">
+                      <TextContent>
+                        <div className=\\"pf-c-content\\">
+                          <Text component=\\"h1\\" className=\\"hub-background-heading\\">
+                            <h1 data-pf-content={true} className=\\"hub-background-heading\\">
+                              Welcome to Tekton Hub
+                            </h1>
+                          </Text>
+                          <Text component=\\"h3\\" className=\\"hub-tag-line\\">
+                            <h3 data-pf-content={true} className=\\"hub-tag-line\\">
+                              Discover, search and share reusable Tasks and Pipelines
+                            </h3>
+                          </Text>
+                        </div>
+                      </TextContent>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                className="pf-l-grid__item"
-              >
-                <div>
-                  <div
-                    className="pf-l-grid"
-                  >
-                    <div
-                      className="pf-l-grid__item pf-m-6-col"
-                    >
-                      <h1
-                        className="hub-filter-header"
-                        data-pf-content={true}
-                      >
-                        Kind
-                      </h1>
-                    </div>
-                    <div
-                      className="pf-l-grid__item pf-m-3-col"
-                    >
-                      <button
-                        aria-disabled={false}
-                        aria-label="Clear"
-                        className="pf-c-button pf-m-plain"
-                        data-ouia-component-id={1}
-                        data-ouia-component-type="PF4/Button"
-                        data-ouia-safe={true}
-                        disabled={false}
-                        onClick={[Function]}
-                        type="button"
-                      >
-                        <svg
-                          aria-hidden={true}
-                          aria-labelledby={null}
-                          fill="currentColor"
-                          height="1em"
-                          role="img"
-                          style={
-                            Object {
-                              "verticalAlign": "-0.125em",
-                            }
-                          }
-                          viewBox="0 0 352 512"
-                          width="1em"
-                        >
-                          <path
-                            d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-                            transform=""
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                    <div
-                      className="pf-l-grid__item pf-m-12-col"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div
-                className="pf-l-grid__item"
-              >
-                <div>
-                  <div
-                    className="pf-l-grid"
-                  >
-                    <div
-                      className="pf-l-grid__item pf-m-6-col"
-                    >
-                      <h1
-                        className="hub-filter-header"
-                        data-pf-content={true}
-                      >
-                        Catalog
-                      </h1>
-                    </div>
-                    <div
-                      className="pf-l-grid__item pf-m-3-col"
-                    >
-                      <button
-                        aria-disabled={false}
-                        aria-label="Clear"
-                        className="pf-c-button pf-m-plain"
-                        data-ouia-component-id={2}
-                        data-ouia-component-type="PF4/Button"
-                        data-ouia-safe={true}
-                        disabled={false}
-                        onClick={[Function]}
-                        type="button"
-                      >
-                        <svg
-                          aria-hidden={true}
-                          aria-labelledby={null}
-                          fill="currentColor"
-                          height="1em"
-                          role="img"
-                          style={
-                            Object {
-                              "verticalAlign": "-0.125em",
-                            }
-                          }
-                          viewBox="0 0 352 512"
-                          width="1em"
-                        >
-                          <path
-                            d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-                            transform=""
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                    <div
-                      className="pf-l-grid__item pf-m-12-col"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div
-                className="pf-l-grid__item"
-              >
-                <div>
-                  <div
-                    className="pf-l-grid"
-                  >
-                    <div
-                      className="pf-l-grid__item pf-m-6-col"
-                    >
-                      <h1
-                        className="hub-filter-header"
-                        data-pf-content={true}
-                      >
-                        Category
-                      </h1>
-                    </div>
-                    <div
-                      className="pf-l-grid__item pf-m-3-col"
-                    >
-                      <button
-                        aria-disabled={false}
-                        aria-label="Clear"
-                        className="pf-c-button pf-m-plain"
-                        data-ouia-component-id={3}
-                        data-ouia-component-type="PF4/Button"
-                        data-ouia-safe={true}
-                        disabled={false}
-                        onClick={[Function]}
-                        type="button"
-                      >
-                        <svg
-                          aria-hidden={true}
-                          aria-labelledby={null}
-                          fill="currentColor"
-                          height="1em"
-                          role="img"
-                          style={
-                            Object {
-                              "verticalAlign": "-0.125em",
-                            }
-                          }
-                          viewBox="0 0 352 512"
-                          width="1em"
-                        >
-                          <path
-                            d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-                            transform=""
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                    <div
-                      className="pf-l-grid__item pf-m-12-col"
-                    />
-                  </div>
-                </div>
-              </div>
+                  </Background>
+                </Route>
+                <PageSection>
+                  <section className=\\"pf-c-page__main-section\\">
+                    <Grid hasGutter={true}>
+                      <div className=\\"pf-l-grid pf-m-gutter\\">
+                        <GridItem span={12}>
+                          <div className=\\"pf-l-grid__item pf-m-12-col\\">
+                            <Route exact={true} path=\\"/login\\" component={{...}} />
+                            <Route exact={true} path=\\"/:catalog/:kind/:name\\" component={[Function: Details]} />
+                          </div>
+                        </GridItem>
+                        <GridItem span={2}>
+                          <div className=\\"pf-l-grid__item pf-m-2-col\\">
+                            <Route exact={true} path=\\"/\\" component={[Function: LeftPane]}>
+                              <LeftPane history={{...}} location={{...}} match={{...}} staticContext={[undefined]}>
+                                <Grid hasGutter={true} className=\\"hub-leftpane\\">
+                                  <div className=\\"pf-l-grid pf-m-gutter hub-leftpane\\">
+                                    <GridItem span={8}>
+                                      <div className=\\"pf-l-grid__item pf-m-8-col\\">
+                                        <Sort>
+                                          <div className=\\"hub-sort\\">
+                                            <Select variant=\\"typeahead\\" typeAheadAriaLabel=\\"Sort By\\" onToggle={[Function: onToggle]} onSelect={[Function: onSelect]} onClear={[Function: clearSelection]} isOpen={false} selections=\\"\\" placeholderText=\\"Sort By\\" className=\\"\\" direction=\\"down\\" toggleId={{...}} isGrouped={false} isPlain={false} isDisabled={false} isCreatable={false} aria-label=\\"\\" aria-labelledby=\\"\\" clearSelectionsAriaLabel=\\"Clear all\\" toggleAriaLabel=\\"Options menu\\" removeSelectionAriaLabel=\\"Remove\\" createText=\\"Create\\" noResultsFoundText=\\"No results found\\" width=\\"\\" onCreateOption={[Function: onCreateOption]} toggleIcon={{...}} onFilter={{...}} customContent={{...}} hasInlineFilter={false} inlineFilterPlaceholderText={{...}} customBadgeText={{...}} inputIdPrefix=\\"\\" menuAppendTo=\\"inline\\" ouiaSafe={true}>
+                                              <GenerateId prefix=\\"pf-random-id-\\">
+                                                <div className=\\"pf-c-select\\" data-ouia-component-type=\\"PF4/Select\\" data-ouia-safe={true} data-ouia-component-id={0}>
+                                                  <SelectToggle id=\\"pf-select-toggle-id-0\\" parentRef={{...}} menuRef={{...}} isOpen={false} isPlain={false} onToggle={[Function: onToggle]} onEnter={[Function (anonymous)]} onClose={[Function (anonymous)]} variant=\\"typeahead\\" aria-labelledby=\\" pf-select-toggle-id-0\\" aria-label=\\"Options menu\\" handleTypeaheadKeys={[Function (anonymous)]} isDisabled={false} hasClearButton={true} className=\\"\\" isActive={false} type=\\"button\\">
+                                                    <div className=\\"pf-c-select__toggle pf-m-typeahead\\" onClick={[Function: onClick]} onKeyDown={[Function (anonymous)]}>
+                                                      <div className=\\"pf-c-select__toggle-wrapper\\">
+                                                        <input className=\\"pf-c-form-control pf-c-select__toggle-typeahead\\" aria-activedescendant={{...}} id=\\"pf-select-toggle-id-0-select-typeahead\\" aria-label=\\"Sort By\\" placeholder=\\"Sort By\\" value=\\"\\" type=\\"text\\" onClick={[Function (anonymous)]} onChange={[Function (anonymous)]} onFocus={[Function (anonymous)]} autoComplete=\\"off\\" disabled={false} />
+                                                      </div>
+                                                      <button id=\\"pf-select-toggle-id-0\\" aria-labelledby=\\" pf-select-toggle-id-0\\" aria-expanded={false} aria-haspopup=\\"listbox\\" type=\\"button\\" className=\\"pf-c-button pf-c-select__toggle-button pf-m-plain\\" aria-label=\\"Options menu\\" onClick={[Function: onClick]} tabIndex={-1} disabled={false}>
+                                                        <CaretDownIcon className=\\"pf-c-select__toggle-arrow\\" color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                          <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 320 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"pf-c-select__toggle-arrow\\">
+                                                            <path d=\\"M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z\\" transform=\\"\\" />
+                                                          </svg>
+                                                        </CaretDownIcon>
+                                                      </button>
+                                                    </div>
+                                                  </SelectToggle>
+                                                </div>
+                                              </GenerateId>
+                                            </Select>
+                                          </div>
+                                        </Sort>
+                                      </div>
+                                    </GridItem>
+                                    <GridItem>
+                                      <div className=\\"pf-l-grid__item\\">
+                                        <KindFilter>
+                                          <Filter store={{...}} header=\\"Kind\\">
+                                            <div>
+                                              <Grid>
+                                                <div className=\\"pf-l-grid\\">
+                                                  <GridItem span={6}>
+                                                    <div className=\\"pf-l-grid__item pf-m-6-col\\">
+                                                      <Text component=\\"h1\\" className=\\"hub-filter-header\\">
+                                                        <h1 data-pf-content={true} className=\\"hub-filter-header\\">
+                                                          Kind
+                                                        </h1>
+                                                      </Text>
+                                                    </div>
+                                                  </GridItem>
+                                                  <GridItem span={3}>
+                                                    <div className=\\"pf-l-grid__item pf-m-3-col\\">
+                                                      <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
+                                                        <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={1}>
+                                                          <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                            <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                              <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" transform=\\"\\" />
+                                                            </svg>
+                                                          </TimesIcon>
+                                                        </button>
+                                                      </Button>
+                                                    </div>
+                                                  </GridItem>
+                                                  <GridItem span={12}>
+                                                    <div className=\\"pf-l-grid__item pf-m-12-col\\" />
+                                                  </GridItem>
+                                                </div>
+                                              </Grid>
+                                            </div>
+                                          </Filter>
+                                        </KindFilter>
+                                      </div>
+                                    </GridItem>
+                                    <GridItem>
+                                      <div className=\\"pf-l-grid__item\\">
+                                        <CatalogFilter>
+                                          <Filter store={{...}} header=\\"Catalog\\">
+                                            <div>
+                                              <Grid>
+                                                <div className=\\"pf-l-grid\\">
+                                                  <GridItem span={6}>
+                                                    <div className=\\"pf-l-grid__item pf-m-6-col\\">
+                                                      <Text component=\\"h1\\" className=\\"hub-filter-header\\">
+                                                        <h1 data-pf-content={true} className=\\"hub-filter-header\\">
+                                                          Catalog
+                                                        </h1>
+                                                      </Text>
+                                                    </div>
+                                                  </GridItem>
+                                                  <GridItem span={3}>
+                                                    <div className=\\"pf-l-grid__item pf-m-3-col\\">
+                                                      <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
+                                                        <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={2}>
+                                                          <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                            <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                              <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" transform=\\"\\" />
+                                                            </svg>
+                                                          </TimesIcon>
+                                                        </button>
+                                                      </Button>
+                                                    </div>
+                                                  </GridItem>
+                                                  <GridItem span={12}>
+                                                    <div className=\\"pf-l-grid__item pf-m-12-col\\" />
+                                                  </GridItem>
+                                                </div>
+                                              </Grid>
+                                            </div>
+                                          </Filter>
+                                        </CatalogFilter>
+                                      </div>
+                                    </GridItem>
+                                    <GridItem>
+                                      <div className=\\"pf-l-grid__item\\">
+                                        <CategoryFilter>
+                                          <Filter store={{...}} header=\\"Category\\">
+                                            <div>
+                                              <Grid>
+                                                <div className=\\"pf-l-grid\\">
+                                                  <GridItem span={6}>
+                                                    <div className=\\"pf-l-grid__item pf-m-6-col\\">
+                                                      <Text component=\\"h1\\" className=\\"hub-filter-header\\">
+                                                        <h1 data-pf-content={true} className=\\"hub-filter-header\\">
+                                                          Category
+                                                        </h1>
+                                                      </Text>
+                                                    </div>
+                                                  </GridItem>
+                                                  <GridItem span={3}>
+                                                    <div className=\\"pf-l-grid__item pf-m-3-col\\">
+                                                      <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
+                                                        <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={3}>
+                                                          <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                            <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                              <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" transform=\\"\\" />
+                                                            </svg>
+                                                          </TimesIcon>
+                                                        </button>
+                                                      </Button>
+                                                    </div>
+                                                  </GridItem>
+                                                  <GridItem span={12}>
+                                                    <div className=\\"pf-l-grid__item pf-m-12-col\\" />
+                                                  </GridItem>
+                                                </div>
+                                              </Grid>
+                                            </div>
+                                          </Filter>
+                                        </CategoryFilter>
+                                      </div>
+                                    </GridItem>
+                                  </div>
+                                </Grid>
+                              </LeftPane>
+                            </Route>
+                          </div>
+                        </GridItem>
+                        <GridItem span={10} rowSpan={1}>
+                          <div className=\\"pf-l-grid__item pf-m-10-col pf-m-1-row\\">
+                            <Route exact={true} path=\\"/\\" component={[Function: Resources]}>
+                              <Resources history={{...}} location={{...}} match={{...}} staticContext={[undefined]}>
+                                <Spinner className=\\"hub-spinner\\">
+                                  <span className=\\"pf-c-spinner pf-m-xl hub-spinner\\" role=\\"progressbar\\" aria-valuetext=\\"Loading...\\">
+                                    <span className=\\"pf-c-spinner__clipper\\" />
+                                    <span className=\\"pf-c-spinner__lead-ball\\" />
+                                    <span className=\\"pf-c-spinner__tail-ball\\" />
+                                  </span>
+                                </Spinner>
+                              </Resources>
+                            </Route>
+                          </div>
+                        </GridItem>
+                      </div>
+                    </Grid>
+                  </section>
+                </PageSection>
+                <Footer>
+                  <Card className=\\"hub-footer-card\\">
+                    <article className=\\"pf-c-card hub-footer-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={4}>
+                      <Grid>
+                        <div className=\\"pf-l-grid\\">
+                          <GridItem span={12} className=\\"hub-footer-info\\">
+                            <div className=\\"pf-l-grid__item pf-m-12-col hub-footer-info\\">
+                              <a href=\\"https://cd.foundation\\" target=\\"_\\">
+                                <img src=\\"https://tekton.dev/partner-logos/cdf.png\\" alt=\\"tekton.dev\\" />
+                              </a>
+                            </div>
+                          </GridItem>
+                          <GridItem span={12} className=\\"hub-footer-info\\">
+                            <div className=\\"pf-l-grid__item pf-m-12-col hub-footer-info\\">
+                              <TextContent className=\\"hub-info-color\\">
+                                <div className=\\"pf-c-content hub-info-color\\">
+                                  <Text component=\\"h3\\">
+                                    <h3 data-pf-content={true} className=\\"\\">
+                                      Tekton is a
+                                       
+                                      <Text component=\\"a\\" href=\\"https://cd.foundation\\" target=\\"_\\">
+                                        <a href=\\"https://cd.foundation\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
+                                          Continuous Delivery Foundation
+                                        </a>
+                                      </Text>
+                                       
+                                      project.
+                                    </h3>
+                                  </Text>
+                                </div>
+                              </TextContent>
+                            </div>
+                          </GridItem>
+                          <GridItem span={12} className=\\"hub-logo-margin\\">
+                            <div className=\\"pf-l-grid__item pf-m-12-col hub-logo-margin\\">
+                              <img src=\\"tekton.png\\" alt=\\"Tekton\\" className=\\"hub-logo-size\\" />
+                            </div>
+                          </GridItem>
+                          <GridItem span={12} className=\\"hub-footer-description\\">
+                            <div className=\\"pf-l-grid__item pf-m-12-col hub-footer-description\\">
+                              <Text>
+                                <p data-pf-content={true} className=\\"\\">
+                                  © 2020 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+                                   
+                                  <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\">
+                                    <a href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
+                                      Trademark Usage page
+                                    </a>
+                                  </Text>
+                                  . Linux is a registered trademark of Linus Torvalds.
+                                   
+                                  <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/privacy/\\" target=\\"_\\">
+                                    <a href=\\"https://www.linuxfoundation.org/privacy/\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
+                                      Privacy Policy
+                                    </a>
+                                  </Text>
+                                   
+                                  and
+                                   
+                                  <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/terms/\\" target=\\"_\\">
+                                    <a href=\\"https://www.linuxfoundation.org/terms/\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
+                                      Terms of Use
+                                    </a>
+                                  </Text>
+                                   
+                                  .
+                                </p>
+                              </Text>
+                            </div>
+                          </GridItem>
+                        </div>
+                      </Grid>
+                    </article>
+                  </Card>
+                </Footer>
+              </main>
             </div>
-          </div>
-          <div
-            className="pf-l-grid__item pf-m-10-col pf-m-1-row"
-          >
-            <span
-              aria-valuetext="Loading..."
-              className="pf-c-spinner pf-m-xl hub-spinner"
-              role="progressbar"
-            >
-              <span
-                className="pf-c-spinner__clipper"
-              />
-              <span
-                className="pf-c-spinner__lead-ball"
-              />
-              <span
-                className="pf-c-spinner__tail-ball"
-              />
-            </span>
-          </div>
-        </div>
-      </section>
-      <article
-        className="pf-c-card hub-footer-card"
-        data-ouia-component-id={4}
-        data-ouia-component-type="PF4/Card"
-        data-ouia-safe={true}
-      >
-        <div
-          className="pf-l-grid"
-        >
-          <div
-            className="pf-l-grid__item pf-m-12-col hub-footer-info"
-          >
-            <a
-              href="https://cd.foundation"
-              target="_"
-            >
-              <img
-                alt="tekton.dev"
-                src="https://tekton.dev/partner-logos/cdf.png"
-              />
-            </a>
-          </div>
-          <div
-            className="pf-l-grid__item pf-m-12-col hub-footer-info"
-          >
-            <div
-              className="pf-c-content hub-info-color"
-            >
-              <h3
-                className=""
-                data-pf-content={true}
-              >
-                Tekton is a
-                 
-                <a
-                  className=""
-                  data-pf-content={true}
-                  href="https://cd.foundation"
-                  target="_"
-                >
-                  Continuous Delivery Foundation
-                </a>
-                 
-                project.
-              </h3>
-            </div>
-          </div>
-          <div
-            className="pf-l-grid__item pf-m-12-col hub-logo-margin"
-          >
-            <img
-              alt="Tekton"
-              className="hub-logo-size"
-              src="tekton.png"
-            />
-          </div>
-          <div
-            className="pf-l-grid__item pf-m-12-col hub-footer-description"
-          >
-            <p
-              className=""
-              data-pf-content={true}
-            >
-              © 2020 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
-               
-              <a
-                className=""
-                data-pf-content={true}
-                href="https://www.linuxfoundation.org/trademark-usage/"
-                target="_"
-              >
-                Trademark Usage page
-              </a>
-              . Linux is a registered trademark of Linus Torvalds.
-               
-              <a
-                className=""
-                data-pf-content={true}
-                href="https://www.linuxfoundation.org/privacy/"
-                target="_"
-              >
-                Privacy Policy
-              </a>
-               
-              and
-               
-              <a
-                className=""
-                data-pf-content={true}
-                href="https://www.linuxfoundation.org/terms/"
-                target="_"
-              >
-                Terms of Use
-              </a>
-               
-              .
-            </p>
-          </div>
-        </div>
-      </article>
-    </main>
-  </div>,
-  " ",
-  " ",
-]
+          </Page>
+        </Router>
+      </BrowserRouter>
+       
+    </Provider>
+  </Memo(wrappedComponent)>
+   
+</Provider>"
 `;
