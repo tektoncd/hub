@@ -30,7 +30,8 @@ describe('Authentication', () => {
   });
 
   it('it can test github login', () => {
-    const windowOpenSpy = spyOn(window, 'open');
+    window.open = jest.fn();
+    const windowOpenSpy = jest.spyOn(window, 'open');
     const clientId = 'foo';
     const redirectUri = 'http://foo.test/auth/github';
 
