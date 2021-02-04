@@ -13,32 +13,21 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
-	github.com/stretchr/testify v1.5.1
-	github.com/tektoncd/pipeline v0.17.1-0.20201007165454-9611f3e4509e
-	go.uber.org/zap v1.15.0
+	github.com/stretchr/testify v1.6.1
+	github.com/tektoncd/pipeline v0.20.1-0.20210204110343-8c5a751b53ea
+	go.uber.org/zap v1.16.0
 	goa.design/goa/v3 v3.2.2
 	goa.design/plugins/v3 v3.1.3
-	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
-	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
+	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
+	golang.org/x/oauth2 v0.0.0-20210126194326-f9ce19ea3013
 	gopkg.in/h2non/gock.v1 v1.0.15
 	gorm.io/driver/postgres v1.0.2
 	gorm.io/gorm v1.20.7
 	gotest.tools/v3 v3.0.2
-	k8s.io/apimachinery v0.19.0
-	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
-	knative.dev/pkg v0.0.0-20200922164940-4bf40ad82aab
+	k8s.io/apimachinery v0.19.7
+	k8s.io/client-go v0.19.7
+	knative.dev/pkg v0.0.0-20210203171706-6045ed499615
 	maze.io/x/duration v0.0.0-20160924141736-faac084b6075
-)
-
-// Pin k8s deps to 0.18.9
-replace (
-	k8s.io/api => k8s.io/api v0.18.9
-	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.18.9
-	k8s.io/apimachinery => k8s.io/apimachinery v0.18.9
-	k8s.io/apiserver => k8s.io/apiserver v0.18.9
-	k8s.io/client-go => k8s.io/client-go v0.18.9
-	k8s.io/code-generator => k8s.io/code-generator v0.18.9
-	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20200410145947-bcb3869e6f29
 )
 
 // Use the same Cobra as upstream tkn cli
