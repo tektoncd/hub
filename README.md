@@ -7,15 +7,6 @@ contains the source code of this service.
 
 > Currently, Hub is launched as a preview [hub-preview.tekton.dev](https://hub-preview.tekton.dev) :mega:
 
-You can find the source code [here](https://github.com/tektoncd/experimental/tree/master/hub).
-
-
-The project is being moved from [experimental](https://github.com/tektoncd/experimental/tree/master/hub) to [hub](https://github.com/tektoncd/hub). Stay tuned for further updates :bow:
-
-Please file all issues on [hub](https://github.com/tektoncd/hub/issues/new/choose).
-
-
-
 
 ## Key features
 
