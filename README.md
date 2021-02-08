@@ -5,7 +5,7 @@ share and contribute tasks and pipelines for Tekton. This repository
 contains the source code of this service.
 
 
-> Currently, Hub is launched as a preview [hub-preview.tekton.dev](https://hub-preview.tekton.dev) :mega:
+> Currently, Hub is launched as [hub.tekton.dev](https://hub.tekton.dev) :mega:
 
 
 ## Key features
