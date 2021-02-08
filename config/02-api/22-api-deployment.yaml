@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: ko://github.com/tektoncd/hub/api/cmd/api
+          image: quay.io/tekton-hub/api
           ports:
             - containerPort: 8000
           readinessProbe:

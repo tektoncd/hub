@@ -1,14 +1,17 @@
 # Deployment
 
 - [Prerequisites](#prerequisites)
+- [Build Images](#build-images)
+- [Deploy Database](#deploy-database)
+- [Run Db migration](run-db-migration)
 - [Deploy API Service](#deploy-api-service)
-  - [Update API Secret](#update-the-api-secret)
-  - [Update API Config Map](#update-api-config-map)
-  - [Prepare API and Db Migration release yaml](#Prepare-the-api-and-db-migration-release-yaml)
+  - [Update API Secret](#update-api-secret)
+  - [Update API ConfigMap](#update-api-configmap)
+  - [Update API Image](#update-api-image)
   - [Setup Ingress/Route](#setup-route-or-ingress)
 - [Deploy UI](#deploy-ui)
-  - [Build and Publish Image](#build-and-publish-image)
-  - [Update the UI ConfigMap](#update-the-ui-configmap)
+  - [Update UI ConfigMap](#update-ui-configmap)
+  - [Update UI Image](#update-ui-image)
   - [Setup Ingress/Route](#setup-route-or-ingress)
 - [Add resources in DB](#add-resources-in-db)
 - [Setup Catalog Refresh CronJob](#setup-catalog-refresh-cronjob)
@@ -20,32 +23,102 @@
 - Kubernetes Cluster
   - You can also deploy on [Minkube][minikube], [kind][kind] or [OpenShift][openshift].
 - [kubectl][kubectl]
-- [ko][ko]
-
-  - You can find installation steps [here][ko] or if you have Go installed then you can execute the command :-
-
-    ```bash
-    go get github.com/google/ko/cmd/ko
-    ```
-
 - [docker][docker] or [podman][podman]
+
+## Build Images
+
+Lets build and push all images to a registry and then create deployments.
+
+### UI Image
+
+Ensure you are in `ui` directory and logged in you image registry.
+
+```
+docker build -t <image> . && docker push <image>
+```
+
+Replace `<image>` with the registry and image name. 
+eg. `quay.io/<username>/ui`
+
+### API & DB Migration Image
+
+Ensure you are in `api` directory and logged in you image registry.
+
+Build the API image using below command
+```
+docker build -t <image> . && docker push <image>
+```
+
+Replace `<image>` with the registry and image name. 
+eg. `quay.io/<username>/api`
+
+Now, Build the Db migration image using below command
+```
+docker build -f db.Dockerfile -t <image> . && docker push <image>
+```
+
+Replace `<image>` with the registry and image name. 
+eg. `quay.io/<username>/db-migration`
+
+Make sure all images are public before creating deployments.
+
+## Deploy Database
+
+Now, we have all images pushed to registry. Lets deploy the database first.
+
+Navigate to `config` directoy in the root of the project.
+
+Execute below command
+
+```
+kubectl apply -f 00-init/
+```
+This will create `tekton-hub` namespace, db deployment with `postgres` image, secret to save db credentials, pvc for the db and a ClusterIP service to expose the db internally.
+
+All resources are created in `tekton-hub` namespace.
+
+Wait till the pod comes in a running state
+
+```
+kubectl get pod -n tekton-hub -w
+```
+
+## Run Db migration
+
+Once the pod is in running state now we can run db migration. This will create all the tables required in the database.
+
+Edit the `01-db/10-db-migration.yaml` and add the replace the image you created previously and apply the yaml.
+
+```
+kubectl apply -f 01-db/10-db-migration.yaml
+```
+
+This will create a job which will read the db credentials from the secret created while deploying database and create all required tables.
+
+```bash
+$ kubectl get pods -n tekton-hub
+NAME                   READY   STATUS      RESTARTS   AGE
+db-589d44fdd5-ksf8v    1/1     Running     0          50s
+db-migration-8vhpd     0/1     Completed   0          17s
+```
+
+You can also check the logs using `kubectl logs -n tekton-hub db-migration-8vhpd`
+
+The migration logs at the end should show
+
+```bash
+2020-09-22T15:35:16.412Z INFO migration/migration.go:91 Migration ran successfully !! {"service": "migration"}
+2020-09-22T15:35:16.412Z INFO db/main.go:39 DB initialisation successful !! {"service": "main"}
+```
 
 ## Deploy API Service
 
-Ensure you are in `api` directory
+### Update API Secret
 
-```bash
-cd api
-```
-
-### Update the API Secret
-
-Navigate to the `config/00-config/` and edit `31-api-secret.yaml` . Set GitHub `oauth` client id and client secret.
-
-To create a GitHub OAuth follow the steps given [here][oauth-steps]. For now add any URL in place of `Homepage URL` and `Authorization callback URL` for eg. `http://localhost:5000`. We will update this URL once we deploy the UI pod.
- 
-- After creating the OAuth add the Client ID and Client Secret in the file.
-- For JWT, you can add any random key, this is used to sign the JWT created for users.
+Edit `02-api/20-api-secret.yaml` and update the configuration
+- Create a GitHub OAuth with `Homepage URL` and `Authorization callback URL` as `http://localhost:5000`. We will update this URL once we deploy the UI pod. Follow the steps given [here][oauth-steps] to create a GitHub OAuth.  
+- After creating the OAuth add the Client ID and Client Secret in the yaml file.
+- For JWT_SIGNING_KEY, you can add any random string, this is used to sign the JWT created for users.
 - For `ACCESS_JWT_EXPIRES_IN` and `REFRESH_JWT_EXPIRES_IN` add time you want the jwt to be expired in. Refresh time should be greater than Access time.
 eg. 1m = 1 minute, 1h = 1 hour, 1d = 1 day
 
@@ -64,9 +137,9 @@ stringData:
   REFRESH_JWT_EXPIRES_IN: time such as 15m
 ```
 
-### Update API Config Map
+### Update API ConfigMap
 
-If you want to change the config file passed to hub, you can edit the `[30-api-configmap.yaml][hub-cm]` and change the URL to the file. By default it is pointing to [config.yaml][config-yaml] in Hub which has Application Data.
+If you want to change the config file passed to hub, you can edit the `02-api/21-api-configmap.yaml` and change the URL to the file. By default it is pointing to [config.yaml][config-yaml] in Hub which has Application Data.
 
 ```yaml
 apiVersion: v1
@@ -81,61 +154,22 @@ data:
 
 ```
 
-In this file we add users who have additional scopes which can be used to refresh a catalog, refresh config file after changes, create an agent token which can be used in cron job to refresh the catalog after an interval.
+In this file we add users who have additional scopes which can be used to
+- refresh a catalog,
+- refresh config file 
+- create an agent token 
 
 All users have default scopes `rating:read` and `rating:write` they get after login which allows them to rate the resources.
 
-#### Apply supporting Resources
+### Update API Image
+
+Edit the `02-api/22-api-deployment.yaml` and replace the image with the one created previously and executed below command
 
 ```bash
-kubectl apply -f config/00-config
+kubectl apply -f 02-api/
 ```
 
-This will create `tekton-hub` namespace and create the supporting resources.
-
-### Prepare the API and DB Migration Release yaml
-
-Export `KO_DOCKER_REPO` for ko to publish image to. E.g.
-
-```bash
-export KO_DOCKER_REPO=quay.io/<username>
-```
-
-```bash
-ko resolve -f config > api.yaml
-```
-
-The command above will create a container image and push it to the registry pointed by `KO_DOCKER_REPO`. Ensure that the image is **publicly** available.
-
-Apply the release yaml
-
-```bash
-kubectl apply -f api.yaml
-```
-
-The command above will create the deployment for Database and API and a job for DB-Migration.
-
-The db-migration job will create all tables in the db.
-
-```bash
-$ kubectl get pods -n tekton-hub
-NAME                   READY   STATUS      RESTARTS   AGE
-api-86ccf7484f-qrz4k   1/1     Running     3          50s
-db-589d44fdd5-ksf8v    1/1     Running     0          50s
-db-migration-4mb75     0/1     Error       0          47s
-db-migration-8vhpd     0/1     Completed   0          17s
-db-migration-pmtw5     0/1     Error       0          50s
-db-migration-tkrsn     0/1     Error       0          37s
-```
-
-One can also check the logs using `kubectl logs db-migration-8vhpd`
-
-The migration logs at the end should show
-
-```bash
-2020-09-22T15:35:16.412Z INFO migration/migration.go:91 Migration ran successfully !! {"service": "migration"}
-2020-09-22T15:35:16.412Z INFO db/main.go:39 DB initialisation successful !! {"service": "main"}
-```
+This will create the deployment, secret, configmap and a NodePort service to expose the API server. 
 
 ### Setup Route or Ingress
 
@@ -144,7 +178,7 @@ After the deployment is done successfully, we need to expose the URL to access t
 - If deploying on OpenShift:-
 
   ```bash
-  oc apply -f config/openshift/
+  kubectl apply -f 04-openshift/40-api-route.yaml
   ```
 
 - If deploying on Kubernetes:-
@@ -152,13 +186,13 @@ After the deployment is done successfully, we need to expose the URL to access t
   - Create the secret containing tls cert and tls key
 
     ```bash
-    kubectl create secret tls api-hub-tekton-dev-tls --cert=path/to/cert/file --key=path/to/key/file
+    kubectl create secret tls api-hub-tekton-dev-tls --cert=path/to/cert/file --key=path/to/key/file -n tekton-hub
     ```
 
   - Apply the Ingress
 
     ```bash
-    kubectl apply -f config/99-post-deploy/33-api-ingress.yaml
+    kubectl apply -f 04-kubernetes/40-api-ingress.yaml
     ```
 
 #### Verify if api route is accessible
@@ -166,7 +200,7 @@ After the deployment is done successfully, we need to expose the URL to access t
 For `OpenShift`:-
 
 ```bash
-curl -k -X GET -I $(oc get -n tekton-hub routes api --template='https://{{ .spec.host }}/v1/categories')
+curl -k -X GET $(oc get -n tekton-hub routes api --template='https://{{ .spec.host }}/v1/categories')
 ```
 
 NOTE: At this moment, there are no resources in the db. Only the tags and categories from hub config are added in the db.
@@ -175,33 +209,13 @@ Let's deploy the UI first and then we will add the resources in db.
 
 ## Deploy UI
 
-Ensure you are in `ui` directory and logged in a image registry.
-
-```bash
-cd ui
-```
-
-### Build and Publish Image
-
-```bash
-docker build -t <image> . && docker push <image>
-```
-
-eg. `quay.io/<username>/ui`
-
-Make sure your image is public after pushing to a registry.
-
-#### Update the deployment image
-
-Update `config/11-deployment` to use the image built above
-
-### Update the UI ConfigMap
+### Update UI ConfigMap
 
 Edit `config/10-config.yaml` and set your GitHub OAuth Client ID and the API URL.
 
-You can get the API URL using below command
+You can get the API URL using below command (OpenShift)
 ```
-  oc get -n tekton-hub routes api --template='https://{{ .spec.host }}
+  kubectl get -n tekton-hub routes api --template='https://{{ .spec.host }}'
 ```
 
 ```yaml
@@ -212,19 +226,21 @@ metadata:
   name: ui
   namespace: tekton-hub
 data:
-  API_URL: API URL   <<< update this by api route
-  GH_CLIENT_ID: GH OAuth Client ID   <<< update this
+  API_URL: API URL   <<< Update this by API url
+  GH_CLIENT_ID: GH OAuth Client ID   <<< Update this OAuth client id
 ```
 
-#### Apply the manifests
+### Update UI Image
+
+Edit the `03-ui/30-ui-configmap.yaml` and replace the image with the one created previously and executed below command
 
 ```bash
-kubectl apply -f config/
+kubectl apply -f 03-ui/
 ```
 
-This will create the deployment and service for UI.
+This will create the deployment, configmap and a NodePort service to expose the UI. 
 
-#### Ensure pods are up and running
+Ensure pods are up and running
 
 ```bash
 kubectl get pods -n tekton-hub
@@ -245,7 +261,7 @@ After the deployment is done successfully, we need to expose the URL to access t
 - If deploying on OpenShift:-
 
   ```bash
-  oc apply -f config/openshift/
+  kubectl apply -f 04-openshift/41-ui-route.yaml
   ```
 
 - If deploying on Kubernetes:-
@@ -259,14 +275,18 @@ After the deployment is done successfully, we need to expose the URL to access t
   - Apply the Ingress
 
     ```bash
-    kubectl apply -f config/post-deploy
+    kubectl apply -f 04-kubernetes/41-ui-ingress.yaml
     ```
+    
+#### Verify if ui route is accessible
 
-#### Verify if UI route is accessible
+For `OpenShift`:-
 
-If on openshift verify if the ui route is accessible
+```
+    kubectl get routes -n tekton-hub ui --template='https://{{ .spec.host }} '
+```
 
-Open: `oc get routes ui --template='https://{{ .spec.host }} '`
+Open the URL in a browser.
 
 Note: In UI you won't be able see the resources on homepage as there are not any in the db but you should see Categories on the left side.
 
@@ -274,19 +294,17 @@ Update your GitHub OAuth created with the UI route in place of `Homepage URL` an
 
 ## Add resources in DB
 
-> Note: Make sure you have added your name in the scopes present [config.yaml][config-yaml]. You will need additional scope i.e. catalog-refresh to add resources.
+1. Add your GitHub username with required scopes in [config.yaml][config-yaml]. For adding resources in DB, you will need   `catalog:refresh` scope.
 
-Now, follow the below steps
+2. Login through the UI. Click on `Login` on right corner and then `Sign in with GitHub`.
 
-1. Login through the UI. Click on `Login` on right corner and then `Sign in with GitHub`.
-
-    This will add you in db, but yet you have only the default scopes i.e. `rating:read` and `rating:write` which you can check with your jwt. On UI, in right corner there is an option to `Copy Hub Token` and paste in any jwt decoder. for eg. https://jwt.io/
+  This will add you in db, but yet you have only the default scopes i.e. `rating:read` and `rating:write` which you can check with your jwt. On UI, in right corner there is an option to `Copy Hub Token` and paste in any jwt decoder. for eg. https://jwt.io/
     
-2. We save the checksum of config file in db to avoid reading the config file again and again if the api pod is deleted due to any reason. The config file is read by API pod before starting the server. 
+2. We save the checksum of config file in db to avoid reading the config file again and again if the api pod is deleted due to some reason. The config file is read by API pod before starting the server. 
 
 3. To make API pod read config we need to delete the entry in db. Exec into the database pod
    ```bash
-   kubectl exec -it <db-pod-name> bash
+   kubectl exec -n tekton-hub -it <db-pod-name> bash
    ```
 4. Open PostgreSQL terminal by executing the command
 
@@ -315,22 +333,21 @@ Now, follow the below steps
 
 7. Delete the API pod by executing the following command
    ```bash
-   oc delete pod <pod-name>
+   kubectl delete pod -n tekton-hub <pod-name>
    ```
-   This will delete the previously created pod and spin a new pod which will add the scopes in the DB.
+   This will delete the previously created pod and spin a new pod which will add the additional scopes from hub config in the DB.
    
 8. Once the pod is running again, Logout from Hub UI and login again.
 
-
 9. Now, if you copy your token from UI and check in jwt decoder, you will have additional scopes.
 
-10. To add resources, you need to make a POST api call passing your jwt token with the addtional scopes in Header.
+10. To add resources, you need to make a POST api call passing your jwt token with the additional scopes in Header.
 
 ```
 curl -X POST -H "Authorization: <access-token>" \
-    <api-route>/catalog/refresh 
+    <api-url>/catalog/refresh 
 ```
-Replace `<access-token>`  with your Hub token copied from UI and replace `<api-route>` with your api url.
+Replace `<access-token>`  with your Hub token copied from UI and replace `<api-url>` with your api pod url.
 
 This will give an output as below
 
@@ -367,7 +384,7 @@ NOTE: The catalog refresh will add new resources or update existing resource if 
     ```
     A token will be returned with the requested scopes. You can check using the jwt decoder. Use this token for the catalog refresh cron job.
 
-4. Navigate to `api/config/99-post-deploy` and edit `34-catalog-refresh-secret.yaml`. Set the Hub Token
+4. Edit `05-catalog-refresh-cj/50-catalog-refresh-secret.yaml` and Set the Hub Token
 
    ```yaml
    apiVersion: v1
@@ -381,13 +398,12 @@ NOTE: The catalog refresh will add new resources or update existing resource if 
    ```
     Set the token created in last step as Hub token.
 
-4. Make sure you are in `api` directory and run the below command. 
+4. Apply the YAMLs 
 
     ```
-    kubectl apply -f config/99-post-deploy/34-catalog-refresh-secret.yaml \ 
-                -f config/99-post-deploy/35-catalog-refresh-cronjob.yaml 
+    kubectl apply -f 05-catalog-refresh-cj/
     ```
-    The cron job is configured to run every 30 min, you can change the interval in `config/99-post-deploy/35-catalog-refresh-cronjob.yaml`.
+    The cron job is configured to run every 30 min, you can change the interval in `05-catalog-refresh-cj/51-catalog-refresh-cronjob.yaml`.
     
 ## Adding New Users in Config
 
@@ -427,5 +443,4 @@ Replace `<access-token>` with your JWT token. you must have `config-refresh` sco
 [docker]: https://docs.docker.com/engine/install/
 [podman]: https://podman.io/getting-started/installation
 [config-yaml]: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml
-[oauth-steps]:https://docs.github.com/en/developers/apps/creating-an-oauth-app 
-[hub-cm]:https://github.com/tektoncd/hub/blob/master/api/config/00-config/30-api-configmap.yaml
+[oauth-steps]:https://docs.github.com/en/developers/apps/creating-an-oauth-app
