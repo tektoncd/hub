@@ -18,10 +18,10 @@ import (
 	"testing"
 
 	pipelinev1beta1test "github.com/tektoncd/pipeline/test"
-	rtesting "knative.dev/pkg/reconciler/testing"
+	ttesting "github.com/tektoncd/pipeline/pkg/reconciler/testing"
 )
 
 func SeedV1beta1TestData(t *testing.T, d pipelinev1beta1test.Data) (pipelinev1beta1test.Clients, pipelinev1beta1test.Informers) {
-	ctx, _ := rtesting.SetupFakeContext(t)
+	ctx, _ :=ttesting.SetupFakeContext(t)
 	return pipelinev1beta1test.SeedTestData(t, ctx, d)
 }
