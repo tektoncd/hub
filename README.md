@@ -1,5 +1,9 @@
 # Tekton Hub
 
+<p align="center">
+<img width="250" height="175" src="https://github.com/cdfoundation/artwork/blob/main/tekton/additional-artwork/tekton-hub/color/TektonHub_color.svg" alt="Tekton Hub logo"></img>
+</p>
+
 The Tekton hub is a web based platform for developers to discover,
 share and contribute tasks and pipelines for Tekton. This repository
 contains the source code of this service.
