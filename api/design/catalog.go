@@ -15,6 +15,7 @@
 package design
 
 import (
+	"github.com/tektoncd/hub/api/design/types"
 	. "goa.design/goa/v3/dsl"
 )
 
@@ -26,14 +27,14 @@ var _ = Service("catalog", func() {
 
 	Method("Refresh", func() {
 		Description("Refreshes Tekton Catalog")
-		Security(JWTAuth, func() {
+		Security(types.JWTAuth, func() {
 			Scope("catalog:refresh")
 		})
 		Payload(func() {
 			Token("token", String, "JWT")
 			Required("token")
 		})
-		Result(Job)
+		Result(types.Job)
 
 		HTTP(func() {
 			POST("/catalog/refresh")

@@ -11,3 +11,8 @@ package client
 func StatusStatusPath() string {
 	return "/"
 }
+
+// StatusStatusPath2 returns the URL path to the status service Status HTTP endpoint.
+func StatusStatusPath2() string {
+	return "/v1"
+}

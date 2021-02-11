@@ -15,8 +15,11 @@
 package design
 
 import (
+	"github.com/tektoncd/hub/api/design/types"
 	. "goa.design/goa/v3/dsl"
 )
+
+// NOTE: APIs in the service are moved to v1. This APIs will be deprecated in the next release.
 
 var _ = Service("resource", func() {
 	Description("The resource service provides details about all kind of resources")
@@ -27,6 +30,7 @@ var _ = Service("resource", func() {
 
 	// NOTE: Supported Tekton Resource kind by APIs are defined in /pkg/parser/kind.go
 
+	// Will be deprecated, moved to v1
 	Method("Query", func() {
 		Description("Find resources by a combination of name, kind and tags")
 		Payload(func() {
@@ -50,11 +54,10 @@ var _ = Service("resource", func() {
 				Default("contains")
 			})
 		})
-		Result(Resources)
+		Result(types.Resources)
 
 		HTTP(func() {
 			GET("/query")
-			GET("/v1/query")
 
 			Param("name")
 			Param("kinds")
@@ -69,6 +72,7 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	// Will be deprecated, moved to v1
 	Method("List", func() {
 		Description("List all resources sorted by rating and name")
 		Payload(func() {
@@ -77,11 +81,10 @@ var _ = Service("resource", func() {
 				Example("limit", 100)
 			})
 		})
-		Result(Resources)
+		Result(types.Resources)
 
 		HTTP(func() {
 			GET("/resources")
-			GET("/v1/resources")
 
 			Param("limit")
 
@@ -90,6 +93,7 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	// Will be deprecated, moved to v1
 	Method("VersionsByID", func() {
 		Description("Find all versions of a resource by its id")
 		Payload(func() {
@@ -98,11 +102,10 @@ var _ = Service("resource", func() {
 			})
 			Required("id")
 		})
-		Result(ResourceVersions)
+		Result(types.ResourceVersions)
 
 		HTTP(func() {
 			GET("/resource/{id}/versions")
-			GET("/v1/resource/{id}/versions")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
@@ -110,6 +113,7 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	// Will be deprecated, moved to v1
 	Method("ByCatalogKindNameVersion", func() {
 		Description("Find resource using name of catalog & name, kind and version of resource")
 		Payload(func() {
@@ -128,11 +132,10 @@ var _ = Service("resource", func() {
 
 			Required("catalog", "kind", "name", "version")
 		})
-		Result(ResourceVersion)
+		Result(types.ResourceVersion)
 
 		HTTP(func() {
 			GET("/resource/{catalog}/{kind}/{name}/{version}")
-			GET("/v1/resource/{catalog}/{kind}/{name}/{version}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
@@ -140,6 +143,7 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	// Will be deprecated, moved to v1
 	Method("ByVersionId", func() {
 		Description("Find a resource using its version's id")
 		Payload(func() {
@@ -148,11 +152,10 @@ var _ = Service("resource", func() {
 			})
 			Required("versionID")
 		})
-		Result(ResourceVersion)
+		Result(types.ResourceVersion)
 
 		HTTP(func() {
 			GET("/resource/version/{versionID}")
-			GET("/v1/resource/version/{versionID}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
@@ -160,6 +163,7 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	// Will be deprecated, moved to v1
 	Method("ByCatalogKindName", func() {
 		Description("Find resources using name of catalog, resource name and kind of resource")
 		Payload(func() {
@@ -174,11 +178,10 @@ var _ = Service("resource", func() {
 			})
 			Required("catalog", "kind", "name")
 		})
-		Result(Resource)
+		Result(types.Resource)
 
 		HTTP(func() {
 			GET("/resource/{catalog}/{kind}/{name}")
-			GET("/v1/resource/{catalog}/{kind}/{name}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
@@ -186,6 +189,7 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	// Will be deprecated, moved to v1
 	Method("ById", func() {
 		Description("Find a resource using it's id")
 		Payload(func() {
@@ -194,11 +198,10 @@ var _ = Service("resource", func() {
 			})
 			Required("id")
 		})
-		Result(Resource)
+		Result(types.Resource)
 
 		HTTP(func() {
 			GET("/resource/{id}")
-			GET("/v1/resource/{id}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)

@@ -28,6 +28,12 @@ paths:
                 - error: unable to reach db
                   name: api
                   status: ok
+                - error: unable to reach db
+                  name: api
+                  status: ok
+                - error: unable to reach db
+                  name: api
+                  status: ok
   /auth/login:
     post:
       tags:
@@ -74,8 +80,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
+                temporary: true
+                timeout: true
         "401":
           description: ""
           content:
@@ -87,8 +93,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
+                temporary: true
+                timeout: false
         "403":
           description: ""
           content:
@@ -101,7 +107,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: false
+                timeout: true
         "500":
           description: ""
           content:
@@ -130,8 +136,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Job'
               example:
-                id: 1029125940089474859
-                status: Reprehenderit libero soluta sapiente deleniti voluptatem distinctio.
+                id: 13680623773748373161
+                status: Pariatur quasi.
         "404":
           description: ""
           content:
@@ -143,8 +149,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
+                temporary: false
+                timeout: false
         "500":
           description: ""
           content:
@@ -152,12 +158,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
+                temporary: false
+                timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -195,6 +201,20 @@ paths:
                     name: image-build
                   - id: 2
                     name: kaniko
+                - id: 1
+                  name: Image Builder
+                  tags:
+                  - id: 1
+                    name: image-build
+                  - id: 2
+                    name: kaniko
+                - id: 1
+                  name: Image Builder
+                  tags:
+                  - id: 1
+                    name: image-build
+                  - id: 2
+                    name: kaniko
         "500":
           description: ""
           content:
@@ -202,12 +222,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: false
+                timeout: true
   /query:
     get:
       tags:
@@ -234,7 +254,7 @@ paths:
           type: array
           items:
             type: string
-            example: Placeat et et.
+            example: Et nam pariatur corrupti atque.
           description: Kinds of resource to filter by
           example:
           - task
@@ -250,7 +270,7 @@ paths:
           type: array
           items:
             type: string
-            example: Itaque aperiam tempore animi iure eum et.
+            example: Expedita sit repellendus magnam.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -296,7 +316,8 @@ paths:
                   id: 1
                   kind: task
                   latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    description: Buildah task builds source into a container image
+                      and then pushes it to a container registry.
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
@@ -320,7 +341,8 @@ paths:
                   id: 1
                   kind: task
                   latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    description: Buildah task builds source into a container image
+                      and then pushes it to a container registry.
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
@@ -344,7 +366,8 @@ paths:
                   id: 1
                   kind: task
                   latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    description: Buildah task builds source into a container image
+                      and then pushes it to a container registry.
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
@@ -373,8 +396,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
+                temporary: false
+                timeout: false
         "404":
           description: ""
           content:
@@ -387,7 +410,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: false
+                timeout: true
         "500":
           description: ""
           content:
@@ -406,7 +429,8 @@ paths:
       tags:
       - resource
       summary: ByCatalogKindName resource
-      description: Find resources using name of catalog, resource name and kind of resource
+      description: Find resources using name of catalog, resource name and kind of
+        resource
       operationId: resource#ByCatalogKindName
       parameters:
       - name: catalog
@@ -429,7 +453,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: Name of resource
@@ -454,7 +478,8 @@ paths:
                   id: 1
                   kind: task
                   latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    description: Buildah task builds source into a container image
+                      and then pushes it to a container registry.
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
@@ -503,7 +528,8 @@ paths:
       tags:
       - resource
       summary: ByCatalogKindNameVersion resource
-      description: Find resource using name of catalog & name, kind and version of resource
+      description: Find resource using name of catalog & name, kind and version of
+        resource
       operationId: resource#ByCatalogKindNameVersion
       parameters:
       - name: catalog
@@ -554,7 +580,8 @@ paths:
                 $ref: '#/components/schemas/ResourceVersion'
               example:
                 data:
-                  description: Buildah task builds source into a container image and then pushes it to a container registry.
+                  description: Buildah task builds source into a container image and
+                    then pushes it to a container registry.
                   displayName: Buildah
                   id: 1
                   minPipelinesVersion: 0.12.1
@@ -584,7 +611,7 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
+                temporary: false
                 timeout: true
         "500":
           description: ""
@@ -593,7 +620,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
@@ -631,7 +658,8 @@ paths:
                   id: 1
                   kind: task
                   latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    description: Buildah task builds source into a container image
+                      and then pushes it to a container registry.
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
@@ -656,12 +684,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
+                temporary: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -673,8 +701,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
+                temporary: true
+                timeout: false
   /resource/{id}/rating:
     get:
       tags:
@@ -690,8 +718,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 11620657542064230955
-        example: 11665674017405905075
+          example: 9293410832204462916
+        example: 15595973357138799589
       responses:
         "200":
           description: ""
@@ -708,7 +736,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
@@ -725,7 +753,7 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
+                temporary: false
                 timeout: false
         "404":
           description: ""
@@ -734,12 +762,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -752,7 +780,7 @@ paths:
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: true
+                timeout: false
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -774,8 +802,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 4869966896348576719
-        example: 6109420220413662287
+          example: 5038586986718798316
+        example: 12822747110185372831
       requestBody:
         required: true
         content:
@@ -810,12 +838,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
+                temporary: true
+                timeout: true
         "404":
           description: ""
           content:
@@ -823,12 +851,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
+                temporary: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -836,11 +864,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
+                temporary: false
                 timeout: false
       security:
       - jwt_header_Authorization:
@@ -896,12 +924,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: false
+                timeout: true
         "500":
           description: ""
           content:
@@ -909,12 +937,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
+                temporary: false
+                timeout: false
   /resource/version/{versionID}:
     get:
       tags:
@@ -941,7 +969,8 @@ paths:
                 $ref: '#/components/schemas/ResourceVersion'
               example:
                 data:
-                  description: Buildah task builds source into a container image and then pushes it to a container registry.
+                  description: Buildah task builds source into a container image and
+                    then pushes it to a container registry.
                   displayName: Buildah
                   id: 1
                   minPipelinesVersion: 0.12.1
@@ -971,8 +1000,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
+                temporary: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -984,8 +1013,8 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
+                temporary: true
+                timeout: false
   /resources:
     get:
       tags:
@@ -1019,7 +1048,8 @@ paths:
                   id: 1
                   kind: task
                   latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    description: Buildah task builds source into a container image
+                      and then pushes it to a container registry.
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
@@ -1043,7 +1073,8 @@ paths:
                   id: 1
                   kind: task
                   latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    description: Buildah task builds source into a container image
+                      and then pushes it to a container registry.
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
@@ -1067,7 +1098,8 @@ paths:
                   id: 1
                   kind: task
                   latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    description: Buildah task builds source into a container image
+                      and then pushes it to a container registry.
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
@@ -1096,7 +1128,7 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
+                temporary: false
                 timeout: false
   /schema/swagger.json:
     get:
@@ -1131,7 +1163,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/RefreshConfigResponseBody'
               example:
-                checksum: Ipsam eos aut magnam.
+                checksum: Cumque omnis non.
         "401":
           description: ""
           content:
@@ -1143,7 +1175,7 @@ paths:
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
+                temporary: false
                 timeout: true
         "403":
           description: ""
@@ -1152,7 +1184,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
@@ -1165,12 +1197,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
+                fault: true
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
+                temporary: false
+                timeout: false
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -1192,10 +1224,10 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateAgentRequestBody'
             example:
-              name: Pariatur occaecati voluptas assumenda maiores quaerat consequatur.
+              name: Non omnis quas deserunt.
               scopes:
-              - Nihil officia itaque non.
-              - Qui dolor consequatur assumenda.
+              - Pariatur occaecati voluptas assumenda maiores quaerat consequatur.
+              - Quia nihil officia itaque.
       responses:
         "200":
           description: ""
@@ -1204,7 +1236,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/UpdateAgentResponseBody'
               example:
-                token: Commodi rerum harum ut tenetur laborum tempore.
+                token: Autem ut est error eaque.
         "400":
           description: ""
           content:
@@ -1238,12 +1270,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: false
-                timeout: true
+                timeout: false
         "500":
           description: ""
           content:
@@ -1251,12 +1283,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
                 temporary: true
-                timeout: false
+                timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -1264,6 +1296,34 @@ paths:
         - agent:create
         - catalog:refresh
         - config:refresh
+  /v1:
+    get:
+      tags:
+      - status
+      summary: Status status
+      description: Return status of the services
+      operationId: status#Status#1
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponseBody'
+              example:
+                services:
+                - error: unable to reach db
+                  name: api
+                  status: ok
+                - error: unable to reach db
+                  name: api
+                  status: ok
+                - error: unable to reach db
+                  name: api
+                  status: ok
+                - error: unable to reach db
+                  name: api
+                  status: ok
   /v1/categories:
     get:
       tags:
@@ -1294,199 +1354,20 @@ paths:
                     name: image-build
                   - id: 2
                     name: kaniko
-        "500":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: false
-                timeout: false
-  /v1/query:
-    get:
-      tags:
-      - resource
-      summary: Query resource
-      description: Find resources by a combination of name, kind and tags
-      operationId: resource#Query#1
-      parameters:
-      - name: name
-        in: query
-        description: Name of resource
-        allowEmptyValue: true
-        schema:
-          type: string
-          description: Name of resource
-          default: ""
-          example: buildah
-        example: buildah
-      - name: kinds
-        in: query
-        description: Kinds of resource to filter by
-        allowEmptyValue: true
-        schema:
-          type: array
-          items:
-            type: string
-            example: Corrupti atque odit expedita sit repellendus.
-          description: Kinds of resource to filter by
-          example:
-          - task
-          - pipelines
-        example:
-        - task
-        - pipelines
-      - name: tags
-        in: query
-        description: Tags associated with a resource to filter by
-        allowEmptyValue: true
-        schema:
-          type: array
-          items:
-            type: string
-            example: Consequatur numquam id aut illum ut rerum.
-          description: Tags associated with a resource to filter by
-          example:
-          - image
-          - build
-        example:
-        - image
-        - build
-      - name: limit
-        in: query
-        description: Maximum number of resources to be returned
-        allowEmptyValue: true
-        schema:
-          type: integer
-          description: Maximum number of resources to be returned
-          default: 1000
-          example: 100
-        example: 100
-      - name: match
-        in: query
-        description: Strategy used to find matching resources
-        allowEmptyValue: true
-        schema:
-          type: string
-          description: Strategy used to find matching resources
-          default: contains
-          example: contains
-          enum:
-          - exact
-          - contains
-        example: exact
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Resources'
-              example:
-                data:
-                - catalog:
-                    id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
+                - id: 1
+                  name: Image Builder
                   tags:
                   - id: 1
                     name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
                   - id: 2
-                    version: "0.2"
-                - catalog:
-                    id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
+                    name: kaniko
+                - id: 1
+                  name: Image Builder
                   tags:
                   - id: 1
                     name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
                   - id: 2
-                    version: "0.2"
-                - catalog:
-                    id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-        "400":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: true
-                timeout: true
-        "404":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: true
-                timeout: false
+                    name: kaniko
         "500":
           description: ""
           content:
@@ -1500,529 +1381,6 @@ paths:
                 name: bad_request
                 temporary: false
                 timeout: true
-  /v1/resource/{catalog}/{kind}/{name}:
-    get:
-      tags:
-      - resource
-      summary: ByCatalogKindName resource
-      description: Find resources using name of catalog, resource name and kind of resource
-      operationId: resource#ByCatalogKindName#1
-      parameters:
-      - name: catalog
-        in: path
-        description: name of catalog
-        required: true
-        schema:
-          type: string
-          description: name of catalog
-          example: tektoncd
-        example: tektoncd
-      - name: kind
-        in: path
-        description: kind of resource
-        required: true
-        schema:
-          type: string
-          description: kind of resource
-          example: pipeline
-          enum:
-          - task
-          - pipeline
-        example: pipeline
-      - name: name
-        in: path
-        description: Name of resource
-        required: true
-        schema:
-          type: string
-          description: Name of resource
-          example: buildah
-        example: buildah
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Resource'
-              example:
-                data:
-                  catalog:
-                    id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-        "404":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: false
-                timeout: false
-        "500":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: true
-                timeout: false
-  /v1/resource/{catalog}/{kind}/{name}/{version}:
-    get:
-      tags:
-      - resource
-      summary: ByCatalogKindNameVersion resource
-      description: Find resource using name of catalog & name, kind and version of resource
-      operationId: resource#ByCatalogKindNameVersion#1
-      parameters:
-      - name: catalog
-        in: path
-        description: name of catalog
-        required: true
-        schema:
-          type: string
-          description: name of catalog
-          example: tektoncd
-        example: tektoncd
-      - name: kind
-        in: path
-        description: kind of resource
-        required: true
-        schema:
-          type: string
-          description: kind of resource
-          example: pipeline
-          enum:
-          - task
-          - pipeline
-        example: pipeline
-      - name: name
-        in: path
-        description: name of resource
-        required: true
-        schema:
-          type: string
-          description: name of resource
-          example: buildah
-        example: buildah
-      - name: version
-        in: path
-        description: version of resource
-        required: true
-        schema:
-          type: string
-          description: version of resource
-          example: "0.1"
-        example: "0.1"
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResourceVersion'
-              example:
-                data:
-                  description: Buildah task builds source into a container image and then pushes it to a container registry.
-                  displayName: Buildah
-                  id: 1
-                  minPipelinesVersion: 0.12.1
-                  rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                  resource:
-                    catalog:
-                      id: 1
-                      type: community
-                    id: 1
-                    kind: task
-                    name: buildah
-                    rating: 4.3
-                    tags:
-                    - id: 1
-                      name: image-build
-                  updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                  version: "0.1"
-                  webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-        "404":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: true
-                timeout: true
-        "500":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: false
-                timeout: true
-  /v1/resource/{id}:
-    get:
-      tags:
-      - resource
-      summary: ById resource
-      description: Find a resource using it's id
-      operationId: resource#ById#1
-      parameters:
-      - name: id
-        in: path
-        description: ID of a resource
-        required: true
-        schema:
-          type: integer
-          description: ID of a resource
-          example: 1
-        example: 1
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Resource'
-              example:
-                data:
-                  catalog:
-                    id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-        "404":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: false
-                timeout: true
-        "500":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: false
-                timeout: true
-  /v1/resource/{id}/versions:
-    get:
-      tags:
-      - resource
-      summary: VersionsByID resource
-      description: Find all versions of a resource by its id
-      operationId: resource#VersionsByID#1
-      parameters:
-      - name: id
-        in: path
-        description: ID of a resource
-        required: true
-        schema:
-          type: integer
-          description: ID of a resource
-          example: 1
-        example: 1
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResourceVersions'
-              example:
-                data:
-                  latest:
-                    id: 2
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
-                    version: "0.2"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
-                  versions:
-                  - id: 1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                  - id: 2
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
-                    version: "0.2"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
-        "404":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: true
-                timeout: false
-        "500":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: true
-                timeout: true
-  /v1/resource/version/{versionID}:
-    get:
-      tags:
-      - resource
-      summary: ByVersionId resource
-      description: Find a resource using its version's id
-      operationId: resource#ByVersionId#1
-      parameters:
-      - name: versionID
-        in: path
-        description: Version ID of a resource's version
-        required: true
-        schema:
-          type: integer
-          description: Version ID of a resource's version
-          example: 1
-        example: 1
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResourceVersion'
-              example:
-                data:
-                  description: Buildah task builds source into a container image and then pushes it to a container registry.
-                  displayName: Buildah
-                  id: 1
-                  minPipelinesVersion: 0.12.1
-                  rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                  resource:
-                    catalog:
-                      id: 1
-                      type: community
-                    id: 1
-                    kind: task
-                    name: buildah
-                    rating: 4.3
-                    tags:
-                    - id: 1
-                      name: image-build
-                  updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                  version: "0.1"
-                  webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-        "404":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: false
-                timeout: true
-        "500":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: false
-                timeout: true
-  /v1/resources:
-    get:
-      tags:
-      - resource
-      summary: List resource
-      description: List all resources sorted by rating and name
-      operationId: resource#List#1
-      parameters:
-      - name: limit
-        in: query
-        description: Maximum number of resources to be returned
-        allowEmptyValue: true
-        schema:
-          type: integer
-          description: Maximum number of resources to be returned
-          default: 1000
-          example: 100
-        example: 100
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Resources'
-              example:
-                data:
-                - catalog:
-                    id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-                - catalog:
-                    id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-                - catalog:
-                    id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-        "500":
-          description: ""
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
-                name: bad_request
-                temporary: true
-                timeout: false
 components:
   schemas:
     AuthTokens:
@@ -2127,11 +1485,13 @@ components:
           example: true
         id:
           type: string
-          description: ID is a unique identifier for this particular occurrence of the problem.
+          description: ID is a unique identifier for this particular occurrence of
+            the problem.
           example: 123abc
         message:
           type: string
-          description: Message is a human-readable explanation specific to this occurrence of the problem.
+          description: Message is a human-readable explanation specific to this occurrence
+            of the problem.
           example: parameter 'p' must be an integer
         name:
           type: string
@@ -2140,12 +1500,12 @@ components:
         temporary:
           type: boolean
           description: Is the error temporary?
-          example: true
+          example: false
         timeout:
           type: boolean
           description: Is the error a timeout?
           example: true
-      description: Internal Server Error
+      description: Invalid request body
       example:
         fault: true
         id: 123abc
@@ -2204,14 +1564,14 @@ components:
         id:
           type: integer
           description: id of the job
-          example: 1775143685620788290
+          example: 8451480480088601963
         status:
           type: string
           description: status of the job
-          example: Dolorum sapiente.
+          example: Vitae ducimus.
       example:
-        id: 8451480480088601963
-        status: Vitae ducimus.
+        id: 3463136335453028454
+        status: Autem aut id.
       required:
       - id
       - status
@@ -2253,20 +1613,6 @@ components:
             name: image-build
           - id: 2
             name: kaniko
-        - id: 1
-          name: Image Builder
-          tags:
-          - id: 1
-            name: image-build
-          - id: 2
-            name: kaniko
-        - id: 1
-          name: Image Builder
-          tags:
-          - id: 1
-            name: image-build
-          - id: 2
-            name: kaniko
     RefreshConfigRequestBody:
       type: object
       properties:
@@ -2284,9 +1630,9 @@ components:
         checksum:
           type: string
           description: Config file checksum
-          example: Sint omnis consequatur.
+          example: Quas veniam.
       example:
-        checksum: Qui aut sed voluptas animi molestiae.
+        checksum: Accusamus ut dolorum sapiente.
       required:
       - checksum
     Resource:
@@ -2302,7 +1648,8 @@ components:
           id: 1
           kind: task
           latestVersion:
-            description: Buildah task builds source into a container image and then pushes it to a container registry.
+            description: Buildah task builds source into a container image and then
+              pushes it to a container registry.
             displayName: Buildah
             id: 1
             minPipelinesVersion: 0.12.1
@@ -2372,7 +1719,8 @@ components:
         id: 1
         kind: task
         latestVersion:
-          description: Buildah task builds source into a container image and then pushes it to a container registry.
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
@@ -2410,7 +1758,8 @@ components:
         id: 1
         kind: task
         latestVersion:
-          description: Buildah task builds source into a container image and then pushes it to a container registry.
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
@@ -2434,7 +1783,58 @@ components:
         id: 1
         kind: task
         latestVersion:
-          description: Buildah task builds source into a container image and then pushes it to a container registry.
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        name: buildah
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+        versions:
+        - id: 1
+          version: "0.1"
+        - id: 2
+          version: "0.2"
+      - catalog:
+          id: 1
+          type: community
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        name: buildah
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+        versions:
+        - id: 1
+          version: "0.1"
+        - id: 2
+          version: "0.2"
+      - catalog:
+          id: 1
+          type: community
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
@@ -2459,7 +1859,8 @@ components:
           $ref: '#/components/schemas/ResourceVersionData'
       example:
         data:
-          description: Buildah task builds source into a container image and then pushes it to a container registry.
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
@@ -2486,7 +1887,8 @@ components:
         description:
           type: string
           description: Description of version
-          example: Buildah task builds source into a container image and then pushes it to a container registry.
+          example: Buildah task builds source into a container image and then pushes
+            it to a container registry.
         displayName:
           type: string
           description: Display name of version
@@ -2497,7 +1899,8 @@ components:
           example: 1
         minPipelinesVersion:
           type: string
-          description: Minimum pipelines version the resource's version is compatible with
+          description: Minimum pipelines version the resource's version is compatible
+            with
           example: 0.12.1
         rawURL:
           type: string
@@ -2522,7 +1925,8 @@ components:
           format: uri
       description: The Version result type describes resource's version information.
       example:
-        description: Buildah task builds source into a container image and then pushes it to a container registry.
+        description: Buildah task builds source into a container image and then pushes
+          it to a container registry.
         displayName: Buildah
         id: 1
         minPipelinesVersion: 0.12.1
@@ -2587,7 +1991,8 @@ components:
           id: 1
           kind: task
           latestVersion:
-            description: Buildah task builds source into a container image and then pushes it to a container registry.
+            description: Buildah task builds source into a container image and then
+              pushes it to a container registry.
             displayName: Buildah
             id: 1
             minPipelinesVersion: 0.12.1
@@ -2611,7 +2016,8 @@ components:
           id: 1
           kind: task
           latestVersion:
-            description: Buildah task builds source into a container image and then pushes it to a container registry.
+            description: Buildah task builds source into a container image and then
+              pushes it to a container registry.
             displayName: Buildah
             id: 1
             minPipelinesVersion: 0.12.1
@@ -2635,7 +2041,8 @@ components:
           id: 1
           kind: task
           latestVersion:
-            description: Buildah task builds source into a container image and then pushes it to a container registry.
+            description: Buildah task builds source into a container image and then
+              pushes it to a container registry.
             displayName: Buildah
             id: 1
             minPipelinesVersion: 0.12.1
@@ -2670,14 +2077,11 @@ components:
           - error: unable to reach db
             name: api
             status: ok
-          - error: unable to reach db
-            name: api
-            status: ok
-          - error: unable to reach db
-            name: api
-            status: ok
       example:
         services:
+        - error: unable to reach db
+          name: api
+          status: ok
         - error: unable to reach db
           name: api
           status: ok
@@ -2735,21 +2139,23 @@ components:
         name:
           type: string
           description: Name of Agent
-          example: Qui nam eos esse enim sint tempora.
+          example: Et nam quia incidunt accusamus.
         scopes:
           type: array
           items:
             type: string
-            example: Neque maxime nesciunt.
+            example: Non eum praesentium corrupti et qui nam.
           description: Scopes required for Agent
           example:
-          - Laboriosam incidunt neque asperiores.
-          - Hic molestiae beatae dicta itaque.
+          - Enim sint tempora.
+          - Neque maxime nesciunt.
       example:
-        name: Reiciendis aut repellat veritatis.
+        name: Debitis laboriosam incidunt neque asperiores reiciendis hic.
         scopes:
-        - Nulla ea.
-        - Aperiam ipsam sapiente labore assumenda.
+        - Dicta itaque possimus.
+        - Aut repellat.
+        - Qui accusantium nulla ea rem.
+        - Ipsam sapiente labore assumenda qui sequi officiis.
       required:
       - name
       - scopes
@@ -2759,9 +2165,9 @@ components:
         token:
           type: string
           description: Agent JWT
-          example: Sequi officiis mollitia.
+          example: Dolorem laudantium quidem amet suscipit fuga.
       example:
-        token: Laudantium quidem amet suscipit fuga nam.
+        token: Dolorem eveniet qui sint omnis.
       required:
       - token
     UpdateRequestBody:
@@ -2770,11 +2176,11 @@ components:
         rating:
           type: integer
           description: User rating for resource
-          example: 2
+          example: 1
           minimum: 0
           maximum: 5
       example:
-        rating: 4
+        rating: 0
       required:
       - rating
     Versions:
@@ -2796,7 +2202,8 @@ components:
             rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
             version: "0.2"
             webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
-      description: The Versions type describes response for versions by resource id API.
+      description: The Versions type describes response for versions by resource id
+        API.
       example:
         latest:
           id: 2
@@ -2818,5 +2225,6 @@ components:
   securitySchemes:
     jwt_header_Authorization:
       type: http
-      description: Secures endpoint by requiring a valid JWT retrieved via the /auth/login endpoint.
+      description: Secures endpoint by requiring a valid JWT retrieved via the /auth/login
+        endpoint.
       scheme: bearer

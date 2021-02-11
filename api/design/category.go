@@ -15,6 +15,7 @@
 package design
 
 import (
+	"github.com/tektoncd/hub/api/design/types"
 	. "goa.design/goa/v3/dsl"
 )
 
@@ -26,7 +27,7 @@ var _ = Service("category", func() {
 	Method("list", func() {
 		Description("List all categories along with their tags sorted by name")
 		Result(func() {
-			Attribute("data", ArrayOf(Category))
+			Attribute("data", ArrayOf(types.Category))
 		})
 
 		HTTP(func() {
