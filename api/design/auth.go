@@ -15,6 +15,7 @@
 package design
 
 import (
+	"github.com/tektoncd/hub/api/design/types"
 	. "goa.design/goa/v3/dsl"
 )
 
@@ -35,7 +36,7 @@ var _ = Service("auth", func() {
 			Required("code")
 		})
 		Result(func() {
-			Attribute("data", AuthTokens, "User Tokens")
+			Attribute("data", types.AuthTokens, "User Tokens")
 			Required("data")
 		})
 

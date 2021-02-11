@@ -41,6 +41,8 @@ import (
 	ratingsvc "github.com/tektoncd/hub/api/pkg/service/rating"
 	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
 	statussvc "github.com/tektoncd/hub/api/pkg/service/status"
+	v1resource "github.com/tektoncd/hub/api/v1/gen/resource"
+	v1resourcesvc "github.com/tektoncd/hub/api/v1/service/resource"
 )
 
 func main() {
@@ -79,13 +81,14 @@ func main() {
 
 	// Initialize the services.
 	var (
-		adminSvc    admin.Service
-		authSvc     auth.Service
-		catalogSvc  catalog.Service
-		categorySvc category.Service
-		ratingSvc   rating.Service
-		resourceSvc resource.Service
-		statusSvc   status.Service
+		adminSvc      admin.Service
+		authSvc       auth.Service
+		catalogSvc    catalog.Service
+		categorySvc   category.Service
+		ratingSvc     rating.Service
+		resourceSvc   resource.Service
+		v1resourceSvc v1resource.Service
+		statusSvc     status.Service
 	)
 	{
 		adminSvc = adminsvc.New(api)
@@ -94,19 +97,21 @@ func main() {
 		categorySvc = categorysvc.New(api)
 		ratingSvc = ratingsvc.New(api)
 		resourceSvc = resourcesvc.New(api)
+		v1resourceSvc = v1resourcesvc.New(api)
 		statusSvc = statussvc.New(api)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
-		adminEndpoints    *admin.Endpoints
-		authEndpoints     *auth.Endpoints
-		catalogEndpoints  *catalog.Endpoints
-		categoryEndpoints *category.Endpoints
-		ratingEndpoints   *rating.Endpoints
-		resourceEndpoints *resource.Endpoints
-		statusEndpoints   *status.Endpoints
+		adminEndpoints      *admin.Endpoints
+		authEndpoints       *auth.Endpoints
+		catalogEndpoints    *catalog.Endpoints
+		categoryEndpoints   *category.Endpoints
+		ratingEndpoints     *rating.Endpoints
+		resourceEndpoints   *resource.Endpoints
+		v1resourceEndpoints *v1resource.Endpoints
+		statusEndpoints     *status.Endpoints
 	)
 	{
 		adminEndpoints = admin.NewEndpoints(adminSvc)
@@ -115,6 +120,7 @@ func main() {
 		categoryEndpoints = category.NewEndpoints(categorySvc)
 		ratingEndpoints = rating.NewEndpoints(ratingSvc)
 		resourceEndpoints = resource.NewEndpoints(resourceSvc)
+		v1resourceEndpoints = v1resource.NewEndpoints(v1resourceSvc)
 		statusEndpoints = status.NewEndpoints(statusSvc)
 	}
 
@@ -163,6 +169,7 @@ func main() {
 				categoryEndpoints,
 				ratingEndpoints,
 				resourceEndpoints,
+				v1resourceEndpoints,
 				statusEndpoints,
 				&wg, errc, api.Logger("http"), *dbgF,
 			)

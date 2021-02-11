@@ -15,6 +15,7 @@
 package design
 
 import (
+	"github.com/tektoncd/hub/api/design/types"
 	. "goa.design/goa/v3/dsl"
 )
 
@@ -28,7 +29,7 @@ var _ = Service("rating", func() {
 
 	Method("Get", func() {
 		Description("Find user's rating for a resource")
-		Security(JWTAuth, func() {
+		Security(types.JWTAuth, func() {
 			Scope("rating:read")
 		})
 		Payload(func() {
@@ -57,7 +58,7 @@ var _ = Service("rating", func() {
 
 	Method("Update", func() {
 		Description("Update user's rating for a resource")
-		Security(JWTAuth, func() {
+		Security(types.JWTAuth, func() {
 			Scope("rating:write")
 		})
 		Payload(func() {

@@ -15,6 +15,7 @@
 package design
 
 import (
+	"github.com/tektoncd/hub/api/design/types"
 	. "goa.design/goa/v3/dsl"
 )
 
@@ -28,7 +29,7 @@ var _ = Service("admin", func() {
 
 	Method("UpdateAgent", func() {
 		Description("Create or Update an agent user with required scopes")
-		Security(JWTAuth, func() {
+		Security(types.JWTAuth, func() {
 			Scope("agent:create")
 		})
 		Payload(func() {
@@ -56,7 +57,7 @@ var _ = Service("admin", func() {
 
 	Method("RefreshConfig", func() {
 		Description("Refresh the changes in config file")
-		Security(JWTAuth, func() {
+		Security(types.JWTAuth, func() {
 			Scope("config:refresh")
 		})
 		Payload(func() {

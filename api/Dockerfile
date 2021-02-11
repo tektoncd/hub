@@ -11,8 +11,13 @@ RUN apk --no-cache add git ca-certificates && addgroup -S hub && adduser -S hub 
 USER hub
 
 WORKDIR /app
+
 COPY --from=builder /go/src/github.com/tektoncd/hub/api/api-server /app/api-server
-COPY --from=builder /go/src/github.com/tektoncd/hub/api/gen/http/openapi3.yaml /app/gen/http/openapi3.yaml
+
+# For each new version, doc has to be copied 
+COPY gen/http/openapi3.yaml /app/gen/http/openapi3.yaml
+COPY v1/gen/http/openapi3.yaml /app/v1/gen/http/openapi3.yaml
+
 EXPOSE 8000
 
 CMD [ "/app/api-server" ]

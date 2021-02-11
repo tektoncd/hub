@@ -55,23 +55,6 @@ func TestQuery_Http(t *testing.T) {
 	})
 }
 
-func TestQuery_V1_Http(t *testing.T) {
-	tc := testutils.Setup(t)
-	testutils.LoadFixtures(t, tc.FixturePath())
-
-	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?name=build&kinds=pipeline&limit=1").Check().
-		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
-		assert.NoError(t, readErr)
-		defer r.Body.Close()
-
-		res, err := testutils.FormatJSON(b)
-		assert.NoError(t, err)
-
-		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
-	})
-}
-
 func TestQueryWithKinds_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
@@ -271,23 +254,6 @@ func TestList_Http_NoLimit(t *testing.T) {
 	})
 }
 
-func TestList_V1_Http(t *testing.T) {
-	tc := testutils.Setup(t)
-	testutils.LoadFixtures(t, tc.FixturePath())
-
-	ListChecker(tc).Test(t, http.MethodGet, "/v1/resources").Check().
-		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
-		assert.NoError(t, readErr)
-		defer r.Body.Close()
-
-		res, err := testutils.FormatJSON(b)
-		assert.NoError(t, err)
-
-		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
-	})
-}
-
 func VersionsByIDChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	checker := goahttpcheck.New()
 	checker.Mount(
@@ -302,23 +268,6 @@ func TestVersionsByID_Http(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	VersionsByIDChecker(tc).Test(t, http.MethodGet, "/resource/1/versions").Check().
-		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
-		assert.NoError(t, readErr)
-		defer r.Body.Close()
-
-		res, err := testutils.FormatJSON(b)
-		assert.NoError(t, err)
-
-		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
-	})
-}
-
-func TestVersionsByID_V1_Http(t *testing.T) {
-	tc := testutils.Setup(t)
-	testutils.LoadFixtures(t, tc.FixturePath())
-
-	VersionsByIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/1/versions").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -375,23 +324,6 @@ func TestByCatalogKindNameVersion_Http(t *testing.T) {
 	})
 }
 
-func TestByCatalogKindNameVersion_V1_Http(t *testing.T) {
-	tc := testutils.Setup(t)
-	testutils.LoadFixtures(t, tc.FixturePath())
-
-	ByCatalogKindNameVersionChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tkn/0.1").Check().
-		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
-		assert.NoError(t, readErr)
-		defer r.Body.Close()
-
-		res, err := testutils.FormatJSON(b)
-		assert.NoError(t, err)
-
-		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
-	})
-}
-
 func TestByCatalogKindNameVersion_Http_ErrorCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
@@ -424,23 +356,6 @@ func TestByVersionID_Http(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	ByVersionIDChecker(tc).Test(t, http.MethodGet, "/resource/version/4").Check().
-		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
-		assert.NoError(t, readErr)
-		defer r.Body.Close()
-
-		res, err := testutils.FormatJSON(b)
-		assert.NoError(t, err)
-
-		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
-	})
-}
-
-func TestByVersionID_V1_Http(t *testing.T) {
-	tc := testutils.Setup(t)
-	testutils.LoadFixtures(t, tc.FixturePath())
-
-	ByVersionIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/version/4").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -497,23 +412,6 @@ func TestByCatalogKindName_Http(t *testing.T) {
 	})
 }
 
-func TestByCatalogKindName_V1_Http(t *testing.T) {
-	tc := testutils.Setup(t)
-	testutils.LoadFixtures(t, tc.FixturePath())
-
-	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tekton").Check().
-		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
-		assert.NoError(t, readErr)
-		defer r.Body.Close()
-
-		res, err := testutils.FormatJSON(b)
-		assert.NoError(t, err)
-
-		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
-	})
-}
-
 func TestByCatalogKindName_Http_ErrorCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
@@ -546,23 +444,6 @@ func TestByID_Http(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	ByIDChecker(tc).Test(t, http.MethodGet, "/resource/1").Check().
-		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
-		assert.NoError(t, readErr)
-		defer r.Body.Close()
-
-		res, err := testutils.FormatJSON(b)
-		assert.NoError(t, err)
-
-		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
-	})
-}
-
-func TestByID_V1_Http(t *testing.T) {
-	tc := testutils.Setup(t)
-	testutils.LoadFixtures(t, tc.FixturePath())
-
-	ByIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/1").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)

@@ -51,7 +51,7 @@ func TestCategories_List_Http(t *testing.T) {
 	})
 }
 
-func TestCategories_List_V1_Http(t *testing.T) {
+func TestCategories_List_Http_V1(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 

@@ -15,6 +15,7 @@
 package design
 
 import (
+	"github.com/tektoncd/hub/api/design/types"
 	. "goa.design/goa/v3/dsl"
 )
 
@@ -24,11 +25,12 @@ var _ = Service("status", func() {
 	Method("Status", func() {
 		Description("Return status of the services")
 		Result(func() {
-			Attribute("services", ArrayOf(HubService), "List of services and their status")
+			Attribute("services", ArrayOf(types.HubService), "List of services and their status")
 		})
 
 		HTTP(func() {
 			GET("/")
+			GET("/v1")
 			Response(StatusOK)
 		})
 	})

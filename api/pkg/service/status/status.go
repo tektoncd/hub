@@ -35,7 +35,7 @@ func New(api app.BaseConfig) status.Service {
 func (s *service) Status(ctx context.Context) (*status.StatusResult, error) {
 
 	service := []*status.HubService{
-		&status.HubService{Name: "api", Status: "ok"},
+		{Name: "api", Status: "ok"},
 	}
 
 	db, err := s.DB(ctx).DB()

@@ -42,6 +42,9 @@ import (
 	rating "github.com/tektoncd/hub/api/gen/rating"
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	status "github.com/tektoncd/hub/api/gen/status"
+	v1resourcesvr "github.com/tektoncd/hub/api/v1/gen/http/resource/server"
+	v1swaggersvr "github.com/tektoncd/hub/api/v1/gen/http/swagger/server"
+	v1resource "github.com/tektoncd/hub/api/v1/gen/resource"
 )
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
@@ -54,6 +57,7 @@ func handleHTTPServer(
 	categoryEndpoints *category.Endpoints,
 	ratingEndpoints *rating.Endpoints,
 	resourceEndpoints *resource.Endpoints,
+	v1resourceEndpoints *v1resource.Endpoints,
 	statusEndpoints *status.Endpoints,
 	wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
@@ -86,14 +90,16 @@ func handleHTTPServer(
 	// the service input and output data structures to HTTP requests and
 	// responses.
 	var (
-		adminServer    *adminsvr.Server
-		authServer     *authsvr.Server
-		catalogServer  *catalogsvr.Server
-		categoryServer *categorysvr.Server
-		ratingServer   *ratingsvr.Server
-		resourceServer *resourcesvr.Server
-		statusServer   *statussvr.Server
-		swaggerServer  *swaggersvr.Server
+		adminServer      *adminsvr.Server
+		authServer       *authsvr.Server
+		catalogServer    *catalogsvr.Server
+		categoryServer   *categorysvr.Server
+		ratingServer     *ratingsvr.Server
+		resourceServer   *resourcesvr.Server
+		v1resourceServer *v1resourcesvr.Server
+		statusServer     *statussvr.Server
+		swaggerServer    *swaggersvr.Server
+		v1swaggerServer  *v1swaggersvr.Server
 	)
 	{
 		eh := errorHandler(logger)
@@ -103,8 +109,10 @@ func handleHTTPServer(
 		categoryServer = categorysvr.New(categoryEndpoints, mux, dec, enc, eh, nil)
 		ratingServer = ratingsvr.New(ratingEndpoints, mux, dec, enc, eh, nil)
 		resourceServer = resourcesvr.New(resourceEndpoints, mux, dec, enc, eh, nil)
+		v1resourceServer = v1resourcesvr.New(v1resourceEndpoints, mux, dec, enc, eh, nil)
 		statusServer = statussvr.New(statusEndpoints, mux, dec, enc, eh, nil)
 		swaggerServer = swaggersvr.New(nil, mux, dec, enc, eh, nil)
+		v1swaggerServer = v1swaggersvr.New(nil, mux, dec, enc, eh, nil)
 
 		if debug {
 			servers := goahttp.Servers{
@@ -114,8 +122,10 @@ func handleHTTPServer(
 				categoryServer,
 				ratingServer,
 				resourceServer,
+				v1resourceServer,
 				statusServer,
 				swaggerServer,
+				v1swaggerServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
@@ -127,8 +137,10 @@ func handleHTTPServer(
 	categorysvr.Mount(mux, categoryServer)
 	ratingsvr.Mount(mux, ratingServer)
 	resourcesvr.Mount(mux, resourceServer)
+	v1resourcesvr.Mount(mux, v1resourceServer)
 	statussvr.Mount(mux, statusServer)
 	swaggersvr.Mount(mux, swaggerServer)
+	v1swaggersvr.Mount(mux, v1swaggerServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.
@@ -159,10 +171,16 @@ func handleHTTPServer(
 	for _, m := range resourceServer.Mounts {
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
+	for _, m := range v1resourceServer.Mounts {
+		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
 	for _, m := range statusServer.Mounts {
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range swaggerServer.Mounts {
+		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range v1swaggerServer.Mounts {
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 
