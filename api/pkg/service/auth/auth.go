@@ -19,6 +19,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"strings"
 
 	"github.com/google/go-github/github"
 	"github.com/tektoncd/hub/api/gen/auth"
@@ -103,21 +104,48 @@ func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
 	return r.createTokens(user, scopes)
 }
 
-func (r *request) addUser(user *github.User) (*model.User, error) {
+func (r *request) addUser(ghUser *github.User) (*model.User, error) {
 
-	q := r.db.Model(&model.User{}).Where(&model.User{GithubLogin: user.GetLogin()})
+	// Check if user exist
+	q := r.db.Model(&model.User{}).
+		Where("LOWER(github_login) = ?", strings.ToLower(ghUser.GetLogin()))
 
-	newUser := model.User{
-		GithubName:  user.GetName(),
-		GithubLogin: user.GetLogin(),
-		Type:        model.NormalUserType,
-	}
-	if err := q.FirstOrCreate(&newUser).Error; err != nil {
+	var user model.User
+	err := q.First(&user).Error
+	if err != nil {
+		// If user doesn't exist, create a new record
+		if err == gorm.ErrRecordNotFound {
+
+			user.GithubName = ghUser.GetName()
+			user.GithubLogin = strings.ToLower(ghUser.GetLogin())
+			user.Type = model.NormalUserType
+
+			err = r.db.Create(&user).Error
+			if err != nil {
+				r.log.Error(err)
+				return nil, internalError
+			}
+			return &user, nil
+		}
 		r.log.Error(err)
 		return nil, internalError
 	}
 
-	return &newUser, nil
+	// User already exist, check if GitHub Name is empty
+	// If Name is empty, then user is inserted through config.yaml
+	// Update user with remaining details
+
+	if user.GithubName == "" {
+		user.GithubName = ghUser.GetName()
+		user.Type = model.NormalUserType
+
+		if err = r.db.Save(&user).Error; err != nil {
+			r.log.Error(err)
+			return nil, err
+		}
+	}
+
+	return &user, nil
 }
 
 func (r *request) userScopes(user *model.User) ([]string, error) {

@@ -217,3 +217,56 @@ func TestLogin_UserWithExtraScope(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, ut.RefreshTokenChecksum, createChecksum(refreshToken))
 }
+
+func TestLogin_UserAddedByConfig(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	defer gock.Off()
+
+	gock.New("https://github.com").
+		Post("/login/oauth/access_token").
+		Reply(200).
+		JSON(map[string]string{
+			"access_token": "test-token",
+		})
+
+	gock.New("https://api.github.com").
+		Get("/user").
+		Reply(200).
+		JSON(map[string]string{
+			"login": "config-user",
+			"name":  "config-user",
+		})
+
+	// Mocks the time
+	token.Now = testutils.Now
+
+	authSvc := New(tc)
+	payload := &auth.AuthenticatePayload{Code: "test-code"}
+	res, err := authSvc.Authenticate(context.Background(), payload)
+	assert.NoError(t, err)
+
+	// expected access jwt for user
+	user, accessToken, err := tc.UserWithScopes("config-user", "rating:read", "rating:write", "config:refresh")
+	assert.Equal(t, user.GithubLogin, "config-user")
+	assert.NoError(t, err)
+
+	// expected refresh jwt for user
+	user, refreshToken, err := tc.RefreshTokenForUser("config-user")
+	assert.Equal(t, user.GithubLogin, "config-user")
+	assert.NoError(t, err)
+
+	accessExpiryTime := testutils.Now().Add(tc.JWTConfig().AccessExpiresIn).Unix()
+	refreshExpiryTime := testutils.Now().Add(tc.JWTConfig().RefreshExpiresIn).Unix()
+
+	assert.Equal(t, accessToken, res.Data.Access.Token)
+	assert.Equal(t, tc.JWTConfig().AccessExpiresIn.String(), res.Data.Access.RefreshInterval)
+	assert.Equal(t, accessExpiryTime, res.Data.Access.ExpiresAt)
+
+	assert.Equal(t, refreshToken, res.Data.Refresh.Token)
+	assert.Equal(t, tc.JWTConfig().RefreshExpiresIn.String(), res.Data.Refresh.RefreshInterval)
+	assert.Equal(t, refreshExpiryTime, res.Data.Refresh.ExpiresAt)
+
+	assert.Equal(t, gock.IsDone(), true)
+}

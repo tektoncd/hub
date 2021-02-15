@@ -138,13 +138,18 @@ func addUsers(db *gorm.DB, log *log.Logger, data *app.Data) error {
 
 			user := model.User{}
 			if err := q.First(&user).Error; err != nil {
-				// If user not found then log and continue
-				if err == gorm.ErrRecordNotFound {
-					log.Warnf("user %s not found: %s", userID, err)
-					continue
+				// If user not found then create a new record
+				if err != gorm.ErrRecordNotFound {
+					log.Error(err)
+					return err
 				}
-				log.Error(err)
-				return err
+
+				log.Infof("user %s not found, create a new user", userID)
+				user.GithubLogin = strings.ToLower(userID)
+				if err = db.Create(&user).Error; err != nil {
+					log.Error(err)
+					return err
+				}
 			}
 
 			// Add scopes for user if not added already
