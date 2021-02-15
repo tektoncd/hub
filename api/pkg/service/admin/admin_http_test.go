@@ -220,6 +220,14 @@ func TestRefreshConfig_Http(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equal(t, checksum, res.Checksum)
+
+		scope := model.Scope{Name: "test:scope"}
+		err = tc.DB().Where(&scope).First(&scope).Error
+		assert.NoError(t, err)
+
+		user := model.User{GithubLogin: "test-user"}
+		err = tc.DB().Where(&user).First(&user).Error
+		assert.NoError(t, err)
 	})
 }
 
