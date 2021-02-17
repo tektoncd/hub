@@ -428,10 +428,10 @@ definitions:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
         rating: 4.3
         tags:
@@ -548,7 +548,7 @@ definitions:
         displayName: Buildah
         id: 1
         minPipelinesVersion: 0.12.1
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         resource:
           catalog:
             id: 1
@@ -562,7 +562,7 @@ definitions:
             name: image-build
         updatedAt: 2020-01-01 12:00:00 +0000 UTC
         version: "0.1"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
     required:
     - data
   ResourceByIDInternalErrorResponseBody:
@@ -675,10 +675,10 @@ definitions:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
         rating: 4.3
         tags:
@@ -795,7 +795,7 @@ definitions:
         displayName: Buildah
         id: 1
         minPipelinesVersion: 0.12.1
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         resource:
           catalog:
             id: 1
@@ -809,7 +809,7 @@ definitions:
             name: image-build
         updatedAt: 2020-01-01 12:00:00 +0000 UTC
         version: "0.1"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
     required:
     - data
   ResourceDataResponseBody:
@@ -869,10 +869,10 @@ definitions:
         displayName: Buildah
         id: 1
         minPipelinesVersion: 0.12.1
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         updatedAt: 2020-01-01 12:00:00 +0000 UTC
         version: "0.1"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
       name: buildah
       rating: 4.3
       tags:
@@ -991,10 +991,10 @@ definitions:
         displayName: Buildah
         id: 1
         minPipelinesVersion: 0.12.1
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         updatedAt: 2020-01-01 12:00:00 +0000 UTC
         version: "0.1"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
       name: buildah
       rating: 4.3
       tags:
@@ -1028,10 +1028,10 @@ definitions:
         displayName: Buildah
         id: 1
         minPipelinesVersion: 0.12.1
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         updatedAt: 2020-01-01 12:00:00 +0000 UTC
         version: "0.1"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
       name: buildah
       rating: 4.3
       tags:
@@ -1053,10 +1053,10 @@ definitions:
         displayName: Buildah
         id: 1
         minPipelinesVersion: 0.12.1
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         updatedAt: 2020-01-01 12:00:00 +0000 UTC
         version: "0.1"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
       name: buildah
       rating: 4.3
       tags:
@@ -1132,10 +1132,10 @@ definitions:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
         rating: 4.3
         tags:
@@ -1152,10 +1152,10 @@ definitions:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
         rating: 4.3
         tags:
@@ -1172,10 +1172,10 @@ definitions:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
         rating: 4.3
         tags:
@@ -1192,10 +1192,10 @@ definitions:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
         rating: 4.3
         tags:
@@ -1358,10 +1358,10 @@ definitions:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
         rating: 4.3
         tags:
@@ -1378,10 +1378,10 @@ definitions:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
         rating: 4.3
         tags:
@@ -1398,10 +1398,10 @@ definitions:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
         rating: 4.3
         tags:
@@ -1418,10 +1418,10 @@ definitions:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
         rating: 4.3
         tags:
@@ -1455,7 +1455,7 @@ definitions:
       rawURL:
         type: string
         description: Raw URL of resource's yaml file of the version
-        example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        example: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         format: uri
       resource:
         $ref: '#/definitions/ResourceDataResponseBodyInfo'
@@ -1471,7 +1471,7 @@ definitions:
       webURL:
         type: string
         description: Web URL of resource's yaml file of the version
-        example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         format: uri
     description: The Version result type describes resource's version information.
     example:
@@ -1480,7 +1480,7 @@ definitions:
       displayName: Buildah
       id: 1
       minPipelinesVersion: 0.12.1
-      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
       resource:
         catalog:
           id: 1
@@ -1494,7 +1494,7 @@ definitions:
           name: image-build
       updatedAt: 2020-01-01 12:00:00 +0000 UTC
       version: "0.1"
-      webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+      webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
     required:
     - id
     - version
@@ -1517,7 +1517,7 @@ definitions:
       rawURL:
         type: string
         description: Raw URL of resource's yaml file of the version
-        example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        example: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         format: uri
       version:
         type: string
@@ -1526,15 +1526,15 @@ definitions:
       webURL:
         type: string
         description: Web URL of resource's yaml file of the version
-        example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         format: uri
     description: The Version result type describes resource's version information.
       (default view)
     example:
       id: 1
-      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
       version: "0.1"
-      webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+      webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
     required:
     - id
     - version
@@ -1587,7 +1587,7 @@ definitions:
       rawURL:
         type: string
         description: Raw URL of resource's yaml file of the version
-        example: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        example: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         format: uri
       updatedAt:
         type: string
@@ -1601,7 +1601,7 @@ definitions:
       webURL:
         type: string
         description: Web URL of resource's yaml file of the version
-        example: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         format: uri
     description: The Version result type describes resource's version information.
       (default view)
@@ -1611,10 +1611,10 @@ definitions:
       displayName: Buildah
       id: 1
       minPipelinesVersion: 0.12.1
-      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
       updatedAt: 2020-01-01 12:00:00 +0000 UTC
       version: "0.1"
-      webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+      webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
     required:
     - id
     - version
@@ -1725,18 +1725,18 @@ definitions:
       data:
         latest:
           id: 2
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
           version: "0.2"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
         versions:
         - id: 1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         - id: 2
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
           version: "0.2"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
     required:
     - data
   TagResponseBody:
@@ -1771,30 +1771,30 @@ definitions:
         description: List of all versions of resource
         example:
         - id: 1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         - id: 2
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
           version: "0.2"
-          webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
     description: The Versions type describes response for versions by resource id
       API.
     example:
       latest:
         id: 2
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
         version: "0.2"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
       versions:
       - id: 1
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         version: "0.1"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
       - id: 2
-        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
         version: "0.2"
-        webURL: https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
     required:
     - latest
     - versions

@@ -34,6 +34,7 @@ func Migrate(api *app.APIBase) error {
 			renameNameColumnToAgentNameInUserTable(log),
 			createConfigTable(log),
 			addRefreshTokenChecksumColumnInUserTable(log),
+			updateCatalogBranchToMain(log),
 		},
 	)
 
