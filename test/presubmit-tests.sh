@@ -54,10 +54,9 @@ install-node() {
 }
 
 ui-unittest(){
-    install-node
-    npm clean-install
+  install-node
 
-  CI=true npm test || {
+  make ui-test || {
     err 'ui unit test failed'
     return 1
   }
@@ -87,50 +86,39 @@ api-unittest(){
     psql -h localhost -p 5432 \
     -U $POSTGRES_USER -c "create database $POSTGRES_DB;"
 
-  info Running unittests
-
-  go mod vendor
-  go test -p 1 -v ./pkg/... ./v1/service/... || {
+  make api-test || {
     err 'api unit test failed'
     return 1
   }
 }
 
 api-golangci-lint() {
-  info Running go lint
 
-  golangci-lint run -v ./pkg/... ./v1/service/... --timeout=5m || {
+  make api-lint || {
     err 'go lint failed'
     return 1
   }
 }
 
 yaml-lint() {
-  info Running Yamllint
 
-  yamllint -c .yamllint ./config.yaml ./config  || {
+  make yaml-lint  || {
     err 'yaml lint failed'
     return 1
   }
 }
 
 api-build(){
-  info Running Api build
-
-  go mod vendor
-  go build -mod=vendor ./cmd/... || {
+  make api-build || {
     err 'Api build failed'
     return 1
   }
 }
 
 ui-build(){
-  info Running UI build
-
   install-node
-  npm clean-install
 
-  CI=true npm run build || {
+  make ui-build || {
     err 'UI build failed'
     return 1
   }
@@ -144,14 +132,12 @@ build_tests() {
   (
     set -eu -o pipefail
 
-    cd "$API_DIR"
     api-build
   ) || exit 1
 
    (
     set -eu -o pipefail
 
-    cd "$UI_DIR"
     ui-build
   ) || exit 1
 }
@@ -162,7 +148,6 @@ unit_tests() {
   (
     set -eu -o pipefail
 
-    cd "$API_DIR"
     api-unittest || return 1
     api-golangci-lint || return 1
   ) || exit 1
@@ -170,7 +155,6 @@ unit_tests() {
   (
     set -eu -o pipefail
 
-    cd "$UI_DIR"
     ui-unittest || return 1
   ) || exit 1
 
