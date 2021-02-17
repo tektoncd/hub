@@ -85,11 +85,11 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 	})
 	Attribute("rawURL", String, "Raw URL of resource's yaml file of the version", func() {
 		Format(FormatURI)
-		Example("rawURL", "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml")
+		Example("rawURL", "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml")
 	})
 	Attribute("webURL", String, "Web URL of resource's yaml file of the version", func() {
 		Format(FormatURI)
-		Example("webURL", "https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml")
+		Example("webURL", "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml")
 	})
 	Attribute("updatedAt", String, "Timestamp when version was last updated", func() {
 		Format(FormatDateTime)
@@ -173,8 +173,8 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 				"description":         "Buildah task builds source into a container image and then pushes it to a container registry.",
 				"displayName":         "Buildah",
 				"minPipelinesVersion": "0.12.1",
-				"rawURL":              "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml",
-				"webURL":              "https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml",
+				"rawURL":              "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml",
+				"webURL":              "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml",
 				"updatedAt":           "2020-01-01 12:00:00 +0000 UTC",
 			})
 		})
@@ -244,8 +244,8 @@ var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {
 			Value(Val{
 				"id":      2,
 				"version": "0.2",
-				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml",
-				"webURL":  "https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml",
+				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml",
+				"webURL":  "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml",
 			})
 		})
 	})
@@ -254,13 +254,13 @@ var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {
 			Value([]Val{{
 				"id":      1,
 				"version": "0.1",
-				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.1/buildah.yaml",
-				"webURL":  "https://github.com/tektoncd/catalog/blob/master/task/buildah/0.1/buildah.yaml",
+				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml",
+				"webURL":  "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml",
 			}, {
 				"id":      2,
 				"version": "0.2",
-				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml",
-				"webURL":  "https://github.com/tektoncd/catalog/blob/master/task/buildah/0.2/buildah.yaml",
+				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml",
+				"webURL":  "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml",
 			}})
 		})
 	})

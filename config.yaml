@@ -51,7 +51,7 @@ catalogs:
     org: tektoncd
     type: community
     url: https://github.com/tektoncd/catalog
-    revision: master
+    revision: main
 
 scopes:
   - name: agent:create
