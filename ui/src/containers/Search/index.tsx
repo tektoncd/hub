@@ -1,13 +1,13 @@
-import { TextInput } from '@patternfly/react-core';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useObserver } from 'mobx-react';
+import { TextInput } from '@patternfly/react-core';
 import { useMst } from '../../store/root';
 import { useDebounce } from '../../utils/useDebounce';
 import './Search.css';
 
 const Search: React.FC = () => {
   const { resources } = useMst();
-  const [value, setValue] = useState('');
 
   // to get query params from the url
   const searchParams = new URLSearchParams(window.location.search);
@@ -16,7 +16,6 @@ const Search: React.FC = () => {
   useEffect(() => {
     if (query !== ' ') {
       resources.setSearch(query);
-      setValue(query);
     }
   }, [query, resources]);
 
@@ -31,24 +30,24 @@ const Search: React.FC = () => {
     if (window.location.pathname === '/') history.replace(`?${url}`);
   };
 
-  const onSearchChange = useDebounce(value, 400);
+  const onSearchChange = useDebounce(resources.search, 400);
 
   const history = useHistory();
   const onSearchKeyPress = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       history.push('/');
-      updateURL(value);
+      updateURL(resources.search);
     }
     return;
   };
 
-  return (
+  return useObserver(() => (
     <TextInput
-      value={value}
+      value={resources.search}
       type="search"
       onChange={(resourceName: string) => {
-        setValue(resourceName);
+        resources.setSearch(resourceName);
         updateURL(resourceName);
         return onSearchChange;
       }}
@@ -58,7 +57,7 @@ const Search: React.FC = () => {
       spellCheck="false"
       className="hub-search"
     />
-  );
+  ));
 };
 
 export default Search;

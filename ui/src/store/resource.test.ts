@@ -583,4 +583,28 @@ describe('Store functions', () => {
       }
     );
   });
+
+  it('it should clear all selected filters', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        store.setSearch('golang');
+        store.setSortBy(SortByFields.Name);
+        expect(store.filteredResources.length).toBe(1);
+
+        store.clearAllFilters();
+        expect(store.filteredResources.length).toBe(7);
+
+        done();
+      }
+    );
+  });
 });
