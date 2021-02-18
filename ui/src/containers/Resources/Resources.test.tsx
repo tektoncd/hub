@@ -1,12 +1,13 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { when } from 'mobx';
-import { EmptyState, GalleryItem } from '@patternfly/react-core';
+import { EmptyState, GalleryItem, Button } from '@patternfly/react-core';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { FakeHub } from '../../api/testutil';
 import { createProviderAndStore } from '../../store/root';
 import Cards from '../../components/Cards';
 import Resources from '.';
+import { SortByFields } from '../../store/resource';
 
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
@@ -79,6 +80,39 @@ describe('Resource Component', () => {
           component.update();
           const r = component.find(EmptyState);
           expect(r.length).toEqual(1);
+
+          done();
+        }, 0);
+      }
+    );
+  });
+
+  it('should find Clear All Filters button in the EmptyState', (done) => {
+    const component = mount(
+      <Provider>
+        <Router>
+          <Resources />
+        </Router>
+      </Provider>
+    );
+
+    const { resources } = root;
+    when(
+      () => {
+        return !resources.isLoading;
+      },
+      () => {
+        setTimeout(() => {
+          resources.setSortBy(SortByFields.Name);
+          resources.setSearch('gcloud');
+
+          const resource = resources.filteredResources;
+          expect(resource.length).toBe(0);
+
+          component.update();
+          const r = component.find(EmptyState);
+
+          expect(r.find(Button).length).toEqual(1);
 
           done();
         }, 0);

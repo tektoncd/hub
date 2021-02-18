@@ -6,9 +6,11 @@ import {
   EmptyStateVariant,
   Gallery,
   Spinner,
-  Title
+  Title,
+  Button
 } from '@patternfly/react-core';
 import CubesIcon from '@patternfly/react-icons/dist/js/icons/cubes-icon';
+import { useHistory } from 'react-router-dom';
 import { useMst } from '../../store/root';
 import { IResource } from '../../store/resource';
 import Cards from '../../components/Cards';
@@ -17,17 +19,26 @@ import './Resources.css';
 const Resources = () => {
   const { resources } = useMst();
 
-  const checkResources = (resources: IResource[]) => {
-    return !resources.length ? (
+  const history = useHistory();
+  const clearFilter = () => {
+    resources.clearAllFilters();
+    history.push('/');
+  };
+
+  const checkResources = (items: IResource[]) => {
+    return !items.length ? (
       <EmptyState variant={EmptyStateVariant.full} className="hub-resource-emptystate__margin">
         <EmptyStateIcon icon={CubesIcon} />
         <Title headingLevel="h5" size="md">
           No Resource Found.
         </Title>
+        <Button variant="primary" onClick={clearFilter}>
+          Clear All Filters
+        </Button>
       </EmptyState>
     ) : (
       <Gallery hasGutter className="hub-resource">
-        <Cards items={resources} />
+        <Cards items={items} />
       </Gallery>
     );
   };

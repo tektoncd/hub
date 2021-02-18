@@ -129,6 +129,16 @@ export const ResourceStore = types
   }))
 
   .actions((self) => ({
+    clearAllFilters() {
+      self.kinds.clearSelected();
+      self.catalogs.clearSelected();
+      self.categories.clearSelected();
+      self.setSearch('');
+      self.setSortBy(SortByFields.Unknown);
+    }
+  }))
+
+  .actions((self) => ({
     versionInfo: flow(function* (resourceName: string) {
       try {
         self.setLoading(true);
