@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PageNotFound Component should render PageNotFound component 1`] = `
+"<EmptyState variant=\\"small\\">
+  <EmptyStateIcon icon={[Function: warningIcon]} />
+  <Title headingLevel=\\"h5\\" size=\\"lg\\" className=\\"hub-pagenotfound__title\\">
+    Page Not Found
+  </Title>
+  <Button variant=\\"primary\\" onClick={[Function: onClick]}>
+    Back Home
+  </Button>
+</EmptyState>"
+`;
