@@ -50,7 +50,7 @@ var resVersion = &res.ResourceVersionData{
 		},
 		Rating: 4.8,
 		Tags: []*res.Tag{
-			&res.Tag{
+			{
 				ID:   3,
 				Name: "cli",
 			},

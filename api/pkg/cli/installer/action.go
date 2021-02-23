@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/go-version"
+	tknVer "github.com/tektoncd/hub/api/pkg/cli/version"
 	kErr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -41,22 +42,68 @@ var (
 	ErrSameVersion              = errors.New("resource already exists with the requested verion")
 	ErrLowerVersion             = errors.New("cannot upgrade resource as requested version is lower than existing")
 	ErrHigherVersion            = errors.New("cannot downgrade resource as requested version is higher than existing")
+	ErrVersionIncompatible      = errors.New("requires compatible version")
+	ErrWarnVersionNotFound      = errors.New("pipeline version unknown")
 )
 
 type action string
 
 const (
-	update    action = "update"
-	upgrade   action = "upgrade"
-	downgrade action = " downgrade"
+	update             action = "update"
+	upgrade            action = "upgrade"
+	downgrade          action = " downgrade"
+	resourceMinVersion string = "tekton.dev/pipelines.minVersion"
 )
 
+func (i *Installer) TektonPipelinesVersion() {
+
+	var err error
+	i.pipelineVersion, err = tknVer.GetPipelineVersion(i.cs.Dynamic())
+	if err != nil {
+		i.pipelineVersion = ""
+	}
+}
+
+func (i *Installer) GetPipelineVersion() string {
+	return i.pipelineVersion
+}
+
+func (i *Installer) checkVersion(resPipMinVersion string) error {
+	i.TektonPipelinesVersion()
+
+	if i.GetPipelineVersion() == "" {
+		return ErrWarnVersionNotFound
+	}
+
+	if i.GetPipelineVersion() < resPipMinVersion {
+		return ErrVersionIncompatible
+	}
+
+	return nil
+}
+
 // Install a resource
-func (i *Installer) Install(data []byte, catalog, namespace string) (*unstructured.Unstructured, error) {
+func (i *Installer) Install(data []byte, catalog, namespace string) (*unstructured.Unstructured, []error) {
+
+	errors := make([]error, 0)
 
 	newRes, err := toUnstructured(data)
 	if err != nil {
-		return nil, err
+		errors = append(errors, err)
+		return nil, errors
+	}
+
+	newResPipMinVersion := newRes.GetAnnotations()[resourceMinVersion]
+	err = i.checkVersion("v" + newResPipMinVersion)
+	if err != nil {
+		if err == ErrWarnVersionNotFound {
+			errors = append(errors, err)
+		}
+
+		if err == ErrVersionIncompatible {
+			errors = append(errors, err)
+			return nil, errors
+		}
 	}
 
 	// Check if resource already exists
@@ -64,13 +111,20 @@ func (i *Installer) Install(data []byte, catalog, namespace string) (*unstructur
 	if err != nil {
 		// If error is notFoundError then create the resource
 		if kErr.IsNotFound(err) {
-			return i.createRes(newRes, catalog, namespace)
+			resp, err := i.createRes(newRes, catalog, namespace)
+			if err != nil {
+				errors = append(errors, err)
+			}
+			return resp, errors
 		}
+		errors = append(errors, err)
 		// otherwise return the error
-		return nil, err
+		return nil, errors
 	}
 
-	return existingRes, ErrAlreadyExist
+	errors = append(errors, ErrAlreadyExist)
+
+	return existingRes, errors
 }
 
 // LookupInstalled checks if a resource is installed
