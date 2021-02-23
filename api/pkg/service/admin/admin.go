@@ -48,10 +48,8 @@ type refreshRequest struct {
 }
 
 var (
-	invalidTokenError  = admin.MakeInvalidToken(fmt.Errorf("invalid user token"))
-	invalidScopesError = admin.MakeInvalidScopes(fmt.Errorf("user not authorized"))
-	internalError      = admin.MakeInternalError(fmt.Errorf("failed to create agent"))
-	refreshError       = admin.MakeInternalError(fmt.Errorf("failed to refresh config"))
+	internalError = admin.MakeInternalError(fmt.Errorf("failed to create agent"))
+	refreshError  = admin.MakeInternalError(fmt.Errorf("failed to refresh config"))
 )
 
 // New returns the admin service implementation.

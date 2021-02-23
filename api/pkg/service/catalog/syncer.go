@@ -166,7 +166,10 @@ func (s *syncer) Process() error {
 	setJobState(model.JobRunning)
 
 	catalog := model.Catalog{}
-	db.Model(&syncJob).Association("Catalog").Find(&catalog)
+	if err := db.Model(&syncJob).Association("Catalog").Find(&catalog); err != nil {
+		log.Error(err)
+		return err
+	}
 
 	fetchSpec := git.FetchSpec{URL: catalog.URL, Revision: catalog.Revision, Path: clonePath}
 	repo, err := s.git.Fetch(fetchSpec)
@@ -201,7 +204,9 @@ func (s *syncer) updateJob(syncJob model.SyncJob, sha string, res []parser.Resou
 	txn := s.db.Begin()
 
 	catalog := model.Catalog{}
-	txn.Model(&syncJob).Association("Catalog").Find(&catalog)
+	if err := txn.Model(&syncJob).Association("Catalog").Find(&catalog); err != nil {
+		return err
+	}
 	catalog.SHA = sha
 
 	if err := s.updateResources(txn, log, &catalog, res); err != nil {

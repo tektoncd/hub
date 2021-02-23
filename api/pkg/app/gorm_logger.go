@@ -55,7 +55,8 @@ func (w *prodWriter) Printf(format string, data ...interface{}) {
 	msg := ""
 
 	for i, d := range data {
-		switch d.(type) {
+		dt := d
+		switch dt.(type) {
 		case error:
 			log = log.With("db-error", d)
 		case float64:

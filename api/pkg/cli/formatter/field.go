@@ -20,7 +20,7 @@ import (
 
 	"github.com/tektoncd/hub/api/gen/http/resource/client"
 	"github.com/tektoncd/hub/api/pkg/cli/hub"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 var icons = map[string]string{
@@ -77,7 +77,7 @@ func WrapText(desc string, maxWidth, titleLength int) string {
 	}
 	desc = strings.ReplaceAll(desc, "\n", " ")
 
-	width, _, err := terminal.GetSize(0)
+	width, _, err := term.GetSize(0)
 	if err != nil {
 		return breakString(desc, maxWidth, titleLength)
 	}

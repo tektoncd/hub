@@ -177,7 +177,10 @@ func (ab *APIBase) ReloadData() error {
 	// Viper unmarshals data from config file into Data Object
 	var data Data
 	viper.SetConfigType("yaml")
-	viper.ReadConfig(bytes.NewBuffer(fileData))
+	if err := viper.ReadConfig(bytes.NewBuffer(fileData)); err != nil {
+		ab.logger.Errorf("failed to read configuration file: %v", err)
+		return err
+	}
 	if err := viper.Unmarshal(&data); err != nil {
 		ab.logger.Errorf("failed to unmarshal config data: %v", err)
 		return err
@@ -193,7 +196,8 @@ func (ab *APIBase) ReloadData() error {
 
 // Cleanup flushes any buffered log entries & closes the db connection
 func (ab *APIBase) Cleanup() {
-	ab.logger.Sync()
+	// TODO --> Handle the error
+	_ = ab.logger.Sync()
 	db, _ := ab.db.DB()
 	db.Close()
 }
