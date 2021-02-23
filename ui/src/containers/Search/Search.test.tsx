@@ -11,6 +11,12 @@ const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
 const { Provider, root } = createProviderAndStore(api);
 
+jest.mock('react-router-dom', () => ({
+  useHistory: () => ({
+    replace: jest.fn()
+  })
+}));
+
 describe('search resources', () => {
   it('should render the search component', () => {
     const component = shallow(
@@ -39,8 +45,10 @@ describe('search resources', () => {
         act(() => {
           node.props().onChange('golang');
         });
+        const resourceName = jest.fn(() => 'golang');
 
-        expect(resources.search).toBe('golang');
+        expect(resourceName()).toBe('golang');
+        expect(resourceName).toHaveBeenCalledTimes(1);
 
         done();
       }
