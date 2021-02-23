@@ -72,5 +72,5 @@ default:
 #     org:  Organization of Catalog
 #     type: Type of Catalog [official, verified, community]
 #     url:  URL of repository
-#     revision: Branch of repository 
-#     contextDir(Optional): Path to resource dir 
+#     revision: Branch of repository
+#     contextDir(Optional): Path to resource dir
