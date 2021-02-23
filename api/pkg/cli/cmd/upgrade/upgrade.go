@@ -225,7 +225,7 @@ func (opts *options) errors(err error) error {
 	}
 
 	if err == installer.ErrLowerVersion {
-		existingVersion, _ := opts.resource.GetLabels()[versionLabel]
+		existingVersion := opts.resource.GetLabels()[versionLabel]
 		return fmt.Errorf("cannot upgrade %s %s to v%s. existing resource seems to be of higher version(v%s). Use downgrade command",
 			strings.ToLower(opts.resource.GetKind()), opts.resource.GetName(), newVersion, existingVersion)
 	}

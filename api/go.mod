@@ -18,8 +18,8 @@ require (
 	go.uber.org/zap v1.16.0
 	goa.design/goa/v3 v3.2.2
 	goa.design/plugins/v3 v3.1.3
-	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
 	golang.org/x/oauth2 v0.0.0-20210126194326-f9ce19ea3013
+	golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf
 	gopkg.in/h2non/gock.v1 v1.0.15
 	gorm.io/driver/postgres v1.0.2
 	gorm.io/gorm v1.20.7

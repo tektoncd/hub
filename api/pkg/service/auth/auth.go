@@ -73,15 +73,15 @@ func (s *service) Authenticate(ctx context.Context, p *auth.AuthenticatePayload)
 func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
 
 	// gets access_token for user using authorization_code
-	token, err := r.oauth.Exchange(oauth2.NoContext, code)
+	token, err := r.oauth.Exchange(context.Background(), code)
 	if err != nil {
 		return nil, invalidCode
 	}
 
 	// gets user details from github using the access_token
-	oauthClient := r.oauth.Client(oauth2.NoContext, token)
+	oauthClient := r.oauth.Client(context.Background(), token)
 	ghClient := github.NewClient(oauthClient)
-	ghUser, _, err := ghClient.Users.Get(oauth2.NoContext, "")
+	ghUser, _, err := ghClient.Users.Get(context.Background(), "")
 	if err != nil {
 		r.log.Error(err)
 		return nil, internalError

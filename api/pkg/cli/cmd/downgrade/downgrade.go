@@ -220,7 +220,7 @@ func (opts *options) resCatalog() string {
 }
 
 func (opts *options) resVersion() string {
-	version, _ := opts.resource.GetLabels()[versionLabel]
+	version := opts.resource.GetLabels()[versionLabel]
 	return version
 }
 
@@ -261,7 +261,7 @@ func (opts *options) errors(err error) error {
 	}
 
 	if err == installer.ErrHigherVersion {
-		existingVersion, _ := opts.resource.GetLabels()[versionLabel]
+		existingVersion := opts.resource.GetLabels()[versionLabel]
 		return fmt.Errorf("cannot downgrade %s %s to v%s. existing resource seems to be of lower version(v%s). Use upgrade command",
 			strings.ToLower(opts.resource.GetKind()), opts.resource.GetName(), opts.version, existingVersion)
 	}

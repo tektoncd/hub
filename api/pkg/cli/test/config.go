@@ -15,6 +15,7 @@
 package test
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/tektoncd/hub/api/pkg/cli/app"
@@ -33,7 +34,9 @@ var _ app.CLI = (*cli)(nil)
 
 func NewCLI() *cli {
 	h := hub.NewClient()
-	h.SetURL(API)
+	if err := h.SetURL(API); err != nil {
+		fmt.Printf("Failed validate and set the hub apiURL server URL %v", err)
+	}
 
 	return &cli{
 		stream: app.Stream{},

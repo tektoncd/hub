@@ -32,7 +32,6 @@ import (
 const (
 	defaultCatalog = "tekton"
 	versionLabel   = "app.kubernetes.io/version"
-	catalogLabel   = "hub.tekton.dev/catalog"
 )
 
 type options struct {

@@ -42,7 +42,7 @@ func FormatJSON(b []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return string(formatted.Bytes()), nil
+	return formatted.String(), nil
 }
 
 // UserWithScopes returns JWT for user with required scopes
