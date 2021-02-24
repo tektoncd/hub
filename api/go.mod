@@ -11,7 +11,7 @@ require (
 	github.com/ikawaha/goahttpcheck v1.3.1
 	github.com/joho/godotenv v1.3.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/spf13/cobra v1.0.0
+	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.6.1
 	github.com/tektoncd/pipeline v0.20.1-0.20210204110343-8c5a751b53ea
@@ -29,6 +29,3 @@ require (
 	knative.dev/pkg v0.0.0-20210203171706-6045ed499615
 	maze.io/x/duration v0.0.0-20160924141736-faac084b6075
 )
-
-// Use the same Cobra as upstream tkn cli
-replace github.com/spf13/cobra => github.com/chmouel/cobra v0.0.0-20200107083527-379e7a80af0c
