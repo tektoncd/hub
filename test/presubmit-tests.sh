@@ -85,8 +85,20 @@ api-unittest(){
   info Running unittests
 
   go mod vendor
-  go test -p 1 -v ./pkg/... && 
+  go test -p 1 -v ./pkg/... &&
   go test -p 1 -v ./v1/service/...
+}
+
+api-golangci-lint() {
+  info Running go lint
+
+  golangci-lint run ./pkg/... ./v1/service/...
+}
+
+yaml-lint() {
+  info Running Yamllint
+
+  yamllint -c .yamllint ./config.yaml ./config
 }
 
 api-build(){
@@ -122,12 +134,18 @@ run_unit_tests() {
 
     cd $API_DIR
     api-unittest
+    api-golangci-lint
   )
   (
     set -eu -o pipefail
 
     cd $UI_DIR
     ui-unittest
+  )
+  (
+    set -eu -o pipefail
+
+    yaml-lint
   )
 }
 
