@@ -1,0 +1,218 @@
+# Copyright © 2021 The Tekton Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: api-deploy
+spec:
+  params:
+    - name: HUB_REPO
+    - name: REVISION
+    - name: API_IMAGE
+    - name: DB_MIGRATION_IMAGE
+    - name: TAG
+    - name: HUB_NAMESPACE
+    - name: K8S_VARIANT
+  workspaces:
+    - name: shared-workspace
+    - name: kubeconfig-dir
+      optional: true
+  tasks:
+    - name: fetch-repository
+      taskRef:
+        name: git-clone
+        bundle: gcr.io/tekton-releases/catalog/upstream/git-clone:0.2
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.HUB_REPO)
+        - name: subdirectory
+          value: ""
+        - name: deleteExisting
+          value: "true"
+        - name: revision
+          value: $(params.REVISION)
+    - name: unit-test
+      taskRef:
+        name: golang-db-test
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: package
+          value: github.com/tektoncd/hub
+        - name: packages
+          value: ./pkg/...
+        - name: path_context
+          value: api
+        - name: flags
+          value: "-p 1 -v --timeout 10m"
+      runAfter:
+        - fetch-repository
+    - name: build-push-api-image
+      taskRef:
+        name: buildah
+        bundle: gcr.io/tekton-releases/catalog/upstream/buildah:0.2
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: $(params.API_IMAGE):$(params.TAG)
+        - name: CONTEXT
+          value: "api"
+        - name: FORMAT
+          value: "docker"
+      runAfter:
+        - unit-test
+    - name: build-push-migration-image
+      taskRef:
+        name: buildah
+        bundle: gcr.io/tekton-releases/catalog/upstream/buildah:0.2
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: $(params.DB_MIGRATION_IMAGE):$(params.TAG)
+        - name: CONTEXT
+          value: "api"
+        - name: FORMAT
+          value: "docker"
+        - name: DOCKERFILE
+          value: ./db.Dockerfile
+      runAfter:
+        - unit-test
+    - name: check-db-deployment
+      taskRef:
+        name: kubernetes-actions
+        bundle: gcr.io/tekton-releases/catalog/upstream/kubernetes-actions:0.2
+      params:
+        - name: script
+          value: |
+            kubectl describe deployment db -n "$(params.HUB_NAMESPACE)" >/dev/null 2>/dev/null
+            if [[ $? -eq 0 ]]; then
+              printf yes | tee /tekton/results/output-result
+            else
+              printf no | tee /tekton/results/output-result
+            fi
+      runAfter:
+        - build-push-migration-image
+        - build-push-api-image
+      workspaces:
+        - name: kubeconfig-dir
+          workspace: kubeconfig-dir
+    - name: create-db-deployment
+      taskRef:
+        name: kubernetes-actions
+        bundle: gcr.io/tekton-releases/catalog/upstream/kubernetes-actions:0.2
+      workspaces:
+        - name: manifest-dir
+          workspace: shared-workspace
+        - name: kubeconfig-dir
+          workspace: kubeconfig-dir
+      params:
+        - name: script
+          value: |
+            kubectl -n $(params.HUB_NAMESPACE) apply -f config/00-init/02-db-pvc.yaml
+            kubectl -n $(params.HUB_NAMESPACE) apply -f config/00-init/03-db-deployment.yaml
+            kubectl -n $(params.HUB_NAMESPACE) apply -f config/00-init/04-db-service.yaml
+      runAfter:
+        - check-db-deployment
+      when:
+        - input: "$(tasks.check-db-deployment.results.output-result)"
+          operator: in
+          values: ["no"]
+    - name: create-new-migration-job
+      taskRef:
+        name: kubernetes-actions
+        bundle: gcr.io/tekton-releases/catalog/upstream/kubernetes-actions:0.2
+      params:
+        - name: script
+          value: |
+            kubectl -n $(params.HUB_NAMESPACE) delete job db-migration --ignore-not-found
+            kubectl -n $(params.HUB_NAMESPACE) apply -f <(sed "s@image:.*@image: $(params.DB_MIGRATION_IMAGE):$(params.TAG)@" config/01-db/10-db-migration.yaml)
+      workspaces:
+        - name: kubeconfig-dir
+          workspace: kubeconfig-dir
+        - name: manifest-dir
+          workspace: shared-workspace
+      runAfter:
+        - check-db-deployment
+    - name: check-api-deployment
+      taskRef:
+        name: kubernetes-actions
+        bundle: gcr.io/tekton-releases/catalog/upstream/kubernetes-actions:0.2
+      params:
+        - name: script
+          value: |
+            kubectl describe deployment api -n "$(params.HUB_NAMESPACE)" >/dev/null 2>/dev/null
+            if [[ $? -eq 0 ]]; then
+              printf yes | tee /tekton/results/output-result
+            else
+              printf no | tee /tekton/results/output-result
+            fi
+      runAfter:
+        - create-new-migration-job
+      workspaces:
+        - name: kubeconfig-dir
+          workspace: kubeconfig-dir
+    - name: patch-api-image
+      taskRef:
+        name: kubernetes-actions
+        bundle: gcr.io/tekton-releases/catalog/upstream/kubernetes-actions:0.2
+      params:
+        - name: script
+          value: |
+            kubectl patch deployment api --patch='{"spec":{"template":{"spec":{
+              "containers":[{
+                "name": "api",
+                "image": "$(params.API_IMAGE):$(params.TAG)"
+              }]
+            }}}}' -n $(params.HUB_NAMESPACE)
+      when:
+        - input: "$(tasks.check-api-deployment.results.output-result)"
+          operator: in
+          values: ["yes"]
+      workspaces:
+        - name: kubeconfig-dir
+          workspace: kubeconfig-dir
+      runAfter:
+        - check-api-deployment
+    - name: create-deployment
+      taskRef:
+        name: kubernetes-actions
+        bundle: gcr.io/tekton-releases/catalog/upstream/kubernetes-actions:0.2
+      workspaces:
+        - name: manifest-dir
+          workspace: shared-workspace
+        - name: kubeconfig-dir
+          workspace: kubeconfig-dir
+      params:
+        - name: script
+          value: |
+            kubectl -n $(params.HUB_NAMESPACE) apply -f <(sed "s@image:.*@image: $(params.API_IMAGE):$(params.TAG)@" config/02-api/22-api-deployment.yaml)
+            kubectl -n $(params.HUB_NAMESPACE) apply -f config/02-api/23-api-service.yaml
+
+            if [ "$(params.K8S_VARIANT)" == "openshift" ]
+            then
+              kubectl -n $(params.HUB_NAMESPACE) apply -f config/04-openshift/40-api-route.yaml
+            fi
+      when:
+        - input: "$(tasks.check-api-deployment.results.output-result)"
+          operator: in
+          values: ["no"]
