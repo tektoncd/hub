@@ -3,7 +3,6 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: catalog-refresh
-  namespace: tekton-hub
   labels:
     app: api
 spec:

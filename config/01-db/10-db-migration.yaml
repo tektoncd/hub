@@ -16,7 +16,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: db-migration
-  namespace: tekton-hub
   labels:
     app: db
 spec:
