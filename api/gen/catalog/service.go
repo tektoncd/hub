@@ -17,7 +17,7 @@ import (
 
 // The Catalog Service exposes endpoints to interact with catalogs
 type Service interface {
-	// Refreshes Tekton Catalog
+	// Refresh a Catalog by it's name
 	Refresh(context.Context, *RefreshPayload) (res *Job, err error)
 }
 
@@ -39,6 +39,8 @@ var MethodNames = [1]string{"Refresh"}
 
 // RefreshPayload is the payload type of the catalog service Refresh method.
 type RefreshPayload struct {
+	// Name of catalog
+	CatalogName string
 	// JWT
 	Token string
 }
@@ -47,6 +49,8 @@ type RefreshPayload struct {
 type Job struct {
 	// id of the job
 	ID uint
+	// Name of the catalog
+	CatalogName string
 	// status of the job
 	Status string
 }
@@ -87,6 +91,9 @@ func newJob(vres *catalogviews.JobView) *Job {
 	if vres.ID != nil {
 		res.ID = *vres.ID
 	}
+	if vres.CatalogName != nil {
+		res.CatalogName = *vres.CatalogName
+	}
 	if vres.Status != nil {
 		res.Status = *vres.Status
 	}
@@ -97,8 +104,9 @@ func newJob(vres *catalogviews.JobView) *Job {
 // "default" view.
 func newJobView(res *Job) *catalogviews.JobView {
 	vres := &catalogviews.JobView{
-		ID:     &res.ID,
-		Status: &res.Status,
+		ID:          &res.ID,
+		CatalogName: &res.CatalogName,
+		Status:      &res.Status,
 	}
 	return vres
 }

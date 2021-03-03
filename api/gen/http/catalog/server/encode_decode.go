@@ -34,9 +34,13 @@ func EncodeRefreshResponse(encoder func(context.Context, http.ResponseWriter) go
 func DecodeRefreshRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			token string
-			err   error
+			catalogName string
+			token       string
+			err         error
+
+			params = mux.Vars(r)
 		)
+		catalogName = params["catalogName"]
 		token = r.Header.Get("Authorization")
 		if token == "" {
 			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
@@ -44,7 +48,7 @@ func DecodeRefreshRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp
 		if err != nil {
 			return nil, err
 		}
-		payload := NewRefreshPayload(token)
+		payload := NewRefreshPayload(catalogName, token)
 		if strings.Contains(payload.Token, " ") {
 			// Remove authorization scheme prefix (e.g. "Bearer")
 			cred := strings.SplitN(payload.Token, " ", 2)[1]

@@ -23,6 +23,8 @@ type Job struct {
 type JobView struct {
 	// id of the job
 	ID *uint
+	// Name of the catalog
+	CatalogName *string
 	// status of the job
 	Status *string
 }
@@ -32,6 +34,7 @@ var (
 	JobMap = map[string][]string{
 		"default": []string{
 			"id",
+			"catalogName",
 			"status",
 		},
 	}
@@ -53,6 +56,9 @@ func ValidateJob(result *Job) (err error) {
 func ValidateJobView(result *JobView) (err error) {
 	if result.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "result"))
+	}
+	if result.CatalogName == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("catalogName", "result"))
 	}
 	if result.Status == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("status", "result"))

@@ -26,18 +26,21 @@ var _ = Service("catalog", func() {
 	Error("not-found", ErrorResult, "Resource Not Found Error")
 
 	Method("Refresh", func() {
-		Description("Refreshes Tekton Catalog")
+		Description("Refresh a Catalog by it's name")
 		Security(types.JWTAuth, func() {
 			Scope("catalog:refresh")
 		})
 		Payload(func() {
+			Attribute("catalogName", String, "Name of catalog", func() {
+				Example("catalogName", "tekton")
+			})
 			Token("token", String, "JWT")
-			Required("token")
+			Required("token", "catalogName")
 		})
 		Result(types.Job)
 
 		HTTP(func() {
-			POST("/catalog/refresh")
+			POST("/catalog/{catalogName}/refresh")
 			Header("token:Authorization")
 
 			Response(StatusOK)

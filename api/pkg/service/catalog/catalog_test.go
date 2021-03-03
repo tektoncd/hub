@@ -49,12 +49,31 @@ func TestRefresh(t *testing.T) {
 	catalogSvc := NewServiceTest(tc)
 	ctx := auth.WithUserID(context.Background(), user.ID)
 
-	payload := &catalog.RefreshPayload{}
+	payload := &catalog.RefreshPayload{CatalogName: "catalog-official"}
 	job, err := catalogSvc.Refresh(ctx, payload)
 	assert.NoError(t, err)
 	assert.Equal(t, uint(10001), job.ID)
 	assert.Equal(t, "queued", job.Status)
 }
+
+func TestRefresh_CatalogNotFound(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user with catalog:refresh scope
+	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	catalogSvc := NewServiceTest(tc)
+	ctx := auth.WithUserID(context.Background(), user.ID)
+
+	payload := &catalog.RefreshPayload{CatalogName: "abc"}
+	_, err = catalogSvc.Refresh(ctx, payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "abc catalog not found")
+}
+
 
 func TestRefreshAgain(t *testing.T) {
 	tc := testutils.Setup(t)
@@ -68,7 +87,7 @@ func TestRefreshAgain(t *testing.T) {
 	catalogSvc := NewServiceTest(tc)
 	ctx := auth.WithUserID(context.Background(), user.ID)
 
-	payload := &catalog.RefreshPayload{}
+	payload := &catalog.RefreshPayload{CatalogName: "catalog-official"}
 	res, err := catalogSvc.Refresh(ctx, payload)
 	assert.NoError(t, err)
 	assert.Equal(t, uint(10001), res.ID)

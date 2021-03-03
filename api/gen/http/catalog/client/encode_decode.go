@@ -23,7 +23,17 @@ import (
 // BuildRefreshRequest instantiates a HTTP request object with method and path
 // set to call the "catalog" service "Refresh" endpoint
 func (c *Client) BuildRefreshRequest(ctx context.Context, v interface{}) (*http.Request, error) {
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RefreshCatalogPath()}
+	var (
+		catalogName string
+	)
+	{
+		p, ok := v.(*catalog.RefreshPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("catalog", "Refresh", "*catalog.RefreshPayload", v)
+		}
+		catalogName = p.CatalogName
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RefreshCatalogPath(catalogName)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("catalog", "Refresh", u.String(), err)

@@ -18,6 +18,8 @@ import (
 type RefreshResponseBody struct {
 	// id of the job
 	ID uint `form:"id" json:"id" xml:"id"`
+	// Name of the catalog
+	CatalogName string `form:"catalogName" json:"catalogName" xml:"catalogName"`
 	// status of the job
 	Status string `form:"status" json:"status" xml:"status"`
 }
@@ -62,8 +64,9 @@ type RefreshInternalErrorResponseBody struct {
 // "Refresh" endpoint of the "catalog" service.
 func NewRefreshResponseBody(res *catalogviews.JobView) *RefreshResponseBody {
 	body := &RefreshResponseBody{
-		ID:     *res.ID,
-		Status: *res.Status,
+		ID:          *res.ID,
+		CatalogName: *res.CatalogName,
+		Status:      *res.Status,
 	}
 	return body
 }
@@ -97,8 +100,9 @@ func NewRefreshInternalErrorResponseBody(res *goa.ServiceError) *RefreshInternal
 }
 
 // NewRefreshPayload builds a catalog service Refresh endpoint payload.
-func NewRefreshPayload(token string) *catalog.RefreshPayload {
+func NewRefreshPayload(catalogName string, token string) *catalog.RefreshPayload {
 	v := &catalog.RefreshPayload{}
+	v.CatalogName = catalogName
 	v.Token = token
 
 	return v

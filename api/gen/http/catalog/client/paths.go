@@ -7,7 +7,11 @@
 
 package client
 
+import (
+	"fmt"
+)
+
 // RefreshCatalogPath returns the URL path to the catalog service Refresh HTTP endpoint.
-func RefreshCatalogPath() string {
-	return "/catalog/refresh"
+func RefreshCatalogPath(catalogName string) string {
+	return fmt.Sprintf("/catalog/%v/refresh", catalogName)
 }

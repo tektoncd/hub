@@ -46,7 +46,7 @@ func TestRefresh_Http(t *testing.T) {
 	assert.Equal(t, agent.AgentName, "agent-001")
 	assert.NoError(t, err)
 
-	RefreshChecker(tc).Test(t, http.MethodPost, "/catalog/refresh").
+	RefreshChecker(tc).Test(t, http.MethodPost, "/catalog/catalog-official/refresh").
 		WithHeader("Authorization", token).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)

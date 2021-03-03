@@ -17,6 +17,8 @@ import (
 type RefreshResponseBody struct {
 	// id of the job
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name of the catalog
+	CatalogName *string `form:"catalogName,omitempty" json:"catalogName,omitempty" xml:"catalogName,omitempty"`
 	// status of the job
 	Status *string `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
 }
@@ -61,8 +63,9 @@ type RefreshInternalErrorResponseBody struct {
 // HTTP "OK" response.
 func NewRefreshJobOK(body *RefreshResponseBody) *catalogviews.JobView {
 	v := &catalogviews.JobView{
-		ID:     body.ID,
-		Status: body.Status,
+		ID:          body.ID,
+		CatalogName: body.CatalogName,
+		Status:      body.Status,
 	}
 
 	return v
