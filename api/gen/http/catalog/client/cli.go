@@ -13,12 +13,17 @@ import (
 
 // BuildRefreshPayload builds the payload for the catalog Refresh endpoint from
 // CLI flags.
-func BuildRefreshPayload(catalogRefreshToken string) (*catalog.RefreshPayload, error) {
+func BuildRefreshPayload(catalogRefreshCatalogName string, catalogRefreshToken string) (*catalog.RefreshPayload, error) {
+	var catalogName string
+	{
+		catalogName = catalogRefreshCatalogName
+	}
 	var token string
 	{
 		token = catalogRefreshToken
 	}
 	v := &catalog.RefreshPayload{}
+	v.CatalogName = catalogName
 	v.Token = token
 
 	return v, nil

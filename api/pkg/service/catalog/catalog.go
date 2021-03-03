@@ -57,24 +57,28 @@ func (s *service) Refresh(ctx context.Context, p *catalog.RefreshPayload) (*cata
 	log := s.Logger(ctx)
 	db := s.DB(ctx)
 
-	log.Infof("going to enqueue")
-
 	ctg := model.Catalog{}
-	if err := db.Model(&model.Catalog{}).First(&ctg).Error; err != nil {
+	if err := db.Where(&model.Catalog{Name: p.CatalogName}).Model(&model.Catalog{}).First(&ctg).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, notFoundError
+			return nil, catalogNotFoundErr(p.CatalogName)
 		}
 		log.Error(err)
 		return nil, internalError
 	}
+
+	log.Infof("going to enqueue")
 
 	job, err := s.wq.Enqueue(auth.UserID(ctx), ctg.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	ret := &catalog.Job{ID: job.ID, Status: job.Status}
+	ret := &catalog.Job{ID: job.ID, CatalogName: ctg.Name, Status: job.Status}
 	log.Infof("job %d queued for refresh", job.ID)
 
 	return ret, nil
+}
+
+func catalogNotFoundErr(name string) error {
+	return catalog.MakeNotFound(fmt.Errorf("%s catalog not found", name))
 }

@@ -57,8 +57,8 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"Refresh", "POST", "/catalog/refresh"},
-			{"CORS", "OPTIONS", "/catalog/refresh"},
+			{"Refresh", "POST", "/catalog/{catalogName}/refresh"},
+			{"CORS", "OPTIONS", "/catalog/{catalogName}/refresh"},
 		},
 		Refresh: NewRefreshHandler(e.Refresh, mux, decoder, encoder, errhandler, formatter),
 		CORS:    NewCORSHandler(),
@@ -89,7 +89,7 @@ func MountRefreshHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/catalog/refresh", f)
+	mux.Handle("POST", "/catalog/{catalogName}/refresh", f)
 }
 
 // NewRefreshHandler creates a HTTP handler which loads the HTTP request and
@@ -141,7 +141,7 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("OPTIONS", "/catalog/refresh", f)
+	mux.Handle("OPTIONS", "/catalog/{catalogName}/refresh", f)
 }
 
 // NewCORSHandler creates a HTTP handler which returns a simple 200 response.

@@ -24,6 +24,6 @@ spec:
               args: [
                 "-i", "-X", "POST",
                 "-H", "Authorization:$(HUB_TOKEN)",
-                "api:8000/catalog/refresh"
+                "api:8000/catalog/tekton/refresh"
               ]
           restartPolicy: OnFailure
