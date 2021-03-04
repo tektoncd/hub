@@ -22,19 +22,25 @@ const UserProfile: React.FC = () => {
     const accessTokenInterval = user.accessTokenInfo.expiresAt * 1000 - new Date().getTime();
     const refreshTokenInterval = user.refreshTokenInfo.expiresAt * 1000 - new Date().getTime();
 
-    // To get a new refresh token
-    // Update the refresh token before 10 seconds of current refresh token's expiry time
-    const tempRefreshId = window.setInterval(() => {
-      user.updateRefreshToken();
-    }, refreshTokenInterval - 10000);
-    setRefreshId(tempRefreshId);
+    // The condition checks the maximum delay for setInterval
+    if (refreshTokenInterval < Math.pow(2, 31) - 1) {
+      // To get a new refresh token
+      // Update the refresh token before 10 seconds of current refresh token's expiry time
+      const tempRefreshId = window.setInterval(() => {
+        user.updateRefreshToken();
+      }, refreshTokenInterval - 10000);
+      setRefreshId(tempRefreshId);
+    }
 
-    // To get a new access token
-    // Update the access token before 10 seconds of current access token's expiry time
-    const tempAccessId = window.setInterval(() => {
-      user.updateAccessToken();
-    }, accessTokenInterval - 10000);
-    setAccessId(tempAccessId);
+    // The condition checks the maximum delay for setInterval
+    if (accessTokenInterval < Math.pow(2, 31) - 1) {
+      // To get a new access token
+      // Update the access token before 10 seconds of current access token's expiry time
+      const tempAccessId = window.setInterval(() => {
+        user.updateAccessToken();
+      }, accessTokenInterval - 10000);
+      setAccessId(tempAccessId);
+    }
   }, [user]);
 
   useEffect(() => {
