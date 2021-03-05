@@ -21,13 +21,6 @@ type UpdateAgentRequestBody struct {
 	Scopes []string `form:"scopes" json:"scopes" xml:"scopes"`
 }
 
-// RefreshConfigRequestBody is the type of the "admin" service "RefreshConfig"
-// endpoint HTTP request body.
-type RefreshConfigRequestBody struct {
-	// Force Refresh the config file
-	Force bool `form:"force" json:"force" xml:"force"`
-}
-
 // UpdateAgentResponseBody is the type of the "admin" service "UpdateAgent"
 // endpoint HTTP response body.
 type UpdateAgentResponseBody struct {
@@ -179,15 +172,6 @@ func NewUpdateAgentRequestBody(p *admin.UpdateAgentPayload) *UpdateAgentRequestB
 		for i, val := range p.Scopes {
 			body.Scopes[i] = val
 		}
-	}
-	return body
-}
-
-// NewRefreshConfigRequestBody builds the HTTP request body from the payload of
-// the "RefreshConfig" endpoint of the "admin" service.
-func NewRefreshConfigRequestBody(p *admin.RefreshConfigPayload) *RefreshConfigRequestBody {
-	body := &RefreshConfigRequestBody{
-		Force: p.Force,
 	}
 	return body
 }

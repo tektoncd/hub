@@ -60,8 +60,6 @@ type UpdateAgentResult struct {
 type RefreshConfigPayload struct {
 	// User JWT
 	Token string
-	// Force Refresh the config file
-	Force bool
 }
 
 // RefreshConfigResult is the result type of the admin service RefreshConfig

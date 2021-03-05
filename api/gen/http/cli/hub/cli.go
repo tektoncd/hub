@@ -44,16 +44,17 @@ user (refresh-access-token|new-refresh-token)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` admin update-agent --body '{
-      "name": "Non omnis quas deserunt.",
+      "name": "Nostrum assumenda.",
       "scopes": [
-         "Pariatur occaecati voluptas assumenda maiores quaerat consequatur.",
-         "Quia nihil officia itaque."
+         "Voluptas assumenda.",
+         "Quaerat consequatur ullam quia.",
+         "Officia itaque non aut qui."
       ]
-   }' --token "Aut qui dolor consequatur assumenda suscipit aut."` + "\n" +
+   }' --token "Consequatur assumenda suscipit aut minima autem ut."` + "\n" +
 		os.Args[0] + ` auth authenticate --code "5628b69ec09c09512eef"` + "\n" +
-		os.Args[0] + ` catalog refresh --token "Aut eos qui fugiat."` + "\n" +
+		os.Args[0] + ` catalog refresh --token "Sunt est."` + "\n" +
 		os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` rating get --id 4565160072724169842 --token "Non quo velit vitae aut porro."` + "\n" +
+		os.Args[0] + ` rating get --id 7081746155990172147 --token "Molestiae eligendi animi sit nulla omnis incidunt."` + "\n" +
 		""
 }
 
@@ -74,7 +75,6 @@ func ParseEndpoint(
 		adminUpdateAgentTokenFlag = adminUpdateAgentFlags.String("token", "REQUIRED", "")
 
 		adminRefreshConfigFlags     = flag.NewFlagSet("refresh-config", flag.ExitOnError)
-		adminRefreshConfigBodyFlag  = adminRefreshConfigFlags.String("body", "REQUIRED", "")
 		adminRefreshConfigTokenFlag = adminRefreshConfigFlags.String("token", "REQUIRED", "")
 
 		authFlags = flag.NewFlagSet("auth", flag.ContinueOnError)
@@ -336,7 +336,7 @@ func ParseEndpoint(
 				data, err = adminc.BuildUpdateAgentPayload(*adminUpdateAgentBodyFlag, *adminUpdateAgentTokenFlag)
 			case "refresh-config":
 				endpoint = c.RefreshConfig()
-				data, err = adminc.BuildRefreshConfigPayload(*adminRefreshConfigBodyFlag, *adminRefreshConfigTokenFlag)
+				data, err = adminc.BuildRefreshConfigPayload(*adminRefreshConfigTokenFlag)
 			}
 		case "auth":
 			c := authc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -443,26 +443,24 @@ Create or Update an agent user with required scopes
 
 Example:
     `+os.Args[0]+` admin update-agent --body '{
-      "name": "Non omnis quas deserunt.",
+      "name": "Nostrum assumenda.",
       "scopes": [
-         "Pariatur occaecati voluptas assumenda maiores quaerat consequatur.",
-         "Quia nihil officia itaque."
+         "Voluptas assumenda.",
+         "Quaerat consequatur ullam quia.",
+         "Officia itaque non aut qui."
       ]
-   }' --token "Aut qui dolor consequatur assumenda suscipit aut."
+   }' --token "Consequatur assumenda suscipit aut minima autem ut."
 `, os.Args[0])
 }
 
 func adminRefreshConfigUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] admin refresh-config -body JSON -token STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] admin refresh-config -token STRING
 
 Refresh the changes in config file
-    -body JSON: 
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` admin refresh-config --body '{
-      "force": true
-   }' --token "Non iure modi."
+    `+os.Args[0]+` admin refresh-config --token "Iure modi facere cumque omnis non ut."
 `, os.Args[0])
 }
 
@@ -510,7 +508,7 @@ Refreshes Tekton Catalog
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --token "Aut eos qui fugiat."
+    `+os.Args[0]+` catalog refresh --token "Sunt est."
 `, os.Args[0])
 }
 
@@ -559,7 +557,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 4565160072724169842 --token "Non quo velit vitae aut porro."
+    `+os.Args[0]+` rating get --id 7081746155990172147 --token "Molestiae eligendi animi sit nulla omnis incidunt."
 `, os.Args[0])
 }
 
@@ -573,8 +571,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 0
-   }' --id 1454725131016771342 --token "Soluta sapiente deleniti voluptatem distinctio distinctio."
+      "rating": 4
+   }' --id 4075726782902513524 --token "Quia consequatur possimus tempora omnis et."
 `, os.Args[0])
 }
 
@@ -674,7 +672,7 @@ Find resources using name of catalog, resource name and kind of resource
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah"
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah"
 `, os.Args[0])
 }
 

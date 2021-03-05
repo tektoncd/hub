@@ -152,23 +152,8 @@ func EncodeRefreshConfigResponse(encoder func(context.Context, http.ResponseWrit
 func DecodeRefreshConfigRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			body RefreshConfigRequestBody
-			err  error
-		)
-		err = decoder(r).Decode(&body)
-		if err != nil {
-			if err == io.EOF {
-				return nil, goa.MissingPayloadError()
-			}
-			return nil, goa.DecodePayloadError(err.Error())
-		}
-		err = ValidateRefreshConfigRequestBody(&body)
-		if err != nil {
-			return nil, err
-		}
-
-		var (
 			token string
+			err   error
 		)
 		token = r.Header.Get("Authorization")
 		if token == "" {
@@ -177,7 +162,7 @@ func DecodeRefreshConfigRequest(mux goahttp.Muxer, decoder func(*http.Request) g
 		if err != nil {
 			return nil, err
 		}
-		payload := NewRefreshConfigPayload(&body, token)
+		payload := NewRefreshConfigPayload(token)
 		if strings.Contains(payload.Token, " ") {
 			// Remove authorization scheme prefix (e.g. "Bearer")
 			cred := strings.SplitN(payload.Token, " ", 2)[1]

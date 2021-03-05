@@ -201,11 +201,8 @@ func TestRefreshConfig_Http(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "testChecksum", config.Checksum)
 
-	data := []byte(`{"force": false}`)
-
 	RefreshConfigChecker(tc).Test(t, http.MethodPost, "/system/config/refresh").
-		WithHeader("Authorization", token).
-		WithBody(data).Check().
+		WithHeader("Authorization", token).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -228,46 +225,6 @@ func TestRefreshConfig_Http(t *testing.T) {
 		user := model.User{GithubLogin: "test-user"}
 		err = tc.DB().Where(&user).First(&user).Error
 		assert.NoError(t, err)
-	})
-}
-
-func TestRefreshConfig_Http_ForceRefresh(t *testing.T) {
-	tc := testutils.Setup(t)
-	testutils.LoadFixtures(t, tc.FixturePath())
-
-	// user with config:refresh scope
-	user, token, err := tc.UserWithScopes("foo", "config:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
-	assert.NoError(t, err)
-
-	// Mocks the time
-	jwt.TimeFunc = testutils.Now
-
-	// DB is populated using text fixture, so it has by default value `testChecksum` in table
-	config := &model.Config{}
-	err = tc.DB().First(config).Error
-	assert.NoError(t, err)
-	assert.Equal(t, "testChecksum", config.Checksum)
-
-	data := []byte(`{"force": true}`)
-
-	RefreshConfigChecker(tc).Test(t, http.MethodPost, "/system/config/refresh").
-		WithHeader("Authorization", token).
-		WithBody(data).Check().
-		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
-		assert.NoError(t, readErr)
-		defer r.Body.Close()
-
-		res := admin.RefreshConfigResult{}
-		marshallErr := json.Unmarshal([]byte(b), &res)
-		assert.NoError(t, marshallErr)
-
-		// compute checksum of test config file which is reloaded
-		checksum, err := computeChecksum()
-		assert.NoError(t, err)
-
-		assert.Equal(t, checksum, res.Checksum)
 	})
 }
 
