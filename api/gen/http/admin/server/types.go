@@ -21,13 +21,6 @@ type UpdateAgentRequestBody struct {
 	Scopes []string `form:"scopes,omitempty" json:"scopes,omitempty" xml:"scopes,omitempty"`
 }
 
-// RefreshConfigRequestBody is the type of the "admin" service "RefreshConfig"
-// endpoint HTTP request body.
-type RefreshConfigRequestBody struct {
-	// Force Refresh the config file
-	Force *bool `form:"force,omitempty" json:"force,omitempty" xml:"force,omitempty"`
-}
-
 // UpdateAgentResponseBody is the type of the "admin" service "UpdateAgent"
 // endpoint HTTP response body.
 type UpdateAgentResponseBody struct {
@@ -300,10 +293,8 @@ func NewUpdateAgentPayload(body *UpdateAgentRequestBody, token string) *admin.Up
 
 // NewRefreshConfigPayload builds a admin service RefreshConfig endpoint
 // payload.
-func NewRefreshConfigPayload(body *RefreshConfigRequestBody, token string) *admin.RefreshConfigPayload {
-	v := &admin.RefreshConfigPayload{
-		Force: *body.Force,
-	}
+func NewRefreshConfigPayload(token string) *admin.RefreshConfigPayload {
+	v := &admin.RefreshConfigPayload{}
 	v.Token = token
 
 	return v
@@ -317,15 +308,6 @@ func ValidateUpdateAgentRequestBody(body *UpdateAgentRequestBody) (err error) {
 	}
 	if body.Scopes == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("scopes", "body"))
-	}
-	return
-}
-
-// ValidateRefreshConfigRequestBody runs the validations defined on
-// RefreshConfigRequestBody
-func ValidateRefreshConfigRequestBody(body *RefreshConfigRequestBody) (err error) {
-	if body.Force == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("force", "body"))
 	}
 	return
 }

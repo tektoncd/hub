@@ -209,10 +209,9 @@ func (r *agentRequest) userExistWithAgentName(name string) error {
 func (s *service) RefreshConfig(ctx context.Context, p *admin.RefreshConfigPayload) (*admin.RefreshConfigResult, error) {
 
 	req := refreshRequest{
-		db:    s.DB(ctx),
-		log:   s.Logger(ctx),
-		api:   s.api,
-		force: p.Force,
+		db:  s.DB(ctx),
+		log: s.Logger(ctx),
+		api: s.api,
 	}
 
 	return req.run(ctx)
@@ -224,15 +223,6 @@ func (r *refreshRequest) run(ctx context.Context) (*admin.RefreshConfigResult, e
 	if err := r.api.ReloadData(); err != nil {
 		r.log.Error(err)
 		return nil, refreshError
-	}
-
-	// Delete existing entry in config for checksum if force refresh is true
-	if r.force {
-		if err := r.db.Unscoped().Where("checksum IS NOT NULL").Delete(&model.Config{}).
-			Error; err != nil {
-			r.log.Error(err)
-			return nil, internalError
-		}
 	}
 
 	// Run the initializer

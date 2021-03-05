@@ -62,8 +62,7 @@ var _ = Service("admin", func() {
 		})
 		Payload(func() {
 			Token("token", String, "User JWT")
-			Attribute("force", Boolean, "Force Refresh the config file")
-			Required("token", "force")
+			Required("token")
 		})
 		Result(func() {
 			Attribute("checksum", String, "Config file checksum")
