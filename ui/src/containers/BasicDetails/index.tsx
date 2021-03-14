@@ -31,18 +31,20 @@ import { Icons } from '../../common/icons';
 import Icon from '../../components/Icon';
 import TooltipDisplay from '../../components/TooltipDisplay';
 import Rating from '../Rating';
+import { titleCase } from '../../common/titlecase';
 import './BasicDetails.css';
 
 const BasicDetails: React.FC = () => {
   const { resources } = useMst();
-  const { name } = useParams();
+  const { catalog, kind, name } = useParams();
 
-  const resource: IResource = resources.resources.get(name);
+  const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
+  const resource: IResource = resources.resources.get(resourceKey);
   const dropdownItems = resource.versions.map((value) => (
     <DropdownItem
       id={String(value.id)}
       key={value.id}
-      onClick={(e) => resources.setDisplayVersion(name, e.currentTarget.id)}
+      onClick={(e) => resources.setDisplayVersion(resourceKey, e.currentTarget.id)}
     >
       {value.version === resource.latestVersion.version
         ? `${value.version} (latest)`

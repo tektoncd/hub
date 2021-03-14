@@ -20,7 +20,9 @@ jest.mock('react-router-dom', () => {
     },
     useParams: () => {
       return {
-        name: 'buildah'
+        name: 'buildah',
+        catalog: 'tekton',
+        kind: 'Task'
       };
     }
   };
@@ -33,7 +35,7 @@ it('should render the BasicDetails component', (done) => {
       return !resources.isLoading;
     },
     () => {
-      resources.versionInfo('buildah');
+      resources.versionInfo('tekton/Task/buildah');
       when(
         () => {
           return !resources.isLoading;
@@ -66,7 +68,7 @@ it('length of DropdownItems should be 2 in case of buildah', (done) => {
       return !resources.isLoading;
     },
     () => {
-      resources.versionInfo('buildah');
+      resources.versionInfo('tekton/Task/buildah');
       when(
         () => {
           return !resources.isLoading;

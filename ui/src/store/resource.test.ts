@@ -13,6 +13,7 @@ describe('Store Object', () => {
     const store = Resource.create({
       id: 5,
       name: 'buildah',
+      resourceKey: 'tekton/Task/buildah',
       catalog: '1',
       kind: 'Task',
       latestVersion: 1,
@@ -198,6 +199,7 @@ describe('Store functions', () => {
         const item = Resource.create({
           id: 44,
           name: 'golang-build',
+          resourceKey: 'tekton/Task/golang-build',
           catalog: 1,
           kind: 'Task',
           latestVersion: 47,
@@ -277,7 +279,7 @@ describe('Store functions', () => {
         expect(store.isLoading).toBe(false);
         expect(store.resources.size).toBe(7);
 
-        const resource = store.resources.get('aws-cli');
+        const resource = store.resources.get('tekton/Task/aws-cli');
         assert(resource);
 
         expect(resource.resourceName).toBe('aws cli');
@@ -329,7 +331,7 @@ describe('Store functions', () => {
         expect(store.isLoading).toBe(false);
         expect(store.resources.size).toBe(7);
 
-        const resource = store.resources.get('aws-cli');
+        const resource = store.resources.get('tekton/Task/aws-cli');
         assert(resource);
 
         expect(resource.webURL).toBe(
@@ -355,7 +357,7 @@ describe('Store functions', () => {
         expect(store.isLoading).toBe(false);
         expect(store.resources.size).toBe(7);
 
-        const resource = store.resources.get('aws-cli');
+        const resource = store.resources.get('tekton/Task/aws-cli');
         assert(resource);
 
         expect(resource.summary).toBe(
@@ -381,7 +383,7 @@ describe('Store functions', () => {
         expect(store.isLoading).toBe(false);
         expect(store.resources.size).toBe(7);
 
-        const resource = store.resources.get('buildah');
+        const resource = store.resources.get('tekton/Task/buildah');
         assert(resource);
 
         expect(resource.detailDescription).toBe(
@@ -407,7 +409,7 @@ describe('Store functions', () => {
         expect(store.isLoading).toBe(false);
         expect(store.resources.size).toBe(7);
 
-        const resource = store.resources.get('aws-cli');
+        const resource = store.resources.get('tekton/Task/aws-cli');
         assert(resource);
 
         expect(resource.installCommand).toBe(
@@ -434,11 +436,11 @@ describe('Store functions', () => {
       () => {
         expect(store.resources.size).toBe(7);
         expect(getSnapshot(store.resources)).toMatchSnapshot();
-        store.versionInfo('buildah');
+        store.versionInfo('tekton/Task/buildah');
         when(
           () => !store.isLoading,
           () => {
-            const resource = store.resources.get('buildah');
+            const resource = store.resources.get('tekton/Task/buildah');
             assert(resource);
             expect(resource.versions.length).toBe(2);
             done();
@@ -464,11 +466,11 @@ describe('Store functions', () => {
       () => {
         expect(store.resources.size).toBe(7);
         expect(getSnapshot(store.resources)).toMatchSnapshot();
-        store.versionInfo('buildah');
+        store.versionInfo('tekton/Task/buildah');
         when(
           () => !store.isLoading,
           () => {
-            const resource = store.resources.get('buildah');
+            const resource = store.resources.get('tekton/Task/buildah');
             assert(resource);
             expect(resource.versions.length).toBe(2);
             store.versionUpdate(13);
@@ -502,14 +504,14 @@ describe('Store functions', () => {
       () => {
         expect(store.resources.size).toBe(7);
         expect(getSnapshot(store.resources)).toMatchSnapshot();
-        store.versionInfo('buildah');
+        store.versionInfo('tekton/Task/buildah');
         when(
           () => !store.isLoading,
           () => {
-            const resource = store.resources.get('buildah');
+            const resource = store.resources.get('tekton/Task/buildah');
             assert(resource);
             expect(resource.versions.length).toBe(2);
-            store.setDisplayVersion('buildah', '13');
+            store.setDisplayVersion('tekton/Task/buildah', '13');
             when(
               () => !store.isLoading,
               () => {
@@ -543,7 +545,7 @@ describe('Store functions', () => {
         when(
           () => !store.isLoading,
           () => {
-            const resource = store.resources.get('buildah');
+            const resource = store.resources.get('tekton/Task/buildah');
             assert(resource);
 
             expect(typeof resource.readme).toBe('string');
@@ -573,7 +575,7 @@ describe('Store functions', () => {
         when(
           () => !store.isLoading,
           () => {
-            const resource = store.resources.get('buildah');
+            const resource = store.resources.get('tekton/Task/buildah');
             assert(resource);
 
             expect(typeof resource.readme).toBe('string');
@@ -602,6 +604,45 @@ describe('Store functions', () => {
 
         store.clearAllFilters();
         expect(store.filteredResources.length).toBe(7);
+
+        done();
+      }
+    );
+  });
+
+  it('makes sure to add resources with same name but from different catalog', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        const item = Resource.create({
+          id: 44,
+          name: 'golang-build',
+          resourceKey: 'tekton-hub/Task/golang-build',
+          catalog: 2,
+          kind: 'Task',
+          latestVersion: 47,
+          displayVersion: 47,
+          tags: [1],
+          rating: 5,
+          versions: [47],
+          displayName: 'golang build'
+        });
+
+        expect(store.resources.size).toBe(7);
+        store.add(item);
+        expect(store.resources.size).toBe(8);
+
+        expect(getSnapshot(store.resources)).toMatchSnapshot();
 
         done();
       }
