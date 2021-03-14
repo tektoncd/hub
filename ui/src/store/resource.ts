@@ -41,7 +41,8 @@ const Version = types.model('Version', {
 export const Resource = types
   .model('Resource', {
     id: types.number,
-    name: types.identifier,
+    name: types.string,
+    resourceKey: types.identifier,
     catalog: types.reference(Catalog),
     kind: types.reference(Kind),
     latestVersion: types.reference(Version),
@@ -139,12 +140,12 @@ export const ResourceStore = types
   }))
 
   .actions((self) => ({
-    versionInfo: flow(function* (resourceName: string) {
+    versionInfo: flow(function* (resourceKey: string) {
       try {
         self.setLoading(true);
 
         const { api } = self;
-        const resource = self.resources.get(resourceName);
+        const resource = self.resources.get(resourceKey);
         assert(resource);
 
         const json = yield api.resourceVersion(resource.id);
@@ -159,8 +160,8 @@ export const ResourceStore = types
         versions.forEach((v: IVersion) => {
           if (!self.versions.has(String(v.id))) {
             self.versions.put(v);
-            if (self.resources.has(resourceName)) {
-              const resource = self.resources.get(resourceName);
+            if (self.resources.has(resourceKey)) {
+              const resource = self.resources.get(resourceKey);
               assert(resource);
               resource.versions.push(v.id);
             }
@@ -222,6 +223,7 @@ export const ResourceStore = types
         const resources: IResource[] = json.data.map((r: IResource) => ({
           id: r.id,
           name: r.name,
+          resourceKey: `${r.catalog.name}/${r.kind}/${r.name}`,
           catalog: r.catalog.id,
           kind: r.kind,
           latestVersion: r.latestVersion.id,
@@ -283,16 +285,16 @@ export const ResourceStore = types
     afterCreate() {
       self.load();
     },
-    setDisplayVersion(resourceName: string, versionId: string) {
-      const resource = self.resources.get(resourceName);
+    setDisplayVersion(resourceKey: string, versionId: string) {
+      const resource = self.resources.get(resourceKey);
       assert(resource);
       const version = self.versions.get(versionId);
       assert(version);
       if (version.id !== resource.displayVersion.id) {
         resource.displayVersion = version;
         self.versionUpdate(version.id);
-        self.loadReadme(resourceName);
-        self.loadYaml(resourceName);
+        self.loadReadme(resourceKey);
+        self.loadYaml(resourceKey);
       }
     }
   }))

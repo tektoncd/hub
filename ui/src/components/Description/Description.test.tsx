@@ -18,8 +18,8 @@ describe('Resource Readme and Yaml', () => {
         return !resources.isLoading;
       },
       () => {
-        resources.loadReadme('buildah');
-        resources.loadYaml('buildah');
+        resources.loadReadme('tekton/Task/buildah');
+        resources.loadYaml('tekton/Task/buildah');
         when(
           () => {
             return !resources.isLoading;
@@ -28,7 +28,7 @@ describe('Resource Readme and Yaml', () => {
             setTimeout(() => {
               const component = mount(
                 <Provider>
-                  <Description name="buildah" />
+                  <Description name="buildah" catalog="tekton" kind="Task" />
                 </Provider>
               );
               component.update();

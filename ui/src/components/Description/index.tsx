@@ -6,10 +6,13 @@ import { Grid, Card, Tabs, Tab, GridItem, CardHeader, Spinner } from '@patternfl
 import { useMst } from '../../store/root';
 import Readme from '../Readme';
 import Yaml from '../Yaml';
+import { titleCase } from '../../common/titlecase';
 import './Description.css';
 
 interface Props {
   name: string;
+  catalog: string;
+  kind: string;
 }
 
 const Description: React.FC<Props> = (props) => {
@@ -20,7 +23,8 @@ const Description: React.FC<Props> = (props) => {
     setActiveTabKey(Number(tabIndex));
   };
 
-  const resource = resources.resources.get(props.name);
+  const { catalog, kind, name } = props;
+  const resource = resources.resources.get(`${catalog}/${titleCase(kind)}/${name}`);
 
   return useObserver(() =>
     resource.readme === '' || resource.yaml === '' ? (
