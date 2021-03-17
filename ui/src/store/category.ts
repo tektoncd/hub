@@ -45,6 +45,13 @@ export const CategoryStore = types
       return Array.from(self.items.values());
     },
 
+    // This returns list of selected category's name
+    get selectedByName() {
+      return Array.from(self.items.values())
+        .filter((c: ICategory) => c.selected)
+        .reduce((acc: string[], c: ICategory) => [...acc, c.name], []);
+    },
+
     get selectedTags() {
       return new Set(
         Array.from(self.items.values())
@@ -66,6 +73,14 @@ export const CategoryStore = types
     clearSelected() {
       self.items.forEach((c) => {
         c.selected = false;
+      });
+    },
+
+    toggleByName(name: string) {
+      self.items.forEach((c) => {
+        if (c.name === name) {
+          c.selected = true;
+        }
       });
     }
   }))

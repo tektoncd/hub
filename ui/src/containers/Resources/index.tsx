@@ -1,5 +1,5 @@
 import React from 'react';
-import { useObserver } from 'mobx-react';
+import { observer } from 'mobx-react';
 import {
   EmptyState,
   EmptyStateIcon,
@@ -14,12 +14,24 @@ import { useHistory } from 'react-router-dom';
 import { useMst } from '../../store/root';
 import { IResource } from '../../store/resource';
 import Cards from '../../components/Cards';
+import { UpdateURL } from '../../utils/updateUrl';
 import './Resources.css';
 
-const Resources = () => {
-  const { resources } = useMst();
+const Resources: React.FC = observer(() => {
+  const { resources, categories } = useMst();
+  const { catalogs, kinds, search, sortBy } = resources;
 
   const history = useHistory();
+
+  React.useEffect(() => {
+    const selectedcategories = categories.selectedByName.join(',');
+    const selectedKinds = [...kinds.selected].join(',');
+    const selectedCatalogs = catalogs.selectedByName.join(',');
+
+    const url = UpdateURL(search, sortBy, selectedcategories, selectedKinds, selectedCatalogs);
+    if (!resources.isLoading) history.replace(`?${url}`);
+  }, [search, sortBy, categories.selectedByName, kinds.selected, catalogs.selected]);
+
   const clearFilter = () => {
     resources.clearAllFilters();
     history.push('/');
@@ -43,12 +55,10 @@ const Resources = () => {
     );
   };
 
-  return useObserver(() =>
-    resources.resources.size === 0 ? (
-      <Spinner className="hub-spinner" />
-    ) : (
-      <React.Fragment>{checkResources(resources.filteredResources)}</React.Fragment>
-    )
+  return resources.resources.size === 0 ? (
+    <Spinner className="hub-spinner" />
+  ) : (
+    <React.Fragment>{checkResources(resources.filteredResources)}</React.Fragment>
   );
-};
+});
 export default Resources;

@@ -8,6 +8,9 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
        
       <BrowserRouter>
         <Router history={{...}}>
+          <ParseUrl>
+             
+          </ParseUrl>
           <Page header={{...}} className=\\"hub-page\\" isManagedSidebar={false} isBreadcrumbWidthLimited={false} defaultManagedSidebarIsOpen={true} onPageResize={[Function: onPageResize]} mainTabIndex={-1} isNotificationDrawerExpanded={false} onNotificationDrawerExpand={[Function: onNotificationDrawerExpand]}>
             <div className=\\"pf-c-page hub-page\\">
               <Memo(wrappedComponent)>
@@ -245,8 +248,8 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                         </GridItem>
                         <GridItem span={10} rowSpan={1}>
                           <div className=\\"pf-l-grid__item pf-m-10-col pf-m-1-row\\">
-                            <Route exact={true} path=\\"/\\" component={[Function: Resources]}>
-                              <Resources history={{...}} location={{...}} match={{...}} staticContext={[undefined]}>
+                            <Route exact={true} path=\\"/\\" component={{...}}>
+                              <Memo(wrappedComponent) history={{...}} location={{...}} match={{...}} staticContext={[undefined]}>
                                 <Spinner className=\\"hub-spinner\\">
                                   <span className=\\"pf-c-spinner pf-m-xl hub-spinner\\" role=\\"progressbar\\" aria-valuetext=\\"Loading...\\">
                                     <span className=\\"pf-c-spinner__clipper\\" />
@@ -254,7 +257,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                                     <span className=\\"pf-c-spinner__tail-ball\\" />
                                   </span>
                                 </Spinner>
-                              </Resources>
+                              </Memo(wrappedComponent)>
                             </Route>
                           </div>
                         </GridItem>

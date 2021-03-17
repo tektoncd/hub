@@ -679,4 +679,27 @@ describe('Store functions', () => {
       }
     );
   });
+
+  it('it should parse the url and can update the store', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        store.setURLParams('?category=Automation%2CBuild+Tools&catalog=tekton');
+        store.parseUrl();
+
+        expect(store.filteredResources.length).toBe(1);
+        expect(store.categories.selectedByName).toEqual(['Build Tools']);
+
+        done();
+      }
+    );
+  });
 });

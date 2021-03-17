@@ -90,4 +90,25 @@ describe('Store Object', () => {
 
     done();
   });
+
+  it('should toggle catalogs by name and can get selected catlogs by name', (done) => {
+    const store = CatalogStore.create({});
+
+    const item = Catalog.create({
+      id: 1,
+      name: 'tekton',
+      type: 'community'
+    });
+
+    store.add(item);
+
+    store.toggleByName('Tekton');
+    const catalogs = store.items.get('1');
+    assert(catalogs);
+
+    expect(catalogs.selected).toBe(true);
+    expect(store.selectedByName).toEqual(['tekton']);
+
+    done();
+  });
 });

@@ -10,6 +10,7 @@ import Footer from '../../components/Footer';
 import Resources from '../Resources';
 import Authentication from '../../containers/Authentication';
 import Details from '../Details';
+import ParseUrl from '../ParseUrl';
 import { createProvider } from '../../store/root';
 import './App.css';
 
@@ -19,6 +20,7 @@ const App: React.FC = observer(() => {
   return (
     <Provider>
       <Router>
+        <ParseUrl />
         <Page header={<Header />} className="hub-page">
           <Route exact path="/" component={Background} />
           <PageSection>
