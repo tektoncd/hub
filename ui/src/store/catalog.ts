@@ -1,5 +1,6 @@
 import { Instance, types } from 'mobx-state-tree';
 import { Icons } from '../common/icons';
+import { titleCase } from '../common/titlecase';
 
 const icons: { [catalog: string]: Icons } = {
   official: Icons.Cat,
@@ -41,6 +42,13 @@ export const CatalogStore = types
       self.items.forEach((c) => {
         c.selected = false;
       });
+    },
+    toggleByName(name: string) {
+      self.items.forEach((c) => {
+        if (titleCase(c.name) === name) {
+          c.selected = true;
+        }
+      });
     }
   }))
 
@@ -58,5 +66,13 @@ export const CatalogStore = types
       });
 
       return list;
+    },
+
+    /* This view returns list of the selected catalos's name instead of id
+    to avoid loop on it inorder to get catalogs name */
+    get selectedByName() {
+      return Array.from(self.items.values())
+        .filter((c: ICatalog) => c.selected)
+        .reduce((acc: string[], c: ICatalog) => [...acc, c.name], []);
     }
   }));

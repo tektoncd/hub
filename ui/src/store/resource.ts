@@ -7,6 +7,7 @@ import { Api } from '../api';
 import { Catalog, CatalogStore } from './catalog';
 import { Kind, KindStore } from './kind';
 import { assert } from './utils';
+import { Params } from '../common/params';
 
 export const updatedAt = types.custom<string, Moment>({
   name: 'momentDate',
@@ -111,6 +112,7 @@ export const ResourceStore = types
     sortBy: types.optional(types.enumeration(Object.values(SortByFields)), SortByFields.Unknown),
     tags: types.optional(types.map(Tag), {}),
     search: '',
+    urlParams: '',
     err: '',
     isLoading: true
   })
@@ -139,6 +141,9 @@ export const ResourceStore = types
     setSortBy(field: string) {
       const key: SortByFields = SortByFields[field as keyof typeof SortByFields];
       self.sortBy = key;
+    },
+    setURLParams(url: string) {
+      self.urlParams = url;
     }
   }))
 
@@ -149,6 +154,32 @@ export const ResourceStore = types
       self.categories.clearSelected();
       self.setSearch('');
       self.setSortBy(SortByFields.Unknown);
+    },
+
+    parseUrl() {
+      const searchParams = new URLSearchParams(self.urlParams);
+      if (searchParams.has(Params.Category)) {
+        const categoriesParams = searchParams.getAll(Params.Category)[0].split(',');
+        categoriesParams.forEach((t: string) => {
+          self.categories.toggleByName(t);
+        });
+      }
+
+      if (searchParams.has(Params.Catalog)) {
+        const catalogsParams = searchParams.getAll(Params.Catalog)[0].split(',');
+        catalogsParams.forEach((t: string) => {
+          self.catalogs.toggleByName(t);
+        });
+      }
+
+      if (searchParams.has(Params.Kind)) {
+        const kindsParams = searchParams.getAll(Params.Kind)[0].split(',');
+        kindsParams.forEach((t: string) => {
+          const kind = self.kinds.items.get(t);
+          assert(kind);
+          kind.toggle();
+        });
+      }
     }
   }))
 
@@ -251,6 +282,9 @@ export const ResourceStore = types
           r.versions.push(r.latestVersion);
           self.add(r);
         });
+
+        // Url parsing after resource load
+        if (self.urlParams) self.parseUrl();
       } catch (err) {
         self.err = err.toString();
       }

@@ -122,4 +122,54 @@ describe('Store functions', () => {
       }
     );
   });
+
+  it('can toggle the category by name', (done) => {
+    const store = CategoryStore.create({}, { api });
+    expect(store.count).toBe(0);
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.count).toBe(5);
+        expect(store.isLoading).toBe(false);
+
+        store.toggleByName('Build Tools');
+
+        const categories = store.items.get('1');
+        assert(categories);
+        expect(categories.selected).toBe(true);
+
+        done();
+      }
+    );
+  });
+
+  it('can return the all selected catgories in a list', (done) => {
+    const store = CategoryStore.create({}, { api });
+    expect(store.count).toBe(0);
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.count).toBe(5);
+        expect(store.isLoading).toBe(false);
+
+        // Gets the category with id as 1
+        const c1 = store.items.get('1');
+        assert(c1);
+        c1.toggle();
+
+        // Gets the category with id as 2
+        const c2 = store.items.get('2');
+        assert(c2);
+        c2.toggle();
+
+        expect(store.selectedByName.sort()).toEqual(['Build Tools', 'CLI'].sort());
+
+        done();
+      }
+    );
+  });
 });
