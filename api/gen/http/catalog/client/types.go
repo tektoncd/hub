@@ -8,6 +8,7 @@
 package client
 
 import (
+	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	catalogviews "github.com/tektoncd/hub/api/gen/catalog/views"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -22,6 +23,10 @@ type RefreshResponseBody struct {
 	// status of the job
 	Status *string `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
 }
+
+// RefreshAllResponseBody is the type of the "catalog" service "RefreshAll"
+// endpoint HTTP response body.
+type RefreshAllResponseBody []*JobResponse
 
 // RefreshNotFoundResponseBody is the type of the "catalog" service "Refresh"
 // endpoint HTTP response body for the "not-found" error.
@@ -59,6 +64,34 @@ type RefreshInternalErrorResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
+// RefreshAllInternalErrorResponseBody is the type of the "catalog" service
+// "RefreshAll" endpoint HTTP response body for the "internal-error" error.
+type RefreshAllInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// JobResponse is used to define fields on response body types.
+type JobResponse struct {
+	// id of the job
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name of the catalog
+	CatalogName *string `form:"catalogName,omitempty" json:"catalogName,omitempty" xml:"catalogName,omitempty"`
+	// status of the job
+	Status *string `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
+}
+
 // NewRefreshJobOK builds a "catalog" service "Refresh" endpoint result from a
 // HTTP "OK" response.
 func NewRefreshJobOK(body *RefreshResponseBody) *catalogviews.JobView {
@@ -88,6 +121,31 @@ func NewRefreshNotFound(body *RefreshNotFoundResponseBody) *goa.ServiceError {
 // NewRefreshInternalError builds a catalog service Refresh endpoint
 // internal-error error.
 func NewRefreshInternalError(body *RefreshInternalErrorResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewRefreshAllJobOK builds a "catalog" service "RefreshAll" endpoint result
+// from a HTTP "OK" response.
+func NewRefreshAllJobOK(body []*JobResponse) []*catalog.Job {
+	v := make([]*catalog.Job, len(body))
+	for i, val := range body {
+		v[i] = unmarshalJobResponseToCatalogJob(val)
+	}
+	return v
+}
+
+// NewRefreshAllInternalError builds a catalog service RefreshAll endpoint
+// internal-error error.
+func NewRefreshAllInternalError(body *RefreshAllInternalErrorResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -144,6 +202,44 @@ func ValidateRefreshInternalErrorResponseBody(body *RefreshInternalErrorResponse
 	}
 	if body.Fault == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateRefreshAllInternalErrorResponseBody runs the validations defined on
+// RefreshAll_internal-error_Response_Body
+func ValidateRefreshAllInternalErrorResponseBody(body *RefreshAllInternalErrorResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateJobResponse runs the validations defined on JobResponse
+func ValidateJobResponse(body *JobResponse) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.CatalogName == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("catalogName", "body"))
+	}
+	if body.Status == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("status", "body"))
 	}
 	return
 }

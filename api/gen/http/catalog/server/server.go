@@ -19,9 +19,10 @@ import (
 
 // Server lists the catalog service endpoint HTTP handlers.
 type Server struct {
-	Mounts  []*MountPoint
-	Refresh http.Handler
-	CORS    http.Handler
+	Mounts     []*MountPoint
+	Refresh    http.Handler
+	RefreshAll http.Handler
+	CORS       http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -58,10 +59,13 @@ func New(
 	return &Server{
 		Mounts: []*MountPoint{
 			{"Refresh", "POST", "/catalog/{catalogName}/refresh"},
+			{"RefreshAll", "POST", "/catalog/refresh"},
 			{"CORS", "OPTIONS", "/catalog/{catalogName}/refresh"},
+			{"CORS", "OPTIONS", "/catalog/refresh"},
 		},
-		Refresh: NewRefreshHandler(e.Refresh, mux, decoder, encoder, errhandler, formatter),
-		CORS:    NewCORSHandler(),
+		Refresh:    NewRefreshHandler(e.Refresh, mux, decoder, encoder, errhandler, formatter),
+		RefreshAll: NewRefreshAllHandler(e.RefreshAll, mux, decoder, encoder, errhandler, formatter),
+		CORS:       NewCORSHandler(),
 	}
 }
 
@@ -71,12 +75,14 @@ func (s *Server) Service() string { return "catalog" }
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.Refresh = m(s.Refresh)
+	s.RefreshAll = m(s.RefreshAll)
 	s.CORS = m(s.CORS)
 }
 
 // Mount configures the mux to serve the catalog endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountRefreshHandler(mux, h.Refresh)
+	MountRefreshAllHandler(mux, h.RefreshAll)
 	MountCORSHandler(mux, h.CORS)
 }
 
@@ -131,6 +137,57 @@ func NewRefreshHandler(
 	})
 }
 
+// MountRefreshAllHandler configures the mux to serve the "catalog" service
+// "RefreshAll" endpoint.
+func MountRefreshAllHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := handleCatalogOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/catalog/refresh", f)
+}
+
+// NewRefreshAllHandler creates a HTTP handler which loads the HTTP request and
+// calls the "catalog" service "RefreshAll" endpoint.
+func NewRefreshAllHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeRefreshAllRequest(mux, decoder)
+		encodeResponse = EncodeRefreshAllResponse(encoder)
+		encodeError    = EncodeRefreshAllError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "RefreshAll")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "catalog")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
 // MountCORSHandler configures the mux to serve the CORS endpoints for the
 // service catalog.
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
@@ -142,6 +199,7 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("OPTIONS", "/catalog/{catalogName}/refresh", f)
+	mux.Handle("OPTIONS", "/catalog/refresh", f)
 }
 
 // NewCORSHandler creates a HTTP handler which returns a simple 200 response.

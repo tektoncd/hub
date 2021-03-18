@@ -97,14 +97,12 @@ func (s *syncer) Run() {
 			case <-s.stop:
 				return
 			case s.limit <- true:
-				go func() {
-					log.Info("processing the queue")
-					if err := s.Process(); err != nil {
-						time.AfterFunc(30*time.Second, s.Next)
-						return
-					}
-					s.Next()
-				}()
+				log.Info("processing the queue")
+				if err := s.Process(); err != nil {
+					time.AfterFunc(30*time.Second, s.Next)
+					return
+				}
+				s.Next()
 			}
 		}
 	}()

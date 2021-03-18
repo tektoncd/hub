@@ -18,6 +18,7 @@ import (
 	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	catalogviews "github.com/tektoncd/hub/api/gen/catalog/views"
 	goahttp "goa.design/goa/v3/http"
+	goa "goa.design/goa/v3/pkg"
 )
 
 // BuildRefreshRequest instantiates a HTTP request object with method and path
@@ -137,4 +138,114 @@ func DecodeRefreshResponse(decoder func(*http.Response) goahttp.Decoder, restore
 			return nil, goahttp.ErrInvalidResponse("catalog", "Refresh", resp.StatusCode, string(body))
 		}
 	}
+}
+
+// BuildRefreshAllRequest instantiates a HTTP request object with method and
+// path set to call the "catalog" service "RefreshAll" endpoint
+func (c *Client) BuildRefreshAllRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RefreshAllCatalogPath()}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("catalog", "RefreshAll", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeRefreshAllRequest returns an encoder for requests sent to the catalog
+// RefreshAll server.
+func EncodeRefreshAllRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*catalog.RefreshAllPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("catalog", "RefreshAll", "*catalog.RefreshAllPayload", v)
+		}
+		{
+			head := p.Token
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
+		return nil
+	}
+}
+
+// DecodeRefreshAllResponse returns a decoder for responses returned by the
+// catalog RefreshAll endpoint. restoreBody controls whether the response body
+// should be restored after having been read.
+// DecodeRefreshAllResponse may return the following errors:
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- error: internal error
+func DecodeRefreshAllResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body RefreshAllResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("catalog", "RefreshAll", err)
+			}
+			for _, e := range body {
+				if e != nil {
+					if err2 := ValidateJobResponse(e); err2 != nil {
+						err = goa.MergeErrors(err, err2)
+					}
+				}
+			}
+			if err != nil {
+				return nil, goahttp.ErrValidationError("catalog", "RefreshAll", err)
+			}
+			res := NewRefreshAllJobOK(body)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body RefreshAllInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("catalog", "RefreshAll", err)
+			}
+			err = ValidateRefreshAllInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("catalog", "RefreshAll", err)
+			}
+			return nil, NewRefreshAllInternalError(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("catalog", "RefreshAll", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// unmarshalJobResponseToCatalogJob builds a value of type *catalog.Job from a
+// value of type *JobResponse.
+func unmarshalJobResponseToCatalogJob(v *JobResponse) *catalog.Job {
+	res := &catalog.Job{
+		ID:          *v.ID,
+		CatalogName: *v.CatalogName,
+		Status:      *v.Status,
+	}
+
+	return res
 }

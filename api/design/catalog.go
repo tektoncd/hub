@@ -49,4 +49,24 @@ var _ = Service("catalog", func() {
 		})
 	})
 
+	Method("RefreshAll", func() {
+		Description("Refresh all catalogs")
+		Security(types.JWTAuth, func() {
+			Scope("catalog:refresh")
+		})
+		Payload(func() {
+			Token("token", String, "JWT")
+			Required("token")
+		})
+		Result(ArrayOf(types.Job))
+
+		HTTP(func() {
+			POST("/catalog/refresh")
+			Header("token:Authorization")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+		})
+	})
+
 })

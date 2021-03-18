@@ -60,3 +60,36 @@ func TestRefresh_Http(t *testing.T) {
 		assert.Equal(t, uint(10001), res.ID)
 	})
 }
+
+func RefreshAllChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	service := auth.NewService(tc.APIConfig, "catalog")
+	checker := goahttpcheck.New()
+	checker.Mount(server.NewRefreshAllHandler,
+		server.MountRefreshAllHandler,
+		catalog.NewRefreshAllEndpoint(NewServiceTest(tc), service.JWTAuth))
+	return checker
+}
+
+func TestRefreshAll_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user with catalog:refresh scope
+	agent, token, err := tc.AgentWithScopes("agent-001", "catalog:refresh")
+	assert.Equal(t, agent.AgentName, "agent-001")
+	assert.NoError(t, err)
+
+	RefreshAllChecker(tc).Test(t, http.MethodPost, "/catalog/refresh").
+		WithHeader("Authorization", token).Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res := []*catalog.Job{}
+		marshallErr := json.Unmarshal([]byte(b), &res)
+		assert.NoError(t, marshallErr)
+
+		assert.Equal(t, 2, len(res))
+	})
+}

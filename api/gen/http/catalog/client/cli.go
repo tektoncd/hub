@@ -28,3 +28,16 @@ func BuildRefreshPayload(catalogRefreshCatalogName string, catalogRefreshToken s
 
 	return v, nil
 }
+
+// BuildRefreshAllPayload builds the payload for the catalog RefreshAll
+// endpoint from CLI flags.
+func BuildRefreshAllPayload(catalogRefreshAllToken string) (*catalog.RefreshAllPayload, error) {
+	var token string
+	{
+		token = catalogRefreshAllToken
+	}
+	v := &catalog.RefreshAllPayload{}
+	v.Token = token
+
+	return v, nil
+}
