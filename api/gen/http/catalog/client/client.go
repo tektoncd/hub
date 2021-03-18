@@ -21,6 +21,10 @@ type Client struct {
 	// endpoint.
 	RefreshDoer goahttp.Doer
 
+	// RefreshAll Doer is the HTTP client used to make requests to the RefreshAll
+	// endpoint.
+	RefreshAllDoer goahttp.Doer
+
 	// CORS Doer is the HTTP client used to make requests to the  endpoint.
 	CORSDoer goahttp.Doer
 
@@ -45,6 +49,7 @@ func NewClient(
 ) *Client {
 	return &Client{
 		RefreshDoer:         doer,
+		RefreshAllDoer:      doer,
 		CORSDoer:            doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
@@ -73,6 +78,30 @@ func (c *Client) Refresh() goa.Endpoint {
 		resp, err := c.RefreshDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("catalog", "Refresh", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// RefreshAll returns an endpoint that makes HTTP requests to the catalog
+// service RefreshAll server.
+func (c *Client) RefreshAll() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeRefreshAllRequest(c.encoder)
+		decodeResponse = DecodeRefreshAllResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildRefreshAllRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.RefreshAllDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("catalog", "RefreshAll", err)
 		}
 		return decodeResponse(resp)
 	}

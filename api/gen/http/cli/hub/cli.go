@@ -32,7 +32,7 @@ import (
 func UsageCommands() string {
 	return `admin (update-agent|refresh-config)
 auth authenticate
-catalog refresh
+catalog (refresh|refresh-all)
 category list
 rating (get|update)
 resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
@@ -44,18 +44,16 @@ user (refresh-access-token|new-refresh-token)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` admin update-agent --body '{
-      "name": "Occaecati voluptas assumenda.",
+      "name": "Pariatur occaecati voluptas assumenda maiores quaerat consequatur.",
       "scopes": [
-         "Consequatur ullam quia nihil officia itaque.",
-         "Aut qui dolor consequatur assumenda suscipit aut.",
-         "Autem ut est error eaque.",
-         "Commodi rerum harum ut tenetur laborum tempore."
+         "Nihil officia itaque non.",
+         "Qui dolor consequatur assumenda."
       ]
-   }' --token "Esse fugit."` + "\n" +
+   }' --token "Aut minima autem ut est error eaque."` + "\n" +
 		os.Args[0] + ` auth authenticate --code "5628b69ec09c09512eef"` + "\n" +
-		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Qui ipsum deleniti corrupti non quo velit."` + "\n" +
+		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Voluptate corrupti omnis."` + "\n" +
 		os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` rating get --id 4360376771359759457 --token "Et nihil aut."` + "\n" +
+		os.Args[0] + ` rating get --id 8223604650900295604 --token "Tempora omnis et nihil aut quo quidem."` + "\n" +
 		""
 }
 
@@ -88,6 +86,9 @@ func ParseEndpoint(
 		catalogRefreshFlags           = flag.NewFlagSet("refresh", flag.ExitOnError)
 		catalogRefreshCatalogNameFlag = catalogRefreshFlags.String("catalog-name", "REQUIRED", "Name of catalog")
 		catalogRefreshTokenFlag       = catalogRefreshFlags.String("token", "REQUIRED", "")
+
+		catalogRefreshAllFlags     = flag.NewFlagSet("refresh-all", flag.ExitOnError)
+		catalogRefreshAllTokenFlag = catalogRefreshAllFlags.String("token", "REQUIRED", "")
 
 		categoryFlags = flag.NewFlagSet("category", flag.ContinueOnError)
 
@@ -157,6 +158,7 @@ func ParseEndpoint(
 
 	catalogFlags.Usage = catalogUsage
 	catalogRefreshFlags.Usage = catalogRefreshUsage
+	catalogRefreshAllFlags.Usage = catalogRefreshAllUsage
 
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
@@ -248,6 +250,9 @@ func ParseEndpoint(
 			switch epn {
 			case "refresh":
 				epf = catalogRefreshFlags
+
+			case "refresh-all":
+				epf = catalogRefreshAllFlags
 
 			}
 
@@ -353,6 +358,9 @@ func ParseEndpoint(
 			case "refresh":
 				endpoint = c.Refresh()
 				data, err = catalogc.BuildRefreshPayload(*catalogRefreshCatalogNameFlag, *catalogRefreshTokenFlag)
+			case "refresh-all":
+				endpoint = c.RefreshAll()
+				data, err = catalogc.BuildRefreshAllPayload(*catalogRefreshAllTokenFlag)
 			}
 		case "category":
 			c := categoryc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -445,14 +453,12 @@ Create or Update an agent user with required scopes
 
 Example:
     `+os.Args[0]+` admin update-agent --body '{
-      "name": "Occaecati voluptas assumenda.",
+      "name": "Pariatur occaecati voluptas assumenda maiores quaerat consequatur.",
       "scopes": [
-         "Consequatur ullam quia nihil officia itaque.",
-         "Aut qui dolor consequatur assumenda suscipit aut.",
-         "Autem ut est error eaque.",
-         "Commodi rerum harum ut tenetur laborum tempore."
+         "Nihil officia itaque non.",
+         "Qui dolor consequatur assumenda."
       ]
-   }' --token "Esse fugit."
+   }' --token "Aut minima autem ut est error eaque."
 `, os.Args[0])
 }
 
@@ -463,7 +469,7 @@ Refresh the changes in config file
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` admin refresh-config --token "Ut nihil eum placeat."
+    `+os.Args[0]+` admin refresh-config --token "Ut aut quos distinctio ipsam eos."
 `, os.Args[0])
 }
 
@@ -499,6 +505,7 @@ Usage:
 
 COMMAND:
     refresh: Refresh a Catalog by it's name
+    refresh-all: Refresh all catalogs
 
 Additional help:
     %s catalog COMMAND --help
@@ -512,7 +519,18 @@ Refresh a Catalog by it's name
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Qui ipsum deleniti corrupti non quo velit."
+    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Voluptate corrupti omnis."
+`, os.Args[0])
+}
+
+func catalogRefreshAllUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] catalog refresh-all -token STRING
+
+Refresh all catalogs
+    -token STRING: 
+
+Example:
+    `+os.Args[0]+` catalog refresh-all --token "Expedita velit magni reprehenderit libero."
 `, os.Args[0])
 }
 
@@ -561,7 +579,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 4360376771359759457 --token "Et nihil aut."
+    `+os.Args[0]+` rating get --id 8223604650900295604 --token "Tempora omnis et nihil aut quo quidem."
 `, os.Args[0])
 }
 
@@ -575,8 +593,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 4
-   }' --id 5020310314104480935 --token "Amet eum."
+      "rating": 2
+   }' --id 14996331923821697327 --token "Hic rerum consequatur explicabo."
 `, os.Args[0])
 }
 
@@ -652,7 +670,7 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -676,7 +694,7 @@ Find resources using name of catalog, resource name and kind of resource
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah"
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah"
 `, os.Args[0])
 }
 

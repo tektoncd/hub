@@ -24,6 +24,10 @@ type RefreshResponseBody struct {
 	Status string `form:"status" json:"status" xml:"status"`
 }
 
+// RefreshAllResponseBody is the type of the "catalog" service "RefreshAll"
+// endpoint HTTP response body.
+type RefreshAllResponseBody []*JobResponse
+
 // RefreshNotFoundResponseBody is the type of the "catalog" service "Refresh"
 // endpoint HTTP response body for the "not-found" error.
 type RefreshNotFoundResponseBody struct {
@@ -60,6 +64,34 @@ type RefreshInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// RefreshAllInternalErrorResponseBody is the type of the "catalog" service
+// "RefreshAll" endpoint HTTP response body for the "internal-error" error.
+type RefreshAllInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// JobResponse is used to define fields on response body types.
+type JobResponse struct {
+	// id of the job
+	ID uint `form:"id" json:"id" xml:"id"`
+	// Name of the catalog
+	CatalogName string `form:"catalogName" json:"catalogName" xml:"catalogName"`
+	// status of the job
+	Status string `form:"status" json:"status" xml:"status"`
+}
+
 // NewRefreshResponseBody builds the HTTP response body from the result of the
 // "Refresh" endpoint of the "catalog" service.
 func NewRefreshResponseBody(res *catalogviews.JobView) *RefreshResponseBody {
@@ -67,6 +99,16 @@ func NewRefreshResponseBody(res *catalogviews.JobView) *RefreshResponseBody {
 		ID:          *res.ID,
 		CatalogName: *res.CatalogName,
 		Status:      *res.Status,
+	}
+	return body
+}
+
+// NewRefreshAllResponseBody builds the HTTP response body from the result of
+// the "RefreshAll" endpoint of the "catalog" service.
+func NewRefreshAllResponseBody(res []*catalog.Job) RefreshAllResponseBody {
+	body := make([]*JobResponse, len(res))
+	for i, val := range res {
+		body[i] = marshalCatalogJobToJobResponse(val)
 	}
 	return body
 }
@@ -99,10 +141,32 @@ func NewRefreshInternalErrorResponseBody(res *goa.ServiceError) *RefreshInternal
 	return body
 }
 
+// NewRefreshAllInternalErrorResponseBody builds the HTTP response body from
+// the result of the "RefreshAll" endpoint of the "catalog" service.
+func NewRefreshAllInternalErrorResponseBody(res *goa.ServiceError) *RefreshAllInternalErrorResponseBody {
+	body := &RefreshAllInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewRefreshPayload builds a catalog service Refresh endpoint payload.
 func NewRefreshPayload(catalogName string, token string) *catalog.RefreshPayload {
 	v := &catalog.RefreshPayload{}
 	v.CatalogName = catalogName
+	v.Token = token
+
+	return v
+}
+
+// NewRefreshAllPayload builds a catalog service RefreshAll endpoint payload.
+func NewRefreshAllPayload(token string) *catalog.RefreshAllPayload {
+	v := &catalog.RefreshAllPayload{}
 	v.Token = token
 
 	return v

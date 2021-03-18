@@ -15,3 +15,8 @@ import (
 func RefreshCatalogPath(catalogName string) string {
 	return fmt.Sprintf("/catalog/%v/refresh", catalogName)
 }
+
+// RefreshAllCatalogPath returns the URL path to the catalog service RefreshAll HTTP endpoint.
+func RefreshAllCatalogPath() string {
+	return "/catalog/refresh"
+}

@@ -79,6 +79,34 @@ func (s *service) Refresh(ctx context.Context, p *catalog.RefreshPayload) (*cata
 	return ret, nil
 }
 
+// refresh all catalog for new resources
+func (s *service) RefreshAll(ctx context.Context, p *catalog.RefreshAllPayload) ([]*catalog.Job, error) {
+
+	log := s.Logger(ctx)
+	db := s.DB(ctx)
+
+	ctgs := []model.Catalog{}
+	if err := db.Find(&ctgs).Error; err != nil {
+		log.Error(err)
+		return nil, internalError
+	}
+
+	var res []*catalog.Job
+	for _, ctg := range ctgs {
+		job, err := s.wq.Enqueue(auth.UserID(ctx), ctg.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		log.Infof("job %d queued to refresh catalog %s", job.ID, ctg.Name)
+
+		ret := &catalog.Job{ID: job.ID, CatalogName: ctg.Name, Status: job.Status}
+		res = append(res, ret)
+	}
+
+	return res, nil
+}
+
 func catalogNotFoundErr(name string) error {
 	return catalog.MakeNotFound(fmt.Errorf("%s catalog not found", name))
 }
