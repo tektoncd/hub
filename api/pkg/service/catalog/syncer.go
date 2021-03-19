@@ -296,7 +296,6 @@ func (s *syncer) updateResourceVersions(
 		ver := model.ResourceVersion{
 			Version:    v.Version,
 			ResourceID: resourceID,
-			URL:        fmt.Sprintf("%s/tree/%s/%s", catalog.URL, catalog.Revision, v.Path),
 		}
 
 		txn.Model(&model.ResourceVersion{}).
@@ -306,6 +305,7 @@ func (s *syncer) updateResourceVersions(
 		ver.Description = v.Description
 		ver.ModifiedAt = v.ModifiedAt
 		ver.MinPipelinesVersion = v.MinPipelinesVersion
+		ver.URL = fmt.Sprintf("%s/tree/%s/%s", catalog.URL, catalog.Revision, v.Path)
 
 		txn.Save(&ver)
 		log.Infof(" Version: %d -> %s | Path: %s ", ver.ID, ver.Version, v.Path)
