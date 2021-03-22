@@ -159,7 +159,7 @@ paths:
       tags:
       - resource
       summary: Query resource
-      description: Find resources by a combination of name, kind and tags
+      description: Find resources by a combination of name, kind , catalog and tags
       operationId: resource#Query
       parameters:
       - name: name
@@ -168,6 +168,14 @@ paths:
         required: false
         type: string
         default: ""
+      - name: catalogs
+        in: query
+        description: Catalogs of resource to filter by
+        required: false
+        type: array
+        items:
+          type: string
+        collectionFormat: multi
       - name: kinds
         in: query
         description: Kinds of resource to filter by

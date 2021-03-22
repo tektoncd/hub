@@ -32,11 +32,14 @@ var _ = Service("resource", func() {
 
 	// Will be deprecated, moved to v1
 	Method("Query", func() {
-		Description("Find resources by a combination of name, kind and tags")
+		Description("Find resources by a combination of name, kind , catalog and tags")
 		Payload(func() {
 			Attribute("name", String, "Name of resource", func() {
 				Default("")
 				Example("name", "buildah")
+			})
+			Attribute("catalogs", ArrayOf(String), "Catalogs of resource to filter by", func() {
+				Example([]string{"tekton", "openshift"})
 			})
 			Attribute("kinds", ArrayOf(String), "Kinds of resource to filter by", func() {
 				Example([]string{"task", "pipelines"})
@@ -60,6 +63,7 @@ var _ = Service("resource", func() {
 			GET("/query")
 
 			Param("name")
+			Param("catalogs")
 			Param("kinds")
 			Param("tags")
 			Param("limit")
