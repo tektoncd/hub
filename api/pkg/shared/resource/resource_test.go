@@ -142,6 +142,45 @@ func TestQuery_ByTags(t *testing.T) {
 	assert.Equal(t, 1, len(res))
 }
 
+func TestQuery_ByCatalogs(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	req := Request{
+		Db:    tc.DB(),
+		Log:   tc.Logger("resource"),
+		Name:  "",
+		Kinds: []string{},
+		Catalogs:  []string{"catalog-community"},
+		Limit: 100,
+	}
+
+	res, err := req.Query()
+	assert.NoError(t, err)
+
+	assert.Equal(t, 1, len(res))
+	assert.Equal(t,"catalog-community",res[0].Catalog.Name)
+}
+
+func TestQuery_ByWrongCatalogs(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	req := Request{
+		Db:    tc.DB(),
+		Log:   tc.Logger("resource"),
+		Name:  "",
+		Kinds: []string{},
+		Catalogs:  []string{"catalog"},
+		Limit: 100,
+	}
+
+	res, err := req.Query()
+	assert.EqualError(t, err,"resource not found")
+
+	assert.Equal(t, 0, len(res))
+}
+
 func TestQuery_ByNameAndKind(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())

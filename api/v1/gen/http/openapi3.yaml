@@ -53,7 +53,7 @@ paths:
       tags:
       - resource
       summary: Query resource
-      description: Find resources by a combination of name, kind and tags
+      description: Find resources by a combination of name, kind,catalog and tags
       operationId: resource#Query
       parameters:
       - name: name
@@ -66,6 +66,22 @@ paths:
           default: ""
           example: buildah
         example: buildah
+      - name: catalogs
+        in: query
+        description: Catalogs of resource to filter by
+        allowEmptyValue: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: Sed libero aut velit.
+          description: Catalogs of resource to filter by
+          example:
+          - tekton
+          - openshift
+        example:
+        - tekton
+        - openshift
       - name: kinds
         in: query
         description: Kinds of resource to filter by
@@ -74,7 +90,7 @@ paths:
           type: array
           items:
             type: string
-            example: Sed libero aut velit.
+            example: Optio cumque autem ratione.
           description: Kinds of resource to filter by
           example:
           - task
@@ -90,7 +106,7 @@ paths:
           type: array
           items:
             type: string
-            example: Optio cumque autem ratione.
+            example: Officiis similique commodi ratione et quo.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -120,7 +136,7 @@ paths:
           enum:
           - exact
           - contains
-        example: contains
+        example: exact
       responses:
         "200":
           description: OK response.
@@ -237,11 +253,11 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: task
+          example: pipeline
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: Name of resource
@@ -335,7 +351,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: task
+        example: pipeline
       - name: name
         in: path
         description: name of resource

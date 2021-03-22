@@ -45,6 +45,9 @@ func EncodeQueryRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.
 		}
 		values := req.URL.Query()
 		values.Add("name", p.Name)
+		for _, value := range p.Catalogs {
+			values.Add("catalogs", value)
+		}
 		for _, value := range p.Kinds {
 			values.Add("kinds", value)
 		}

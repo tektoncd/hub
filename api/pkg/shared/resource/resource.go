@@ -31,6 +31,7 @@ type Request struct {
 	Name      string
 	Match     string
 	Kinds     []string
+	Catalogs  []string
 	Tags      []string
 	Limit     uint
 	Version   string
@@ -46,7 +47,7 @@ var (
 
 // Query resources based on name, kind, tags.
 // Match is the type of search: 'exact' or 'contains'
-// Fields: name, []kinds, []Tags, Match, Limit
+// Fields: name, []kinds,[]Catalogs []Tags, Match, Limit
 func (r *Request) Query() ([]model.Resource, error) {
 
 	// Validate the kinds passed are supported by Hub
@@ -64,6 +65,7 @@ func (r *Request) Query() ([]model.Resource, error) {
 	r.Db = r.Db.Select("DISTINCT(resources.id), resources.*").Scopes(
 		filterByTags(r.Tags),
 		filterByKinds(r.Kinds),
+		filterByCatalogs(r.Catalogs),
 		filterResourceName(r.Match, r.Name),
 		withResourceDetails,
 	).Limit(int(r.Limit))
@@ -311,6 +313,19 @@ func filterResourceName(match, name string) func(db *gorm.DB) *gorm.DB {
 		return func(db *gorm.DB) *gorm.DB {
 			return db.Where("LOWER(resources.name) LIKE ?", likeName)
 		}
+	}
+}
+
+func filterByCatalogs(catalogs []string) func(db *gorm.DB) *gorm.DB {
+	if len(catalogs) == 0 {
+		return noop
+	}
+
+	catalogs = lower(catalogs)
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Model(&model.Resource{}).
+			Joins("JOIN catalogs as ct on ct.id = resources.catalog_id").
+			Where("lower(ct.name) in (?)", catalogs)
 	}
 }
 

@@ -16,7 +16,7 @@ import (
 
 // The resource service provides details about all kind of resources
 type Service interface {
-	// Find resources by a combination of name, kind and tags
+	// Find resources by a combination of name, kind , catalog and tags
 	Query(context.Context, *QueryPayload) (res *Resources, err error)
 	// List all resources sorted by rating and name
 	List(context.Context, *ListPayload) (res *Resources, err error)
@@ -46,6 +46,8 @@ var MethodNames = [7]string{"Query", "List", "VersionsByID", "ByCatalogKindNameV
 type QueryPayload struct {
 	// Name of resource
 	Name string
+	// Catalogs of resource to filter by
+	Catalogs []string
 	// Kinds of resource to filter by
 	Kinds []string
 	// Tags associated with a resource to filter by

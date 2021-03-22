@@ -45,6 +45,7 @@ func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (*resourc
 		Log:   s.Logger(ctx),
 		Name:  p.Name,
 		Kinds: p.Kinds,
+		Catalogs: p.Catalogs,
 		Tags:  p.Tags,
 		Limit: p.Limit,
 		Match: p.Match,

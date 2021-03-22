@@ -34,17 +34,19 @@ func EncodeQueryResponse(encoder func(context.Context, http.ResponseWriter) goah
 func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			name  string
-			kinds []string
-			tags  []string
-			limit uint
-			match string
-			err   error
+			name     string
+			catalogs []string
+			kinds    []string
+			tags     []string
+			limit    uint
+			match    string
+			err      error
 		)
 		nameRaw := r.URL.Query().Get("name")
 		if nameRaw != "" {
 			name = nameRaw
 		}
+		catalogs = r.URL.Query()["catalogs"]
 		kinds = r.URL.Query()["kinds"]
 		tags = r.URL.Query()["tags"]
 		{
@@ -71,7 +73,7 @@ func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 		if err != nil {
 			return nil, err
 		}
-		payload := NewQueryPayload(name, kinds, tags, limit, match)
+		payload := NewQueryPayload(name, catalogs, kinds, tags, limit, match)
 
 		return payload, nil
 	}

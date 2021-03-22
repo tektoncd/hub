@@ -32,7 +32,10 @@ resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|b
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` catalog list` + "\n" +
-		os.Args[0] + ` resource query --name "buildah" --kinds '[
+		os.Args[0] + ` resource query --name "buildah" --catalogs '[
+      "tekton",
+      "openshift"
+   ]' --kinds '[
       "task",
       "pipelines"
    ]' --tags '[
@@ -58,12 +61,13 @@ func ParseEndpoint(
 
 		resourceFlags = flag.NewFlagSet("resource", flag.ContinueOnError)
 
-		resourceQueryFlags     = flag.NewFlagSet("query", flag.ExitOnError)
-		resourceQueryNameFlag  = resourceQueryFlags.String("name", "", "")
-		resourceQueryKindsFlag = resourceQueryFlags.String("kinds", "", "")
-		resourceQueryTagsFlag  = resourceQueryFlags.String("tags", "", "")
-		resourceQueryLimitFlag = resourceQueryFlags.String("limit", "1000", "")
-		resourceQueryMatchFlag = resourceQueryFlags.String("match", "contains", "")
+		resourceQueryFlags        = flag.NewFlagSet("query", flag.ExitOnError)
+		resourceQueryNameFlag     = resourceQueryFlags.String("name", "", "")
+		resourceQueryCatalogsFlag = resourceQueryFlags.String("catalogs", "", "")
+		resourceQueryKindsFlag    = resourceQueryFlags.String("kinds", "", "")
+		resourceQueryTagsFlag     = resourceQueryFlags.String("tags", "", "")
+		resourceQueryLimitFlag    = resourceQueryFlags.String("limit", "1000", "")
+		resourceQueryMatchFlag    = resourceQueryFlags.String("match", "contains", "")
 
 		resourceListFlags     = flag.NewFlagSet("list", flag.ExitOnError)
 		resourceListLimitFlag = resourceListFlags.String("limit", "1000", "")
@@ -198,7 +202,7 @@ func ParseEndpoint(
 			switch epn {
 			case "query":
 				endpoint = c.Query()
-				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryKindsFlag, *resourceQueryTagsFlag, *resourceQueryLimitFlag, *resourceQueryMatchFlag)
+				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryCatalogsFlag, *resourceQueryKindsFlag, *resourceQueryTagsFlag, *resourceQueryLimitFlag, *resourceQueryMatchFlag)
 			case "list":
 				endpoint = c.List()
 				data, err = resourcec.BuildListPayload(*resourceListLimitFlag)
@@ -257,7 +261,7 @@ Usage:
     %s [globalflags] resource COMMAND [flags]
 
 COMMAND:
-    query: Find resources by a combination of name, kind and tags
+    query: Find resources by a combination of name, kind,catalog and tags
     list: List all resources sorted by rating and name
     versions-by-id: Find all versions of a resource by its id
     by-catalog-kind-name-version: Find resource using name of catalog & name, kind and version of resource
@@ -270,17 +274,21 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func resourceQueryUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -kinds JSON -tags JSON -limit UINT -match STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -catalogs JSON -kinds JSON -tags JSON -limit UINT -match STRING
 
-Find resources by a combination of name, kind and tags
+Find resources by a combination of name, kind,catalog and tags
     -name STRING: 
+    -catalogs JSON: 
     -kinds JSON: 
     -tags JSON: 
     -limit UINT: 
     -match STRING: 
 
 Example:
-    `+os.Args[0]+` resource query --name "buildah" --kinds '[
+    `+os.Args[0]+` resource query --name "buildah" --catalogs '[
+      "tekton",
+      "openshift"
+   ]' --kinds '[
       "task",
       "pipelines"
    ]' --tags '[

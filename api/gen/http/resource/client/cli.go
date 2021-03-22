@@ -18,12 +18,21 @@ import (
 
 // BuildQueryPayload builds the payload for the resource Query endpoint from
 // CLI flags.
-func BuildQueryPayload(resourceQueryName string, resourceQueryKinds string, resourceQueryTags string, resourceQueryLimit string, resourceQueryMatch string) (*resource.QueryPayload, error) {
+func BuildQueryPayload(resourceQueryName string, resourceQueryCatalogs string, resourceQueryKinds string, resourceQueryTags string, resourceQueryLimit string, resourceQueryMatch string) (*resource.QueryPayload, error) {
 	var err error
 	var name string
 	{
 		if resourceQueryName != "" {
 			name = resourceQueryName
+		}
+	}
+	var catalogs []string
+	{
+		if resourceQueryCatalogs != "" {
+			err = json.Unmarshal([]byte(resourceQueryCatalogs), &catalogs)
+			if err != nil {
+				return nil, fmt.Errorf("invalid JSON for catalogs, \nerror: %s, \nexample of valid JSON:\n%s", err, "'[\n      \"tekton\",\n      \"openshift\"\n   ]'")
+			}
 		}
 	}
 	var kinds []string
@@ -69,6 +78,7 @@ func BuildQueryPayload(resourceQueryName string, resourceQueryKinds string, reso
 	}
 	v := &resource.QueryPayload{}
 	v.Name = name
+	v.Catalogs = catalogs
 	v.Kinds = kinds
 	v.Tags = tags
 	v.Limit = limit
