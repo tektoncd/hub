@@ -77,6 +77,19 @@ export const Resource = types
     },
     get installCommand() {
       return `kubectl apply -f ${self.displayVersion.rawURL}`;
+    },
+    get tknInstallCommand() {
+      const versionFlag =
+        self.latestVersion.version !== self.displayVersion.version
+          ? ` --version ${self.displayVersion.version}`
+          : ``;
+      const catalogFlag =
+        self.catalog.name.toLowerCase() !== 'tekton'
+          ? ` --from ${self.catalog.name.toLowerCase()}`
+          : ``;
+      return `tkn hub install ${self.kind.name.toLowerCase()} ${
+        self.name
+      }${versionFlag}${catalogFlag}`;
     }
   }));
 
