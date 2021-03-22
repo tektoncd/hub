@@ -648,4 +648,35 @@ describe('Store functions', () => {
       }
     );
   });
+
+  it('it should return tkn hub install command', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.isLoading).toBe(false);
+        expect(store.resources.size).toBe(7);
+
+        const tektonResource = store.resources.get('tekton/Task/aws-cli');
+        assert(tektonResource);
+
+        expect(tektonResource.tknInstallCommand).toBe('tkn hub install task aws-cli');
+
+        const hubResource = store.resources.get('tekton-hub/Pipeline/hub');
+
+        assert(hubResource);
+        expect(hubResource.tknInstallCommand).toBe(
+          'tkn hub install pipeline hub --from tekton-hub'
+        );
+        done();
+      }
+    );
+  });
 });

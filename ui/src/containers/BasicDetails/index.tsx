@@ -163,10 +163,18 @@ const BasicDetails: React.FC = () => {
             <hr />
             <div>
               <TextContent>
-                <Text component={TextVariants.h2}>Install on Kubernetes</Text>
+                <Text component={TextVariants.h2}>Install using kubectl</Text>
                 <Text> {resource.kind.name} </Text>
                 <ClipboardCopy isReadOnly variant={ClipboardCopyVariant.expansion}>
                   {resource.installCommand}
+                </ClipboardCopy>
+              </TextContent>
+              <br />
+              <TextContent>
+                <Text component={TextVariants.h2}>Install using tkn</Text>
+                <Text> {resource.kind.name} </Text>
+                <ClipboardCopy isReadOnly variant={ClipboardCopyVariant.expansion}>
+                  {resource.tknInstallCommand}
                 </ClipboardCopy>
               </TextContent>
             </div>
