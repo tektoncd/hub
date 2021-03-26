@@ -1,3 +1,3 @@
-NAME            KIND       DESCRIPTION                                  TAGS
-foo (0.1)       Task       Description for task abc version 0.1         tag3, tag1   
-foo-bar (0.2)   Pipeline   Description for pipeline foo-bar versio...   ---          
+NAME            KIND       CATALOG   DESCRIPTION                                  TAGS
+foo (0.1)       Task       Tekton    Description for task abc version 0.1         tag3, tag1
+foo-bar (0.2)   Pipeline   Foo       Description for pipeline foo-bar versio...   ---
