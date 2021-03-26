@@ -40,6 +40,11 @@ func FormatName(name, latestVersion string) string {
 	return fmt.Sprintf("%s (%s)", name, latestVersion)
 }
 
+// FormatCatalogName returns name of catalog from which the resource is
+func FormatCatalogName(catalogName string) string {
+	return fmt.Sprintf("%s", strings.Title(catalogName))
+}
+
 // FormatDesc returns first 40 char of resource description
 func FormatDesc(desc string, num int) string {
 

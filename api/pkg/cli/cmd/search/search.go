@@ -31,18 +31,19 @@ import (
 const resTemplate = `{{- $rl := len .Resources }}{{ if eq $rl 0 -}}
 No Resources found
 {{ else -}}
-NAME	KIND	DESCRIPTION	TAGS
+NAME	KIND	CATALOG	DESCRIPTION	TAGS
 {{ range $_, $r := .Resources -}}
-{{ formatName $r.Name $r.LatestVersion.Version }}	{{ $r.Kind }}	{{ formatDesc $r.LatestVersion.Description 40 }}	{{ formatTags $r.Tags }}	
+{{ formatName $r.Name $r.LatestVersion.Version }}	{{ $r.Kind }}	{{ formatCatalogName $r.Catalog.Name }}	{{ formatDesc $r.LatestVersion.Description 40 }}	{{ formatTags $r.Tags }}
 {{ end }}
 {{- end -}}
 `
 
 var (
 	funcMap = template.FuncMap{
-		"formatName": formatter.FormatName,
-		"formatDesc": formatter.FormatDesc,
-		"formatTags": formatter.FormatTags,
+		"formatName":        formatter.FormatName,
+		"formatCatalogName": formatter.FormatCatalogName,
+		"formatDesc":        formatter.FormatDesc,
+		"formatTags":        formatter.FormatTags,
 	}
 	tmpl = template.Must(template.New("List Resources").Funcs(funcMap).Parse(resTemplate))
 )

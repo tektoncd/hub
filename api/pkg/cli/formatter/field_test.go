@@ -26,6 +26,11 @@ func TestFormatName(t *testing.T) {
 	assert.Equal(t, name, "abc (0.1)")
 }
 
+func TestFormatCatalogName(t *testing.T) {
+	catalog := FormatCatalogName("foo")
+	assert.Equal(t, catalog, "Foo")
+}
+
 func TestFormatDesc(t *testing.T) {
 
 	// Description greater than 40 char

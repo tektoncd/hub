@@ -33,6 +33,7 @@ var res1 = &res.ResourceData{
 	Kind: "Task",
 	Catalog: &res.Catalog{
 		ID:   1,
+		Name: "tekton",
 		Type: "community",
 	},
 	Rating: 4.8,
@@ -47,8 +48,8 @@ var res1 = &res.ResourceData{
 		UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
 	},
 	Tags: []*res.Tag{
-		&res.Tag{ID: 3, Name: "tag3"},
-		&res.Tag{ID: 1, Name: "tag1"},
+		{ID: 3, Name: "tag3"},
+		{ID: 1, Name: "tag1"},
 	},
 }
 
@@ -58,6 +59,7 @@ var res2 = &res.ResourceData{
 	Kind: "Pipeline",
 	Catalog: &res.Catalog{
 		ID:   1,
+		Name: "foo",
 		Type: "community",
 	},
 	Rating: 4,
