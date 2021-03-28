@@ -337,6 +337,13 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 	Required("data")
 })
 
+var ResourceVersionsList = ResultType("application/vnd.hub.resource.versions.list", "ResourceVersionsList", func() {
+	Attribute("data", CollectionOf(ResourceVersionData), func() {
+		View("withoutResource")
+	})
+	Required("data")
+})
+
 var Token = Type("Token", func() {
 	Description("Token includes the JWT, Expire Duration & Time")
 	Attribute("token", String, "JWT", func() {

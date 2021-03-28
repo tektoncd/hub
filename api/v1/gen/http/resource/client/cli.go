@@ -219,3 +219,42 @@ func BuildByIDPayload(resourceByIDID string) (*resource.ByIDPayload, error) {
 
 	return v, nil
 }
+
+// BuildByCatalogKindNameAndPipelinesVersionPayload builds the payload for the
+// resource ByCatalogKindNameAndPipelinesVersion endpoint from CLI flags.
+func BuildByCatalogKindNameAndPipelinesVersionPayload(resourceByCatalogKindNameAndPipelinesVersionCatalog string, resourceByCatalogKindNameAndPipelinesVersionKind string, resourceByCatalogKindNameAndPipelinesVersionName string, resourceByCatalogKindNameAndPipelinesVersionPipelinesVersion string) (*resource.ByCatalogKindNameAndPipelinesVersionPayload, error) {
+	var err error
+	var catalog string
+	{
+		catalog = resourceByCatalogKindNameAndPipelinesVersionCatalog
+	}
+	var kind string
+	{
+		kind = resourceByCatalogKindNameAndPipelinesVersionKind
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	var name string
+	{
+		name = resourceByCatalogKindNameAndPipelinesVersionName
+	}
+	var pipelinesVersion string
+	{
+		pipelinesVersion = resourceByCatalogKindNameAndPipelinesVersionPipelinesVersion
+		err = goa.MergeErrors(err, goa.ValidatePattern("pipelinesVersion", pipelinesVersion, "^\\d+(?:\\.\\d+){0,2}$"))
+		if err != nil {
+			return nil, err
+		}
+	}
+	v := &resource.ByCatalogKindNameAndPipelinesVersionPayload{}
+	v.Catalog = catalog
+	v.Kind = kind
+	v.Name = name
+	v.PipelinesVersion = pipelinesVersion
+
+	return v, nil
+}

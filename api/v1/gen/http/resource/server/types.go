@@ -55,6 +55,13 @@ type ByIDResponseBody struct {
 	Data *ResourceDataResponseBody `form:"data" json:"data" xml:"data"`
 }
 
+// ByCatalogKindNameAndPipelinesVersionResponseBody is the type of the
+// "resource" service "ByCatalogKindNameAndPipelinesVersion" endpoint HTTP
+// response body.
+type ByCatalogKindNameAndPipelinesVersionResponseBody struct {
+	Data ResourceVersionDataResponseBodyWithoutResourceCollection `form:"data" json:"data" xml:"data"`
+}
+
 // QueryInternalErrorResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "internal-error" error.
 type QueryInternalErrorResponseBody struct {
@@ -310,6 +317,44 @@ type ByIDNotFoundResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// ByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody is the type of
+// the "resource" service "ByCatalogKindNameAndPipelinesVersion" endpoint HTTP
+// response body for the "internal-error" error.
+type ByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// ByCatalogKindNameAndPipelinesVersionNotFoundResponseBody is the type of the
+// "resource" service "ByCatalogKindNameAndPipelinesVersion" endpoint HTTP
+// response body for the "not-found" error.
+type ByCatalogKindNameAndPipelinesVersionNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
 // ResourceDataResponseBodyWithoutVersionCollection is used to define fields on
 // response body types.
 type ResourceDataResponseBodyWithoutVersionCollection []*ResourceDataResponseBodyWithoutVersion
@@ -461,6 +506,10 @@ type ResourceVersionDataResponseBodyTiny struct {
 	Version string `form:"version" json:"version" xml:"version"`
 }
 
+// ResourceVersionDataResponseBodyWithoutResourceCollection is used to define
+// fields on response body types.
+type ResourceVersionDataResponseBodyWithoutResourceCollection []*ResourceVersionDataResponseBodyWithoutResource
+
 // NewQueryResponseBody builds the HTTP response body from the result of the
 // "Query" endpoint of the "resource" service.
 func NewQueryResponseBody(res *resourceviews.ResourcesView) *QueryResponseBody {
@@ -534,6 +583,20 @@ func NewByIDResponseBody(res *resourceviews.ResourceView) *ByIDResponseBody {
 	body := &ByIDResponseBody{}
 	if res.Data != nil {
 		body.Data = marshalResourceviewsResourceDataViewToResourceDataResponseBody(res.Data)
+	}
+	return body
+}
+
+// NewByCatalogKindNameAndPipelinesVersionResponseBody builds the HTTP response
+// body from the result of the "ByCatalogKindNameAndPipelinesVersion" endpoint
+// of the "resource" service.
+func NewByCatalogKindNameAndPipelinesVersionResponseBody(res *resourceviews.ResourceVersionsListView) *ByCatalogKindNameAndPipelinesVersionResponseBody {
+	body := &ByCatalogKindNameAndPipelinesVersionResponseBody{}
+	if res.Data != nil {
+		body.Data = make([]*ResourceVersionDataResponseBodyWithoutResource, len(res.Data))
+		for i, val := range res.Data {
+			body.Data[i] = marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBodyWithoutResource(val)
+		}
 	}
 	return body
 }
@@ -737,6 +800,36 @@ func NewByIDNotFoundResponseBody(res *goa.ServiceError) *ByIDNotFoundResponseBod
 	return body
 }
 
+// NewByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody builds the
+// HTTP response body from the result of the
+// "ByCatalogKindNameAndPipelinesVersion" endpoint of the "resource" service.
+func NewByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody(res *goa.ServiceError) *ByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody {
+	body := &ByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewByCatalogKindNameAndPipelinesVersionNotFoundResponseBody builds the HTTP
+// response body from the result of the "ByCatalogKindNameAndPipelinesVersion"
+// endpoint of the "resource" service.
+func NewByCatalogKindNameAndPipelinesVersionNotFoundResponseBody(res *goa.ServiceError) *ByCatalogKindNameAndPipelinesVersionNotFoundResponseBody {
+	body := &ByCatalogKindNameAndPipelinesVersionNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewQueryPayload builds a resource service Query endpoint payload.
 func NewQueryPayload(name string, kinds []string, tags []string, limit uint, match string) *resource.QueryPayload {
 	v := &resource.QueryPayload{}
@@ -801,6 +894,18 @@ func NewByCatalogKindNamePayload(catalog string, kind string, name string) *reso
 func NewByIDPayload(id uint) *resource.ByIDPayload {
 	v := &resource.ByIDPayload{}
 	v.ID = id
+
+	return v
+}
+
+// NewByCatalogKindNameAndPipelinesVersionPayload builds a resource service
+// ByCatalogKindNameAndPipelinesVersion endpoint payload.
+func NewByCatalogKindNameAndPipelinesVersionPayload(catalog string, kind string, name string, pipelinesVersion string) *resource.ByCatalogKindNameAndPipelinesVersionPayload {
+	v := &resource.ByCatalogKindNameAndPipelinesVersionPayload{}
+	v.Catalog = catalog
+	v.Kind = kind
+	v.Name = name
+	v.PipelinesVersion = pipelinesVersion
 
 	return v
 }

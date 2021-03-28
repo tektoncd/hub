@@ -595,6 +595,90 @@ func EncodeByIDError(encoder func(context.Context, http.ResponseWriter) goahttp.
 	}
 }
 
+// EncodeByCatalogKindNameAndPipelinesVersionResponse returns an encoder for
+// responses returned by the resource ByCatalogKindNameAndPipelinesVersion
+// endpoint.
+func EncodeByCatalogKindNameAndPipelinesVersionResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*resourceviews.ResourceVersionsList)
+		enc := encoder(ctx, w)
+		body := NewByCatalogKindNameAndPipelinesVersionResponseBody(res.Projected)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeByCatalogKindNameAndPipelinesVersionRequest returns a decoder for
+// requests sent to the resource ByCatalogKindNameAndPipelinesVersion endpoint.
+func DecodeByCatalogKindNameAndPipelinesVersionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			catalog          string
+			kind             string
+			name             string
+			pipelinesVersion string
+			err              error
+
+			params = mux.Vars(r)
+		)
+		catalog = params["catalog"]
+		kind = params["kind"]
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		}
+		name = params["name"]
+		pipelinesVersion = params["pipelinesVersion"]
+		err = goa.MergeErrors(err, goa.ValidatePattern("pipelinesVersion", pipelinesVersion, "^\\d+(?:\\.\\d+){0,2}$"))
+		if err != nil {
+			return nil, err
+		}
+		payload := NewByCatalogKindNameAndPipelinesVersionPayload(catalog, kind, name, pipelinesVersion)
+
+		return payload, nil
+	}
+}
+
+// EncodeByCatalogKindNameAndPipelinesVersionError returns an encoder for
+// errors returned by the ByCatalogKindNameAndPipelinesVersion resource
+// endpoint.
+func EncodeByCatalogKindNameAndPipelinesVersionError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "internal-error":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "internal-error")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		case "not-found":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByCatalogKindNameAndPipelinesVersionNotFoundResponseBody(res)
+			}
+			w.Header().Set("goa-error", "not-found")
+			w.WriteHeader(http.StatusNotFound)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersion
 // builds a value of type *ResourceDataResponseBodyWithoutVersion from a value
 // of type *resourceviews.ResourceDataView.

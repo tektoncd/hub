@@ -23,7 +23,7 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
+	return `resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id|by-catalog-kind-name-and-pipelines-version)
 `
 }
 
@@ -80,6 +80,12 @@ func ParseEndpoint(
 
 		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
 		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
+
+		resourceByCatalogKindNameAndPipelinesVersionFlags                = flag.NewFlagSet("by-catalog-kind-name-and-pipelines-version", flag.ExitOnError)
+		resourceByCatalogKindNameAndPipelinesVersionCatalogFlag          = resourceByCatalogKindNameAndPipelinesVersionFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceByCatalogKindNameAndPipelinesVersionKindFlag             = resourceByCatalogKindNameAndPipelinesVersionFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByCatalogKindNameAndPipelinesVersionNameFlag             = resourceByCatalogKindNameAndPipelinesVersionFlags.String("name", "REQUIRED", "name of resource")
+		resourceByCatalogKindNameAndPipelinesVersionPipelinesVersionFlag = resourceByCatalogKindNameAndPipelinesVersionFlags.String("pipelines-version", "REQUIRED", "version of Tekton Pipelines")
 	)
 	resourceFlags.Usage = resourceUsage
 	resourceQueryFlags.Usage = resourceQueryUsage
@@ -89,6 +95,7 @@ func ParseEndpoint(
 	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
 	resourceByCatalogKindNameFlags.Usage = resourceByCatalogKindNameUsage
 	resourceByIDFlags.Usage = resourceByIDUsage
+	resourceByCatalogKindNameAndPipelinesVersionFlags.Usage = resourceByCatalogKindNameAndPipelinesVersionUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -145,6 +152,9 @@ func ParseEndpoint(
 			case "by-id":
 				epf = resourceByIDFlags
 
+			case "by-catalog-kind-name-and-pipelines-version":
+				epf = resourceByCatalogKindNameAndPipelinesVersionFlags
+
 			}
 
 		}
@@ -191,6 +201,9 @@ func ParseEndpoint(
 			case "by-id":
 				endpoint = c.ByID()
 				data, err = resourcec.BuildByIDPayload(*resourceByIDIDFlag)
+			case "by-catalog-kind-name-and-pipelines-version":
+				endpoint = c.ByCatalogKindNameAndPipelinesVersion()
+				data, err = resourcec.BuildByCatalogKindNameAndPipelinesVersionPayload(*resourceByCatalogKindNameAndPipelinesVersionCatalogFlag, *resourceByCatalogKindNameAndPipelinesVersionKindFlag, *resourceByCatalogKindNameAndPipelinesVersionNameFlag, *resourceByCatalogKindNameAndPipelinesVersionPipelinesVersionFlag)
 			}
 		}
 	}
@@ -215,6 +228,7 @@ COMMAND:
     by-version-id: Find a resource using its version's id
     by-catalog-kind-name: Find resources using name of catalog, resource name and kind of resource
     by-id: Find a resource using it's id
+    by-catalog-kind-name-and-pipelines-version: Find resource's versions compatible with a pipelines version
 
 Additional help:
     %s resource COMMAND --help
@@ -297,7 +311,7 @@ Find resources using name of catalog, resource name and kind of resource
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah"
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah"
 `, os.Args[0])
 }
 
@@ -309,5 +323,19 @@ Find a resource using it's id
 
 Example:
     `+os.Args[0]+` resource by-id --id 1
+`, os.Args[0])
+}
+
+func resourceByCatalogKindNameAndPipelinesVersionUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name-and-pipelines-version -catalog STRING -kind STRING -name STRING -pipelines-version STRING
+
+Find resource's versions compatible with a pipelines version
+    -catalog STRING: name of catalog
+    -kind STRING: kind of resource
+    -name STRING: name of resource
+    -pipelines-version STRING: version of Tekton Pipelines
+
+Example:
+    `+os.Args[0]+` resource by-catalog-kind-name-and-pipelines-version --catalog "tektoncd" --kind "task" --name "buildah" --pipelines-version "0.21.0"
 `, os.Args[0])
 }

@@ -19,6 +19,9 @@ import (
 	. "goa.design/goa/v3/dsl"
 )
 
+// Pipelines Version
+var regex = `^\d+(?:\.\d+){0,2}$`
+
 var _ = Service("resource", func() {
 	Description("The resource service provides details about all kind of resources")
 
@@ -197,6 +200,35 @@ var _ = Service("resource", func() {
 
 		HTTP(func() {
 			GET("/resource/{id}")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
+		})
+	})
+
+	Method("ByCatalogKindNameAndPipelinesVersion", func() {
+		Description("Find resource's versions compatible with a pipelines version")
+		Payload(func() {
+			Attribute("catalog", String, "name of catalog", func() {
+				Example("catalog", "tektoncd")
+			})
+			Attribute("kind", String, "kind of resource", func() {
+				Enum("task", "pipeline")
+			})
+			Attribute("name", String, "name of resource", func() {
+				Example("name", "buildah")
+			})
+			Attribute("pipelinesVersion", String, "version of Tekton Pipelines", func() {
+				Pattern(regex)
+				Example("pipelinesVersion", "0.21.0")
+			})
+			Required("catalog", "kind", "name", "pipelinesVersion")
+		})
+		Result(types.ResourceVersionsList)
+
+		HTTP(func() {
+			GET("/resource/{catalog}/{kind}/{name}/pipelinesversion/{pipelinesVersion}")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)

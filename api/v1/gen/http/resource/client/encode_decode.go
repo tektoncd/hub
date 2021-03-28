@@ -742,6 +742,114 @@ func DecodeByIDResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 	}
 }
 
+// BuildByCatalogKindNameAndPipelinesVersionRequest instantiates a HTTP request
+// object with method and path set to call the "resource" service
+// "ByCatalogKindNameAndPipelinesVersion" endpoint
+func (c *Client) BuildByCatalogKindNameAndPipelinesVersionRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		catalog          string
+		kind             string
+		name             string
+		pipelinesVersion string
+	)
+	{
+		p, ok := v.(*resource.ByCatalogKindNameAndPipelinesVersionPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("resource", "ByCatalogKindNameAndPipelinesVersion", "*resource.ByCatalogKindNameAndPipelinesVersionPayload", v)
+		}
+		catalog = p.Catalog
+		kind = p.Kind
+		name = p.Name
+		pipelinesVersion = p.PipelinesVersion
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ByCatalogKindNameAndPipelinesVersionResourcePath(catalog, kind, name, pipelinesVersion)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("resource", "ByCatalogKindNameAndPipelinesVersion", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeByCatalogKindNameAndPipelinesVersionResponse returns a decoder for
+// responses returned by the resource ByCatalogKindNameAndPipelinesVersion
+// endpoint. restoreBody controls whether the response body should be restored
+// after having been read.
+// DecodeByCatalogKindNameAndPipelinesVersionResponse may return the following
+// errors:
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- "not-found" (type *goa.ServiceError): http.StatusNotFound
+//	- error: internal error
+func DecodeByCatalogKindNameAndPipelinesVersionResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body ByCatalogKindNameAndPipelinesVersionResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByCatalogKindNameAndPipelinesVersion", err)
+			}
+			p := NewByCatalogKindNameAndPipelinesVersionResourceVersionsListOK(&body)
+			view := "default"
+			vres := &resourceviews.ResourceVersionsList{Projected: p, View: view}
+			if err = resourceviews.ValidateResourceVersionsList(vres); err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindNameAndPipelinesVersion", err)
+			}
+			res := resource.NewResourceVersionsList(vres)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body ByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByCatalogKindNameAndPipelinesVersion", err)
+			}
+			err = ValidateByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindNameAndPipelinesVersion", err)
+			}
+			return nil, NewByCatalogKindNameAndPipelinesVersionInternalError(&body)
+		case http.StatusNotFound:
+			var (
+				body ByCatalogKindNameAndPipelinesVersionNotFoundResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "ByCatalogKindNameAndPipelinesVersion", err)
+			}
+			err = ValidateByCatalogKindNameAndPipelinesVersionNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindNameAndPipelinesVersion", err)
+			}
+			return nil, NewByCatalogKindNameAndPipelinesVersionNotFound(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("resource", "ByCatalogKindNameAndPipelinesVersion", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalResourceDataResponseBodyToResourceviewsResourceDataView builds a
 // value of type *resourceviews.ResourceDataView from a value of type
 // *ResourceDataResponseBody.

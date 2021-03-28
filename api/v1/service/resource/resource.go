@@ -239,6 +239,34 @@ func (s *service) ByID(ctx context.Context, p *resource.ByIDPayload) (*resource.
 	return &resource.Resource{Data: res}, nil
 }
 
+// Find resource's versions compatible with a pipelines version
+func (s *service) ByCatalogKindNameAndPipelinesVersion(ctx context.Context, p *resource.ByCatalogKindNameAndPipelinesVersionPayload) (*resource.ResourceVersionsList, error) {
+
+	req := res.Request{
+		Db:               s.DB(ctx),
+		Log:              s.Logger(ctx),
+		Catalog:          p.Catalog,
+		Kind:             p.Kind,
+		Name:             p.Name,
+		PipelinesVersion: p.PipelinesVersion,
+	}
+
+	rvs, err := req.FindCompatibleVersions()
+	if err != nil {
+		if err == res.NotFoundError {
+			return nil, resource.MakeNotFound(err)
+		}
+		return nil, resource.MakeInternalError(err)
+	}
+
+	var rvd []*resource.ResourceVersionData
+	for _, rv := range rvs {
+		rvd = append(rvd, resVersionData(rv))
+	}
+
+	return &resource.ResourceVersionsList{Data: rvd}, nil
+}
+
 func initResource(r model.Resource) *resource.ResourceData {
 
 	res := &resource.ResourceData{}
@@ -253,16 +281,8 @@ func initResource(r model.Resource) *resource.ResourceData {
 	res.Rating = r.Rating
 
 	lv := (r.Versions)[len(r.Versions)-1]
-	res.LatestVersion = &resource.ResourceVersionData{
-		ID:                  lv.ID,
-		Version:             lv.Version,
-		Description:         lv.Description,
-		DisplayName:         lv.DisplayName,
-		MinPipelinesVersion: lv.MinPipelinesVersion,
-		WebURL:              lv.URL,
-		RawURL:              replaceGHtoRaw.Replace(lv.URL),
-		UpdatedAt:           lv.ModifiedAt.UTC().Format(time.RFC3339),
-	}
+	res.LatestVersion = resVersionData(lv)
+
 	res.Tags = []*resource.Tag{}
 	for _, tag := range r.Tags {
 		res.Tags = append(res.Tags, &resource.Tag{
@@ -316,17 +336,8 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 	}
 
 	v := r.Versions[0]
-	ver := &resource.ResourceVersionData{
-		ID:                  v.ID,
-		Version:             v.Version,
-		Description:         v.Description,
-		DisplayName:         v.DisplayName,
-		MinPipelinesVersion: v.MinPipelinesVersion,
-		WebURL:              v.URL,
-		RawURL:              replaceGHtoRaw.Replace(v.URL),
-		UpdatedAt:           v.ModifiedAt.UTC().Format(time.RFC3339),
-		Resource:            res,
-	}
+	ver := resVersionData(v)
+	ver.Resource = res
 
 	return &resource.ResourceVersion{Data: ver}
 }
@@ -338,4 +349,17 @@ func versionInfoFromVersion(v model.ResourceVersion) *resource.ResourceVersion {
 	// the required info
 	v.Resource.Versions = []model.ResourceVersion{v}
 	return versionInfoFromResource(v.Resource)
+}
+
+func resVersionData(v model.ResourceVersion) *resource.ResourceVersionData {
+	return &resource.ResourceVersionData{
+		ID:                  v.ID,
+		Version:             v.Version,
+		Description:         v.Description,
+		DisplayName:         v.DisplayName,
+		MinPipelinesVersion: v.MinPipelinesVersion,
+		WebURL:              v.URL,
+		RawURL:              replaceGHtoRaw.Replace(v.URL),
+		UpdatedAt:           v.ModifiedAt.UTC().Format(time.RFC3339),
+	}
 }

@@ -25,18 +25,19 @@ import (
 )
 
 type Request struct {
-	Db        *gorm.DB
-	Log       *log.Logger
-	ID        uint
-	Name      string
-	Match     string
-	Kinds     []string
-	Tags      []string
-	Limit     uint
-	Version   string
-	Kind      string
-	Catalog   string
-	VersionID uint
+	Db               *gorm.DB
+	Log              *log.Logger
+	ID               uint
+	Name             string
+	Match            string
+	Kinds            []string
+	Tags             []string
+	Limit            uint
+	Version          string
+	Kind             string
+	Catalog          string
+	VersionID        uint
+	PipelinesVersion string
 }
 
 var (
@@ -163,6 +164,33 @@ func (r *Request) ByID() (model.Resource, error) {
 	}
 
 	return res, nil
+}
+
+// FindCompatibleVersions searches resource's versions compatible with a pipelines version
+// Fields: Catalog, Name, PipelinesVersion
+func (r *Request) FindCompatibleVersions() ([]model.ResourceVersion, error) {
+
+	q := r.Db.Scopes(
+		filterByCatalog(r.Catalog),
+		filterByKind(r.Kind),
+		filterResourceName("exact", r.Name))
+
+	var res model.Resource
+	if err := findOne(q, r.Log, &res); err != nil {
+		return []model.ResourceVersion{}, err
+	}
+
+	q = r.Db.Scopes(orderByVersion,
+		filterByResourceID(res.ID),
+		compatibleWithPipelinesVersion(r.PipelinesVersion))
+
+	var all []model.ResourceVersion
+	if err := q.Find(&all).Error; err != nil {
+		r.Log.Error(err)
+		return nil, FetchError
+	}
+
+	return all, nil
 }
 
 func (r *Request) findAllResources() ([]model.Resource, error) {
@@ -311,6 +339,12 @@ func filterResourceName(match, name string) func(db *gorm.DB) *gorm.DB {
 		return func(db *gorm.DB) *gorm.DB {
 			return db.Where("LOWER(resources.name) LIKE ?", likeName)
 		}
+	}
+}
+
+func compatibleWithPipelinesVersion(pipVersion string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("min_pipelines_version >= ?", pipVersion)
 	}
 }
 

@@ -465,3 +465,39 @@ func TestByID_NotFoundError(t *testing.T) {
 	assert.Error(t, err)
 	assert.EqualError(t, err, "resource not found")
 }
+
+func TestFindCompatibleVersions(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	req := Request{
+		Db:               tc.DB(),
+		Log:              tc.Logger("resource"),
+		Catalog:          "catalog-official",
+		Kind:             "task",
+		Name:             "tekton",
+		PipelinesVersion: "0.11.0",
+	}
+
+	res, err := req.FindCompatibleVersions()
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(res))
+}
+
+func TestFindCompatibleVersions_ResourceNotFound(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	req := Request{
+		Db:               tc.DB(),
+		Log:              tc.Logger("resource"),
+		Catalog:          "catalog-official",
+		Kind:             "task",
+		Name:             "abc",
+		PipelinesVersion: "0.11.0",
+	}
+
+	_, err := req.FindCompatibleVersions()
+	assert.Error(t, err)
+	assert.EqualError(t, err, "resource not found")
+}

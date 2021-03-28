@@ -42,6 +42,10 @@ type Client struct {
 	// ByID Doer is the HTTP client used to make requests to the ById endpoint.
 	ByIDDoer goahttp.Doer
 
+	// ByCatalogKindNameAndPipelinesVersion Doer is the HTTP client used to make
+	// requests to the ByCatalogKindNameAndPipelinesVersion endpoint.
+	ByCatalogKindNameAndPipelinesVersionDoer goahttp.Doer
+
 	// CORS Doer is the HTTP client used to make requests to the  endpoint.
 	CORSDoer goahttp.Doer
 
@@ -65,19 +69,20 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		QueryDoer:                    doer,
-		ListDoer:                     doer,
-		VersionsByIDDoer:             doer,
-		ByCatalogKindNameVersionDoer: doer,
-		ByVersionIDDoer:              doer,
-		ByCatalogKindNameDoer:        doer,
-		ByIDDoer:                     doer,
-		CORSDoer:                     doer,
-		RestoreResponseBody:          restoreBody,
-		scheme:                       scheme,
-		host:                         host,
-		decoder:                      dec,
-		encoder:                      enc,
+		QueryDoer:                                doer,
+		ListDoer:                                 doer,
+		VersionsByIDDoer:                         doer,
+		ByCatalogKindNameVersionDoer:             doer,
+		ByVersionIDDoer:                          doer,
+		ByCatalogKindNameDoer:                    doer,
+		ByIDDoer:                                 doer,
+		ByCatalogKindNameAndPipelinesVersionDoer: doer,
+		CORSDoer:                                 doer,
+		RestoreResponseBody:                      restoreBody,
+		scheme:                                   scheme,
+		host:                                     host,
+		decoder:                                  dec,
+		encoder:                                  enc,
 	}
 }
 
@@ -219,6 +224,25 @@ func (c *Client) ByID() goa.Endpoint {
 		resp, err := c.ByIDDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("resource", "ById", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// ByCatalogKindNameAndPipelinesVersion returns an endpoint that makes HTTP
+// requests to the resource service ByCatalogKindNameAndPipelinesVersion server.
+func (c *Client) ByCatalogKindNameAndPipelinesVersion() goa.Endpoint {
+	var (
+		decodeResponse = DecodeByCatalogKindNameAndPipelinesVersionResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildByCatalogKindNameAndPipelinesVersionRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.ByCatalogKindNameAndPipelinesVersionDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("resource", "ByCatalogKindNameAndPipelinesVersion", err)
 		}
 		return decodeResponse(resp)
 	}

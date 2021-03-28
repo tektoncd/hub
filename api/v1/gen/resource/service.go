@@ -30,6 +30,8 @@ type Service interface {
 	ByCatalogKindName(context.Context, *ByCatalogKindNamePayload) (res *Resource, err error)
 	// Find a resource using it's id
 	ByID(context.Context, *ByIDPayload) (res *Resource, err error)
+	// Find resource's versions compatible with a pipelines version
+	ByCatalogKindNameAndPipelinesVersion(context.Context, *ByCatalogKindNameAndPipelinesVersionPayload) (res *ResourceVersionsList, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -40,7 +42,7 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [7]string{"Query", "List", "VersionsByID", "ByCatalogKindNameVersion", "ByVersionId", "ByCatalogKindName", "ById"}
+var MethodNames = [8]string{"Query", "List", "VersionsByID", "ByCatalogKindNameVersion", "ByVersionId", "ByCatalogKindName", "ById", "ByCatalogKindNameAndPipelinesVersion"}
 
 // QueryPayload is the payload type of the resource service Query method.
 type QueryPayload struct {
@@ -128,6 +130,25 @@ type ByIDPayload struct {
 	ID uint
 }
 
+// ByCatalogKindNameAndPipelinesVersionPayload is the payload type of the
+// resource service ByCatalogKindNameAndPipelinesVersion method.
+type ByCatalogKindNameAndPipelinesVersionPayload struct {
+	// name of catalog
+	Catalog string
+	// kind of resource
+	Kind string
+	// name of resource
+	Name string
+	// version of Tekton Pipelines
+	PipelinesVersion string
+}
+
+// ResourceVersionsList is the result type of the resource service
+// ByCatalogKindNameAndPipelinesVersion method.
+type ResourceVersionsList struct {
+	Data ResourceVersionDataCollection
+}
+
 type ResourceDataCollection []*ResourceData
 
 // The resource type describes resource information.
@@ -195,6 +216,8 @@ type Versions struct {
 	// List of all versions of resource
 	Versions []*ResourceVersionData
 }
+
+type ResourceVersionDataCollection []*ResourceVersionData
 
 // MakeInternalError builds a goa.ServiceError from an error.
 func MakeInternalError(err error) *goa.ServiceError {
@@ -273,6 +296,20 @@ func NewResource(vres *resourceviews.Resource) *Resource {
 func NewViewedResource(res *Resource, view string) *resourceviews.Resource {
 	p := newResourceView(res)
 	return &resourceviews.Resource{Projected: p, View: "default"}
+}
+
+// NewResourceVersionsList initializes result type ResourceVersionsList from
+// viewed result type ResourceVersionsList.
+func NewResourceVersionsList(vres *resourceviews.ResourceVersionsList) *ResourceVersionsList {
+	return newResourceVersionsList(vres.Projected)
+}
+
+// NewViewedResourceVersionsList initializes viewed result type
+// ResourceVersionsList from result type ResourceVersionsList using the given
+// view.
+func NewViewedResourceVersionsList(res *ResourceVersionsList, view string) *resourceviews.ResourceVersionsList {
+	p := newResourceVersionsListView(res)
+	return &resourceviews.ResourceVersionsList{Projected: p, View: "default"}
 }
 
 // newResources converts projected type Resources to service type Resources.
@@ -780,6 +817,110 @@ func newResourceView(res *Resource) *resourceviews.ResourceView {
 	vres := &resourceviews.ResourceView{}
 	if res.Data != nil {
 		vres.Data = newResourceDataView(res.Data)
+	}
+	return vres
+}
+
+// newResourceVersionsList converts projected type ResourceVersionsList to
+// service type ResourceVersionsList.
+func newResourceVersionsList(vres *resourceviews.ResourceVersionsListView) *ResourceVersionsList {
+	res := &ResourceVersionsList{}
+	if vres.Data != nil {
+		res.Data = newResourceVersionDataCollectionWithoutResource(vres.Data)
+	}
+	return res
+}
+
+// newResourceVersionsListView projects result type ResourceVersionsList to
+// projected type ResourceVersionsListView using the "default" view.
+func newResourceVersionsListView(res *ResourceVersionsList) *resourceviews.ResourceVersionsListView {
+	vres := &resourceviews.ResourceVersionsListView{}
+	if res.Data != nil {
+		vres.Data = newResourceVersionDataCollectionViewWithoutResource(res.Data)
+	}
+	return vres
+}
+
+// newResourceVersionDataCollectionTiny converts projected type
+// ResourceVersionDataCollection to service type ResourceVersionDataCollection.
+func newResourceVersionDataCollectionTiny(vres resourceviews.ResourceVersionDataCollectionView) ResourceVersionDataCollection {
+	res := make(ResourceVersionDataCollection, len(vres))
+	for i, n := range vres {
+		res[i] = newResourceVersionDataTiny(n)
+	}
+	return res
+}
+
+// newResourceVersionDataCollectionMin converts projected type
+// ResourceVersionDataCollection to service type ResourceVersionDataCollection.
+func newResourceVersionDataCollectionMin(vres resourceviews.ResourceVersionDataCollectionView) ResourceVersionDataCollection {
+	res := make(ResourceVersionDataCollection, len(vres))
+	for i, n := range vres {
+		res[i] = newResourceVersionDataMin(n)
+	}
+	return res
+}
+
+// newResourceVersionDataCollectionWithoutResource converts projected type
+// ResourceVersionDataCollection to service type ResourceVersionDataCollection.
+func newResourceVersionDataCollectionWithoutResource(vres resourceviews.ResourceVersionDataCollectionView) ResourceVersionDataCollection {
+	res := make(ResourceVersionDataCollection, len(vres))
+	for i, n := range vres {
+		res[i] = newResourceVersionDataWithoutResource(n)
+	}
+	return res
+}
+
+// newResourceVersionDataCollection converts projected type
+// ResourceVersionDataCollection to service type ResourceVersionDataCollection.
+func newResourceVersionDataCollection(vres resourceviews.ResourceVersionDataCollectionView) ResourceVersionDataCollection {
+	res := make(ResourceVersionDataCollection, len(vres))
+	for i, n := range vres {
+		res[i] = newResourceVersionData(n)
+	}
+	return res
+}
+
+// newResourceVersionDataCollectionViewTiny projects result type
+// ResourceVersionDataCollection to projected type
+// ResourceVersionDataCollectionView using the "tiny" view.
+func newResourceVersionDataCollectionViewTiny(res ResourceVersionDataCollection) resourceviews.ResourceVersionDataCollectionView {
+	vres := make(resourceviews.ResourceVersionDataCollectionView, len(res))
+	for i, n := range res {
+		vres[i] = newResourceVersionDataViewTiny(n)
+	}
+	return vres
+}
+
+// newResourceVersionDataCollectionViewMin projects result type
+// ResourceVersionDataCollection to projected type
+// ResourceVersionDataCollectionView using the "min" view.
+func newResourceVersionDataCollectionViewMin(res ResourceVersionDataCollection) resourceviews.ResourceVersionDataCollectionView {
+	vres := make(resourceviews.ResourceVersionDataCollectionView, len(res))
+	for i, n := range res {
+		vres[i] = newResourceVersionDataViewMin(n)
+	}
+	return vres
+}
+
+// newResourceVersionDataCollectionViewWithoutResource projects result type
+// ResourceVersionDataCollection to projected type
+// ResourceVersionDataCollectionView using the "withoutResource" view.
+func newResourceVersionDataCollectionViewWithoutResource(res ResourceVersionDataCollection) resourceviews.ResourceVersionDataCollectionView {
+	vres := make(resourceviews.ResourceVersionDataCollectionView, len(res))
+	for i, n := range res {
+		vres[i] = newResourceVersionDataViewWithoutResource(n)
+	}
+	return vres
+}
+
+// newResourceVersionDataCollectionView projects result type
+// ResourceVersionDataCollection to projected type
+// ResourceVersionDataCollectionView using the "default" view.
+func newResourceVersionDataCollectionView(res ResourceVersionDataCollection) resourceviews.ResourceVersionDataCollectionView {
+	vres := make(resourceviews.ResourceVersionDataCollectionView, len(res))
+	for i, n := range res {
+		vres[i] = newResourceVersionDataView(n)
 	}
 	return vres
 }

@@ -15,25 +15,27 @@ import (
 
 // Endpoints wraps the "resource" service endpoints.
 type Endpoints struct {
-	Query                    goa.Endpoint
-	List                     goa.Endpoint
-	VersionsByID             goa.Endpoint
-	ByCatalogKindNameVersion goa.Endpoint
-	ByVersionID              goa.Endpoint
-	ByCatalogKindName        goa.Endpoint
-	ByID                     goa.Endpoint
+	Query                                goa.Endpoint
+	List                                 goa.Endpoint
+	VersionsByID                         goa.Endpoint
+	ByCatalogKindNameVersion             goa.Endpoint
+	ByVersionID                          goa.Endpoint
+	ByCatalogKindName                    goa.Endpoint
+	ByID                                 goa.Endpoint
+	ByCatalogKindNameAndPipelinesVersion goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "resource" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		Query:                    NewQueryEndpoint(s),
-		List:                     NewListEndpoint(s),
-		VersionsByID:             NewVersionsByIDEndpoint(s),
-		ByCatalogKindNameVersion: NewByCatalogKindNameVersionEndpoint(s),
-		ByVersionID:              NewByVersionIDEndpoint(s),
-		ByCatalogKindName:        NewByCatalogKindNameEndpoint(s),
-		ByID:                     NewByIDEndpoint(s),
+		Query:                                NewQueryEndpoint(s),
+		List:                                 NewListEndpoint(s),
+		VersionsByID:                         NewVersionsByIDEndpoint(s),
+		ByCatalogKindNameVersion:             NewByCatalogKindNameVersionEndpoint(s),
+		ByVersionID:                          NewByVersionIDEndpoint(s),
+		ByCatalogKindName:                    NewByCatalogKindNameEndpoint(s),
+		ByID:                                 NewByIDEndpoint(s),
+		ByCatalogKindNameAndPipelinesVersion: NewByCatalogKindNameAndPipelinesVersionEndpoint(s),
 	}
 }
 
@@ -46,6 +48,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.ByVersionID = m(e.ByVersionID)
 	e.ByCatalogKindName = m(e.ByCatalogKindName)
 	e.ByID = m(e.ByID)
+	e.ByCatalogKindNameAndPipelinesVersion = m(e.ByCatalogKindNameAndPipelinesVersion)
 }
 
 // NewQueryEndpoint returns an endpoint function that calls the method "Query"
@@ -142,6 +145,21 @@ func NewByIDEndpoint(s Service) goa.Endpoint {
 			return nil, err
 		}
 		vres := NewViewedResource(res, "default")
+		return vres, nil
+	}
+}
+
+// NewByCatalogKindNameAndPipelinesVersionEndpoint returns an endpoint function
+// that calls the method "ByCatalogKindNameAndPipelinesVersion" of service
+// "resource".
+func NewByCatalogKindNameAndPipelinesVersionEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*ByCatalogKindNameAndPipelinesVersionPayload)
+		res, err := s.ByCatalogKindNameAndPipelinesVersion(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedResourceVersionsList(res, "default")
 		return vres, nil
 	}
 }

@@ -54,6 +54,13 @@ type ByIDResponseBody struct {
 	Data *ResourceDataResponseBody `form:"data,omitempty" json:"data,omitempty" xml:"data,omitempty"`
 }
 
+// ByCatalogKindNameAndPipelinesVersionResponseBody is the type of the
+// "resource" service "ByCatalogKindNameAndPipelinesVersion" endpoint HTTP
+// response body.
+type ByCatalogKindNameAndPipelinesVersionResponseBody struct {
+	Data ResourceVersionDataCollectionResponseBody `form:"data,omitempty" json:"data,omitempty" xml:"data,omitempty"`
+}
+
 // QueryInternalErrorResponseBody is the type of the "resource" service "Query"
 // endpoint HTTP response body for the "internal-error" error.
 type QueryInternalErrorResponseBody struct {
@@ -309,6 +316,44 @@ type ByIDNotFoundResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
+// ByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody is the type of
+// the "resource" service "ByCatalogKindNameAndPipelinesVersion" endpoint HTTP
+// response body for the "internal-error" error.
+type ByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// ByCatalogKindNameAndPipelinesVersionNotFoundResponseBody is the type of the
+// "resource" service "ByCatalogKindNameAndPipelinesVersion" endpoint HTTP
+// response body for the "not-found" error.
+type ByCatalogKindNameAndPipelinesVersionNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
 // ResourceDataCollectionResponseBody is used to define fields on response body
 // types.
 type ResourceDataCollectionResponseBody []*ResourceDataResponseBody
@@ -381,6 +426,10 @@ type VersionsResponseBody struct {
 	// List of all versions of resource
 	Versions []*ResourceVersionDataResponseBody `form:"versions,omitempty" json:"versions,omitempty" xml:"versions,omitempty"`
 }
+
+// ResourceVersionDataCollectionResponseBody is used to define fields on
+// response body types.
+type ResourceVersionDataCollectionResponseBody []*ResourceVersionDataResponseBody
 
 // NewQueryResourcesOK builds a "resource" service "Query" endpoint result from
 // a HTTP "OK" response.
@@ -647,6 +696,49 @@ func NewByIDInternalError(body *ByIDInternalErrorResponseBody) *goa.ServiceError
 
 // NewByIDNotFound builds a resource service ById endpoint not-found error.
 func NewByIDNotFound(body *ByIDNotFoundResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewByCatalogKindNameAndPipelinesVersionResourceVersionsListOK builds a
+// "resource" service "ByCatalogKindNameAndPipelinesVersion" endpoint result
+// from a HTTP "OK" response.
+func NewByCatalogKindNameAndPipelinesVersionResourceVersionsListOK(body *ByCatalogKindNameAndPipelinesVersionResponseBody) *resourceviews.ResourceVersionsListView {
+	v := &resourceviews.ResourceVersionsListView{}
+	v.Data = make([]*resourceviews.ResourceVersionDataView, len(body.Data))
+	for i, val := range body.Data {
+		v.Data[i] = unmarshalResourceVersionDataResponseBodyToResourceviewsResourceVersionDataView(val)
+	}
+
+	return v
+}
+
+// NewByCatalogKindNameAndPipelinesVersionInternalError builds a resource
+// service ByCatalogKindNameAndPipelinesVersion endpoint internal-error error.
+func NewByCatalogKindNameAndPipelinesVersionInternalError(body *ByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewByCatalogKindNameAndPipelinesVersionNotFound builds a resource service
+// ByCatalogKindNameAndPipelinesVersion endpoint not-found error.
+func NewByCatalogKindNameAndPipelinesVersionNotFound(body *ByCatalogKindNameAndPipelinesVersionNotFoundResponseBody) *goa.ServiceError {
 	v := &goa.ServiceError{
 		Name:      *body.Name,
 		ID:        *body.ID,
@@ -995,6 +1087,56 @@ func ValidateByIDNotFoundResponseBody(body *ByIDNotFoundResponseBody) (err error
 	return
 }
 
+// ValidateByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody runs
+// the validations defined on
+// ByCatalogKindNameAndPipelinesVersion_internal-error_Response_Body
+func ValidateByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody(body *ByCatalogKindNameAndPipelinesVersionInternalErrorResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateByCatalogKindNameAndPipelinesVersionNotFoundResponseBody runs the
+// validations defined on
+// ByCatalogKindNameAndPipelinesVersion_not-found_Response_Body
+func ValidateByCatalogKindNameAndPipelinesVersionNotFoundResponseBody(body *ByCatalogKindNameAndPipelinesVersionNotFoundResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
 // ValidateResourceDataCollectionResponseBody runs the validations defined on
 // ResourceDataCollectionResponseBody
 func ValidateResourceDataCollectionResponseBody(body ResourceDataCollectionResponseBody) (err error) {
@@ -1155,6 +1297,19 @@ func ValidateVersionsResponseBody(body *VersionsResponseBody) (err error) {
 		}
 	}
 	for _, e := range body.Versions {
+		if e != nil {
+			if err2 := ValidateResourceVersionDataResponseBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}
+
+// ValidateResourceVersionDataCollectionResponseBody runs the validations
+// defined on ResourceVersionDataCollectionResponseBody
+func ValidateResourceVersionDataCollectionResponseBody(body ResourceVersionDataCollectionResponseBody) (err error) {
+	for _, e := range body {
 		if e != nil {
 			if err2 := ValidateResourceVersionDataResponseBody(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)

@@ -473,3 +473,47 @@ func TestByID_Http_ErrorCase(t *testing.T) {
 		assert.Equal(t, "not-found", err.Name)
 	})
 }
+
+func ByCatalogKindNameAndPipelinesVersionChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	checker := goahttpcheck.New()
+	checker.Mount(
+		server.NewByCatalogKindNameAndPipelinesVersionHandler,
+		server.MountByCatalogKindNameAndPipelinesVersionHandler,
+		resource.NewByCatalogKindNameAndPipelinesVersionEndpoint(New(tc)))
+	return checker
+}
+
+func TestByCatalogKindNameAndPipelinesVersion_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByCatalogKindNameAndPipelinesVersionChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tekton/pipelinesversion/0.15.0").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
+func TestByCatalogKindNameAndPipelinesVersion_Http_ErrorCase(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByCatalogKindNameAndPipelinesVersionChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/abc/pipelinesversion/0.15.0").Check().
+		HasStatus(404).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		err := goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
+		assert.NoError(t, marshallErr)
+
+		assert.Equal(t, "not-found", err.Name)
+	})
+}

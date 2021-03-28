@@ -43,6 +43,15 @@ type Resource struct {
 	View string
 }
 
+// ResourceVersionsList is the viewed result type that is projected based on a
+// view.
+type ResourceVersionsList struct {
+	// Type to project
+	Projected *ResourceVersionsListView
+	// View to render
+	View string
+}
+
 // ResourcesView is a type that runs validations on a projected type.
 type ResourcesView struct {
 	Data ResourceDataCollectionView
@@ -135,6 +144,15 @@ type ResourceView struct {
 	Data *ResourceDataView
 }
 
+// ResourceVersionsListView is a type that runs validations on a projected type.
+type ResourceVersionsListView struct {
+	Data ResourceVersionDataCollectionView
+}
+
+// ResourceVersionDataCollectionView is a type that runs validations on a
+// projected type.
+type ResourceVersionDataCollectionView []*ResourceVersionDataView
+
 var (
 	// ResourcesMap is a map of attribute names in result type Resources indexed by
 	// view name.
@@ -160,6 +178,13 @@ var (
 	// ResourceMap is a map of attribute names in result type Resource indexed by
 	// view name.
 	ResourceMap = map[string][]string{
+		"default": []string{
+			"data",
+		},
+	}
+	// ResourceVersionsListMap is a map of attribute names in result type
+	// ResourceVersionsList indexed by view name.
+	ResourceVersionsListMap = map[string][]string{
 		"default": []string{
 			"data",
 		},
@@ -269,6 +294,41 @@ var (
 			"versions",
 		},
 	}
+	// ResourceVersionDataCollectionMap is a map of attribute names in result type
+	// ResourceVersionDataCollection indexed by view name.
+	ResourceVersionDataCollectionMap = map[string][]string{
+		"tiny": []string{
+			"id",
+			"version",
+		},
+		"min": []string{
+			"id",
+			"version",
+			"rawURL",
+			"webURL",
+		},
+		"withoutResource": []string{
+			"id",
+			"version",
+			"displayName",
+			"description",
+			"minPipelinesVersion",
+			"rawURL",
+			"webURL",
+			"updatedAt",
+		},
+		"default": []string{
+			"id",
+			"version",
+			"displayName",
+			"description",
+			"minPipelinesVersion",
+			"rawURL",
+			"webURL",
+			"updatedAt",
+			"resource",
+		},
+	}
 )
 
 // ValidateResources runs the validations defined on the viewed result type
@@ -313,6 +373,18 @@ func ValidateResource(result *Resource) (err error) {
 	switch result.View {
 	case "default", "":
 		err = ValidateResourceView(result.Projected)
+	default:
+		err = goa.InvalidEnumValueError("view", result.View, []interface{}{"default"})
+	}
+	return
+}
+
+// ValidateResourceVersionsList runs the validations defined on the viewed
+// result type ResourceVersionsList.
+func ValidateResourceVersionsList(result *ResourceVersionsList) (err error) {
+	switch result.View {
+	case "default", "":
+		err = ValidateResourceVersionsListView(result.Projected)
 	default:
 		err = goa.InvalidEnumValueError("view", result.View, []interface{}{"default"})
 	}
@@ -692,6 +764,63 @@ func ValidateResourceView(result *ResourceView) (err error) {
 
 	if result.Data != nil {
 		if err2 := ValidateResourceDataView(result.Data); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateResourceVersionsListView runs the validations defined on
+// ResourceVersionsListView using the "default" view.
+func ValidateResourceVersionsListView(result *ResourceVersionsListView) (err error) {
+
+	if result.Data != nil {
+		if err2 := ValidateResourceVersionDataCollectionViewWithoutResource(result.Data); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateResourceVersionDataCollectionViewTiny runs the validations defined
+// on ResourceVersionDataCollectionView using the "tiny" view.
+func ValidateResourceVersionDataCollectionViewTiny(result ResourceVersionDataCollectionView) (err error) {
+	for _, item := range result {
+		if err2 := ValidateResourceVersionDataViewTiny(item); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateResourceVersionDataCollectionViewMin runs the validations defined on
+// ResourceVersionDataCollectionView using the "min" view.
+func ValidateResourceVersionDataCollectionViewMin(result ResourceVersionDataCollectionView) (err error) {
+	for _, item := range result {
+		if err2 := ValidateResourceVersionDataViewMin(item); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateResourceVersionDataCollectionViewWithoutResource runs the
+// validations defined on ResourceVersionDataCollectionView using the
+// "withoutResource" view.
+func ValidateResourceVersionDataCollectionViewWithoutResource(result ResourceVersionDataCollectionView) (err error) {
+	for _, item := range result {
+		if err2 := ValidateResourceVersionDataViewWithoutResource(item); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateResourceVersionDataCollectionView runs the validations defined on
+// ResourceVersionDataCollectionView using the "default" view.
+func ValidateResourceVersionDataCollectionView(result ResourceVersionDataCollectionView) (err error) {
+	for _, item := range result {
+		if err2 := ValidateResourceVersionDataView(item); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
 	}

@@ -179,3 +179,35 @@ func TestByID_NotFoundError(t *testing.T) {
 	assert.Error(t, err)
 	assert.EqualError(t, err, "resource not found")
 }
+
+func TestByCatalogKindNameAndPipelinesVersion(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByCatalogKindNameAndPipelinesVersionPayload{
+		Catalog:          "catalog-official",
+		Kind:             "task",
+		Name:             "tekton",
+		PipelinesVersion: "0.15.0",
+	}
+	res, err := resourceSvc.ByCatalogKindNameAndPipelinesVersion(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(res.Data))
+}
+
+func TestByCatalogKindNameAndPipelinesVersion_NoResourceFound(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByCatalogKindNameAndPipelinesVersionPayload{
+		Catalog:          "catalog-official",
+		Kind:             "task",
+		Name:             "abc",
+		PipelinesVersion: "0.12.1",
+	}
+	_, err := resourceSvc.ByCatalogKindNameAndPipelinesVersion(context.Background(), payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "resource not found")
+}
