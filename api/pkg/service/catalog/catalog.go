@@ -33,7 +33,6 @@ type service struct {
 
 var (
 	internalError = catalog.MakeInternalError(fmt.Errorf("failed to refresh catalog"))
-	notFoundError = catalog.MakeNotFound(fmt.Errorf("resource not found"))
 )
 
 // New returns the catalog service implementation.

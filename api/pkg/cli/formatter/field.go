@@ -42,7 +42,7 @@ func FormatName(name, latestVersion string) string {
 
 // FormatCatalogName returns name of catalog from which the resource is
 func FormatCatalogName(catalogName string) string {
-	return fmt.Sprintf("%s", strings.Title(catalogName))
+	return strings.Title(catalogName)
 }
 
 // FormatDesc returns first 40 char of resource description
@@ -146,6 +146,7 @@ func DefaultValue(val, def string) string {
 	return val
 }
 
+// FormatInstallCMD returns install command to be executed to install the resource
 func FormatInstallCMD(res hub.ResourceData, resVer hub.ResourceWithVersionData, latest bool) string {
 	var sb strings.Builder
 	sb.WriteString("tkn hub install")
