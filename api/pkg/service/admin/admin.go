@@ -41,10 +41,9 @@ type agentRequest struct {
 }
 
 type refreshRequest struct {
-	db    *gorm.DB
-	log   *log.Logger
-	api   app.BaseConfig
-	force bool
+	db  *gorm.DB
+	log *log.Logger
+	api app.BaseConfig
 }
 
 var (

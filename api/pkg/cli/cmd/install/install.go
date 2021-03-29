@@ -148,7 +148,7 @@ func (opts *options) run() error {
 		}
 		// process the errors and return the response
 		if errors[0] == installer.ErrWarnVersionNotFound && len(errors) == 1 {
-			printer.New(out).String("WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v" + resourcePipelineMinVersion)
+			_ = printer.New(out).String("WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v" + resourcePipelineMinVersion)
 		} else {
 			return opts.errors(resourceInstaller.GetPipelineVersion(), errors)
 		}
