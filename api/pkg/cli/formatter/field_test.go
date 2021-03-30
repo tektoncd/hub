@@ -68,6 +68,17 @@ func TestFormatTags(t *testing.T) {
 	assert.Equal(t, "---", tags)
 }
 
+func TestWrapText(t *testing.T) {
+
+	// Description of resource with just summa
+	desc := WrapText("The Buildpacks task builds source into a container image and pushes it to a registry, using Cloud Native Buildpacks.", 80, 16)
+	assert.Equal(t, "The Buildpacks task builds source into a container image and"+"\n"+" pushes it to a registry, using Cloud Native Buildpacks.", desc)
+
+	// Description of resource with summary and description
+	desc = WrapText("Buildah task builds source into a container image and then pushes it to a container registry."+"\n"+"Buildah Task builds source into a container image using Project Atomic's Buildah build tool.It uses Buildah's support for building from Dockerfiles, using its buildah bud command.This command executes the directives in the Dockerfile to assemble a container image, then pushes that image to a container registry.", 80, 16)
+	assert.Equal(t, "Buildah task builds source into a container image and then"+"\n"+" pushes it to a container registry. Buildah Task builds source into a container"+"\n"+" image using Project Atomic's Buildah build tool.It uses Buildah's support for"+"\n"+" building from Dockerfiles, using its buildah bud command.This command executes"+"\n"+" the directives in the Dockerfile to assemble a container image, then pushes"+"\n"+" that image to a container registry.", desc)
+}
+
 func TestFormatVersion(t *testing.T) {
 	got := FormatVersion("0.1", false)
 	assert.Equal(t, "0.1", got)
