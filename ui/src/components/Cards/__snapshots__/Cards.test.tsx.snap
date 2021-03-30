@@ -10,7 +10,7 @@ exports[`Cards should render the resources on cards 1`] = `
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -56,7 +56,7 @@ exports[`Cards should render the resources on cards 1`] = `
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -101,7 +101,7 @@ exports[`Cards should render the resources on cards 1`] = `
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -146,7 +146,7 @@ exports[`Cards should render the resources on cards 1`] = `
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -194,7 +194,7 @@ exports[`Cards should render the resources on cards 1`] = `
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -240,7 +240,7 @@ exports[`Cards should render the resources on cards 1`] = `
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <TooltipDisplay name=\\"tekton\\" id=\\"user\\" />
+            <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">
@@ -285,7 +285,7 @@ exports[`Cards should render the resources on cards 1`] = `
             <TooltipDisplay name=\\"Pipeline\\" id=\\"domain\\" />
           </span>
           <span className=\\"hub-catalog-icon\\">
-            <TooltipDisplay name=\\"tekton-hub\\" id=\\"cat\\" />
+            <TooltipDisplay name=\\"tekton-hub\\" id=\\"catalog\\" />
           </span>
           <CardActions>
             <span className=\\"hub-rating-icon\\">

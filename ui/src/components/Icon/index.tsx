@@ -8,7 +8,8 @@ import {
   IconSize,
   StarIcon,
   GithubIcon,
-  WarningTriangleIcon
+  WarningTriangleIcon,
+  CatalogIcon
 } from '@patternfly/react-icons';
 import { Icons } from '../../common/icons';
 import './Icon.css';
@@ -40,6 +41,8 @@ const Icon: React.FC<Props> = (props: Props) => {
       return <GithubIcon size={size} className="hub-icon" label={label} />;
     case Icons.WarningTriangle:
       return <WarningTriangleIcon size={size} className="hub-icon" label={label} />;
+    case Icons.Catalog:
+      return <CatalogIcon size={size} className="hub-icon" label={label} />;
   }
 };
 
