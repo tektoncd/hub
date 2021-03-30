@@ -1,8 +1,9 @@
-import React from 'react';
 import { shallow } from 'enzyme';
+import SwaggerUI from 'swagger-ui-react';
 import App from '.';
 
-test('renders learn react link', () => {
+test('should render the Swagger component', () => {
   const app = shallow(<App />);
+  expect(SwaggerUI.length).toBe(1);
   expect(app.debug()).toMatchSnapshot();
 });

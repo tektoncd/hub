@@ -12,4 +12,4 @@ window.config = window.config || {
   API_URL: 'no API_URL  set'
 };
 
-export const API_URL = window.config.API_URL;
+export const API_URL = window.config.API_URL + '/schema/swagger.json';
