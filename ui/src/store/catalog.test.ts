@@ -86,7 +86,7 @@ describe('Store Object', () => {
 
     const catalog = store.items.get('1');
     assert(catalog);
-    expect(catalog.icon).toBe(Icons.User);
+    expect(catalog.icon).toBe(Icons.Catalog);
 
     done();
   });

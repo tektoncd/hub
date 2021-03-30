@@ -2,9 +2,7 @@ import { Instance, types } from 'mobx-state-tree';
 import { Icons } from '../common/icons';
 
 const icons: { [catalog: string]: Icons } = {
-  official: Icons.Cat,
-  verified: Icons.Certificate,
-  community: Icons.User
+  community: Icons.Catalog
 };
 
 export const Catalog = types
@@ -21,7 +19,7 @@ export const Catalog = types
   }))
   .views((self) => ({
     get icon(): Icons {
-      return icons[self.type] || Icons.Unknown;
+      return icons[self.type] || Icons.Catalog;
     }
   }));
 

@@ -36,16 +36,16 @@ exports[`Resource Component should render the resources component 1`] = `
                                   </TooltipDisplay>
                                 </span>
                                 <span className=\\"hub-catalog-icon\\">
-                                  <TooltipDisplay name=\\"tekton\\" id=\\"user\\">
+                                  <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\">
                                     <Tooltip content={{...}}>
                                       <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
                                         <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
-                                          <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-2\\">
-                                            <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
-                                                <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                          <Icon id=\\"catalog\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-2\\">
+                                            <CatalogIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1097 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                                <path d=\\"M509.714 737.371v-0.686c0.229 0.229 0.229 0.457 0 0.686zM184.457 84.114c-67.2-6.171-111.314-83.657-111.314-83.657v877.257c-73.143-2.286-73.143-68.571-73.143-68.571v-813.714c2.971-86.857 109.714-66.286 109.714-66.286 109.714 154.743 402.286-2.286 402.286-2.286v71.314c-125.714 81.829-242.286 95.543-327.543 85.943zM366.629 133.714c53.486-9.371 110.857-52.571 143.086-60.343v72.914h-3.886c-0.229 0-0.457 0-0.686 0h4.571v590.4c0 0 0 0 0 0v0.686c0 0 0 0 0 0l0.229 58.057c0 0-0.229 0-0.229 0.229v8c-119.314 76.8-274.057 129.143-363.429 145.829v-811.2c65.6 18.057 120.229 13.257 220.343-4.571zM587.429 737.371c-0.229-0.229-0.229-0.229 0 0v0zM1024 877.714v-877.257c0 0-44.114 77.486-111.314 83.657-85.257 9.6-201.829-4.114-327.543-85.943v-71.314c0 0 292.571 157.029 402.286 2.286 0 0 106.743-20.571 109.714 66.286v813.714c0 0 0 66.286-73.143 68.571zM587.429 545.143v-398.857l10.514 1.829c-2.057-1.143-4.343-1.829-6.629-1.829h-3.886v-72.914c32.229 7.771 89.6 50.971 143.086 60.343 100.114 17.829 154.743 22.629 220.343 4.571v811.2c-89.371-16.686-244.114-69.029-363.429-145.6v-8.229c0-0.229-0.229-0.229-0.229-0.229l0.229-58.057v-192.229z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
                                               </svg>
-                                            </UserIcon>
+                                            </CatalogIcon>
                                           </Icon>
                                         </FindRefWrapper>
                                       </Popper>
@@ -140,16 +140,16 @@ exports[`Resource Component should render the resources component 1`] = `
                                   </TooltipDisplay>
                                 </span>
                                 <span className=\\"hub-catalog-icon\\">
-                                  <TooltipDisplay name=\\"tekton\\" id=\\"user\\">
+                                  <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\">
                                     <Tooltip content={{...}}>
                                       <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
                                         <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
-                                          <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-4\\">
-                                            <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
-                                                <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                          <Icon id=\\"catalog\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-4\\">
+                                            <CatalogIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1097 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                                <path d=\\"M509.714 737.371v-0.686c0.229 0.229 0.229 0.457 0 0.686zM184.457 84.114c-67.2-6.171-111.314-83.657-111.314-83.657v877.257c-73.143-2.286-73.143-68.571-73.143-68.571v-813.714c2.971-86.857 109.714-66.286 109.714-66.286 109.714 154.743 402.286-2.286 402.286-2.286v71.314c-125.714 81.829-242.286 95.543-327.543 85.943zM366.629 133.714c53.486-9.371 110.857-52.571 143.086-60.343v72.914h-3.886c-0.229 0-0.457 0-0.686 0h4.571v590.4c0 0 0 0 0 0v0.686c0 0 0 0 0 0l0.229 58.057c0 0-0.229 0-0.229 0.229v8c-119.314 76.8-274.057 129.143-363.429 145.829v-811.2c65.6 18.057 120.229 13.257 220.343-4.571zM587.429 737.371c-0.229-0.229-0.229-0.229 0 0v0zM1024 877.714v-877.257c0 0-44.114 77.486-111.314 83.657-85.257 9.6-201.829-4.114-327.543-85.943v-71.314c0 0 292.571 157.029 402.286 2.286 0 0 106.743-20.571 109.714 66.286v813.714c0 0 0 66.286-73.143 68.571zM587.429 545.143v-398.857l10.514 1.829c-2.057-1.143-4.343-1.829-6.629-1.829h-3.886v-72.914c32.229 7.771 89.6 50.971 143.086 60.343 100.114 17.829 154.743 22.629 220.343 4.571v811.2c-89.371-16.686-244.114-69.029-363.429-145.6v-8.229c0-0.229-0.229-0.229-0.229-0.229l0.229-58.057v-192.229z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
                                               </svg>
-                                            </UserIcon>
+                                            </CatalogIcon>
                                           </Icon>
                                         </FindRefWrapper>
                                       </Popper>
@@ -243,16 +243,16 @@ exports[`Resource Component should render the resources component 1`] = `
                                   </TooltipDisplay>
                                 </span>
                                 <span className=\\"hub-catalog-icon\\">
-                                  <TooltipDisplay name=\\"tekton\\" id=\\"user\\">
+                                  <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\">
                                     <Tooltip content={{...}}>
                                       <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
                                         <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
-                                          <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-6\\">
-                                            <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
-                                                <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                          <Icon id=\\"catalog\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-6\\">
+                                            <CatalogIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1097 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                                <path d=\\"M509.714 737.371v-0.686c0.229 0.229 0.229 0.457 0 0.686zM184.457 84.114c-67.2-6.171-111.314-83.657-111.314-83.657v877.257c-73.143-2.286-73.143-68.571-73.143-68.571v-813.714c2.971-86.857 109.714-66.286 109.714-66.286 109.714 154.743 402.286-2.286 402.286-2.286v71.314c-125.714 81.829-242.286 95.543-327.543 85.943zM366.629 133.714c53.486-9.371 110.857-52.571 143.086-60.343v72.914h-3.886c-0.229 0-0.457 0-0.686 0h4.571v590.4c0 0 0 0 0 0v0.686c0 0 0 0 0 0l0.229 58.057c0 0-0.229 0-0.229 0.229v8c-119.314 76.8-274.057 129.143-363.429 145.829v-811.2c65.6 18.057 120.229 13.257 220.343-4.571zM587.429 737.371c-0.229-0.229-0.229-0.229 0 0v0zM1024 877.714v-877.257c0 0-44.114 77.486-111.314 83.657-85.257 9.6-201.829-4.114-327.543-85.943v-71.314c0 0 292.571 157.029 402.286 2.286 0 0 106.743-20.571 109.714 66.286v813.714c0 0 0 66.286-73.143 68.571zM587.429 545.143v-398.857l10.514 1.829c-2.057-1.143-4.343-1.829-6.629-1.829h-3.886v-72.914c32.229 7.771 89.6 50.971 143.086 60.343 100.114 17.829 154.743 22.629 220.343 4.571v811.2c-89.371-16.686-244.114-69.029-363.429-145.6v-8.229c0-0.229-0.229-0.229-0.229-0.229l0.229-58.057v-192.229z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
                                               </svg>
-                                            </UserIcon>
+                                            </CatalogIcon>
                                           </Icon>
                                         </FindRefWrapper>
                                       </Popper>
@@ -346,16 +346,16 @@ exports[`Resource Component should render the resources component 1`] = `
                                   </TooltipDisplay>
                                 </span>
                                 <span className=\\"hub-catalog-icon\\">
-                                  <TooltipDisplay name=\\"tekton\\" id=\\"user\\">
+                                  <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\">
                                     <Tooltip content={{...}}>
                                       <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
                                         <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
-                                          <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-8\\">
-                                            <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
-                                                <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                          <Icon id=\\"catalog\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-8\\">
+                                            <CatalogIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1097 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                                <path d=\\"M509.714 737.371v-0.686c0.229 0.229 0.229 0.457 0 0.686zM184.457 84.114c-67.2-6.171-111.314-83.657-111.314-83.657v877.257c-73.143-2.286-73.143-68.571-73.143-68.571v-813.714c2.971-86.857 109.714-66.286 109.714-66.286 109.714 154.743 402.286-2.286 402.286-2.286v71.314c-125.714 81.829-242.286 95.543-327.543 85.943zM366.629 133.714c53.486-9.371 110.857-52.571 143.086-60.343v72.914h-3.886c-0.229 0-0.457 0-0.686 0h4.571v590.4c0 0 0 0 0 0v0.686c0 0 0 0 0 0l0.229 58.057c0 0-0.229 0-0.229 0.229v8c-119.314 76.8-274.057 129.143-363.429 145.829v-811.2c65.6 18.057 120.229 13.257 220.343-4.571zM587.429 737.371c-0.229-0.229-0.229-0.229 0 0v0zM1024 877.714v-877.257c0 0-44.114 77.486-111.314 83.657-85.257 9.6-201.829-4.114-327.543-85.943v-71.314c0 0 292.571 157.029 402.286 2.286 0 0 106.743-20.571 109.714 66.286v813.714c0 0 0 66.286-73.143 68.571zM587.429 545.143v-398.857l10.514 1.829c-2.057-1.143-4.343-1.829-6.629-1.829h-3.886v-72.914c32.229 7.771 89.6 50.971 143.086 60.343 100.114 17.829 154.743 22.629 220.343 4.571v811.2c-89.371-16.686-244.114-69.029-363.429-145.6v-8.229c0-0.229-0.229-0.229-0.229-0.229l0.229-58.057v-192.229z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
                                               </svg>
-                                            </UserIcon>
+                                            </CatalogIcon>
                                           </Icon>
                                         </FindRefWrapper>
                                       </Popper>
@@ -454,16 +454,16 @@ exports[`Resource Component should render the resources component 1`] = `
                                   </TooltipDisplay>
                                 </span>
                                 <span className=\\"hub-catalog-icon\\">
-                                  <TooltipDisplay name=\\"tekton\\" id=\\"user\\">
+                                  <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\">
                                     <Tooltip content={{...}}>
                                       <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
                                         <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
-                                          <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-10\\">
-                                            <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
-                                                <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                          <Icon id=\\"catalog\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-10\\">
+                                            <CatalogIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1097 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                                <path d=\\"M509.714 737.371v-0.686c0.229 0.229 0.229 0.457 0 0.686zM184.457 84.114c-67.2-6.171-111.314-83.657-111.314-83.657v877.257c-73.143-2.286-73.143-68.571-73.143-68.571v-813.714c2.971-86.857 109.714-66.286 109.714-66.286 109.714 154.743 402.286-2.286 402.286-2.286v71.314c-125.714 81.829-242.286 95.543-327.543 85.943zM366.629 133.714c53.486-9.371 110.857-52.571 143.086-60.343v72.914h-3.886c-0.229 0-0.457 0-0.686 0h4.571v590.4c0 0 0 0 0 0v0.686c0 0 0 0 0 0l0.229 58.057c0 0-0.229 0-0.229 0.229v8c-119.314 76.8-274.057 129.143-363.429 145.829v-811.2c65.6 18.057 120.229 13.257 220.343-4.571zM587.429 737.371c-0.229-0.229-0.229-0.229 0 0v0zM1024 877.714v-877.257c0 0-44.114 77.486-111.314 83.657-85.257 9.6-201.829-4.114-327.543-85.943v-71.314c0 0 292.571 157.029 402.286 2.286 0 0 106.743-20.571 109.714 66.286v813.714c0 0 0 66.286-73.143 68.571zM587.429 545.143v-398.857l10.514 1.829c-2.057-1.143-4.343-1.829-6.629-1.829h-3.886v-72.914c32.229 7.771 89.6 50.971 143.086 60.343 100.114 17.829 154.743 22.629 220.343 4.571v811.2c-89.371-16.686-244.114-69.029-363.429-145.6v-8.229c0-0.229-0.229-0.229-0.229-0.229l0.229-58.057v-192.229z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
                                               </svg>
-                                            </UserIcon>
+                                            </CatalogIcon>
                                           </Icon>
                                         </FindRefWrapper>
                                       </Popper>
@@ -558,16 +558,16 @@ exports[`Resource Component should render the resources component 1`] = `
                                   </TooltipDisplay>
                                 </span>
                                 <span className=\\"hub-catalog-icon\\">
-                                  <TooltipDisplay name=\\"tekton\\" id=\\"user\\">
+                                  <TooltipDisplay name=\\"tekton\\" id=\\"catalog\\">
                                     <Tooltip content={{...}}>
                                       <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
                                         <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
-                                          <Icon id=\\"user\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-12\\">
-                                            <UserIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 448 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
-                                                <path d=\\"M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z\\" transform=\\"\\" />
+                                          <Icon id=\\"catalog\\" size=\\"sm\\" label=\\"tekton\\" aria-describedby=\\"pf-tooltip-12\\">
+                                            <CatalogIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1097 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                                                <path d=\\"M509.714 737.371v-0.686c0.229 0.229 0.229 0.457 0 0.686zM184.457 84.114c-67.2-6.171-111.314-83.657-111.314-83.657v877.257c-73.143-2.286-73.143-68.571-73.143-68.571v-813.714c2.971-86.857 109.714-66.286 109.714-66.286 109.714 154.743 402.286-2.286 402.286-2.286v71.314c-125.714 81.829-242.286 95.543-327.543 85.943zM366.629 133.714c53.486-9.371 110.857-52.571 143.086-60.343v72.914h-3.886c-0.229 0-0.457 0-0.686 0h4.571v590.4c0 0 0 0 0 0v0.686c0 0 0 0 0 0l0.229 58.057c0 0-0.229 0-0.229 0.229v8c-119.314 76.8-274.057 129.143-363.429 145.829v-811.2c65.6 18.057 120.229 13.257 220.343-4.571zM587.429 737.371c-0.229-0.229-0.229-0.229 0 0v0zM1024 877.714v-877.257c0 0-44.114 77.486-111.314 83.657-85.257 9.6-201.829-4.114-327.543-85.943v-71.314c0 0 292.571 157.029 402.286 2.286 0 0 106.743-20.571 109.714 66.286v813.714c0 0 0 66.286-73.143 68.571zM587.429 545.143v-398.857l10.514 1.829c-2.057-1.143-4.343-1.829-6.629-1.829h-3.886v-72.914c32.229 7.771 89.6 50.971 143.086 60.343 100.114 17.829 154.743 22.629 220.343 4.571v811.2c-89.371-16.686-244.114-69.029-363.429-145.6v-8.229c0-0.229-0.229-0.229-0.229-0.229l0.229-58.057v-192.229z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
                                               </svg>
-                                            </UserIcon>
+                                            </CatalogIcon>
                                           </Icon>
                                         </FindRefWrapper>
                                       </Popper>
@@ -661,16 +661,16 @@ exports[`Resource Component should render the resources component 1`] = `
                                   </TooltipDisplay>
                                 </span>
                                 <span className=\\"hub-catalog-icon\\">
-                                  <TooltipDisplay name=\\"tekton-hub\\" id=\\"cat\\">
+                                  <TooltipDisplay name=\\"tekton-hub\\" id=\\"catalog\\">
                                     <Tooltip content={{...}}>
                                       <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
                                         <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
-                                          <Icon id=\\"cat\\" size=\\"sm\\" label=\\"tekton-hub\\" aria-describedby=\\"pf-tooltip-14\\">
-                                            <CatIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton-hub\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 512 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton-hub\\">
-                                                <path d=\\"M290.59 192c-20.18 0-106.82 1.98-162.59 85.95V192c0-52.94-43.06-96-96-96-17.67 0-32 14.33-32 32s14.33 32 32 32c17.64 0 32 14.36 32 32v256c0 35.3 28.7 64 64 64h176c8.84 0 16-7.16 16-16v-16c0-17.67-14.33-32-32-32h-32l128-96v144c0 8.84 7.16 16 16 16h32c8.84 0 16-7.16 16-16V289.86c-10.29 2.67-20.89 4.54-32 4.54-61.81 0-113.52-44.05-125.41-102.4zM448 96h-64l-64-64v134.4c0 53.02 42.98 96 96 96s96-42.98 96-96V32l-64 64zm-72 80c-8.84 0-16-7.16-16-16s7.16-16 16-16 16 7.16 16 16-7.16 16-16 16zm80 0c-8.84 0-16-7.16-16-16s7.16-16 16-16 16 7.16 16 16-7.16 16-16 16z\\" transform=\\"\\" />
+                                          <Icon id=\\"catalog\\" size=\\"sm\\" label=\\"tekton-hub\\" aria-describedby=\\"pf-tooltip-14\\">
+                                            <CatalogIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton-hub\\" color=\\"currentColor\\" noVerticalAlign={false}>
+                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1097 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton-hub\\">
+                                                <path d=\\"M509.714 737.371v-0.686c0.229 0.229 0.229 0.457 0 0.686zM184.457 84.114c-67.2-6.171-111.314-83.657-111.314-83.657v877.257c-73.143-2.286-73.143-68.571-73.143-68.571v-813.714c2.971-86.857 109.714-66.286 109.714-66.286 109.714 154.743 402.286-2.286 402.286-2.286v71.314c-125.714 81.829-242.286 95.543-327.543 85.943zM366.629 133.714c53.486-9.371 110.857-52.571 143.086-60.343v72.914h-3.886c-0.229 0-0.457 0-0.686 0h4.571v590.4c0 0 0 0 0 0v0.686c0 0 0 0 0 0l0.229 58.057c0 0-0.229 0-0.229 0.229v8c-119.314 76.8-274.057 129.143-363.429 145.829v-811.2c65.6 18.057 120.229 13.257 220.343-4.571zM587.429 737.371c-0.229-0.229-0.229-0.229 0 0v0zM1024 877.714v-877.257c0 0-44.114 77.486-111.314 83.657-85.257 9.6-201.829-4.114-327.543-85.943v-71.314c0 0 292.571 157.029 402.286 2.286 0 0 106.743-20.571 109.714 66.286v813.714c0 0 0 66.286-73.143 68.571zM587.429 545.143v-398.857l10.514 1.829c-2.057-1.143-4.343-1.829-6.629-1.829h-3.886v-72.914c32.229 7.771 89.6 50.971 143.086 60.343 100.114 17.829 154.743 22.629 220.343 4.571v811.2c-89.371-16.686-244.114-69.029-363.429-145.6v-8.229c0-0.229-0.229-0.229-0.229-0.229l0.229-58.057v-192.229z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
                                               </svg>
-                                            </CatIcon>
+                                            </CatalogIcon>
                                           </Icon>
                                         </FindRefWrapper>
                                       </Popper>
