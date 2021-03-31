@@ -15,13 +15,16 @@ paths:
       operationId: status#Status
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatusResponseBody'
               example:
                 services:
+                - error: unable to reach db
+                  name: api
+                  status: ok
                 - error: unable to reach db
                   name: api
                   status: ok
@@ -51,7 +54,7 @@ paths:
         example: 5628b69ec09c09512eef
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -67,57 +70,45 @@ paths:
                     refreshInterval: 1h30m
                     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
         "400":
-          description: ""
+          description: Bad Request response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
         "401":
-          description: ""
+          description: Unauthorized response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
         "403":
-          description: ""
+          description: Forbidden response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
   /catalog/{catalogName}/refresh:
     post:
       tags:
@@ -137,41 +128,35 @@ paths:
         example: tekton
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Job'
               example:
-                catalogName: Quo velit vitae.
-                id: 14236020767980603451
-                status: Porro nulla sunt omnis molestiae.
+                catalogName: Enim ut rerum repellat aut.
+                id: 7875832644409337079
+                status: Qui fugiat earum.
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -189,7 +174,7 @@ paths:
       operationId: catalog#RefreshAll
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -203,10 +188,13 @@ paths:
                 - catalogName: Est deserunt.
                   id: 18265458532539025930
                   status: Assumenda quaerat ea.
-                - catalogName: Est deserunt.
-                  id: 18265458532539025930
-                  status: Assumenda quaerat ea.
               example:
+              - catalogName: Est deserunt.
+                id: 18265458532539025930
+                status: Assumenda quaerat ea.
+              - catalogName: Est deserunt.
+                id: 18265458532539025930
+                status: Assumenda quaerat ea.
               - catalogName: Est deserunt.
                 id: 18265458532539025930
                 status: Assumenda quaerat ea.
@@ -214,18 +202,15 @@ paths:
                 id: 18265458532539025930
                 status: Assumenda quaerat ea.
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -243,7 +228,7 @@ paths:
       operationId: category#list
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -264,26 +249,16 @@ paths:
                     name: image-build
                   - id: 2
                     name: kaniko
-                - id: 1
-                  name: Image Builder
-                  tags:
-                  - id: 1
-                    name: image-build
-                  - id: 2
-                    name: kaniko
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
   /query:
     get:
       tags:
@@ -310,7 +285,7 @@ paths:
           type: array
           items:
             type: string
-            example: Et ut quas mollitia.
+            example: Et at.
           description: Kinds of resource to filter by
           example:
           - task
@@ -326,7 +301,7 @@ paths:
           type: array
           items:
             type: string
-            example: Delectus sunt.
+            example: Aperiam tempore animi iure eum et et.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -352,14 +327,14 @@ paths:
           type: string
           description: Strategy used to find matching resources
           default: contains
-          example: contains
+          example: exact
           enum:
           - exact
           - contains
         example: contains
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -417,44 +392,35 @@ paths:
                   - id: 2
                     version: "0.2"
         "400":
-          description: ""
+          description: Bad Request response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
   /resource/{catalog}/{kind}/{name}:
     get:
       tags:
@@ -484,7 +450,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: task
+        example: pipeline
       - name: name
         in: path
         description: Name of resource
@@ -496,7 +462,7 @@ paths:
         example: buildah
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -529,31 +495,25 @@ paths:
                   - id: 2
                     version: "0.2"
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
   /resource/{catalog}/{kind}/{name}/{version}:
     get:
       tags:
@@ -604,7 +564,7 @@ paths:
         example: "0.1"
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -632,31 +592,25 @@ paths:
                   version: "0.1"
                   webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
   /resource/{id}:
     get:
       tags:
@@ -676,7 +630,7 @@ paths:
         example: 1
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -709,31 +663,25 @@ paths:
                   - id: 2
                     version: "0.2"
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
   /resource/{id}/rating:
     get:
       tags:
@@ -749,11 +697,11 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 12526971164801341145
-        example: 2614534421984488022
+          example: 4869966896348576719
+        example: 6109420220413662287
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -761,57 +709,45 @@ paths:
               example:
                 rating: 4
         "401":
-          description: ""
+          description: Unauthorized response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
         "403":
-          description: ""
+          description: Forbidden response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -834,8 +770,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 15189161969413104471
-        example: 13698460991870412851
+          example: 13294227609226048376
+        example: 12665468825598636914
       requestBody:
         required: true
         content:
@@ -843,65 +779,50 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateRequestBody'
             example:
-              rating: 2
+              rating: 4
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              example: {}
+          description: OK response.
         "401":
-          description: ""
+          description: Unauthorized response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
         "403":
-          description: ""
+          description: Forbidden response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -929,7 +850,7 @@ paths:
         example: 1
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -951,31 +872,25 @@ paths:
                     version: "0.2"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
   /resource/version/{versionID}:
     get:
       tags:
@@ -995,7 +910,7 @@ paths:
         example: 1
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -1023,31 +938,25 @@ paths:
                   version: "0.1"
                   webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
   /resources:
     get:
       tags:
@@ -1068,7 +977,7 @@ paths:
         example: 100
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -1126,18 +1035,15 @@ paths:
                   - id: 2
                     version: "0.2"
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
   /schema/swagger.json:
     get:
       tags:
@@ -1157,52 +1063,43 @@ paths:
       operationId: admin#RefreshConfig
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RefreshConfigResponseBody'
               example:
-                checksum: Magnam illum ut nihil eum placeat.
+                checksum: Nobis est voluptatibus numquam rerum.
         "401":
-          description: ""
+          description: Unauthorized response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "403":
-          description: ""
+          description: Forbidden response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -1231,7 +1128,7 @@ paths:
               - Qui dolor consequatur assumenda.
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -1239,57 +1136,45 @@ paths:
               example:
                 token: Commodi rerum harum ut tenetur laborum tempore.
         "400":
-          description: ""
+          description: Bad Request response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "401":
-          description: ""
+          description: Unauthorized response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "403":
-          description: ""
+          description: Forbidden response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -1307,7 +1192,7 @@ paths:
       operationId: user#RefreshAccessToken
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -1319,44 +1204,35 @@ paths:
                     refreshInterval: 1h30m
                     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
         "401":
-          description: ""
+          description: Unauthorized response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
         "403":
-          description: ""
+          description: Forbidden response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -1374,7 +1250,7 @@ paths:
       operationId: user#NewRefreshToken
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -1386,44 +1262,35 @@ paths:
                     refreshInterval: 1h30m
                     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
         "401":
-          description: ""
+          description: Unauthorized response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "403":
-          description: ""
+          description: Forbidden response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -1441,13 +1308,16 @@ paths:
       operationId: status#Status#1
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatusResponseBody'
               example:
                 services:
+                - error: unable to reach db
+                  name: api
+                  status: ok
                 - error: unable to reach db
                   name: api
                   status: ok
@@ -1466,7 +1336,7 @@ paths:
       operationId: category#list#1
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -1487,26 +1357,16 @@ paths:
                     name: image-build
                   - id: 2
                     name: kaniko
-                - id: 1
-                  name: Image Builder
-                  tags:
-                  - id: 1
-                    name: image-build
-                  - id: 2
-                    name: kaniko
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
 components:
   schemas:
     AccessToken:
@@ -1637,19 +1497,16 @@ components:
         temporary:
           type: boolean
           description: Is the error temporary?
-          example: true
+          example: false
         timeout:
           type: boolean
           description: Is the error a timeout?
           example: false
       description: Invalid request body
       example:
-        fault: true
-        id: 123abc
-        message: parameter 'p' must be an integer
+        id: 3F1FKVRR
+        message: Value of ID must be an integer
         name: bad_request
-        temporary: false
-        timeout: false
       required:
       - name
       - id
@@ -1701,19 +1558,19 @@ components:
         catalogName:
           type: string
           description: Name of the catalog
-          example: Laborum et nesciunt.
+          example: Suscipit fuga nam.
         id:
           type: integer
           description: id of the job
-          example: 1666927712833288856
+          example: 17090987381425625275
         status:
           type: string
           description: status of the job
-          example: Temporibus ut.
+          example: Eveniet qui sint omnis consequatur omnis.
       example:
-        catalogName: Aliquid rerum perspiciatis voluptatem asperiores quae vel.
-        id: 12206470617862292135
-        status: Veritatis omnis.
+        catalogName: Sed voluptas animi molestiae nam quas.
+        id: 6985782719166842104
+        status: Optio accusamus ut.
       required:
       - id
       - catalogName
@@ -1816,9 +1673,9 @@ components:
         checksum:
           type: string
           description: Config file checksum
-          example: Id asperiores aut et.
+          example: Ea rem aperiam ipsam sapiente.
       example:
-        checksum: Unde quia quia blanditiis nam dolorem.
+        checksum: Assumenda qui sequi officiis mollitia dolorem laudantium.
       required:
       - checksum
     RefreshToken:
@@ -2232,6 +2089,12 @@ components:
         - error: unable to reach db
           name: api
           status: ok
+        - error: unable to reach db
+          name: api
+          status: ok
+        - error: unable to reach db
+          name: api
+          status: ok
     Tag:
       type: object
       properties:
@@ -2280,24 +2143,22 @@ components:
         name:
           type: string
           description: Name of Agent
-          example: Odit expedita.
+          example: Vel error.
         scopes:
           type: array
           items:
             type: string
-            example: Repellendus magnam consequatur numquam id aut.
+            example: Quam inventore et incidunt maxime voluptas.
           description: Scopes required for Agent
           example:
-          - Rerum soluta consequatur quia at impedit accusamus.
-          - Omnis recusandae accusantium fugiat alias ipsa.
-          - Eveniet aut mollitia.
+          - Sed sapiente libero sit id.
+          - Nam quia incidunt accusamus dolor non eum.
       example:
-        name: Perferendis et iusto voluptatem nihil.
+        name: Corrupti et.
         scopes:
-        - Aliquam possimus tempore non.
-        - Voluptatibus voluptatem voluptates sint est officia.
-        - Omnis officia ratione aut quia.
-        - Ipsum aperiam nam numquam rerum nam.
+        - Eos esse enim sint tempora.
+        - Neque maxime nesciunt.
+        - Debitis laboriosam incidunt neque asperiores reiciendis hic.
       required:
       - name
       - scopes
@@ -2307,9 +2168,9 @@ components:
         token:
           type: string
           description: Agent JWT
-          example: Voluptatem qui et aspernatur eos.
+          example: Beatae dicta itaque possimus.
       example:
-        token: Adipisci vel neque commodi necessitatibus.
+        token: Aut repellat.
       required:
       - token
     UpdateRequestBody:
@@ -2318,11 +2179,11 @@ components:
         rating:
           type: integer
           description: User rating for resource
-          example: 2
+          example: 4
           minimum: 0
           maximum: 5
       example:
-        rating: 0
+        rating: 2
       required:
       - rating
     Versions:
