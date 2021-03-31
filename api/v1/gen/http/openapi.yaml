@@ -76,7 +76,7 @@ paths:
           schema:
             $ref: '#/definitions/ResourceQueryInternalErrorResponseBody'
       schemes:
-      - http
+      - https
   /v1/resource/{catalog}/{kind}/{name}:
     get:
       tags:
@@ -118,7 +118,7 @@ paths:
           schema:
             $ref: '#/definitions/ResourceByCatalogKindNameInternalErrorResponseBody'
       schemes:
-      - http
+      - https
   /v1/resource/{catalog}/{kind}/{name}/{version}:
     get:
       tags:
@@ -165,7 +165,7 @@ paths:
           schema:
             $ref: '#/definitions/ResourceByCatalogKindNameVersionInternalErrorResponseBody'
       schemes:
-      - http
+      - https
   /v1/resource/{id}:
     get:
       tags:
@@ -193,7 +193,7 @@ paths:
           schema:
             $ref: '#/definitions/ResourceByIDInternalErrorResponseBody'
       schemes:
-      - http
+      - https
   /v1/resource/{id}/versions:
     get:
       tags:
@@ -221,7 +221,7 @@ paths:
           schema:
             $ref: '#/definitions/ResourceVersionsByIDInternalErrorResponseBody'
       schemes:
-      - http
+      - https
   /v1/resource/version/{versionID}:
     get:
       tags:
@@ -249,7 +249,7 @@ paths:
           schema:
             $ref: '#/definitions/ResourceByVersionIDInternalErrorResponseBody'
       schemes:
-      - http
+      - https
   /v1/resources:
     get:
       tags:
@@ -274,7 +274,7 @@ paths:
           schema:
             $ref: '#/definitions/ResourceListInternalErrorResponseBody'
       schemes:
-      - http
+      - https
   /v1/schema/swagger.json:
     get:
       tags:
@@ -288,7 +288,7 @@ paths:
           schema:
             type: file
       schemes:
-      - http
+      - https
 definitions:
   CatalogResponseBody:
     title: CatalogResponseBody

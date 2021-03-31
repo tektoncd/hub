@@ -29,7 +29,7 @@ var _ = API("hub", func() {
 	Meta("swagger:example", "false")
 	Server("hub", func() {
 		Host("production", func() {
-			URI("http://api.hub.tekton.dev")
+			URI("https://api.hub.tekton.dev")
 		})
 
 		Services(
