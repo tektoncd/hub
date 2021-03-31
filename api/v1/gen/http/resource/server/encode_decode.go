@@ -606,7 +606,7 @@ func marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersio
 		Rating: *v.Rating,
 	}
 	if v.Catalog != nil {
-		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBody(v.Catalog)
+		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v.Catalog)
 	}
 	if v.LatestVersion != nil {
 		res.LatestVersion = marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBodyWithoutResource(v.LatestVersion)
@@ -621,10 +621,10 @@ func marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersio
 	return res
 }
 
-// marshalResourceviewsCatalogViewToCatalogResponseBody builds a value of type
-// *CatalogResponseBody from a value of type *resourceviews.CatalogView.
-func marshalResourceviewsCatalogViewToCatalogResponseBody(v *resourceviews.CatalogView) *CatalogResponseBody {
-	res := &CatalogResponseBody{
+// marshalResourceviewsCatalogViewToCatalogResponseBodyMin builds a value of
+// type *CatalogResponseBodyMin from a value of type *resourceviews.CatalogView.
+func marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v *resourceviews.CatalogView) *CatalogResponseBodyMin {
+	res := &CatalogResponseBodyMin{
 		ID:   *v.ID,
 		Name: *v.Name,
 		Type: *v.Type,
@@ -725,7 +725,7 @@ func marshalResourceviewsResourceDataViewToResourceDataResponseBodyInfo(v *resou
 		Rating: *v.Rating,
 	}
 	if v.Catalog != nil {
-		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBody(v.Catalog)
+		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v.Catalog)
 	}
 	if v.Tags != nil {
 		res.Tags = make([]*TagResponseBody, len(v.Tags))
@@ -748,7 +748,7 @@ func marshalResourceviewsResourceDataViewToResourceDataResponseBody(v *resourcev
 		Rating: *v.Rating,
 	}
 	if v.Catalog != nil {
-		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBody(v.Catalog)
+		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v.Catalog)
 	}
 	if v.LatestVersion != nil {
 		res.LatestVersion = marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBodyWithoutResource(v.LatestVersion)

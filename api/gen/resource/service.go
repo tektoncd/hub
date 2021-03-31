@@ -157,6 +157,8 @@ type Catalog struct {
 	Name string
 	// Type of catalog
 	Type string
+	// URL of catalog
+	URL string
 }
 
 // The Version result type describes resource's version information.
@@ -372,14 +374,14 @@ func newResourceDataInfo(vres *resourceviews.ResourceDataView) *ResourceData {
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
 	}
-	if vres.Catalog != nil {
-		res.Catalog = transformResourceviewsCatalogViewToCatalog(vres.Catalog)
-	}
 	if vres.Tags != nil {
 		res.Tags = make([]*Tag, len(vres.Tags))
 		for i, val := range vres.Tags {
 			res.Tags[i] = transformResourceviewsTagViewToTag(val)
 		}
+	}
+	if vres.Catalog != nil {
+		res.Catalog = newCatalogMin(vres.Catalog)
 	}
 	if vres.LatestVersion != nil {
 		res.LatestVersion = newResourceVersionData(vres.LatestVersion)
@@ -403,14 +405,14 @@ func newResourceDataWithoutVersion(vres *resourceviews.ResourceDataView) *Resour
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
 	}
-	if vres.Catalog != nil {
-		res.Catalog = transformResourceviewsCatalogViewToCatalog(vres.Catalog)
-	}
 	if vres.Tags != nil {
 		res.Tags = make([]*Tag, len(vres.Tags))
 		for i, val := range vres.Tags {
 			res.Tags[i] = transformResourceviewsTagViewToTag(val)
 		}
+	}
+	if vres.Catalog != nil {
+		res.Catalog = newCatalogMin(vres.Catalog)
 	}
 	if vres.LatestVersion != nil {
 		res.LatestVersion = newResourceVersionDataWithoutResource(vres.LatestVersion)
@@ -434,9 +436,6 @@ func newResourceData(vres *resourceviews.ResourceDataView) *ResourceData {
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
 	}
-	if vres.Catalog != nil {
-		res.Catalog = transformResourceviewsCatalogViewToCatalog(vres.Catalog)
-	}
 	if vres.Tags != nil {
 		res.Tags = make([]*Tag, len(vres.Tags))
 		for i, val := range vres.Tags {
@@ -448,6 +447,9 @@ func newResourceData(vres *resourceviews.ResourceDataView) *ResourceData {
 		for i, val := range vres.Versions {
 			res.Versions[i] = transformResourceviewsResourceVersionDataViewToResourceVersionData(val)
 		}
+	}
+	if vres.Catalog != nil {
+		res.Catalog = newCatalogMin(vres.Catalog)
 	}
 	if vres.LatestVersion != nil {
 		res.LatestVersion = newResourceVersionDataWithoutResource(vres.LatestVersion)
@@ -464,14 +466,14 @@ func newResourceDataViewInfo(res *ResourceData) *resourceviews.ResourceDataView 
 		Kind:   &res.Kind,
 		Rating: &res.Rating,
 	}
-	if res.Catalog != nil {
-		vres.Catalog = transformCatalogToResourceviewsCatalogView(res.Catalog)
-	}
 	if res.Tags != nil {
 		vres.Tags = make([]*resourceviews.TagView, len(res.Tags))
 		for i, val := range res.Tags {
 			vres.Tags[i] = transformTagToResourceviewsTagView(val)
 		}
+	}
+	if res.Catalog != nil {
+		vres.Catalog = newCatalogViewMin(res.Catalog)
 	}
 	return vres
 }
@@ -485,14 +487,14 @@ func newResourceDataViewWithoutVersion(res *ResourceData) *resourceviews.Resourc
 		Kind:   &res.Kind,
 		Rating: &res.Rating,
 	}
-	if res.Catalog != nil {
-		vres.Catalog = transformCatalogToResourceviewsCatalogView(res.Catalog)
-	}
 	if res.Tags != nil {
 		vres.Tags = make([]*resourceviews.TagView, len(res.Tags))
 		for i, val := range res.Tags {
 			vres.Tags[i] = transformTagToResourceviewsTagView(val)
 		}
+	}
+	if res.Catalog != nil {
+		vres.Catalog = newCatalogViewMin(res.Catalog)
 	}
 	if res.LatestVersion != nil {
 		vres.LatestVersion = newResourceVersionDataViewWithoutResource(res.LatestVersion)
@@ -509,9 +511,6 @@ func newResourceDataView(res *ResourceData) *resourceviews.ResourceDataView {
 		Kind:   &res.Kind,
 		Rating: &res.Rating,
 	}
-	if res.Catalog != nil {
-		vres.Catalog = transformCatalogToResourceviewsCatalogView(res.Catalog)
-	}
 	if res.Tags != nil {
 		vres.Tags = make([]*resourceviews.TagView, len(res.Tags))
 		for i, val := range res.Tags {
@@ -524,8 +523,67 @@ func newResourceDataView(res *ResourceData) *resourceviews.ResourceDataView {
 			vres.Versions[i] = transformResourceVersionDataToResourceviewsResourceVersionDataView(val)
 		}
 	}
+	if res.Catalog != nil {
+		vres.Catalog = newCatalogViewMin(res.Catalog)
+	}
 	if res.LatestVersion != nil {
 		vres.LatestVersion = newResourceVersionDataViewWithoutResource(res.LatestVersion)
+	}
+	return vres
+}
+
+// newCatalogMin converts projected type Catalog to service type Catalog.
+func newCatalogMin(vres *resourceviews.CatalogView) *Catalog {
+	res := &Catalog{}
+	if vres.ID != nil {
+		res.ID = *vres.ID
+	}
+	if vres.Name != nil {
+		res.Name = *vres.Name
+	}
+	if vres.Type != nil {
+		res.Type = *vres.Type
+	}
+	return res
+}
+
+// newCatalog converts projected type Catalog to service type Catalog.
+func newCatalog(vres *resourceviews.CatalogView) *Catalog {
+	res := &Catalog{}
+	if vres.ID != nil {
+		res.ID = *vres.ID
+	}
+	if vres.Name != nil {
+		res.Name = *vres.Name
+	}
+	if vres.Type != nil {
+		res.Type = *vres.Type
+	}
+	if vres.URL != nil {
+		res.URL = *vres.URL
+	}
+	return res
+}
+
+// newCatalogViewMin projects result type Catalog to projected type CatalogView
+// using the "min" view.
+func newCatalogViewMin(res *Catalog) *resourceviews.CatalogView {
+	vres := &resourceviews.CatalogView{
+		ID:   &res.ID,
+		Name: &res.Name,
+		Type: &res.Type,
+	}
+	return vres
+}
+
+// newCatalogView projects result type Catalog to projected type CatalogView
+// using the "default" view.
+func newCatalogView(res *Catalog) *resourceviews.CatalogView {
+	vres := &resourceviews.CatalogView{
+		ID:   &res.ID,
+		Name: &res.Name,
+		Type: &res.Type,
+		URL:  &res.URL,
 	}
 	return vres
 }
@@ -784,21 +842,6 @@ func newResourceView(res *Resource) *resourceviews.ResourceView {
 	return vres
 }
 
-// transformResourceviewsCatalogViewToCatalog builds a value of type *Catalog
-// from a value of type *resourceviews.CatalogView.
-func transformResourceviewsCatalogViewToCatalog(v *resourceviews.CatalogView) *Catalog {
-	if v == nil {
-		return nil
-	}
-	res := &Catalog{
-		ID:   *v.ID,
-		Name: *v.Name,
-		Type: *v.Type,
-	}
-
-	return res
-}
-
 // transformResourceviewsTagViewToTag builds a value of type *Tag from a value
 // of type *resourceviews.TagView.
 func transformResourceviewsTagViewToTag(v *resourceviews.TagView) *Tag {
@@ -853,9 +896,6 @@ func transformResourceviewsResourceDataViewToResourceData(v *resourceviews.Resou
 	if v.Rating != nil {
 		res.Rating = *v.Rating
 	}
-	if v.Catalog != nil {
-		res.Catalog = transformResourceviewsCatalogViewToCatalog(v.Catalog)
-	}
 	if v.Tags != nil {
 		res.Tags = make([]*Tag, len(v.Tags))
 		for i, val := range v.Tags {
@@ -867,18 +907,6 @@ func transformResourceviewsResourceDataViewToResourceData(v *resourceviews.Resou
 		for i, val := range v.Versions {
 			res.Versions[i] = transformResourceviewsResourceVersionDataViewToResourceVersionData(val)
 		}
-	}
-
-	return res
-}
-
-// transformCatalogToResourceviewsCatalogView builds a value of type
-// *resourceviews.CatalogView from a value of type *Catalog.
-func transformCatalogToResourceviewsCatalogView(v *Catalog) *resourceviews.CatalogView {
-	res := &resourceviews.CatalogView{
-		ID:   &v.ID,
-		Name: &v.Name,
-		Type: &v.Type,
 	}
 
 	return res
@@ -925,9 +953,6 @@ func transformResourceDataToResourceviewsResourceDataView(v *ResourceData) *reso
 		Kind:   &v.Kind,
 		Rating: &v.Rating,
 	}
-	if v.Catalog != nil {
-		res.Catalog = transformCatalogToResourceviewsCatalogView(v.Catalog)
-	}
 	if v.Tags != nil {
 		res.Tags = make([]*resourceviews.TagView, len(v.Tags))
 		for i, val := range v.Tags {
@@ -939,6 +964,32 @@ func transformResourceDataToResourceviewsResourceDataView(v *ResourceData) *reso
 		for i, val := range v.Versions {
 			res.Versions[i] = transformResourceVersionDataToResourceviewsResourceVersionDataView(val)
 		}
+	}
+
+	return res
+}
+
+// transformResourceviewsCatalogViewToCatalog builds a value of type *Catalog
+// from a value of type *resourceviews.CatalogView.
+func transformResourceviewsCatalogViewToCatalog(v *resourceviews.CatalogView) *Catalog {
+	res := &Catalog{
+		ID:   *v.ID,
+		Name: *v.Name,
+		Type: *v.Type,
+		URL:  *v.URL,
+	}
+
+	return res
+}
+
+// transformCatalogToResourceviewsCatalogView builds a value of type
+// *resourceviews.CatalogView from a value of type *Catalog.
+func transformCatalogToResourceviewsCatalogView(v *Catalog) *resourceviews.CatalogView {
+	res := &resourceviews.CatalogView{
+		ID:   &v.ID,
+		Name: &v.Name,
+		Type: &v.Type,
+		URL:  &v.URL,
 	}
 
 	return res

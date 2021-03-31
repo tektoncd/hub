@@ -43,7 +43,9 @@ import (
 	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
 	statussvc "github.com/tektoncd/hub/api/pkg/service/status"
 	usersvc "github.com/tektoncd/hub/api/pkg/service/user"
+	v1catalog "github.com/tektoncd/hub/api/v1/gen/catalog"
 	v1resource "github.com/tektoncd/hub/api/v1/gen/resource"
+	v1catalogsvc "github.com/tektoncd/hub/api/v1/service/catalog"
 	v1resourcesvc "github.com/tektoncd/hub/api/v1/service/resource"
 )
 
@@ -86,6 +88,7 @@ func main() {
 		adminSvc      admin.Service
 		authSvc       auth.Service
 		catalogSvc    catalog.Service
+		v1catalogSvc  v1catalog.Service
 		categorySvc   category.Service
 		ratingSvc     rating.Service
 		resourceSvc   resource.Service
@@ -97,6 +100,7 @@ func main() {
 		adminSvc = adminsvc.New(api)
 		authSvc = authsvc.New(api)
 		catalogSvc = catalogsvc.New(api)
+		v1catalogSvc = v1catalogsvc.New(api)
 		categorySvc = categorysvc.New(api)
 		ratingSvc = ratingsvc.New(api)
 		resourceSvc = resourcesvc.New(api)
@@ -111,6 +115,7 @@ func main() {
 		adminEndpoints      *admin.Endpoints
 		authEndpoints       *auth.Endpoints
 		catalogEndpoints    *catalog.Endpoints
+		v1catalogEndpoints  *v1catalog.Endpoints
 		categoryEndpoints   *category.Endpoints
 		ratingEndpoints     *rating.Endpoints
 		resourceEndpoints   *resource.Endpoints
@@ -122,6 +127,7 @@ func main() {
 		adminEndpoints = admin.NewEndpoints(adminSvc)
 		authEndpoints = auth.NewEndpoints(authSvc)
 		catalogEndpoints = catalog.NewEndpoints(catalogSvc)
+		v1catalogEndpoints = v1catalog.NewEndpoints(v1catalogSvc)
 		categoryEndpoints = category.NewEndpoints(categorySvc)
 		ratingEndpoints = rating.NewEndpoints(ratingSvc)
 		resourceEndpoints = resource.NewEndpoints(resourceSvc)
@@ -172,6 +178,7 @@ func main() {
 				adminEndpoints,
 				authEndpoints,
 				catalogEndpoints,
+				v1catalogEndpoints,
 				categoryEndpoints,
 				ratingEndpoints,
 				resourceEndpoints,

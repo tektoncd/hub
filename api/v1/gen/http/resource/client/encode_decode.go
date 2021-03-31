@@ -773,6 +773,7 @@ func unmarshalCatalogResponseBodyToResourceviewsCatalogView(v *CatalogResponseBo
 		ID:   v.ID,
 		Name: v.Name,
 		Type: v.Type,
+		URL:  v.URL,
 	}
 
 	return res

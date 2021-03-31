@@ -343,6 +343,7 @@ paths:
                 data:
                 - catalog:
                     id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -368,6 +369,7 @@ paths:
                     version: "0.2"
                 - catalog:
                     id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -471,6 +473,7 @@ paths:
                 data:
                   catalog:
                     id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -639,6 +642,7 @@ paths:
                 data:
                   catalog:
                     id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -986,6 +990,7 @@ paths:
                 data:
                 - catalog:
                     id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -1011,6 +1016,7 @@ paths:
                     version: "0.2"
                 - catalog:
                     id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -1432,14 +1438,20 @@ components:
           enum:
           - official
           - community
+        url:
+          type: string
+          description: URL of catalog
+          example: https://github.com/tektoncd/hub
       example:
         id: 1
         name: Tekton
         type: community
+        url: https://github.com/tektoncd/hub
       required:
       - id
       - name
       - type
+      - url
     Category:
       type: object
       properties:
@@ -1698,6 +1710,7 @@ components:
         data:
           catalog:
             id: 1
+            name: tekton
             type: community
           id: 1
           kind: task
@@ -1769,6 +1782,7 @@ components:
       example:
         catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -1808,6 +1822,7 @@ components:
       example:
       - catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -1833,6 +1848,7 @@ components:
           version: "0.2"
       - catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -1858,6 +1874,7 @@ components:
           version: "0.2"
       - catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -2016,6 +2033,7 @@ components:
         data:
         - catalog:
             id: 1
+            name: tekton
             type: community
           id: 1
           kind: task
@@ -2041,6 +2059,7 @@ components:
             version: "0.2"
         - catalog:
             id: 1
+            name: tekton
             type: community
           id: 1
           kind: task

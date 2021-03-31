@@ -15,31 +15,32 @@
 package design
 
 import (
+	types "github.com/tektoncd/hub/api/design/types"
 	. "goa.design/goa/v3/dsl"
-	cors "goa.design/plugins/v3/cors/dsl"
-
-	// Enables the zaplogger plugin
-	_ "goa.design/plugins/v3/zaplogger"
 )
 
-var _ = API("v1", func() {
-	Title("Tekton Hub")
-	Description("HTTP services for managing Tekton Hub")
-	Version("1.0")
-	Meta("swagger:example", "false")
-	Server("hub", func() {
-		Host("production", func() {
-			URI("https://api.hub.tekton.dev")
+var _ = Service("catalog", func() {
+	Description("List of catalogs")
+
+	HTTP(func() {
+		Path("/v1")
+	})
+
+	Error("internal-error", ErrorResult, "Internal Server Error")
+
+	Method("List", func() {
+		Description("List all Catalogs")
+
+		Result(func() {
+			Attribute("data", ArrayOf(types.Catalog))
 		})
 
-		Services(
-			"catalog",
-			"resource",
-			"swagger",
-		)
+		HTTP(func() {
+			GET("/catalogs")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+		})
 	})
 
-	cors.Origin("*", func() {
-		cors.Methods("GET")
-	})
 })

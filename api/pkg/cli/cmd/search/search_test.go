@@ -160,6 +160,7 @@ func TestSearch_TableFormat(t *testing.T) {
 	assert.Equal(t, gock.IsDone(), true)
 }
 
+// Updates golden file as GOA is unable to pick the min view of catalog
 func TestSearch_JSONFormat(t *testing.T) {
 	cli := test.NewCLI()
 

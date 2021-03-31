@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 
+	catalogc "github.com/tektoncd/hub/api/v1/gen/http/catalog/client"
 	resourcec "github.com/tektoncd/hub/api/v1/gen/http/resource/client"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
@@ -23,13 +24,15 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
+	return `catalog list
+resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
-	return os.Args[0] + ` resource query --name "buildah" --kinds '[
+	return os.Args[0] + ` catalog list` + "\n" +
+		os.Args[0] + ` resource query --name "buildah" --kinds '[
       "task",
       "pipelines"
    ]' --tags '[
@@ -49,6 +52,10 @@ func ParseEndpoint(
 	restore bool,
 ) (goa.Endpoint, interface{}, error) {
 	var (
+		catalogFlags = flag.NewFlagSet("catalog", flag.ContinueOnError)
+
+		catalogListFlags = flag.NewFlagSet("list", flag.ExitOnError)
+
 		resourceFlags = flag.NewFlagSet("resource", flag.ContinueOnError)
 
 		resourceQueryFlags     = flag.NewFlagSet("query", flag.ExitOnError)
@@ -81,6 +88,9 @@ func ParseEndpoint(
 		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
 		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
 	)
+	catalogFlags.Usage = catalogUsage
+	catalogListFlags.Usage = catalogListUsage
+
 	resourceFlags.Usage = resourceUsage
 	resourceQueryFlags.Usage = resourceQueryUsage
 	resourceListFlags.Usage = resourceListUsage
@@ -105,6 +115,8 @@ func ParseEndpoint(
 	{
 		svcn = flag.Arg(0)
 		switch svcn {
+		case "catalog":
+			svcf = catalogFlags
 		case "resource":
 			svcf = resourceFlags
 		default:
@@ -122,6 +134,13 @@ func ParseEndpoint(
 	{
 		epn = svcf.Arg(0)
 		switch svcn {
+		case "catalog":
+			switch epn {
+			case "list":
+				epf = catalogListFlags
+
+			}
+
 		case "resource":
 			switch epn {
 			case "query":
@@ -167,6 +186,13 @@ func ParseEndpoint(
 	)
 	{
 		switch svcn {
+		case "catalog":
+			c := catalogc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "list":
+				endpoint = c.List()
+				data = nil
+			}
 		case "resource":
 			c := resourcec.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
@@ -199,6 +225,29 @@ func ParseEndpoint(
 	}
 
 	return endpoint, data, nil
+}
+
+// catalogUsage displays the usage of the catalog command and its subcommands.
+func catalogUsage() {
+	fmt.Fprintf(os.Stderr, `List of catalogs
+Usage:
+    %s [globalflags] catalog COMMAND [flags]
+
+COMMAND:
+    list: List all Catalogs
+
+Additional help:
+    %s catalog COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func catalogListUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] catalog list
+
+List all Catalogs
+
+Example:
+    `+os.Args[0]+` catalog list
+`, os.Args[0])
 }
 
 // resourceUsage displays the usage of the resource command and its subcommands.
@@ -297,7 +346,7 @@ Find resources using name of catalog, resource name and kind of resource
     -name STRING: Name of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah"
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah"
 `, os.Args[0])
 }
 
