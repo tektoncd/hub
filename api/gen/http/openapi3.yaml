@@ -4,7 +4,7 @@ info:
   description: HTTP services for managing Tekton Hub
   version: "1.0"
 servers:
-- url: http://api.hub.tekton.dev
+- url: https://api.hub.tekton.dev
 paths:
   /:
     get:
