@@ -6,6 +6,48 @@ info:
 servers:
 - url: https://api.hub.tekton.dev
 paths:
+  /v1/catalogs:
+    get:
+      tags:
+      - catalog
+      summary: List catalog
+      description: List all Catalogs
+      operationId: catalog#List
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListResponseBody'
+              example:
+                data:
+                - id: 1
+                  name: Tekton
+                  type: community
+                  url: https://github.com/tektoncd/hub
+                - id: 1
+                  name: Tekton
+                  type: community
+                  url: https://github.com/tektoncd/hub
+                - id: 1
+                  name: Tekton
+                  type: community
+                  url: https://github.com/tektoncd/hub
+                - id: 1
+                  name: Tekton
+                  type: community
+                  url: https://github.com/tektoncd/hub
+        "500":
+          description: Internal Server Error response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
   /v1/query:
     get:
       tags:
@@ -32,7 +74,7 @@ paths:
           type: array
           items:
             type: string
-            example: Quod non saepe maiores quia.
+            example: Sed libero aut velit.
           description: Kinds of resource to filter by
           example:
           - task
@@ -48,7 +90,7 @@ paths:
           type: array
           items:
             type: string
-            example: Est voluptatum facere expedita aut.
+            example: Optio cumque autem ratione.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -90,6 +132,7 @@ paths:
                 data:
                 - catalog:
                     id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -115,56 +158,7 @@ paths:
                     version: "0.2"
                 - catalog:
                     id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image
-                      and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-                - catalog:
-                    id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image
-                      and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-                - catalog:
-                    id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -247,7 +241,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: task
+        example: pipeline
       - name: name
         in: path
         description: Name of resource
@@ -268,6 +262,7 @@ paths:
                 data:
                   catalog:
                     id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -340,7 +335,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: name of resource
@@ -436,6 +431,7 @@ paths:
                 data:
                   catalog:
                     id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -634,6 +630,7 @@ paths:
                 data:
                 - catalog:
                     id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -659,56 +656,7 @@ paths:
                     version: "0.2"
                 - catalog:
                     id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image
-                      and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-                - catalog:
-                    id: 1
-                    type: community
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image
-                      and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-                - catalog:
-                    id: 1
+                    name: tekton
                     type: community
                   id: 1
                   kind: task
@@ -772,14 +720,20 @@ components:
           enum:
           - official
           - community
+        url:
+          type: string
+          description: URL of catalog
+          example: https://github.com/tektoncd/hub
       example:
         id: 1
         name: Tekton
         type: community
+        url: https://github.com/tektoncd/hub
       required:
       - id
       - name
       - type
+      - url
     Error:
       type: object
       properties:
@@ -804,11 +758,11 @@ components:
         temporary:
           type: boolean
           description: Is the error temporary?
-          example: true
+          example: false
         timeout:
           type: boolean
           description: Is the error a timeout?
-          example: false
+          example: true
       description: Internal Server Error
       example:
         id: 3F1FKVRR
@@ -821,6 +775,44 @@ components:
       - temporary
       - timeout
       - fault
+    ListResponseBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Catalog'
+          example:
+          - id: 1
+            name: Tekton
+            type: community
+            url: https://github.com/tektoncd/hub
+          - id: 1
+            name: Tekton
+            type: community
+            url: https://github.com/tektoncd/hub
+          - id: 1
+            name: Tekton
+            type: community
+            url: https://github.com/tektoncd/hub
+      example:
+        data:
+        - id: 1
+          name: Tekton
+          type: community
+          url: https://github.com/tektoncd/hub
+        - id: 1
+          name: Tekton
+          type: community
+          url: https://github.com/tektoncd/hub
+        - id: 1
+          name: Tekton
+          type: community
+          url: https://github.com/tektoncd/hub
+        - id: 1
+          name: Tekton
+          type: community
+          url: https://github.com/tektoncd/hub
     Resource:
       type: object
       properties:
@@ -830,6 +822,7 @@ components:
         data:
           catalog:
             id: 1
+            name: tekton
             type: community
           id: 1
           kind: task
@@ -901,6 +894,7 @@ components:
       example:
         catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -940,6 +934,7 @@ components:
       example:
       - catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -965,6 +960,7 @@ components:
           version: "0.2"
       - catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -990,31 +986,7 @@ components:
           version: "0.2"
       - catalog:
           id: 1
-          type: community
-        id: 1
-        kind: task
-        latestVersion:
-          description: Buildah task builds source into a container image and then
-            pushes it to a container registry.
-          displayName: Buildah
-          id: 1
-          minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-          updatedAt: 2020-01-01 12:00:00 +0000 UTC
-          version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-        name: buildah
-        rating: 4.3
-        tags:
-        - id: 1
-          name: image-build
-        versions:
-        - id: 1
-          version: "0.1"
-        - id: 2
-          version: "0.2"
-      - catalog:
-          id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -1173,6 +1145,7 @@ components:
         data:
         - catalog:
             id: 1
+            name: tekton
             type: community
           id: 1
           kind: task
@@ -1198,56 +1171,7 @@ components:
             version: "0.2"
         - catalog:
             id: 1
-            type: community
-          id: 1
-          kind: task
-          latestVersion:
-            description: Buildah task builds source into a container image and then
-              pushes it to a container registry.
-            displayName: Buildah
-            id: 1
-            minPipelinesVersion: 0.12.1
-            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-            updatedAt: 2020-01-01 12:00:00 +0000 UTC
-            version: "0.1"
-            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-          name: buildah
-          rating: 4.3
-          tags:
-          - id: 1
-            name: image-build
-          versions:
-          - id: 1
-            version: "0.1"
-          - id: 2
-            version: "0.2"
-        - catalog:
-            id: 1
-            type: community
-          id: 1
-          kind: task
-          latestVersion:
-            description: Buildah task builds source into a container image and then
-              pushes it to a container registry.
-            displayName: Buildah
-            id: 1
-            minPipelinesVersion: 0.12.1
-            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-            updatedAt: 2020-01-01 12:00:00 +0000 UTC
-            version: "0.1"
-            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-          name: buildah
-          rating: 4.3
-          tags:
-          - id: 1
-            name: image-build
-          versions:
-          - id: 1
-            version: "0.1"
-          - id: 2
-            version: "0.2"
-        - catalog:
-            id: 1
+            name: tekton
             type: community
           id: 1
           kind: task

@@ -322,7 +322,7 @@ type ResourceDataResponseBodyWithoutVersion struct {
 	// Name of resource
 	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog to which resource belongs
-	Catalog *CatalogResponseBody `form:"catalog" json:"catalog" xml:"catalog"`
+	Catalog *CatalogResponseBodyMin `form:"catalog" json:"catalog" xml:"catalog"`
 	// Kind of resource
 	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Latest version of resource
@@ -333,8 +333,8 @@ type ResourceDataResponseBodyWithoutVersion struct {
 	Rating float64 `form:"rating" json:"rating" xml:"rating"`
 }
 
-// CatalogResponseBody is used to define fields on response body types.
-type CatalogResponseBody struct {
+// CatalogResponseBodyMin is used to define fields on response body types.
+type CatalogResponseBodyMin struct {
 	// ID is the unique id of the catalog
 	ID uint `form:"id" json:"id" xml:"id"`
 	// Name of catalog
@@ -423,7 +423,7 @@ type ResourceDataResponseBodyInfo struct {
 	// Name of resource
 	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog to which resource belongs
-	Catalog *CatalogResponseBody `form:"catalog" json:"catalog" xml:"catalog"`
+	Catalog *CatalogResponseBodyMin `form:"catalog" json:"catalog" xml:"catalog"`
 	// Kind of resource
 	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Tags related to resource
@@ -439,7 +439,7 @@ type ResourceDataResponseBody struct {
 	// Name of resource
 	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog to which resource belongs
-	Catalog *CatalogResponseBody `form:"catalog" json:"catalog" xml:"catalog"`
+	Catalog *CatalogResponseBodyMin `form:"catalog" json:"catalog" xml:"catalog"`
 	// Kind of resource
 	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Latest version of resource

@@ -6,7 +6,8 @@
 			"Catalog": {
 				"ID": 1,
 				"Name": "foo",
-				"Type": "community"
+				"Type": "community",
+				"URL": null
 			},
 			"Kind": "Pipeline",
 			"LatestVersion": {

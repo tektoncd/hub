@@ -12,34 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package design
+package catalog
 
 import (
-	. "goa.design/goa/v3/dsl"
-	cors "goa.design/plugins/v3/cors/dsl"
+	"context"
+	"testing"
 
-	// Enables the zaplogger plugin
-	_ "goa.design/plugins/v3/zaplogger"
+	"github.com/stretchr/testify/assert"
+	"github.com/tektoncd/hub/api/pkg/testutils"
 )
 
-var _ = API("v1", func() {
-	Title("Tekton Hub")
-	Description("HTTP services for managing Tekton Hub")
-	Version("1.0")
-	Meta("swagger:example", "false")
-	Server("hub", func() {
-		Host("production", func() {
-			URI("https://api.hub.tekton.dev")
-		})
+func TestCatalog_List(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
 
-		Services(
-			"catalog",
-			"resource",
-			"swagger",
-		)
-	})
+	catalog := New(tc)
+	all, err := catalog.List(context.Background())
 
-	cors.Origin("*", func() {
-		cors.Methods("GET")
-	})
-})
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(all.Data))
+
+}

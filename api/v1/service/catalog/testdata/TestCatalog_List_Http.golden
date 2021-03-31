@@ -1,0 +1,16 @@
+{
+	"data": [
+		{
+			"id": 1,
+			"name": "catalog-official",
+			"type": "official",
+			"url": "https:/github.com/tektoncd/catalog"
+		},
+		{
+			"id": 2,
+			"name": "catalog-community",
+			"type": "community",
+			"url": "https:/github.com/tektoncd/catalog-community"
+		}
+	]
+}

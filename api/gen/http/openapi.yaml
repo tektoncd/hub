@@ -1490,8 +1490,8 @@ definitions:
     - id
     - catalogName
     - status
-  CatalogResponseBody:
-    title: CatalogResponseBody
+  CatalogResponseBodyMin:
+    title: 'Mediatype identifier: application/vnd.hub.catalog; view=default'
     type: object
     properties:
       id:
@@ -1510,6 +1510,7 @@ definitions:
         enum:
         - official
         - community
+    description: CatalogResponseBodyMin result type (default view)
     example:
       id: 1
       name: Tekton
@@ -2219,6 +2220,7 @@ definitions:
       data:
         catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -2466,6 +2468,7 @@ definitions:
       data:
         catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -2617,7 +2620,7 @@ definitions:
     type: object
     properties:
       catalog:
-        $ref: '#/definitions/CatalogResponseBody'
+        $ref: '#/definitions/CatalogResponseBodyMin'
       id:
         type: integer
         description: ID is the unique id of the resource
@@ -2660,6 +2663,7 @@ definitions:
     example:
       catalog:
         id: 1
+        name: tekton
         type: community
       id: 1
       kind: task
@@ -2697,7 +2701,7 @@ definitions:
     type: object
     properties:
       catalog:
-        $ref: '#/definitions/CatalogResponseBody'
+        $ref: '#/definitions/CatalogResponseBodyMin'
       id:
         type: integer
         description: ID is the unique id of the resource
@@ -2728,6 +2732,7 @@ definitions:
     example:
       catalog:
         id: 1
+        name: tekton
         type: community
       id: 1
       kind: task
@@ -2748,7 +2753,7 @@ definitions:
     type: object
     properties:
       catalog:
-        $ref: '#/definitions/CatalogResponseBody'
+        $ref: '#/definitions/CatalogResponseBodyMin'
       id:
         type: integer
         description: ID is the unique id of the resource
@@ -2782,6 +2787,7 @@ definitions:
     example:
       catalog:
         id: 1
+        name: tekton
         type: community
       id: 1
       kind: task
@@ -2819,6 +2825,7 @@ definitions:
     example:
     - catalog:
         id: 1
+        name: tekton
         type: community
       id: 1
       kind: task
@@ -2844,6 +2851,7 @@ definitions:
         version: "0.2"
     - catalog:
         id: 1
+        name: tekton
         type: community
       id: 1
       kind: task
@@ -2923,6 +2931,7 @@ definitions:
       data:
       - catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -2943,6 +2952,7 @@ definitions:
           name: image-build
       - catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -3109,6 +3119,7 @@ definitions:
       data:
       - catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task
@@ -3129,6 +3140,7 @@ definitions:
           name: image-build
       - catalog:
           id: 1
+          name: tekton
           type: community
         id: 1
         kind: task

@@ -50,7 +50,7 @@ var Category = Type("Category", func() {
 	Required("id", "name", "tags")
 })
 
-var Catalog = Type("Catalog", func() {
+var Catalog = ResultType("application/vnd.hub.catalog", "Catalog", func() {
 	Attribute("id", UInt, "ID is the unique id of the catalog", func() {
 		Example("id", 1)
 	})
@@ -61,8 +61,24 @@ var Catalog = Type("Catalog", func() {
 		Enum("official", "community")
 		Example("type", "community")
 	})
+	Attribute("url", String, "URL of catalog", func() {
+		Example("url", "https://github.com/tektoncd/hub")
+	})
 
-	Required("id", "name", "type")
+	View("min", func() {
+		Attribute("id")
+		Attribute("name")
+		Attribute("type")
+	})
+
+	View("default", func() {
+		Attribute("id")
+		Attribute("name")
+		Attribute("type")
+		Attribute("url")
+	})
+
+	Required("id", "name", "type", "url")
 })
 
 var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data", "ResourceVersionData", func() {
@@ -157,8 +173,9 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Example("name", "buildah")
 	})
 	Attribute("catalog", Catalog, "Type of catalog to which resource belongs", func() {
+		View("min")
 		Example("catalog", func() {
-			Value(Val{"id": 1, "type": "community"})
+			Value(Val{"id": 1, "name": "tekton", "type": "community"})
 		})
 	})
 	Attribute("kind", String, "Kind of resource", func() {
@@ -213,7 +230,9 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 	View("withoutVersion", func() {
 		Attribute("id")
 		Attribute("name")
-		Attribute("catalog")
+		Attribute("catalog", func() {
+			View("min")
+		})
 		Attribute("kind")
 		Attribute("latestVersion")
 		Attribute("tags")
