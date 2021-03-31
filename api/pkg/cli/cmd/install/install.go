@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/go-version"
 	"github.com/spf13/cobra"
 	"github.com/tektoncd/hub/api/pkg/cli/app"
 	"github.com/tektoncd/hub/api/pkg/cli/flag"
@@ -199,22 +198,19 @@ func (opts *options) errors(pipelinesVersion string, errors []error) error {
 			existingVersion, ok := opts.resource.GetLabels()[versionLabel]
 			if ok {
 
-				exVer, _ := version.NewVersion(existingVersion)
-				newVer, _ := version.NewVersion(resourceVersion)
-
 				switch {
-				case exVer.Equal(newVer):
+				case existingVersion == resourceVersion:
 					return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use reinstall command to overwrite existing",
 						strings.Title(opts.resource.GetKind()), opts.resource.GetName(), existingVersion, opts.cs.Namespace())
 
-				case exVer.LessThan(newVer):
+				case existingVersion < resourceVersion:
 					if opts.version == "" {
 						resourceVersion = resourceVersion + "(latest)"
 					}
 					return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use upgrade command to install v%s",
 						strings.Title(opts.resource.GetKind()), opts.resource.GetName(), existingVersion, opts.cs.Namespace(), resourceVersion)
 
-				case exVer.GreaterThan(newVer):
+				case existingVersion > resourceVersion:
 					return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use downgrade command to install v%s",
 						strings.Title(opts.resource.GetKind()), opts.resource.GetName(), existingVersion, opts.cs.Namespace(), resourceVersion)
 
@@ -230,7 +226,7 @@ func (opts *options) errors(pipelinesVersion string, errors []error) error {
 		}
 
 		if err == installer.ErrVersionIncompatible {
-			return fmt.Errorf("Task %s(%s) requires Tekton Pipelines min version v%s but found %s", opts.name(), resourceVersion, resourcePipelineMinVersion, pipelinesVersion)
+			return fmt.Errorf("%s %s(%s) requires Tekton Pipelines min version v%s but found %s", strings.Title(opts.kind), opts.name(), resourceVersion, resourcePipelineMinVersion, pipelinesVersion)
 		}
 
 		if strings.Contains(err.Error(), "mutation failed: cannot decode incoming new object") {

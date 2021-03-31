@@ -19,7 +19,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/hashicorp/go-version"
 	tknVer "github.com/tektoncd/hub/api/pkg/cli/version"
 	kErr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -52,7 +51,7 @@ const (
 	update             action = "update"
 	upgrade            action = "upgrade"
 	downgrade          action = " downgrade"
-	resourceMinVersion string = "tekton.dev/pipelines.minVersion"
+	ResourceMinVersion string = "tekton.dev/pipelines.minVersion"
 )
 
 func (i *Installer) TektonPipelinesVersion() {
@@ -93,7 +92,7 @@ func (i *Installer) Install(data []byte, catalog, namespace string) (*unstructur
 		return nil, errors
 	}
 
-	newResPipMinVersion := newRes.GetAnnotations()[resourceMinVersion]
+	newResPipMinVersion := newRes.GetAnnotations()[ResourceMinVersion]
 	err = i.checkVersion("v" + newResPipMinVersion)
 	if err != nil {
 		if err == ErrWarnVersionNotFound {
@@ -147,34 +146,53 @@ func (i *Installer) LookupInstalled(name, kind, namespace string) (*unstructured
 }
 
 // Update will updates an existing resource with the passed resource if exist
-func (i *Installer) Update(data []byte, catalog, namespace string) (*unstructured.Unstructured, error) {
+func (i *Installer) Update(data []byte, catalog, namespace string) (*unstructured.Unstructured, []error) {
 	return i.updateByAction(data, catalog, namespace, update)
 }
 
 // Upgrade an existing resource to a version upper version by passing it
-func (i *Installer) Upgrade(data []byte, catalog, namespace string) (*unstructured.Unstructured, error) {
+func (i *Installer) Upgrade(data []byte, catalog, namespace string) (*unstructured.Unstructured, []error) {
 	return i.updateByAction(data, catalog, namespace, upgrade)
 }
 
 // Downgrade an existing resource to a version lower version by passing it
-func (i *Installer) Downgrade(data []byte, catalog, namespace string) (*unstructured.Unstructured, error) {
+func (i *Installer) Downgrade(data []byte, catalog, namespace string) (*unstructured.Unstructured, []error) {
 	return i.updateByAction(data, catalog, namespace, downgrade)
 }
 
-func (i *Installer) updateByAction(data []byte, catalog, namespace string, action action) (*unstructured.Unstructured, error) {
+func (i *Installer) updateByAction(data []byte, catalog, namespace string, action action) (*unstructured.Unstructured, []error) {
+
+	var errors []error
 
 	newRes, err := toUnstructured(data)
 	if err != nil {
-		return nil, err
+		errors = append(errors, err)
+		return nil, errors
+	}
+
+	newResPipMinVersion := newRes.GetAnnotations()[ResourceMinVersion]
+
+	err = i.checkVersion("v" + newResPipMinVersion)
+	if err != nil {
+		if err == ErrWarnVersionNotFound {
+			errors = append(errors, err)
+		}
+
+		if err == ErrVersionIncompatible {
+			errors = append(errors, err)
+			return newRes, errors
+		}
 	}
 
 	if i.existingRes == nil {
 		i.existingRes, err = i.get(newRes.GetName(), newRes.GetKind(), namespace, metav1.GetOptions{})
 		if err != nil {
 			if kErr.IsNotFound(err) {
-				return nil, ErrNotFound
+				errors = append(errors, ErrNotFound)
+				return nil, errors
 			}
-			return nil, err
+			errors = append(errors, err)
+			return nil, errors
 		}
 	}
 
@@ -184,26 +202,29 @@ func (i *Installer) updateByAction(data []byte, catalog, namespace string, actio
 	switch action {
 	case upgrade:
 		if err = isUpgradable(existingVersion, newVersion); err != nil {
-			return i.existingRes, err
+			errors = append(errors, err)
+			return i.existingRes, errors
 		}
 	case downgrade:
 		if err = isDowngradable(existingVersion, newVersion); err != nil {
-			return i.existingRes, err
+			errors = append(errors, err)
+			return i.existingRes, errors
 		}
 	}
 
-	return i.updateRes(i.existingRes, newRes, catalog, namespace)
+	res, err := i.updateRes(i.existingRes, newRes, catalog, namespace)
+	if err != nil {
+		errors = append(errors, err)
+	}
+	return res, errors
 }
 
 func isUpgradable(existingVersion, newVersion string) error {
 
-	exVer, _ := version.NewVersion(existingVersion)
-	newVer, _ := version.NewVersion(newVersion)
-
-	if newVer.Equal(exVer) {
+	if newVersion == existingVersion {
 		return ErrSameVersion
 	}
-	if newVer.LessThan(exVer) {
+	if newVersion < existingVersion {
 		return ErrLowerVersion
 	}
 	return nil
@@ -211,13 +232,10 @@ func isUpgradable(existingVersion, newVersion string) error {
 
 func isDowngradable(existingVersion, newVersion string) error {
 
-	exVer, _ := version.NewVersion(existingVersion)
-	newVer, _ := version.NewVersion(newVersion)
-
-	if newVer.Equal(exVer) {
+	if newVersion == existingVersion {
 		return ErrSameVersion
 	}
-	if newVer.GreaterThan(exVer) {
+	if newVersion > existingVersion {
 		return ErrHigherVersion
 	}
 	return nil
