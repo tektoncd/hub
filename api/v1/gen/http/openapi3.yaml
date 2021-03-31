@@ -32,7 +32,7 @@ paths:
           type: array
           items:
             type: string
-            example: Non sint assumenda non facere ratione eos.
+            example: Quod non saepe maiores quia.
           description: Kinds of resource to filter by
           example:
           - task
@@ -48,7 +48,7 @@ paths:
           type: array
           items:
             type: string
-            example: Quis sed dolorem.
+            example: Est voluptatum facere expedita aut.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -78,10 +78,10 @@ paths:
           enum:
           - exact
           - contains
-        example: exact
+        example: contains
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -189,44 +189,35 @@ paths:
                   - id: 2
                     version: "0.2"
         "400":
-          description: ""
+          description: Bad Request response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
   /v1/resource/{catalog}/{kind}/{name}:
     get:
       tags:
@@ -252,7 +243,7 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: pipeline
+          example: task
           enum:
           - task
           - pipeline
@@ -268,7 +259,7 @@ paths:
         example: buildah
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -301,31 +292,25 @@ paths:
                   - id: 2
                     version: "0.2"
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
   /v1/resource/{catalog}/{kind}/{name}/{version}:
     get:
       tags:
@@ -355,7 +340,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: task
+        example: pipeline
       - name: name
         in: path
         description: name of resource
@@ -376,7 +361,7 @@ paths:
         example: "0.1"
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -404,31 +389,25 @@ paths:
                   version: "0.1"
                   webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
   /v1/resource/{id}:
     get:
       tags:
@@ -448,7 +427,7 @@ paths:
         example: 1
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -481,31 +460,25 @@ paths:
                   - id: 2
                     version: "0.2"
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: true
-                timeout: true
   /v1/resource/{id}/versions:
     get:
       tags:
@@ -525,7 +498,7 @@ paths:
         example: 1
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -547,31 +520,25 @@ paths:
                     version: "0.2"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
   /v1/resource/version/{versionID}:
     get:
       tags:
@@ -591,7 +558,7 @@ paths:
         example: 1
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -619,31 +586,25 @@ paths:
                   version: "0.1"
                   webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         "404":
-          description: ""
+          description: Not Found response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: false
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: true
   /v1/resources:
     get:
       tags:
@@ -664,7 +625,7 @@ paths:
         example: 100
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -772,18 +733,15 @@ paths:
                   - id: 2
                     version: "0.2"
         "500":
-          description: ""
+          description: Internal Server Error response.
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                fault: true
-                id: 123abc
-                message: parameter 'p' must be an integer
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
                 name: bad_request
-                temporary: false
-                timeout: false
   /v1/schema/swagger.json:
     get:
       tags:
@@ -853,12 +811,9 @@ components:
           example: false
       description: Internal Server Error
       example:
-        fault: true
-        id: 123abc
-        message: parameter 'p' must be an integer
+        id: 3F1FKVRR
+        message: Value of ID must be an integer
         name: bad_request
-        temporary: true
-        timeout: true
       required:
       - name
       - id
