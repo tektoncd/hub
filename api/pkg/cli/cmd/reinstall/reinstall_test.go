@@ -181,7 +181,7 @@ func TestReinstall_DifferentVersionPassedByFlag(t *testing.T) {
 
 	err := opts.run()
 	assert.NoError(t, err)
-	assert.Equal(t, "Task foo(0.3) reinstalled in hub namespace\n", buf.String())
+	assert.Equal(t, "WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v0.12\nTask foo(0.3) reinstalled in hub namespace\n", buf.String())
 	assert.Equal(t, gock.IsDone(), true)
 }
 
@@ -233,7 +233,7 @@ func TestReinstall_DifferentCatalogPassedByFlag(t *testing.T) {
 
 	err := opts.run()
 	assert.NoError(t, err)
-	assert.Equal(t, "Task foo(0.3) reinstalled in hub namespace\n", buf.String())
+	assert.Equal(t, "WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v0.12\nTask foo(0.3) reinstalled in hub namespace\n", buf.String())
 	assert.Equal(t, gock.IsDone(), true)
 }
 
@@ -282,6 +282,114 @@ func TestReinstall(t *testing.T) {
 
 	err := opts.run()
 	assert.NoError(t, err)
+	assert.Equal(t, "WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v0.12\nTask foo(0.3) reinstalled in hub namespace\n", buf.String())
+	assert.Equal(t, gock.IsDone(), true)
+}
+
+func TestReinstall_RespectPipelinesVersionSuccess(t *testing.T) {
+	cli := test.NewCLI()
+
+	defer gock.Off()
+
+	resVersion := &res.ResourceVersion{Data: resVersion}
+	res := res.NewViewedResourceVersion(resVersion, "default")
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.3").
+		Reply(200).
+		JSON(&res.Projected)
+
+	gock.New("http://raw.github.url").
+		Get("/foo/0.3/foo.yaml").
+		Reply(200).
+		File("./testdata/foo-v0.3.yaml")
+
+	buf := new(bytes.Buffer)
+	cli.SetStream(buf, buf)
+
+	existingTask := &v1beta1.Task{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "foo",
+			Namespace: "hub",
+			Labels: map[string]string{
+				"hub.tekton.dev/catalog":    "tekton",
+				"app.kubernetes.io/version": "0.3",
+			}},
+	}
+
+	version := "v1beta1"
+	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+
+	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
+	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
+
+	opts := &options{
+		cs:   test.FakeClientSet(cs.Pipeline, dynamic, "hub"),
+		cli:  cli,
+		kind: "task",
+		args: []string{"foo"},
+	}
+
+	err := test.CreateTektonPipelineController(dynamic, "v0.14.0")
+	if err != nil {
+		t.Errorf("%s", err.Error())
+	}
+
+	err = opts.run()
+	assert.NoError(t, err)
 	assert.Equal(t, "Task foo(0.3) reinstalled in hub namespace\n", buf.String())
+	assert.Equal(t, gock.IsDone(), true)
+}
+
+func TestReinstall_RespectPipelinesVersionFailure(t *testing.T) {
+	cli := test.NewCLI()
+
+	defer gock.Off()
+
+	resVersion := &res.ResourceVersion{Data: resVersion}
+	res := res.NewViewedResourceVersion(resVersion, "default")
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.3").
+		Reply(200).
+		JSON(&res.Projected)
+
+	gock.New("http://raw.github.url").
+		Get("/foo/0.3/foo.yaml").
+		Reply(200).
+		File("./testdata/foo-v0.3.yaml")
+
+	buf := new(bytes.Buffer)
+	cli.SetStream(buf, buf)
+
+	existingTask := &v1beta1.Task{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "foo",
+			Namespace: "hub",
+			Labels: map[string]string{
+				"hub.tekton.dev/catalog":    "tekton",
+				"app.kubernetes.io/version": "0.3",
+			}},
+	}
+
+	version := "v1beta1"
+	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+
+	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
+	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
+
+	opts := &options{
+		cs:   test.FakeClientSet(cs.Pipeline, dynamic, "hub"),
+		cli:  cli,
+		kind: "task",
+		args: []string{"foo"},
+	}
+
+	err := test.CreateTektonPipelineController(dynamic, "v0.11.0")
+	if err != nil {
+		t.Errorf("%s", err.Error())
+	}
+
+	err = opts.run()
+	assert.Error(t, err)
+	assert.EqualError(t, err, "Task foo(0.3) can't be reinstalled as it requires Pipelines min version v0.12 but found v0.11.0")
 	assert.Equal(t, gock.IsDone(), true)
 }

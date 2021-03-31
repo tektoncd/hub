@@ -202,7 +202,7 @@ func TestDowngrade(t *testing.T) {
 
 	err := opts.run()
 	assert.NoError(t, err)
-	assert.Equal(t, "Task foo downgraded to v0.2 in hub namespace\n", buf.String())
+	assert.Equal(t, "WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v0.13.1\nTask foo downgraded to v0.2 in hub namespace\n", buf.String())
 	assert.Equal(t, gock.IsDone(), true)
 }
 
@@ -260,7 +260,7 @@ func TestDowngrade_ToSpecificVersion(t *testing.T) {
 
 	err := opts.run()
 	assert.NoError(t, err)
-	assert.Equal(t, "Task foo downgraded to v0.2 in hub namespace\n", buf.String())
+	assert.Equal(t, "WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v0.13.1\nTask foo downgraded to v0.2 in hub namespace\n", buf.String())
 	assert.Equal(t, gock.IsDone(), true)
 }
 
@@ -366,5 +366,131 @@ func TestDowngrade_HigherVersionError(t *testing.T) {
 	err := opts.run()
 	assert.Error(t, err)
 	assert.EqualError(t, err, "cannot downgrade task foo to v0.4. existing resource seems to be of lower version(v0.3). Use upgrade command")
+	assert.Equal(t, gock.IsDone(), true)
+}
+
+func TestDowngrade_ToSpecificVersionRespectingPipelinesVersionSuccess(t *testing.T) {
+	cli := test.NewCLI()
+
+	defer gock.Off()
+
+	resVersion := &res.ResourceVersion{Data: resVersion}
+	resource := res.NewViewedResourceVersion(resVersion, "default")
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.3").
+		Reply(200).
+		JSON(&resource.Projected)
+
+	versions := &res.ResourceVersions{Data: &res.Versions{Latest: ver03, Versions: []*res.ResourceVersionData{ver02, ver03}}}
+	ver := res.NewViewedResourceVersions(versions, "default")
+
+	gock.New(test.API).
+		Get("/resource/1/versions").
+		Reply(200).
+		JSON(&ver.Projected)
+
+	gock.New("http://raw.github.url").
+		Get("/foo/0.2/foo.yaml").
+		Reply(200).
+		File("./testdata/foo-v0.2.yaml")
+
+	buf := new(bytes.Buffer)
+	cli.SetStream(buf, buf)
+
+	existingTask := &v1beta1.Task{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "foo",
+			Namespace: "hub",
+			Labels: map[string]string{
+				"hub.tekton.dev/catalog":    "tekton",
+				"app.kubernetes.io/version": "0.3",
+			}},
+	}
+
+	version := "v1beta1"
+	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+
+	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
+	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
+
+	opts := &options{
+		cs:      test.FakeClientSet(cs.Pipeline, dynamic, "hub"),
+		cli:     cli,
+		kind:    "task",
+		args:    []string{"foo"},
+		version: "0.2",
+	}
+
+	err := test.CreateTektonPipelineController(dynamic, "v0.14.0")
+	if err != nil {
+		t.Errorf("%s", err.Error())
+	}
+
+	err = opts.run()
+	assert.NoError(t, err)
+	assert.Equal(t, "Task foo downgraded to v0.2 in hub namespace\n", buf.String())
+	assert.Equal(t, gock.IsDone(), true)
+}
+
+func TestDowngrade_ToSpecificVersionRespectingPipelinesVersionFailure(t *testing.T) {
+	cli := test.NewCLI()
+
+	defer gock.Off()
+
+	resVersion := &res.ResourceVersion{Data: resVersion}
+	resource := res.NewViewedResourceVersion(resVersion, "default")
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.3").
+		Reply(200).
+		JSON(&resource.Projected)
+
+	versions := &res.ResourceVersions{Data: &res.Versions{Latest: ver03, Versions: []*res.ResourceVersionData{ver02, ver03}}}
+	ver := res.NewViewedResourceVersions(versions, "default")
+
+	gock.New(test.API).
+		Get("/resource/1/versions").
+		Reply(200).
+		JSON(&ver.Projected)
+
+	gock.New("http://raw.github.url").
+		Get("/foo/0.2/foo.yaml").
+		Reply(200).
+		File("./testdata/foo-v0.2.yaml")
+
+	buf := new(bytes.Buffer)
+	cli.SetStream(buf, buf)
+
+	existingTask := &v1beta1.Task{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "foo",
+			Namespace: "hub",
+			Labels: map[string]string{
+				"hub.tekton.dev/catalog":    "tekton",
+				"app.kubernetes.io/version": "0.3",
+			}},
+	}
+
+	version := "v1beta1"
+	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+
+	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
+	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
+
+	opts := &options{
+		cs:      test.FakeClientSet(cs.Pipeline, dynamic, "hub"),
+		cli:     cli,
+		kind:    "task",
+		args:    []string{"foo"},
+		version: "0.2",
+	}
+
+	err := test.CreateTektonPipelineController(dynamic, "v0.12.0")
+	if err != nil {
+		t.Errorf("%s", err.Error())
+	}
+
+	err = opts.run()
+	assert.Error(t, err)
+	assert.EqualError(t, err, "cannot downgrade Task foo to v0.2 as it requires Pipelines min version v0.13.1 but found v0.12.0")
 	assert.Equal(t, gock.IsDone(), true)
 }
