@@ -311,7 +311,7 @@ func TestByCatalogKindNameVersion_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByCatalogKindNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/task/tkn/0.1").Check().
+	ByCatalogKindNameVersionChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/Task/tkn/0.1").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -399,7 +399,7 @@ func TestByCatalogKindName_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
-	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/task/tekton").Check().
+	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/Task/tekton").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)

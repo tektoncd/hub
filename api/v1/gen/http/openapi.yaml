@@ -99,6 +99,8 @@ paths:
         enum:
         - task
         - pipeline
+        - Task
+        - Pipeline
       - name: name
         in: path
         description: Name of resource
@@ -141,6 +143,8 @@ paths:
         enum:
         - task
         - pipeline
+        - Task
+        - Pipeline
       - name: name
         in: path
         description: name of resource

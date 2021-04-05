@@ -304,8 +304,8 @@ func DecodeByCatalogKindNameVersionRequest(mux goahttp.Muxer, decoder func(*http
 		)
 		catalog = params["catalog"]
 		kind = params["kind"]
-		if !(kind == "task" || kind == "pipeline") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		if !(kind == "task" || kind == "pipeline" || kind == "Task" || kind == "Pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline", "Task", "Pipeline"}))
 		}
 		name = params["name"]
 		version = params["version"]
@@ -463,8 +463,8 @@ func DecodeByCatalogKindNameRequest(mux goahttp.Muxer, decoder func(*http.Reques
 		)
 		catalog = params["catalog"]
 		kind = params["kind"]
-		if !(kind == "task" || kind == "pipeline") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		if !(kind == "task" || kind == "pipeline" || kind == "Task" || kind == "Pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline", "Task", "Pipeline"}))
 		}
 		name = params["name"]
 		if err != nil {

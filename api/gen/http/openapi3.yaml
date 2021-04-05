@@ -480,11 +480,13 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: task
+          example: Task
           enum:
           - task
           - pipeline
-        example: task
+          - Task
+          - Pipeline
+        example: Task
       - name: name
         in: path
         description: Name of resource
@@ -579,11 +581,13 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: pipeline
+          example: Pipeline
           enum:
           - task
           - pipeline
-        example: pipeline
+          - Task
+          - Pipeline
+        example: Pipeline
       - name: name
         in: path
         description: name of resource

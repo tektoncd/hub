@@ -119,7 +119,7 @@ var _ = Service("resource", func() {
 				Example("catalog", "tektoncd")
 			})
 			Attribute("kind", String, "kind of resource", func() {
-				Enum("task", "pipeline")
+				Enum("task", "pipeline", "Task", "Pipeline")
 			})
 			Attribute("name", String, "name of resource", func() {
 				Example("name", "buildah")
@@ -167,7 +167,7 @@ var _ = Service("resource", func() {
 				Example("catalog", "tektoncd")
 			})
 			Attribute("kind", String, "kind of resource", func() {
-				Enum("task", "pipeline")
+				Enum("task", "pipeline", "Task", "Pipeline")
 			})
 			Attribute("name", String, "Name of resource", func() {
 				Example("name", "buildah")

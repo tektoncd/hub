@@ -128,8 +128,8 @@ func BuildByCatalogKindNameVersionPayload(resourceByCatalogKindNameVersionCatalo
 	var kind string
 	{
 		kind = resourceByCatalogKindNameVersionKind
-		if !(kind == "task" || kind == "pipeline") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		if !(kind == "task" || kind == "pipeline" || kind == "Task" || kind == "Pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline", "Task", "Pipeline"}))
 		}
 		if err != nil {
 			return nil, err
@@ -182,8 +182,8 @@ func BuildByCatalogKindNamePayload(resourceByCatalogKindNameCatalog string, reso
 	var kind string
 	{
 		kind = resourceByCatalogKindNameKind
-		if !(kind == "task" || kind == "pipeline") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		if !(kind == "task" || kind == "pipeline" || kind == "Task" || kind == "Pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline", "Task", "Pipeline"}))
 		}
 		if err != nil {
 			return nil, err

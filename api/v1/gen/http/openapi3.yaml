@@ -252,10 +252,12 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: pipeline
+          example: Pipeline
           enum:
           - task
           - pipeline
+          - Task
+          - Pipeline
         example: task
       - name: name
         in: path
@@ -355,6 +357,8 @@ paths:
           enum:
           - task
           - pipeline
+          - Task
+          - Pipeline
         example: task
       - name: name
         in: path
