@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swagger
+  namespace: tekton-hub
+  labels:
+    app: swagger
+spec:
+  selector:
+    matchLabels:
+      app: swagger
+  template:
+    metadata:
+      name: swagger
+      labels:
+        app: swagger
+    spec:
+      containers:
+        - name: swagger
+          image: quay.io/tekton-hub/swagger
+          env:
+            - name: API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: swagger
+                  key: API_URL
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1

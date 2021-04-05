@@ -1,0 +1,13 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: swagger
+  namespace: tekton-hub
+spec:
+  to:
+    kind: Service
+    name: swagger
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge

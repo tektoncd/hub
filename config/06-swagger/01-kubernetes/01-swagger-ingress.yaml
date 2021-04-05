@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: swagger
+  namespace: tekton-hub
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: 'true'
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - secretName: swagger-hub-tekton-dev-tls
+      hosts: [swagger.hub.tekton.dev]
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: swagger
+              servicePort: 8080
