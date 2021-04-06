@@ -11,7 +11,10 @@ const Footer: React.FC = () => {
         <Grid>
           <GridItem span={12} className="hub-footer-info">
             <a href="https://cd.foundation" target="_">
-              <img src="https://tekton.dev/partner-logos/cdf.png" alt="tekton.dev" />
+              <img
+                src={`https://tekton.dev/partner-logos/cdf.png?${global.Date.now()}`}
+                alt="tekton.dev"
+              />
             </a>
           </GridItem>
           <GridItem span={12} className="hub-footer-info">
@@ -26,7 +29,7 @@ const Footer: React.FC = () => {
             </TextContent>
           </GridItem>
           <GridItem span={12} className="hub-logo-margin">
-            <img src={tekton} alt="Tekton" className="hub-logo-size" />
+            <img src={`${tekton}?${global.Date.now()}`} alt="Tekton" className="hub-logo-size" />
           </GridItem>
           <GridItem span={12} className="hub-footer-description">
             <Text>
