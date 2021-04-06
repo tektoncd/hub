@@ -90,7 +90,7 @@ export const AuthStore = types
     }
   }))
   .actions((self) => ({
-    authenticate: flow(function* (authCode: AuthCodeProps, refresh?: Refresh) {
+    authenticate: flow(function* (authCode: AuthCodeProps, historyBack?: Refresh) {
       try {
         self.setLoading(true);
 
@@ -103,8 +103,8 @@ export const AuthStore = types
         self.addRefreshTokenInfo(userDetails.refresh);
 
         self.setIsAuthenticated(true);
-        if (refresh) {
-          refresh();
+        if (historyBack) {
+          historyBack();
         }
       } catch (err) {
         const error: IError = {

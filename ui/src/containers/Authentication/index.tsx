@@ -13,14 +13,13 @@ import './Authentication.css';
 
 const Authentication: React.FC = observer(() => {
   const history = useHistory();
-  const refreshPage = () => {
-    history.push('/');
-    window.location.reload();
+  const historyBack = () => {
+    history.goBack();
   };
 
   const { user } = useMst();
   const onSuccess = (code: AuthCodeProps) => {
-    user.authenticate(code, refreshPage);
+    user.authenticate(code, historyBack);
   };
 
   return (
