@@ -4,10 +4,17 @@ import { FakeHub } from '../../api/testutil';
 import { createProviderAndStore, createProvider } from '../../store/root';
 import LeftPane from '../../components/LeftPane';
 import App from '.';
+import { FakeDate, ActualDate } from '../../common/testutils';
 
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
 const { Provider } = createProviderAndStore(api);
+
+// Assign a dummy date to global Date inorder to avoid snapshaot updation
+FakeDate();
+
+// Assign current Date once test is over
+ActualDate();
 
 describe('App', () => {
   it('should render the component correctly and match the snapshot', (done) => {

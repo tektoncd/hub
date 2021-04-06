@@ -19,7 +19,7 @@ exports[`should render the footer component 1`] = `
       >
         <img
           alt="tekton.dev"
-          src="https://tekton.dev/partner-logos/cdf.png"
+          src="https://tekton.dev/partner-logos/cdf.png?1609496430000"
         />
       </a>
     </div>
@@ -54,7 +54,7 @@ exports[`should render the footer component 1`] = `
       <img
         alt="Tekton"
         className="hub-logo-size"
-        src="tekton.png"
+        src="tekton.png?1609496430000"
       />
     </div>
     <div

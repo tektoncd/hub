@@ -3,6 +3,11 @@
 exports[`should render the background component 1`] = `
 <div
   className="hub-background-image"
+  style={
+    Object {
+      "backgroundImage": "url(background.jpg)",
+    }
+  }
 >
   <div
     className="pf-c-content"

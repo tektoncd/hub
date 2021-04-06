@@ -61,7 +61,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
               <main role={[undefined]} id={[undefined]} className=\\"pf-c-page__main\\" tabIndex={-1} aria-label={[undefined]}>
                 <Route exact={true} path=\\"/\\" component={[Function: Background]}>
                   <Background history={{...}} location={{...}} match={{...}} staticContext={[undefined]}>
-                    <div className=\\"hub-background-image\\">
+                    <div className=\\"hub-background-image\\" style={{...}}>
                       <TextContent>
                         <div className=\\"pf-c-content\\">
                           <Text component=\\"h1\\" className=\\"hub-background-heading\\">
@@ -273,7 +273,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                           <GridItem span={12} className=\\"hub-footer-info\\">
                             <div className=\\"pf-l-grid__item pf-m-12-col hub-footer-info\\">
                               <a href=\\"https://cd.foundation\\" target=\\"_\\">
-                                <img src=\\"https://tekton.dev/partner-logos/cdf.png\\" alt=\\"tekton.dev\\" />
+                                <img src=\\"https://tekton.dev/partner-logos/cdf.png?1609496430000\\" alt=\\"tekton.dev\\" />
                               </a>
                             </div>
                           </GridItem>
@@ -300,7 +300,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                           </GridItem>
                           <GridItem span={12} className=\\"hub-logo-margin\\">
                             <div className=\\"pf-l-grid__item pf-m-12-col hub-logo-margin\\">
-                              <img src=\\"tekton.png\\" alt=\\"Tekton\\" className=\\"hub-logo-size\\" />
+                              <img src=\\"tekton.png?1609496430000\\" alt=\\"Tekton\\" className=\\"hub-logo-size\\" />
                             </div>
                           </GridItem>
                           <GridItem span={12} className=\\"hub-footer-description\\">
