@@ -19,7 +19,9 @@ jest.mock('react-router-dom', () => {
     },
     useParams: () => {
       return {
-        name: 'buildah'
+        name: 'buildah',
+        catalog: 'tekton',
+        kind: 'Task'
       };
     }
   };

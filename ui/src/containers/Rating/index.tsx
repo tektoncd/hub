@@ -8,10 +8,12 @@ import { assert } from '../../store/utils';
 import { Icons } from '../../common/icons';
 import Icon from '../../components/Icon';
 import AlertDisplay from '../../components/AlertDisplay';
+import { titleCase } from '../../common/titlecase';
 import './Rating.css';
 
 const Rating: React.FC = observer(() => {
-  const { name } = useParams();
+  const { name, kind, catalog } = useParams();
+  const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
 
   const [star, setStar] = useState([false, false, false, false, false]);
   const [ratingError, setRatingError] = useState('');
@@ -74,7 +76,7 @@ const Rating: React.FC = observer(() => {
       history.push('/login');
     } else {
       if (rating) {
-        const resource = resources.resources.get(name);
+        const resource = resources.resources.get(resourceKey);
         assert(resource);
         user.setRating(resource.id, Number(rating));
         if (user.ratingErr === '') {
