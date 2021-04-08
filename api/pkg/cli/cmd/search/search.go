@@ -138,7 +138,7 @@ func (opts *options) run() error {
 func (opts *options) validate() error {
 
 	if flag.AllEmpty(opts.args, opts.kinds, opts.tags) {
-		return fmt.Errorf("please specify a name, tag or a kind to search")
+		return fmt.Errorf("please specify a resource name, --tags or --kinds flag to search")
 	}
 
 	if err := flag.InList("match", opts.match, []string{"contains", "exact"}); err != nil {

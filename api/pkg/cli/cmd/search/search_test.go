@@ -102,7 +102,7 @@ func TestValidate_ErrorCases(t *testing.T) {
 	opt := options{}
 	err := opt.validate()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "please specify a name, tag or a kind to search")
+	assert.EqualError(t, err, "please specify a resource name, --tags or --kinds flag to search")
 
 	opt = options{
 		kinds:  []string{"abc"},
