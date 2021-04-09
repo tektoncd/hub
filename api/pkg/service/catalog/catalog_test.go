@@ -74,7 +74,6 @@ func TestRefresh_CatalogNotFound(t *testing.T) {
 	assert.EqualError(t, err, "abc catalog not found")
 }
 
-
 func TestRefreshAgain(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
@@ -116,11 +115,8 @@ func TestRefresh_All(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(jobs))
 
-	assert.Equal(t, uint(10001), jobs[0].ID)
-	assert.Equal(t, "catalog-official", jobs[0].CatalogName)
+	assert.Contains(t, []string{"catalog-official", "catalog-community"}, jobs[0].CatalogName)
 	assert.Equal(t, "queued", jobs[0].Status)
-
-	assert.Equal(t, uint(10002), jobs[1].ID)
-	assert.Equal(t, "catalog-community", jobs[1].CatalogName)
+	assert.Contains(t, []string{"catalog-official", "catalog-community"}, jobs[1].CatalogName)
 	assert.Equal(t, "queued", jobs[1].Status)
 }
