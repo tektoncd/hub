@@ -32,15 +32,16 @@ declare -r UI_DIR="$SCRIPT_DIR/../ui"
 
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-tests.sh
 
-# TODO: enable this pleaseeeeee
-#set -e -u -o pipefail
-
 info() {
   echo "INFO: $@"
 }
 
 warn() {
   echo "WARN: $@"
+}
+
+err() {
+  echo "ERROR: $@"
 }
 
 install-node() {
@@ -54,8 +55,12 @@ install-node() {
 
 ui-unittest(){
     install-node
+    npm clean-install
 
-    CI=true npm test
+  CI=true npm test || {
+    err 'ui unit test failed'
+    return 1
+  }
 }
 
 install-postgres() {
@@ -85,71 +90,99 @@ api-unittest(){
   info Running unittests
 
   go mod vendor
-  go test -p 1 -v ./pkg/... &&
-  go test -p 1 -v ./v1/service/...
+  go test -p 1 -v ./pkg/... ./v1/service/... || {
+    err 'api unit test failed'
+    return 1
+  }
 }
 
 api-golangci-lint() {
   info Running go lint
 
-  golangci-lint run ./pkg/... ./v1/service/...
+  golangci-lint run -v ./pkg/... ./v1/service/... --timeout=5m || {
+    err 'go lint failed'
+    return 1
+  }
 }
 
 yaml-lint() {
   info Running Yamllint
 
-  yamllint -c .yamllint ./config.yaml ./config
+  yamllint -c .yamllint ./config.yaml ./config  || {
+    err 'yaml lint failed'
+    return 1
+  }
 }
 
 api-build(){
+  info Running Api build
+
   go mod vendor
-  go build -mod=vendor ./cmd/...
+  go build -mod=vendor ./cmd/... || {
+    err 'Api build failed'
+    return 1
+  }
 }
 
 ui-build(){
-  cd $UI_DIR
-  install-node
-  npm install
+  info Running UI build
 
-  CI=true npm run build
+  install-node
+  npm clean-install
+
+  CI=true npm run build || {
+    err 'UI build failed'
+    return 1
+  }
 }
 
 ### presubmit hooks ###
 
-run_build_tests() {
+build_tests() {
   # run in a subshell so that path and shell options -eu -o pipefail will
   # will remain the same when it exits
   (
     set -eu -o pipefail
+
+    cd "$API_DIR"
     api-build
+  ) || exit 1
+
+   (
+    set -eu -o pipefail
+
+    cd "$UI_DIR"
     ui-build
-  )
+  ) || exit 1
 }
 
-run_unit_tests() {
+unit_tests() {
   # run in a subshell so that path and shell options -eu -o pipefail will
   # will remain the same when it exits
   (
     set -eu -o pipefail
 
-    cd $API_DIR
-    api-unittest
-    api-golangci-lint
-  )
+    cd "$API_DIR"
+    api-unittest || return 1
+    api-golangci-lint || return 1
+  ) || exit 1
+
   (
     set -eu -o pipefail
 
-    cd $UI_DIR
-    ui-unittest
-  )
+    cd "$UI_DIR"
+    ui-unittest || return 1
+  ) || exit 1
+
   (
     set -eu -o pipefail
 
-    yaml-lint
-  )
+    yaml-lint || return 1
+  ) || exit 1
+
 }
 
-run_integration_tests() {
+integration_tests() {
   warn "No integration tests to run"
   return 0
 }
