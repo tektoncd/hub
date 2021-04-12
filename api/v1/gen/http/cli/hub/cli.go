@@ -229,7 +229,7 @@ func ParseEndpoint(
 
 // catalogUsage displays the usage of the catalog command and its subcommands.
 func catalogUsage() {
-	fmt.Fprintf(os.Stderr, `List of catalogs
+	fmt.Fprintf(os.Stderr, `The catalog service provides details about catalogs.
 Usage:
     %s [globalflags] catalog COMMAND [flags]
 
