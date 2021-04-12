@@ -30,6 +30,11 @@ spec:
                 configMapKeyRef:
                   name: ui
                   key: GH_CLIENT_ID
+            - name: API_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: ui
+                  key: API_VERSION
           ports:
             - containerPort: 8080
               protocol: TCP

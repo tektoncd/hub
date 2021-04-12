@@ -5,6 +5,7 @@ import { CategoryStore } from './category';
 import { ResourceStore } from './resource';
 import { Hub, Api } from '../api';
 import { AuthStore } from './auth';
+import { CatalogStore } from './catalog';
 
 export const Root = types.model('Root', {}).views((self) => ({
   get api(): Api {
@@ -18,6 +19,9 @@ export const Root = types.model('Root', {}).views((self) => ({
   },
   get user() {
     return getEnv(self).user;
+  },
+  get catalogs() {
+    return getEnv(self).catalogs;
   }
 }));
 
@@ -25,7 +29,8 @@ type IRoot = Instance<typeof Root>;
 
 const initRootStore = (api: Api) => {
   const categories = CategoryStore.create({}, { api });
-  const resources = ResourceStore.create({}, { api, categories });
+  const catalogs = CatalogStore.create({}, { api });
+  const resources = ResourceStore.create({}, { api, categories, catalogs });
   const user = AuthStore.create({ accessTokenInfo: {}, refreshTokenInfo: {} }, { api });
 
   // This peristently stores user auth details
@@ -36,7 +41,7 @@ const initRootStore = (api: Api) => {
     whitelist: ['accessTokenInfo', 'refreshTokenInfo', 'isAuthenticated', 'isLoading']
   });
 
-  return Root.create({}, { api, categories, resources, user });
+  return Root.create({}, { api, catalogs, categories, resources, user });
 };
 
 interface Props {

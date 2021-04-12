@@ -3,6 +3,7 @@ import { ICategory } from '../store/category';
 import { IResource, IVersion } from '../store/resource';
 import { ITokenInfo, IUserProfile } from '../store/auth';
 import { Api, AuthResponse } from './';
+import { ICatalog } from '../store/catalog';
 
 export class FakeHub implements Api {
   dataDir: string;
@@ -24,6 +25,15 @@ export class FakeHub implements Api {
 
     const ret = () => JSON.parse(fs.readFileSync(data).toString());
     return new Promise<IResource>((resolve) => {
+      setTimeout(() => resolve(ret()), 1000);
+    });
+  }
+
+  async catalogs() {
+    const data = `${this.dataDir}/catalogs.json`;
+
+    const ret = () => JSON.parse(fs.readFileSync(data).toString());
+    return new Promise<ICatalog>((resolve) => {
       setTimeout(() => resolve(ret()), 1000);
     });
   }
