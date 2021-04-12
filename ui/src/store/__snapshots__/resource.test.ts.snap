@@ -1,24 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Store functions creates a catalog store 1`] = `
-Object {
-  "items": Object {
-    "1": Object {
-      "id": 1,
-      "name": "tekton",
-      "selected": false,
-      "type": "community",
-    },
-    "2": Object {
-      "id": 2,
-      "name": "tekton-hub",
-      "selected": false,
-      "type": "official",
-    },
-  },
-}
-`;
-
 exports[`Store functions creates a kind store 1`] = `
 Object {
   "items": Object {

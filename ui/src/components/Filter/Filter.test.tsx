@@ -5,6 +5,7 @@ import { shallow } from 'enzyme';
 import Filter from '.';
 import { CategoryStore } from '../../store/category';
 import { ResourceStore } from '../../store/resource';
+import { CatalogStore } from '../../store/catalog';
 
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
@@ -57,7 +58,14 @@ describe('Filter component', () => {
   });
 
   it('checks the checkbox render count for catalogs', (done) => {
-    const store = ResourceStore.create({}, { api, categories: CategoryStore.create({}, { api }) });
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        catalogs: CatalogStore.create({}, { api }),
+        categories: CategoryStore.create({}, { api })
+      }
+    );
 
     when(
       () => !store.isLoading,

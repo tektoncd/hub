@@ -4,6 +4,8 @@ import { shallow } from 'enzyme';
 import { FakeHub } from '../../api/testutil';
 import { ResourceStore } from '../../store/resource';
 import { CategoryStore } from '../../store/category';
+import { CatalogStore } from '../../store/catalog';
+
 import Cards from '.';
 
 const TESTDATA_DIR = `src/store/testdata`;
@@ -19,7 +21,14 @@ afterEach(() => {
 
 describe('Cards', () => {
   it('should render the resources on cards', (done) => {
-    const store = ResourceStore.create({}, { api, categories: CategoryStore.create({}, { api }) });
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        catalogs: CatalogStore.create({}, { api }),
+        categories: CategoryStore.create({}, { api })
+      }
+    );
 
     when(
       () => !store.isLoading,

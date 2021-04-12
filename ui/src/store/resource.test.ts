@@ -3,6 +3,7 @@ import { getSnapshot } from 'mobx-state-tree';
 import { when } from 'mobx';
 import { FakeHub } from '../api/testutil';
 import { CategoryStore } from './category';
+import { CatalogStore } from './catalog';
 import { assert } from './utils';
 
 const TESTDATA_DIR = `${__dirname}/testdata`;
@@ -48,26 +49,6 @@ describe('Store functions', () => {
     );
   });
 
-  it('creates a catalog store', (done) => {
-    const store = ResourceStore.create(
-      {},
-      {
-        api,
-        categories: CategoryStore.create({}, { api })
-      }
-    );
-    expect(store.isLoading).toBe(true);
-
-    when(
-      () => !store.isLoading,
-      () => {
-        expect(store.resources.size).toBe(7);
-        expect(getSnapshot(store.catalogs)).toMatchSnapshot();
-        done();
-      }
-    );
-  });
-
   it('creates a kind store', (done) => {
     const store = ResourceStore.create(
       {},
@@ -94,6 +75,7 @@ describe('Store functions', () => {
       {},
       {
         api,
+        catalogs: CatalogStore.create({}, { api }),
         categories: CategoryStore.create({}, { api })
       }
     );
@@ -124,6 +106,7 @@ describe('Store functions', () => {
       {},
       {
         api,
+        catalogs: CatalogStore.create({}, { api }),
         categories: CategoryStore.create({}, { api })
       }
     );
@@ -152,6 +135,7 @@ describe('Store functions', () => {
       {},
       {
         api,
+        catalogs: CatalogStore.create({}, { api }),
         categories: CategoryStore.create({}, { api })
       }
     );
@@ -249,6 +233,7 @@ describe('Store functions', () => {
       {},
       {
         api,
+        catalogs: CatalogStore.create({}, { api }),
         categories: CategoryStore.create({}, { api })
       }
     );
@@ -293,6 +278,7 @@ describe('Store functions', () => {
       {},
       {
         api,
+        catalogs: CatalogStore.create({}, { api }),
         categories: CategoryStore.create({}, { api })
       }
     );
@@ -591,6 +577,7 @@ describe('Store functions', () => {
       {},
       {
         api,
+        catalogs: CatalogStore.create({}, { api }),
         categories: CategoryStore.create({}, { api })
       }
     );
@@ -685,6 +672,7 @@ describe('Store functions', () => {
       {},
       {
         api,
+        catalogs: CatalogStore.create({}, { api }),
         categories: CategoryStore.create({}, { api })
       }
     );

@@ -2,11 +2,21 @@
 
 exports[`Store Object creates a catalog store 1`] = `
 Object {
-  "1": Object {
-    "id": 1,
-    "name": "tekton",
-    "selected": false,
-    "type": "community",
+  "err": "",
+  "isLoading": false,
+  "items": Object {
+    "1": Object {
+      "id": 1,
+      "name": "tekton",
+      "selected": false,
+      "type": "community",
+    },
+    "2": Object {
+      "id": 2,
+      "name": "openshift",
+      "selected": false,
+      "type": "community",
+    },
   },
 }
 `;
