@@ -41,8 +41,9 @@ func (s *service) List(ctx context.Context) (*catalog.ListResult, error) {
 
 	log := s.Logger(ctx)
 	db := s.DB(ctx)
+
 	var all []model.Catalog
-	if err := db.Find(&all).Error; err != nil {
+	if err := db.Order("id").Find(&all).Error; err != nil {
 		log.Error(err)
 		return nil, internalError
 	}
@@ -52,7 +53,13 @@ func (s *service) List(ctx context.Context) (*catalog.ListResult, error) {
 	}
 
 	for _, c := range all {
-		res.Data = append(res.Data, &catalog.Catalog{ID: c.ID, Name: c.Name, Type: c.Type, URL: c.URL})
+		res.Data = append(res.Data,
+			&catalog.Catalog{
+				ID:   c.ID,
+				Name: c.Name,
+				Type: c.Type,
+				URL:  c.URL,
+			})
 	}
 
 	return res, nil

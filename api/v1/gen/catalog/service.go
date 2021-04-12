@@ -13,7 +13,7 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// List of catalogs
+// The catalog service provides details about catalogs.
 type Service interface {
 	// List all Catalogs
 	List(context.Context) (res *ListResult, err error)

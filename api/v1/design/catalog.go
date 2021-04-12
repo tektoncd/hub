@@ -20,7 +20,7 @@ import (
 )
 
 var _ = Service("catalog", func() {
-	Description("List of catalogs")
+	Description("The catalog service provides details about catalogs.")
 
 	HTTP(func() {
 		Path("/v1")
