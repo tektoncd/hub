@@ -27,19 +27,33 @@ var _ = Service("admin", func() {
 	Error("invalid-scopes", ErrorResult, "Invalid Token scopes ")
 	Error("internal-error", ErrorResult, "Internal server error")
 
+	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
+		"eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ." +
+		"6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM"
+
 	Method("UpdateAgent", func() {
 		Description("Create or Update an agent user with required scopes")
 		Security(types.JWTAuth, func() {
 			Scope("agent:create")
 		})
 		Payload(func() {
-			Token("token", String, "User JWT")
-			Attribute("name", String, "Name of Agent")
-			Attribute("scopes", ArrayOf(String), "Scopes required for Agent")
+			Token("token", String, "User JWT", func() {
+				Example("token", token)
+			})
+			Attribute("name", String, "Name of Agent", func() {
+				Example("name", "abc")
+			})
+			Attribute("scopes", ArrayOf(String), "Scopes required for Agent", func() {
+				Example("scopes", func() {
+					Value([]string{"catalog-refresh", "agent:create"})
+				})
+			})
 			Required("name", "scopes", "token")
 		})
 		Result(func() {
-			Attribute("token", String, "Agent JWT")
+			Attribute("token", String, "Agent JWT", func() {
+				Example("token", token)
+			})
 			Required("token")
 		})
 
@@ -61,11 +75,15 @@ var _ = Service("admin", func() {
 			Scope("config:refresh")
 		})
 		Payload(func() {
-			Token("token", String, "User JWT")
+			Token("token", String, "User JWT", func() {
+				Example("token", token)
+			})
 			Required("token")
 		})
 		Result(func() {
-			Attribute("checksum", String, "Config file checksum")
+			Attribute("checksum", String, "Config file checksum", func() {
+				Example("checksum", "41ba391c8baf1fcd3c62c11272b913dc6613f4cf3b1833cfbb32431dc4384c93")
+			})
 			Required("checksum")
 		})
 

@@ -134,9 +134,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Job'
               example:
-                catalogName: Enim ut rerum repellat aut.
-                id: 7875832644409337079
-                status: Qui fugiat earum.
+                catalogName: tekton
+                id: 1
+                status: queued
         "404":
           description: Not Found response.
           content:
@@ -182,19 +182,28 @@ paths:
                 items:
                   $ref: '#/components/schemas/Job'
                 example:
-                - catalogName: Est deserunt.
-                  id: 18265458532539025930
-                  status: Assumenda quaerat ea.
-                - catalogName: Est deserunt.
-                  id: 18265458532539025930
-                  status: Assumenda quaerat ea.
+                - catalogName: tekton
+                  id: 1
+                  status: queued
+                - catalogName: tekton
+                  id: 1
+                  status: queued
+                - catalogName: tekton
+                  id: 1
+                  status: queued
               example:
-              - catalogName: Est deserunt.
-                id: 18265458532539025930
-                status: Assumenda quaerat ea.
-              - catalogName: Est deserunt.
-                id: 18265458532539025930
-                status: Assumenda quaerat ea.
+              - catalogName: tekton
+                id: 1
+                status: queued
+              - catalogName: tekton
+                id: 1
+                status: queued
+              - catalogName: tekton
+                id: 1
+                status: queued
+              - catalogName: tekton
+                id: 1
+                status: queued
         "500":
           description: Internal Server Error response.
           content:
@@ -229,6 +238,20 @@ paths:
                 $ref: '#/components/schemas/ListResponseBody'
               example:
                 data:
+                - id: 1
+                  name: Image Builder
+                  tags:
+                  - id: 1
+                    name: image-build
+                  - id: 2
+                    name: kaniko
+                - id: 1
+                  name: Image Builder
+                  tags:
+                  - id: 1
+                    name: image-build
+                  - id: 2
+                    name: kaniko
                 - id: 1
                   name: Image Builder
                   tags:
@@ -279,7 +302,7 @@ paths:
           type: array
           items:
             type: string
-            example: Sit repellendus magnam.
+            example: Eius non illo accusantium.
           description: Catalogs of resource to filter by
           example:
           - tekton
@@ -295,7 +318,7 @@ paths:
           type: array
           items:
             type: string
-            example: Numquam id.
+            example: Iste et similique temporibus sequi est.
           description: Kinds of resource to filter by
           example:
           - task
@@ -311,7 +334,7 @@ paths:
           type: array
           items:
             type: string
-            example: Illum ut.
+            example: Facilis adipisci.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -474,7 +497,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: Name of resource
@@ -723,8 +746,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 6983622564908202437
-        example: 11444787998453656499
+          example: 9941447640867000916
+        example: 2975478370849669386
       responses:
         "200":
           description: OK response.
@@ -796,8 +819,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 14679754584081241153
-        example: 11554948102879015198
+          example: 928452093406780591
+        example: 8692421372001101966
       requestBody:
         required: true
         content:
@@ -805,7 +828,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateRequestBody'
             example:
-              rating: 4
+              rating: 3
       responses:
         "200":
           description: OK response.
@@ -1097,7 +1120,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/RefreshConfigResponseBody'
               example:
-                checksum: Nobis est voluptatibus numquam rerum.
+                checksum: 41ba391c8baf1fcd3c62c11272b913dc6613f4cf3b1833cfbb32431dc4384c93
         "401":
           description: Unauthorized response.
           content:
@@ -1150,10 +1173,10 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateAgentRequestBody'
             example:
-              name: Pariatur occaecati voluptas assumenda maiores quaerat consequatur.
+              name: abc
               scopes:
-              - Nihil officia itaque non.
-              - Qui dolor consequatur assumenda.
+              - catalog-refresh
+              - agent:create
       responses:
         "200":
           description: OK response.
@@ -1162,7 +1185,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/UpdateAgentResponseBody'
               example:
-                token: Commodi rerum harum ut tenetur laborum tempore.
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
         "400":
           description: Bad Request response.
           content:
@@ -1442,6 +1465,20 @@ paths:
                     name: image-build
                   - id: 2
                     name: kaniko
+                - id: 1
+                  name: Image Builder
+                  tags:
+                  - id: 1
+                    name: image-build
+                  - id: 2
+                    name: kaniko
+                - id: 1
+                  name: Image Builder
+                  tags:
+                  - id: 1
+                    name: image-build
+                  - id: 2
+                    name: kaniko
         "500":
           description: Internal Server Error response.
           content:
@@ -1592,7 +1629,7 @@ components:
         timeout:
           type: boolean
           description: Is the error a timeout?
-          example: false
+          example: true
       description: Invalid request body
       example:
         id: 3F1FKVRR
@@ -1661,19 +1698,19 @@ components:
         catalogName:
           type: string
           description: Name of the catalog
-          example: Dolorum sapiente.
+          example: tekton
         id:
           type: integer
           description: id of the job
-          example: 1775143685620788290
+          example: 1
         status:
           type: string
           description: status of the job
-          example: Occaecati vitae ducimus ab natus autem.
+          example: queued
       example:
-        catalogName: Porro placeat.
-        id: 4869966896348576719
-        status: Et at.
+        catalogName: tekton
+        id: 1
+        status: queued
       required:
       - id
       - catalogName
@@ -1730,13 +1767,6 @@ components:
             name: image-build
           - id: 2
             name: kaniko
-        - id: 1
-          name: Image Builder
-          tags:
-          - id: 1
-            name: image-build
-          - id: 2
-            name: kaniko
     NewRefreshTokenResponseBody:
       type: object
       properties:
@@ -1769,9 +1799,9 @@ components:
         checksum:
           type: string
           description: Config file checksum
-          example: Omnis consequatur omnis qui aut.
+          example: 41ba391c8baf1fcd3c62c11272b913dc6613f4cf3b1833cfbb32431dc4384c93
       example:
-        checksum: Voluptas animi molestiae nam quas veniam optio.
+        checksum: 41ba391c8baf1fcd3c62c11272b913dc6613f4cf3b1833cfbb32431dc4384c93
       required:
       - checksum
     RefreshToken:
@@ -2213,9 +2243,6 @@ components:
           - error: unable to reach db
             name: api
             status: ok
-          - error: unable to reach db
-            name: api
-            status: ok
       example:
         services:
         - error: unable to reach db
@@ -2272,22 +2299,21 @@ components:
         name:
           type: string
           description: Name of Agent
-          example: Quia incidunt accusamus dolor non.
+          example: abc
         scopes:
           type: array
           items:
             type: string
-            example: Praesentium corrupti et qui nam eos esse.
+            example: Beatae est.
           description: Scopes required for Agent
           example:
-          - Tempora dolorem neque maxime nesciunt.
-          - Debitis laboriosam incidunt neque asperiores reiciendis hic.
-          - Beatae dicta itaque possimus.
+          - catalog-refresh
+          - agent:create
       example:
-        name: Aut repellat.
+        name: abc
         scopes:
-        - Accusantium nulla ea rem aperiam.
-        - Sapiente labore.
+        - catalog-refresh
+        - agent:create
       required:
       - name
       - scopes
@@ -2297,9 +2323,9 @@ components:
         token:
           type: string
           description: Agent JWT
-          example: Qui sequi officiis mollitia dolorem laudantium quidem.
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
       example:
-        token: Suscipit fuga nam.
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
       required:
       - token
     UpdateRequestBody:
@@ -2308,11 +2334,11 @@ components:
         rating:
           type: integer
           description: User rating for resource
-          example: 4
+          example: 1
           minimum: 0
           maximum: 5
       example:
-        rating: 1
+        rating: 0
       required:
       - rating
     UserData:
