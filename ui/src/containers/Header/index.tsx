@@ -16,6 +16,7 @@ import Search from '../../containers/Search';
 import UserProfile from '../UserProfile';
 import { useMst } from '../../store/root';
 import './Header.css';
+import { scrollToTop } from '../../common/scrollToTop';
 
 const Header: React.FC = observer(() => {
   const { user } = useMst();
@@ -40,10 +41,15 @@ const Header: React.FC = observer(() => {
     </PageHeaderTools>
   );
 
+  const homePage = () => {
+    if (!window.location.search) history.push('/');
+    scrollToTop();
+  };
+
   return (
     <React.Fragment>
       <PageHeader
-        logo={<Brand src={logo} alt="Tekton Hub Logo" onClick={() => history.push('/')} />}
+        logo={<Brand src={logo} alt="Tekton Hub Logo" onClick={homePage} />}
         headerTools={headerTools}
       />
     </React.Fragment>

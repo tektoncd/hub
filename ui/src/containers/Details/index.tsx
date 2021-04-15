@@ -8,6 +8,7 @@ import Description from '../../components/Description';
 import { assert } from '../../store/utils';
 import { PageNotFound } from '../../components/PageNotFound';
 import { titleCase } from '../../common/titlecase';
+import { scrollToTop } from '../../common/scrollToTop';
 
 const Details: React.FC = () => {
   const { resources, user } = useMst();
@@ -25,12 +26,6 @@ const Details: React.FC = () => {
     const resource = resources.resources.get(resourceKey);
     assert(resource);
     user.getRating(resource.id);
-  };
-
-  const scrollToTop = () => {
-    const scroller = document.querySelector('main');
-    assert(scroller);
-    if (scroller) scroller.scrollTo(0, 0);
   };
 
   return useObserver(() =>
