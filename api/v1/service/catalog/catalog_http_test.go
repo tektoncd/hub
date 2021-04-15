@@ -25,7 +25,7 @@ import (
 	"github.com/tektoncd/hub/api/pkg/testutils"
 	"github.com/tektoncd/hub/api/v1/gen/catalog"
 	"github.com/tektoncd/hub/api/v1/gen/http/catalog/server"
-	"gotest.tools/golden"
+	"gotest.tools/v3/golden"
 )
 
 func TestCatalog_List_Http(t *testing.T) {
