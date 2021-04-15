@@ -36,3 +36,16 @@ func BuildNewRefreshTokenPayload(userNewRefreshTokenRefreshToken string) (*user.
 
 	return v, nil
 }
+
+// BuildInfoPayload builds the payload for the user Info endpoint from CLI
+// flags.
+func BuildInfoPayload(userInfoAccessToken string) (*user.InfoPayload, error) {
+	var accessToken string
+	{
+		accessToken = userInfoAccessToken
+	}
+	v := &user.InfoPayload{}
+	v.AccessToken = accessToken
+
+	return v, nil
+}

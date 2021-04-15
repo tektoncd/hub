@@ -388,3 +388,17 @@ var RefreshToken = Type("RefreshToken", func() {
 	Description("Refresh Token for User")
 	Attribute("refresh", Token, "Refresh Token for user")
 })
+
+var UserData = Type("UserData", func() {
+	Description("Github user Information")
+	Attribute("githubId", String, "Github id of User", func() {
+		Example("githubId", "abc123")
+	})
+	Attribute("name", String, "Github user name", func() {
+		Example("name", "abc")
+	})
+	Attribute("avatarUrl", String, "Github user's profile picture url", func() {
+		Example("avatarUrl", "https://avatars.githubusercontent.com")
+	})
+	Required("githubId", "name", "avatarUrl")
+})

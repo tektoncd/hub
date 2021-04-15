@@ -83,4 +83,31 @@ var _ = Service("user", func() {
 			Response("invalid-scopes", StatusForbidden)
 		})
 	})
+
+	Method("Info", func() {
+		Description("Get the user Info")
+		Security(types.JWTAuth)
+		Payload(func() {
+			Token("accessToken", String, "Access Token of User", func() {
+				Example("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."+
+					"eyJleHAiOjE1Nzc4ODM2MDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJlZnJlc2g6dG9rZW4iXSwidHlwZSI6InJlZnJlc2gtdG9rZW4ifQ."+
+					"4RdUk5ttHdDiymurlZ_f7Uy5Pas3Lq9w04BjKQKRiCE")
+			})
+			Required("accessToken")
+		})
+		Result(func() {
+			Attribute("data", types.UserData, "User Information")
+			Required("data")
+		})
+
+		HTTP(func() {
+			GET("/user/info")
+			Header("accessToken:Authorization")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("invalid-token", StatusUnauthorized)
+			Response("invalid-scopes", StatusForbidden)
+		})
+	})
 })

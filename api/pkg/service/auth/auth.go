@@ -119,6 +119,7 @@ func (r *request) addUser(ghUser *github.User) (*model.User, error) {
 			user.GithubName = ghUser.GetName()
 			user.GithubLogin = strings.ToLower(ghUser.GetLogin())
 			user.Type = model.NormalUserType
+			user.AvatarURL = ghUser.GetAvatarURL()
 
 			err = r.db.Create(&user).Error
 			if err != nil {
@@ -138,7 +139,10 @@ func (r *request) addUser(ghUser *github.User) (*model.User, error) {
 	if user.GithubName == "" {
 		user.GithubName = ghUser.GetName()
 		user.Type = model.NormalUserType
-
+	}
+	// For existing user, check if URL is not added
+	if user.AvatarURL == "" {
+		user.AvatarURL = ghUser.GetAvatarURL()
 		if err = r.db.Save(&user).Error; err != nil {
 			r.log.Error(err)
 			return nil, err

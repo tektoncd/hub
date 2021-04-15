@@ -26,6 +26,13 @@ type NewRefreshTokenResponseBody struct {
 	Data *RefreshTokenResponseBody `form:"data" json:"data" xml:"data"`
 }
 
+// InfoResponseBody is the type of the "user" service "Info" endpoint HTTP
+// response body.
+type InfoResponseBody struct {
+	// User Information
+	Data *UserDataResponseBody `form:"data" json:"data" xml:"data"`
+}
+
 // RefreshAccessTokenInternalErrorResponseBody is the type of the "user"
 // service "RefreshAccessToken" endpoint HTTP response body for the
 // "internal-error" error.
@@ -137,6 +144,60 @@ type NewRefreshTokenInvalidScopesResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// InfoInternalErrorResponseBody is the type of the "user" service "Info"
+// endpoint HTTP response body for the "internal-error" error.
+type InfoInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// InfoInvalidTokenResponseBody is the type of the "user" service "Info"
+// endpoint HTTP response body for the "invalid-token" error.
+type InfoInvalidTokenResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// InfoInvalidScopesResponseBody is the type of the "user" service "Info"
+// endpoint HTTP response body for the "invalid-scopes" error.
+type InfoInvalidScopesResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
 // AccessTokenResponseBody is used to define fields on response body types.
 type AccessTokenResponseBody struct {
 	// Access Token for user
@@ -159,6 +220,16 @@ type RefreshTokenResponseBody struct {
 	Refresh *TokenResponseBody `form:"refresh,omitempty" json:"refresh,omitempty" xml:"refresh,omitempty"`
 }
 
+// UserDataResponseBody is used to define fields on response body types.
+type UserDataResponseBody struct {
+	// Github id of User
+	GithubID string `form:"githubId" json:"githubId" xml:"githubId"`
+	// Github user name
+	Name string `form:"name" json:"name" xml:"name"`
+	// Github user's profile picture url
+	AvatarURL string `form:"avatarUrl" json:"avatarUrl" xml:"avatarUrl"`
+}
+
 // NewRefreshAccessTokenResponseBody builds the HTTP response body from the
 // result of the "RefreshAccessToken" endpoint of the "user" service.
 func NewRefreshAccessTokenResponseBody(res *user.RefreshAccessTokenResult) *RefreshAccessTokenResponseBody {
@@ -175,6 +246,16 @@ func NewNewRefreshTokenResponseBody(res *user.NewRefreshTokenResult) *NewRefresh
 	body := &NewRefreshTokenResponseBody{}
 	if res.Data != nil {
 		body.Data = marshalUserRefreshTokenToRefreshTokenResponseBody(res.Data)
+	}
+	return body
+}
+
+// NewInfoResponseBody builds the HTTP response body from the result of the
+// "Info" endpoint of the "user" service.
+func NewInfoResponseBody(res *user.InfoResult) *InfoResponseBody {
+	body := &InfoResponseBody{}
+	if res.Data != nil {
+		body.Data = marshalUserUserDataToUserDataResponseBody(res.Data)
 	}
 	return body
 }
@@ -263,6 +344,48 @@ func NewNewRefreshTokenInvalidScopesResponseBody(res *goa.ServiceError) *NewRefr
 	return body
 }
 
+// NewInfoInternalErrorResponseBody builds the HTTP response body from the
+// result of the "Info" endpoint of the "user" service.
+func NewInfoInternalErrorResponseBody(res *goa.ServiceError) *InfoInternalErrorResponseBody {
+	body := &InfoInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewInfoInvalidTokenResponseBody builds the HTTP response body from the
+// result of the "Info" endpoint of the "user" service.
+func NewInfoInvalidTokenResponseBody(res *goa.ServiceError) *InfoInvalidTokenResponseBody {
+	body := &InfoInvalidTokenResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewInfoInvalidScopesResponseBody builds the HTTP response body from the
+// result of the "Info" endpoint of the "user" service.
+func NewInfoInvalidScopesResponseBody(res *goa.ServiceError) *InfoInvalidScopesResponseBody {
+	body := &InfoInvalidScopesResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewRefreshAccessTokenPayload builds a user service RefreshAccessToken
 // endpoint payload.
 func NewRefreshAccessTokenPayload(refreshToken string) *user.RefreshAccessTokenPayload {
@@ -277,6 +400,14 @@ func NewRefreshAccessTokenPayload(refreshToken string) *user.RefreshAccessTokenP
 func NewNewRefreshTokenPayload(refreshToken string) *user.NewRefreshTokenPayload {
 	v := &user.NewRefreshTokenPayload{}
 	v.RefreshToken = refreshToken
+
+	return v
+}
+
+// NewInfoPayload builds a user service Info endpoint payload.
+func NewInfoPayload(accessToken string) *user.InfoPayload {
+	v := &user.InfoPayload{}
+	v.AccessToken = accessToken
 
 	return v
 }

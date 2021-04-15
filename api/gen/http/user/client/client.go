@@ -25,6 +25,9 @@ type Client struct {
 	// NewRefreshToken endpoint.
 	NewRefreshTokenDoer goahttp.Doer
 
+	// Info Doer is the HTTP client used to make requests to the Info endpoint.
+	InfoDoer goahttp.Doer
+
 	// CORS Doer is the HTTP client used to make requests to the  endpoint.
 	CORSDoer goahttp.Doer
 
@@ -50,6 +53,7 @@ func NewClient(
 	return &Client{
 		RefreshAccessTokenDoer: doer,
 		NewRefreshTokenDoer:    doer,
+		InfoDoer:               doer,
 		CORSDoer:               doer,
 		RestoreResponseBody:    restoreBody,
 		scheme:                 scheme,
@@ -102,6 +106,30 @@ func (c *Client) NewRefreshToken() goa.Endpoint {
 		resp, err := c.NewRefreshTokenDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("user", "NewRefreshToken", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// Info returns an endpoint that makes HTTP requests to the user service Info
+// server.
+func (c *Client) Info() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeInfoRequest(c.encoder)
+		decodeResponse = DecodeInfoResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildInfoRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.InfoDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("user", "Info", err)
 		}
 		return decodeResponse(resp)
 	}

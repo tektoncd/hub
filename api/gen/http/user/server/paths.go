@@ -16,3 +16,8 @@ func RefreshAccessTokenUserPath() string {
 func NewRefreshTokenUserPath() string {
 	return "/user/refresh/refreshtoken"
 }
+
+// InfoUserPath returns the URL path to the user service Info HTTP endpoint.
+func InfoUserPath() string {
+	return "/user/info"
+}

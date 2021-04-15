@@ -181,3 +181,19 @@ func (r *request) newRefreshToken() (*user.NewRefreshTokenResult, error) {
 
 	return &user.NewRefreshTokenResult{Data: data}, nil
 }
+
+// Get the user Info
+func (s *service) Info(ctx context.Context, p *user.InfoPayload) (*user.InfoResult, error) {
+
+	data, err := s.User(ctx)
+	if err != nil {
+		return nil, err
+	}
+	res := &user.InfoResult{Data: &user.UserData{
+		GithubID:  data.GithubLogin,
+		Name:      data.GithubName,
+		AvatarURL: data.AvatarURL,
+	},
+	}
+	return res, nil
+}

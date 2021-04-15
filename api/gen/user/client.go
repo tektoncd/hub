@@ -17,13 +17,15 @@ import (
 type Client struct {
 	RefreshAccessTokenEndpoint goa.Endpoint
 	NewRefreshTokenEndpoint    goa.Endpoint
+	InfoEndpoint               goa.Endpoint
 }
 
 // NewClient initializes a "user" service client given the endpoints.
-func NewClient(refreshAccessToken, newRefreshToken goa.Endpoint) *Client {
+func NewClient(refreshAccessToken, newRefreshToken, info goa.Endpoint) *Client {
 	return &Client{
 		RefreshAccessTokenEndpoint: refreshAccessToken,
 		NewRefreshTokenEndpoint:    newRefreshToken,
+		InfoEndpoint:               info,
 	}
 }
 
@@ -46,4 +48,14 @@ func (c *Client) NewRefreshToken(ctx context.Context, p *NewRefreshTokenPayload)
 		return
 	}
 	return ires.(*NewRefreshTokenResult), nil
+}
+
+// Info calls the "Info" endpoint of the "user" service.
+func (c *Client) Info(ctx context.Context, p *InfoPayload) (res *InfoResult, err error) {
+	var ires interface{}
+	ires, err = c.InfoEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*InfoResult), nil
 }
