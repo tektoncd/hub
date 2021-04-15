@@ -41,14 +41,14 @@ func New(api app.BaseConfig) resource.Service {
 func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (*resource.Resources, error) {
 
 	req := res.Request{
-		Db:    s.DB(ctx),
-		Log:   s.Logger(ctx),
-		Name:  p.Name,
-		Kinds: p.Kinds,
+		Db:       s.DB(ctx),
+		Log:      s.Logger(ctx),
+		Name:     p.Name,
+		Kinds:    p.Kinds,
 		Catalogs: p.Catalogs,
-		Tags:  p.Tags,
-		Limit: p.Limit,
-		Match: p.Match,
+		Tags:     p.Tags,
+		Limit:    p.Limit,
+		Match:    p.Match,
 	}
 
 	rArr, err := req.Query()
@@ -205,6 +205,14 @@ func (s *service) ByCatalogKindName(ctx context.Context, p *resource.ByCatalogKi
 		}
 	}
 
+	// If minPipelinesVersion is passed then check for version compatible with pipelines version
+	if p.Minpipelinesversion != nil {
+		r = filterCompatibleVersions(r, *p.Minpipelinesversion)
+		if len(r.Versions) == 0 {
+			return nil, resource.MakeNotFound(fmt.Errorf("resource not found compatible with minPipelinesVersion"))
+		}
+	}
+
 	res := initResource(r)
 	for _, v := range r.Versions {
 		res.Versions = append(res.Versions, tinyVersionInfo(v))
@@ -238,6 +246,18 @@ func (s *service) ByID(ctx context.Context, p *resource.ByIDPayload) (*resource.
 	}
 
 	return &resource.Resource{Data: res}, nil
+}
+
+func filterCompatibleVersions(r model.Resource, minPipelinesVersion string) model.Resource {
+
+	var compatibleVersions []model.ResourceVersion
+	for _, v := range r.Versions {
+		if v.MinPipelinesVersion <= minPipelinesVersion {
+			compatibleVersions = append(compatibleVersions, v)
+		}
+	}
+	r.Versions = compatibleVersions
+	return r
 }
 
 func initResource(r model.Resource) *resource.ResourceData {

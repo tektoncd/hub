@@ -235,6 +235,13 @@ paths:
         resource
       operationId: resource#ByCatalogKindName
       parameters:
+      - name: minpipelinesversion
+        in: query
+        description: To find resource compatible with a Tekton pipelines version,
+          use this param
+        required: false
+        type: string
+        pattern: ^\d+(?:\.\d+){0,2}$
       - name: catalog
         in: path
         description: name of catalog
