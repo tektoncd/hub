@@ -572,6 +572,23 @@ func (c *Client) BuildByCatalogKindNameRequest(ctx context.Context, v interface{
 	return req, nil
 }
 
+// EncodeByCatalogKindNameRequest returns an encoder for requests sent to the
+// resource ByCatalogKindName server.
+func EncodeByCatalogKindNameRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*resource.ByCatalogKindNamePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("resource", "ByCatalogKindName", "*resource.ByCatalogKindNamePayload", v)
+		}
+		values := req.URL.Query()
+		if p.Minpipelinesversion != nil {
+			values.Add("minpipelinesversion", *p.Minpipelinesversion)
+		}
+		req.URL.RawQuery = values.Encode()
+		return nil
+	}
+}
+
 // DecodeByCatalogKindNameResponse returns a decoder for responses returned by
 // the resource ByCatalogKindName endpoint. restoreBody controls whether the
 // response body should be restored after having been read.
