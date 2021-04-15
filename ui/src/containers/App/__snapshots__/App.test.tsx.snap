@@ -18,8 +18,8 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                   <header role={[undefined]} className=\\"pf-c-page__header\\">
                     <div className=\\"pf-c-page__header-brand\\">
                       <a className=\\"pf-c-page__header-brand-link\\">
-                        <Brand src=\\"logo.png\\" alt=\\"Tekton Hub Logo\\" onClick={[Function: onClick]}>
-                          <img onClick={[Function: onClick]} className=\\"pf-c-brand\\" src=\\"logo.png\\" alt=\\"Tekton Hub Logo\\" />
+                        <Brand src=\\"logo.png\\" alt=\\"Tekton Hub Logo\\" onClick={[Function: homePage]}>
+                          <img onClick={[Function: homePage]} className=\\"pf-c-brand\\" src=\\"logo.png\\" alt=\\"Tekton Hub Logo\\" />
                         </Brand>
                       </a>
                     </div>
