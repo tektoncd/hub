@@ -44,16 +44,16 @@ user (refresh-access-token|new-refresh-token|info)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` admin update-agent --body '{
-      "name": "Pariatur occaecati voluptas assumenda maiores quaerat consequatur.",
+      "name": "abc",
       "scopes": [
-         "Nihil officia itaque non.",
-         "Qui dolor consequatur assumenda."
+         "catalog-refresh",
+         "agent:create"
       ]
-   }' --token "Aut minima autem ut est error eaque."` + "\n" +
+   }' --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM"` + "\n" +
 		os.Args[0] + ` auth authenticate --code "5628b69ec09c09512eef"` + "\n" +
-		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Iure modi facere cumque omnis non ut."` + "\n" +
+		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Occaecati officia inventore adipisci."` + "\n" +
 		os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` rating get --id 15685588519419587575 --token "Omnis aut beatae reiciendis accusantium distinctio."` + "\n" +
+		os.Args[0] + ` rating get --id 11281538076509796713 --token "Placeat hic accusamus."` + "\n" +
 		""
 }
 
@@ -465,12 +465,12 @@ Create or Update an agent user with required scopes
 
 Example:
     `+os.Args[0]+` admin update-agent --body '{
-      "name": "Pariatur occaecati voluptas assumenda maiores quaerat consequatur.",
+      "name": "abc",
       "scopes": [
-         "Nihil officia itaque non.",
-         "Qui dolor consequatur assumenda."
+         "catalog-refresh",
+         "agent:create"
       ]
-   }' --token "Aut minima autem ut est error eaque."
+   }' --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM"
 `, os.Args[0])
 }
 
@@ -481,7 +481,7 @@ Refresh the changes in config file
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` admin refresh-config --token "Esse fugit."
+    `+os.Args[0]+` admin refresh-config --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM"
 `, os.Args[0])
 }
 
@@ -531,7 +531,7 @@ Refresh a Catalog by it's name
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Iure modi facere cumque omnis non ut."
+    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Occaecati officia inventore adipisci."
 `, os.Args[0])
 }
 
@@ -542,7 +542,7 @@ Refresh all catalogs
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh-all --token "Sunt est."
+    `+os.Args[0]+` catalog refresh-all --token "Quaerat animi qui."
 `, os.Args[0])
 }
 
@@ -591,7 +591,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 15685588519419587575 --token "Omnis aut beatae reiciendis accusantium distinctio."
+    `+os.Args[0]+` rating get --id 11281538076509796713 --token "Placeat hic accusamus."
 `, os.Args[0])
 }
 
@@ -605,8 +605,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 4
-   }' --id 4565160072724169842 --token "Non quo velit vitae aut porro."
+      "rating": 3
+   }' --id 13327540982832606309 --token "Quaerat ea rerum qui hic fugit inventore."
 `, os.Args[0])
 }
 
@@ -650,7 +650,7 @@ Example:
    ]' --tags '[
       "image",
       "build"
-   ]' --limit 100 --match "contains"
+   ]' --limit 100 --match "exact"
 `, os.Args[0])
 }
 
@@ -686,7 +686,7 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -711,7 +711,7 @@ Find resources using name of catalog, resource name and kind of resource
     -minpipelinesversion STRING: 
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah" --minpipelinesversion "0.21.0"
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah" --minpipelinesversion "0.21.0"
 `, os.Args[0])
 }
 

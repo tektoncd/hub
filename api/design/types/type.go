@@ -326,9 +326,15 @@ var HubService = Type("HubService", func() {
 
 var Job = ResultType("application/vnd.hub.job", "Job", func() {
 	Description("The Job type describes a catalog refresh job that is run asynchronously")
-	Attribute("id", UInt, "id of the job")
-	Attribute("catalogName", String, "Name of the catalog")
-	Attribute("status", String, "status of the job")
+	Attribute("id", UInt, "id of the job", func() {
+		Example("id", 1)
+	})
+	Attribute("catalogName", String, "Name of the catalog", func() {
+		Example("catalogName", "tekton")
+	})
+	Attribute("status", String, "status of the job", func() {
+		Example("status", "queued")
+	})
 	Required("id", "catalogName", "status")
 })
 
