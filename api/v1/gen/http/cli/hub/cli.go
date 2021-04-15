@@ -84,10 +84,11 @@ func ParseEndpoint(
 		resourceByVersionIDFlags         = flag.NewFlagSet("by-version-id", flag.ExitOnError)
 		resourceByVersionIDVersionIDFlag = resourceByVersionIDFlags.String("version-id", "REQUIRED", "Version ID of a resource's version")
 
-		resourceByCatalogKindNameFlags       = flag.NewFlagSet("by-catalog-kind-name", flag.ExitOnError)
-		resourceByCatalogKindNameCatalogFlag = resourceByCatalogKindNameFlags.String("catalog", "REQUIRED", "name of catalog")
-		resourceByCatalogKindNameKindFlag    = resourceByCatalogKindNameFlags.String("kind", "REQUIRED", "kind of resource")
-		resourceByCatalogKindNameNameFlag    = resourceByCatalogKindNameFlags.String("name", "REQUIRED", "Name of resource")
+		resourceByCatalogKindNameFlags                   = flag.NewFlagSet("by-catalog-kind-name", flag.ExitOnError)
+		resourceByCatalogKindNameCatalogFlag             = resourceByCatalogKindNameFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceByCatalogKindNameKindFlag                = resourceByCatalogKindNameFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByCatalogKindNameNameFlag                = resourceByCatalogKindNameFlags.String("name", "REQUIRED", "Name of resource")
+		resourceByCatalogKindNameMinpipelinesversionFlag = resourceByCatalogKindNameFlags.String("minpipelinesversion", "", "")
 
 		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
 		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
@@ -217,7 +218,7 @@ func ParseEndpoint(
 				data, err = resourcec.BuildByVersionIDPayload(*resourceByVersionIDVersionIDFlag)
 			case "by-catalog-kind-name":
 				endpoint = c.ByCatalogKindName()
-				data, err = resourcec.BuildByCatalogKindNamePayload(*resourceByCatalogKindNameCatalogFlag, *resourceByCatalogKindNameKindFlag, *resourceByCatalogKindNameNameFlag)
+				data, err = resourcec.BuildByCatalogKindNamePayload(*resourceByCatalogKindNameCatalogFlag, *resourceByCatalogKindNameKindFlag, *resourceByCatalogKindNameNameFlag, *resourceByCatalogKindNameMinpipelinesversionFlag)
 			case "by-id":
 				endpoint = c.ByID()
 				data, err = resourcec.BuildByIDPayload(*resourceByIDIDFlag)
@@ -346,15 +347,16 @@ Example:
 }
 
 func resourceByCatalogKindNameUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name -catalog STRING -kind STRING -name STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name -catalog STRING -kind STRING -name STRING -minpipelinesversion STRING
 
 Find resources using name of catalog, resource name and kind of resource
     -catalog STRING: name of catalog
     -kind STRING: kind of resource
     -name STRING: Name of resource
+    -minpipelinesversion STRING: 
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah"
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah" --minpipelinesversion "0.21.0"
 `, os.Args[0])
 }
 
