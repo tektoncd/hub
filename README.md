@@ -11,6 +11,7 @@ contains the source code of this service.
 
 > Currently, Hub is launched as [hub.tekton.dev](https://hub.tekton.dev) :mega:
 
+> To view the set of APIs provided by Hub do visit the [API documentation website](https://swagger.hub.tekton.dev)
 
 ## Key features
 
