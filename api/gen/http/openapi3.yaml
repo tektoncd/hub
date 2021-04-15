@@ -195,12 +195,6 @@ paths:
               - catalogName: Est deserunt.
                 id: 18265458532539025930
                 status: Assumenda quaerat ea.
-              - catalogName: Est deserunt.
-                id: 18265458532539025930
-                status: Assumenda quaerat ea.
-              - catalogName: Est deserunt.
-                id: 18265458532539025930
-                status: Assumenda quaerat ea.
         "500":
           description: Internal Server Error response.
           content:
@@ -285,7 +279,7 @@ paths:
           type: array
           items:
             type: string
-            example: Et at.
+            example: Sit repellendus magnam.
           description: Catalogs of resource to filter by
           example:
           - tekton
@@ -301,7 +295,7 @@ paths:
           type: array
           items:
             type: string
-            example: Aperiam tempore animi iure eum et et.
+            example: Numquam id.
           description: Kinds of resource to filter by
           example:
           - task
@@ -317,7 +311,7 @@ paths:
           type: array
           items:
             type: string
-            example: Pariatur corrupti.
+            example: Illum ut.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -343,11 +337,11 @@ paths:
           type: string
           description: Strategy used to find matching resources
           default: contains
-          example: contains
+          example: exact
           enum:
           - exact
           - contains
-        example: exact
+        example: contains
       responses:
         "200":
           description: OK response.
@@ -464,11 +458,11 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: pipeline
+          example: task
           enum:
           - task
           - pipeline
-        example: task
+        example: pipeline
       - name: name
         in: path
         description: Name of resource
@@ -558,11 +552,11 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: pipeline
+          example: task
           enum:
           - task
           - pipeline
-        example: task
+        example: pipeline
       - name: name
         in: path
         description: name of resource
@@ -717,8 +711,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 4869966896348576719
-        example: 6109420220413662287
+          example: 6983622564908202437
+        example: 11444787998453656499
       responses:
         "200":
           description: OK response.
@@ -790,8 +784,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 13294227609226048376
-        example: 12665468825598636914
+          example: 14679754584081241153
+        example: 11554948102879015198
       requestBody:
         required: true
         content:
@@ -1205,6 +1199,63 @@ paths:
         - catalog:refresh
         - config:refresh
         - refresh:token
+  /user/info:
+    get:
+      tags:
+      - user
+      summary: Info user
+      description: Get the user Info
+      operationId: user#Info
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponseBody'
+              example:
+                data:
+                  avatarUrl: https://avatars.githubusercontent.com
+                  githubId: abc123
+                  name: abc
+        "401":
+          description: Unauthorized response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+        "403":
+          description: Forbidden response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+        "500":
+          description: Internal Server Error response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+      security:
+      - jwt_header_Authorization:
+        - rating:read
+        - rating:write
+        - agent:create
+        - catalog:refresh
+        - config:refresh
+        - refresh:token
   /user/refresh/accesstoken:
     post:
       tags:
@@ -1507,7 +1558,7 @@ components:
         fault:
           type: boolean
           description: Is the error a server-side fault?
-          example: true
+          example: false
         id:
           type: string
           description: ID is a unique identifier for this particular occurrence of
@@ -1525,7 +1576,7 @@ components:
         temporary:
           type: boolean
           description: Is the error temporary?
-          example: false
+          example: true
         timeout:
           type: boolean
           description: Is the error a timeout?
@@ -1580,25 +1631,37 @@ components:
       required:
       - name
       - status
+    InfoResponseBody:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/UserData'
+      example:
+        data:
+          avatarUrl: https://avatars.githubusercontent.com
+          githubId: abc123
+          name: abc
+      required:
+      - data
     Job:
       type: object
       properties:
         catalogName:
           type: string
           description: Name of the catalog
-          example: Suscipit fuga nam.
+          example: Dolorum sapiente.
         id:
           type: integer
           description: id of the job
-          example: 17090987381425625275
+          example: 1775143685620788290
         status:
           type: string
           description: status of the job
-          example: Eveniet qui sint omnis consequatur omnis.
+          example: Occaecati vitae ducimus ab natus autem.
       example:
-        catalogName: Sed voluptas animi molestiae nam quas.
-        id: 6985782719166842104
-        status: Optio accusamus ut.
+        catalogName: Porro placeat.
+        id: 4869966896348576719
+        status: Et at.
       required:
       - id
       - catalogName
@@ -1662,13 +1725,6 @@ components:
             name: image-build
           - id: 2
             name: kaniko
-        - id: 1
-          name: Image Builder
-          tags:
-          - id: 1
-            name: image-build
-          - id: 2
-            name: kaniko
     NewRefreshTokenResponseBody:
       type: object
       properties:
@@ -1701,9 +1757,9 @@ components:
         checksum:
           type: string
           description: Config file checksum
-          example: Ea rem aperiam ipsam sapiente.
+          example: Omnis consequatur omnis qui aut.
       example:
-        checksum: Assumenda qui sequi officiis mollitia dolorem laudantium.
+        checksum: Voluptas animi molestiae nam quas veniam optio.
       required:
       - checksum
     RefreshToken:
@@ -1836,6 +1892,32 @@ components:
       items:
         $ref: '#/components/schemas/ResourceData'
       example:
+      - catalog:
+          id: 1
+          name: tekton
+          type: community
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        name: buildah
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+        versions:
+        - id: 1
+          version: "0.1"
+        - id: 2
+          version: "0.2"
       - catalog:
           id: 1
           name: tekton
@@ -2116,14 +2198,14 @@ components:
           - error: unable to reach db
             name: api
             status: ok
+          - error: unable to reach db
+            name: api
+            status: ok
+          - error: unable to reach db
+            name: api
+            status: ok
       example:
         services:
-        - error: unable to reach db
-          name: api
-          status: ok
-        - error: unable to reach db
-          name: api
-          status: ok
         - error: unable to reach db
           name: api
           status: ok
@@ -2178,22 +2260,22 @@ components:
         name:
           type: string
           description: Name of Agent
-          example: Vel error.
+          example: Quia incidunt accusamus dolor non.
         scopes:
           type: array
           items:
             type: string
-            example: Quam inventore et incidunt maxime voluptas.
+            example: Praesentium corrupti et qui nam eos esse.
           description: Scopes required for Agent
           example:
-          - Sed sapiente libero sit id.
-          - Nam quia incidunt accusamus dolor non eum.
+          - Tempora dolorem neque maxime nesciunt.
+          - Debitis laboriosam incidunt neque asperiores reiciendis hic.
+          - Beatae dicta itaque possimus.
       example:
-        name: Corrupti et.
+        name: Aut repellat.
         scopes:
-        - Eos esse enim sint tempora.
-        - Neque maxime nesciunt.
-        - Debitis laboriosam incidunt neque asperiores reiciendis hic.
+        - Accusantium nulla ea rem aperiam.
+        - Sapiente labore.
       required:
       - name
       - scopes
@@ -2203,9 +2285,9 @@ components:
         token:
           type: string
           description: Agent JWT
-          example: Beatae dicta itaque possimus.
+          example: Qui sequi officiis mollitia dolorem laudantium quidem.
       example:
-        token: Aut repellat.
+        token: Suscipit fuga nam.
       required:
       - token
     UpdateRequestBody:
@@ -2218,9 +2300,33 @@ components:
           minimum: 0
           maximum: 5
       example:
-        rating: 2
+        rating: 1
       required:
       - rating
+    UserData:
+      type: object
+      properties:
+        avatarUrl:
+          type: string
+          description: Github user's profile picture url
+          example: https://avatars.githubusercontent.com
+        githubId:
+          type: string
+          description: Github id of User
+          example: abc123
+        name:
+          type: string
+          description: Github user name
+          example: abc
+      description: Github user Information
+      example:
+        avatarUrl: https://avatars.githubusercontent.com
+        githubId: abc123
+        name: abc
+      required:
+      - githubId
+      - name
+      - avatarUrl
     Versions:
       type: object
       properties:

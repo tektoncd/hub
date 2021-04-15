@@ -263,6 +263,128 @@ func DecodeNewRefreshTokenResponse(decoder func(*http.Response) goahttp.Decoder,
 	}
 }
 
+// BuildInfoRequest instantiates a HTTP request object with method and path set
+// to call the "user" service "Info" endpoint
+func (c *Client) BuildInfoRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: InfoUserPath()}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("user", "Info", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeInfoRequest returns an encoder for requests sent to the user Info
+// server.
+func EncodeInfoRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*user.InfoPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("user", "Info", "*user.InfoPayload", v)
+		}
+		{
+			head := p.AccessToken
+			if !strings.Contains(head, " ") {
+				req.Header.Set("Authorization", "Bearer "+head)
+			} else {
+				req.Header.Set("Authorization", head)
+			}
+		}
+		return nil
+	}
+}
+
+// DecodeInfoResponse returns a decoder for responses returned by the user Info
+// endpoint. restoreBody controls whether the response body should be restored
+// after having been read.
+// DecodeInfoResponse may return the following errors:
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
+//	- "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
+//	- error: internal error
+func DecodeInfoResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body InfoResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("user", "Info", err)
+			}
+			err = ValidateInfoResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("user", "Info", err)
+			}
+			res := NewInfoResultOK(&body)
+			return res, nil
+		case http.StatusInternalServerError:
+			var (
+				body InfoInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("user", "Info", err)
+			}
+			err = ValidateInfoInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("user", "Info", err)
+			}
+			return nil, NewInfoInternalError(&body)
+		case http.StatusUnauthorized:
+			var (
+				body InfoInvalidTokenResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("user", "Info", err)
+			}
+			err = ValidateInfoInvalidTokenResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("user", "Info", err)
+			}
+			return nil, NewInfoInvalidToken(&body)
+		case http.StatusForbidden:
+			var (
+				body InfoInvalidScopesResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("user", "Info", err)
+			}
+			err = ValidateInfoInvalidScopesResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("user", "Info", err)
+			}
+			return nil, NewInfoInvalidScopes(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("user", "Info", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalAccessTokenResponseBodyToUserAccessToken builds a value of type
 // *user.AccessToken from a value of type *AccessTokenResponseBody.
 func unmarshalAccessTokenResponseBodyToUserAccessToken(v *AccessTokenResponseBody) *user.AccessToken {
@@ -295,6 +417,18 @@ func unmarshalRefreshTokenResponseBodyToUserRefreshToken(v *RefreshTokenResponse
 	res := &user.RefreshToken{}
 	if v.Refresh != nil {
 		res.Refresh = unmarshalTokenResponseBodyToUserToken(v.Refresh)
+	}
+
+	return res
+}
+
+// unmarshalUserDataResponseBodyToUserUserData builds a value of type
+// *user.UserData from a value of type *UserDataResponseBody.
+func unmarshalUserDataResponseBodyToUserUserData(v *UserDataResponseBody) *user.UserData {
+	res := &user.UserData{
+		GithubID:  *v.GithubID,
+		Name:      *v.Name,
+		AvatarURL: *v.AvatarURL,
 	}
 
 	return res

@@ -26,6 +26,13 @@ type NewRefreshTokenResponseBody struct {
 	Data *RefreshTokenResponseBody `form:"data,omitempty" json:"data,omitempty" xml:"data,omitempty"`
 }
 
+// InfoResponseBody is the type of the "user" service "Info" endpoint HTTP
+// response body.
+type InfoResponseBody struct {
+	// User Information
+	Data *UserDataResponseBody `form:"data,omitempty" json:"data,omitempty" xml:"data,omitempty"`
+}
+
 // RefreshAccessTokenInternalErrorResponseBody is the type of the "user"
 // service "RefreshAccessToken" endpoint HTTP response body for the
 // "internal-error" error.
@@ -137,6 +144,60 @@ type NewRefreshTokenInvalidScopesResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
+// InfoInternalErrorResponseBody is the type of the "user" service "Info"
+// endpoint HTTP response body for the "internal-error" error.
+type InfoInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// InfoInvalidTokenResponseBody is the type of the "user" service "Info"
+// endpoint HTTP response body for the "invalid-token" error.
+type InfoInvalidTokenResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// InfoInvalidScopesResponseBody is the type of the "user" service "Info"
+// endpoint HTTP response body for the "invalid-scopes" error.
+type InfoInvalidScopesResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
 // AccessTokenResponseBody is used to define fields on response body types.
 type AccessTokenResponseBody struct {
 	// Access Token for user
@@ -157,6 +218,16 @@ type TokenResponseBody struct {
 type RefreshTokenResponseBody struct {
 	// Refresh Token for user
 	Refresh *TokenResponseBody `form:"refresh,omitempty" json:"refresh,omitempty" xml:"refresh,omitempty"`
+}
+
+// UserDataResponseBody is used to define fields on response body types.
+type UserDataResponseBody struct {
+	// Github id of User
+	GithubID *string `form:"githubId,omitempty" json:"githubId,omitempty" xml:"githubId,omitempty"`
+	// Github user name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Github user's profile picture url
+	AvatarURL *string `form:"avatarUrl,omitempty" json:"avatarUrl,omitempty" xml:"avatarUrl,omitempty"`
 }
 
 // NewRefreshAccessTokenResultOK builds a "user" service "RefreshAccessToken"
@@ -267,6 +338,59 @@ func NewNewRefreshTokenInvalidScopes(body *NewRefreshTokenInvalidScopesResponseB
 	return v
 }
 
+// NewInfoResultOK builds a "user" service "Info" endpoint result from a HTTP
+// "OK" response.
+func NewInfoResultOK(body *InfoResponseBody) *user.InfoResult {
+	v := &user.InfoResult{}
+	v.Data = unmarshalUserDataResponseBodyToUserUserData(body.Data)
+
+	return v
+}
+
+// NewInfoInternalError builds a user service Info endpoint internal-error
+// error.
+func NewInfoInternalError(body *InfoInternalErrorResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewInfoInvalidToken builds a user service Info endpoint invalid-token error.
+func NewInfoInvalidToken(body *InfoInvalidTokenResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewInfoInvalidScopes builds a user service Info endpoint invalid-scopes
+// error.
+func NewInfoInvalidScopes(body *InfoInvalidScopesResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
 // ValidateRefreshAccessTokenResponseBody runs the validations defined on
 // RefreshAccessTokenResponseBody
 func ValidateRefreshAccessTokenResponseBody(body *RefreshAccessTokenResponseBody) (err error) {
@@ -289,6 +413,19 @@ func ValidateNewRefreshTokenResponseBody(body *NewRefreshTokenResponseBody) (err
 	}
 	if body.Data != nil {
 		if err2 := ValidateRefreshTokenResponseBody(body.Data); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateInfoResponseBody runs the validations defined on InfoResponseBody
+func ValidateInfoResponseBody(body *InfoResponseBody) (err error) {
+	if body.Data == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("data", "body"))
+	}
+	if body.Data != nil {
+		if err2 := ValidateUserDataResponseBody(body.Data); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
 	}
@@ -439,6 +576,78 @@ func ValidateNewRefreshTokenInvalidScopesResponseBody(body *NewRefreshTokenInval
 	return
 }
 
+// ValidateInfoInternalErrorResponseBody runs the validations defined on
+// Info_internal-error_Response_Body
+func ValidateInfoInternalErrorResponseBody(body *InfoInternalErrorResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateInfoInvalidTokenResponseBody runs the validations defined on
+// Info_invalid-token_Response_Body
+func ValidateInfoInvalidTokenResponseBody(body *InfoInvalidTokenResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateInfoInvalidScopesResponseBody runs the validations defined on
+// Info_invalid-scopes_Response_Body
+func ValidateInfoInvalidScopesResponseBody(body *InfoInvalidScopesResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
 // ValidateAccessTokenResponseBody runs the validations defined on
 // AccessTokenResponseBody
 func ValidateAccessTokenResponseBody(body *AccessTokenResponseBody) (err error) {
@@ -471,6 +680,21 @@ func ValidateRefreshTokenResponseBody(body *RefreshTokenResponseBody) (err error
 		if err2 := ValidateTokenResponseBody(body.Refresh); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
+	}
+	return
+}
+
+// ValidateUserDataResponseBody runs the validations defined on
+// UserDataResponseBody
+func ValidateUserDataResponseBody(body *UserDataResponseBody) (err error) {
+	if body.GithubID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("githubId", "body"))
+	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.AvatarURL == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("avatarUrl", "body"))
 	}
 	return
 }

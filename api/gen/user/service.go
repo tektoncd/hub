@@ -20,6 +20,8 @@ type Service interface {
 	RefreshAccessToken(context.Context, *RefreshAccessTokenPayload) (res *RefreshAccessTokenResult, err error)
 	// Get a new refresh token of User
 	NewRefreshToken(context.Context, *NewRefreshTokenPayload) (res *NewRefreshTokenResult, err error)
+	// Get the user Info
+	Info(context.Context, *InfoPayload) (res *InfoResult, err error)
 }
 
 // Auther defines the authorization functions to be implemented by the service.
@@ -36,7 +38,7 @@ const ServiceName = "user"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"RefreshAccessToken", "NewRefreshToken"}
+var MethodNames = [3]string{"RefreshAccessToken", "NewRefreshToken", "Info"}
 
 // RefreshAccessTokenPayload is the payload type of the user service
 // RefreshAccessToken method.
@@ -66,6 +68,18 @@ type NewRefreshTokenResult struct {
 	Data *RefreshToken
 }
 
+// InfoPayload is the payload type of the user service Info method.
+type InfoPayload struct {
+	// Access Token of User
+	AccessToken string
+}
+
+// InfoResult is the result type of the user service Info method.
+type InfoResult struct {
+	// User Information
+	Data *UserData
+}
+
 // Access Token for User
 type AccessToken struct {
 	// Access Token for user
@@ -86,6 +100,16 @@ type Token struct {
 type RefreshToken struct {
 	// Refresh Token for user
 	Refresh *Token
+}
+
+// Github user Information
+type UserData struct {
+	// Github id of User
+	GithubID string
+	// Github user name
+	Name string
+	// Github user's profile picture url
+	AvatarURL string
 }
 
 // MakeInvalidToken builds a goa.ServiceError from an error.

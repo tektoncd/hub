@@ -118,3 +118,24 @@ func TestNewRefreshToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 	assert.Error(t, err)
 	assert.EqualError(t, err, "invalid refresh token")
 }
+
+func TestInfo(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user Access Token
+	testUser, accessToken, err := tc.UserWithScopes("abc", "rating:read", "rating:write")
+	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.NoError(t, err)
+
+	userSvc := New(tc)
+	ctx := auth.WithUserID(context.Background(), testUser.ID)
+	payload := &user.InfoPayload{AccessToken: accessToken}
+	res, err := userSvc.Info(ctx, payload)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "abc", res.Data.GithubID)
+	assert.Equal(t, "https://bar", res.Data.AvatarURL)
+
+}

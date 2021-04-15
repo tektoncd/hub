@@ -92,6 +92,7 @@ type (
 		Type                 UserType
 		Scopes               []*Scope `gorm:"many2many:user_scopes;"`
 		RefreshTokenChecksum string
+		AvatarURL            string
 	}
 
 	Scope struct {

@@ -196,3 +196,37 @@ func TestNewRefreshToken_Http_RefreshTokenChecksumIsDifferent(t *testing.T) {
 		assert.EqualError(t, err, "invalid refresh token")
 	})
 }
+
+func InfoChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	service := auth.NewService(tc.APIConfig, "admin")
+	checker := goahttpcheck.New()
+	checker.Mount(server.NewInfoHandler,
+		server.MountInfoHandler,
+		user.NewInfoEndpoint(New(tc), service.JWTAuth))
+	return checker
+}
+func TestUserInfo_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user refresh token
+	testUser, accessToken, err := tc.UserWithScopes("abc", "rating:read")
+	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
+	InfoChecker(tc).Test(t, http.MethodGet, "/user/info").
+		WithHeader("Authorization", accessToken).Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res := &user.InfoResult{}
+		marshallErr := json.Unmarshal([]byte(b), &res)
+		assert.NoError(t, marshallErr)
+		assert.Equal(t, "abc", res.Data.Name)
+	})
+}
