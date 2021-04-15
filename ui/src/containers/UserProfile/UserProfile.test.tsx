@@ -21,6 +21,6 @@ describe('UserProfile', () => {
 
     const dropdownItems = component.find(Dropdown).props().dropdownItems;
     assert(dropdownItems);
-    expect(dropdownItems.length).toBe(2);
+    expect(dropdownItems.length).toBe(4);
   });
 });

@@ -8,12 +8,19 @@ export const TokenInfo = types.model('TokenInfo', {
   refreshInterval: types.optional(types.string, '')
 });
 
+export const UserProfile = types.model('UserProfile', {
+  githubId: types.optional(types.string, ''),
+  name: types.optional(types.string, ''),
+  avatarUrl: types.optional(types.string, '')
+});
+
 export const Error = types.model('Error', {
   status: types.optional(types.number, 0),
   customMessage: types.optional(types.string, ''),
   serverMessage: types.optional(types.string, '')
 });
 
+export type IUserProfile = Instance<typeof UserProfile>;
 export type ITokenInfo = Instance<typeof TokenInfo>;
 export type IError = Instance<typeof Error>;
 
@@ -29,6 +36,7 @@ export const AuthStore = types
   .model('AuthStore', {
     accessTokenInfo: types.optional(TokenInfo, {}),
     refreshTokenInfo: types.optional(TokenInfo, {}),
+    profile: types.optional(UserProfile, {}),
     isLoading: true,
     isAuthenticated: false,
     userRating: types.optional(types.number, 0),
@@ -45,6 +53,11 @@ export const AuthStore = types
       self.refreshTokenInfo.token = item.token;
       self.refreshTokenInfo.expiresAt = item.expiresAt;
       self.refreshTokenInfo.refreshInterval = item.refreshInterval;
+    },
+    addUserProfile(item: IUserProfile) {
+      self.profile.githubId = item.githubId;
+      self.profile.name = item.name;
+      self.profile.avatarUrl = item.avatarUrl;
     },
     setIsAuthenticated(l: boolean) {
       self.isAuthenticated = l;
@@ -190,6 +203,23 @@ export const AuthStore = types
           status: err.status,
           serverMessage: titleCase(err.data.message),
           customMessage: 'Refresh token has been expired please login again !'
+        };
+        self.setErrorMessage(error);
+      }
+    }),
+
+    getProfile: flow(function* () {
+      try {
+        const { api } = self;
+
+        const access = yield api.profile(self.accessTokenInfo.token);
+        const userdata = access.data;
+        self.addUserProfile(userdata);
+      } catch (err) {
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data.message),
+          customMessage: 'Access token has been expired please login again !'
         };
         self.setErrorMessage(error);
       }

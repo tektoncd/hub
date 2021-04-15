@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { ICategory } from '../store/category';
 import { IResource, IVersion } from '../store/resource';
-import { ITokenInfo } from '../store/auth';
+import { ITokenInfo, IUserProfile } from '../store/auth';
 import { Api, AuthResponse } from './';
 
 export class FakeHub implements Api {
@@ -99,6 +99,15 @@ export class FakeHub implements Api {
 
     const ret = () => JSON.parse(fs.readFileSync(data).toString());
     return new Promise<ITokenInfo>((resolve) => {
+      setTimeout(() => resolve(ret()), 1000);
+    });
+  }
+
+  async profile() {
+    const data = `${this.dataDir}/userInfo.json`;
+
+    const ret = () => JSON.parse(fs.readFileSync(data).toString());
+    return new Promise<IUserProfile>((resolve) => {
       setTimeout(() => resolve(ret()), 1000);
     });
   }

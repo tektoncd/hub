@@ -166,4 +166,31 @@ describe('Store functions', () => {
       }
     );
   });
+
+  it('can get user information after logged in', (done) => {
+    const user = AuthStore.create(
+      { accessTokenInfo: {}, refreshTokenInfo: {}, profile: {} },
+      { api }
+    );
+
+    expect(user.isLoading).toBe(true);
+
+    const code = {
+      code: 'foo'
+    };
+
+    user.authenticate(code);
+    when(
+      () => !user.isLoading,
+      () => {
+        expect(user.isAuthenticated).toBe(true);
+        user.getProfile();
+        setTimeout(() => {
+          expect(user.profile.githubId).toBe('abc123');
+          expect(user.profile.avatarUrl).toBe('https://avatars.githubusercontent.com/u/abc');
+          done();
+        }, 1000);
+      }
+    );
+  });
 });
