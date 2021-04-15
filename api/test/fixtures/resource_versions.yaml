@@ -61,7 +61,7 @@
   version: "0.2"
   display_name: Tekton CLI
   description: Desc1
-  min_pipelines_version: 0.12.1
+  min_pipelines_version: 0.15.0
   url: https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml
   resource_id: 1
   created_at: 2016-01-01 12:30:12 UTC
@@ -72,7 +72,7 @@
   version: "0.1.1"
   display_name: Tekton CLI
   description: Desc1
-  min_pipelines_version: 0.12.1
+  min_pipelines_version: 0.12.7
   url: https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.1.1/tekton.yaml
   resource_id: 1
   created_at: 2016-01-01 12:30:12 UTC

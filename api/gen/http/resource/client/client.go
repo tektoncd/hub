@@ -190,10 +190,15 @@ func (c *Client) ByVersionID() goa.Endpoint {
 // resource service ByCatalogKindName server.
 func (c *Client) ByCatalogKindName() goa.Endpoint {
 	var (
+		encodeRequest  = EncodeByCatalogKindNameRequest(c.encoder)
 		decodeResponse = DecodeByCatalogKindNameResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
 		req, err := c.BuildByCatalogKindNameRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
 		if err != nil {
 			return nil, err
 		}

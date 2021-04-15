@@ -147,6 +147,32 @@ func TestByCatalogKindName(t *testing.T) {
 	assert.Equal(t, "img", res.Data.Name)
 }
 
+func TestByCatalogKindNameIfCompatible(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	version := "0.12.3"
+	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-official", Kind: "task", Name: "tekton", Minpipelinesversion: &version}
+	res, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, "tekton", res.Data.Name)
+	assert.Equal(t, 1, len(res.Data.Versions))
+	assert.Equal(t, "0.1", res.Data.Versions[0].Version)
+}
+
+func TestByCatalogKindName_CompatibleVersionNotFound(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	version := "0.11.0"
+	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-official", Kind: "task", Name: "tekton", Minpipelinesversion: &version}
+	_, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
+	assert.Error(t, err)
+	assert.EqualError(t, err, "resource not found compatible with minPipelinesVersion")
+}
+
 func TestByCatalogKindName_ResourceNotFoundError(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())

@@ -147,19 +147,19 @@ func TestQuery_ByCatalogs(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	req := Request{
-		Db:    tc.DB(),
-		Log:   tc.Logger("resource"),
-		Name:  "",
-		Kinds: []string{},
-		Catalogs:  []string{"catalog-community"},
-		Limit: 100,
+		Db:       tc.DB(),
+		Log:      tc.Logger("resource"),
+		Name:     "",
+		Kinds:    []string{},
+		Catalogs: []string{"catalog-community"},
+		Limit:    100,
 	}
 
 	res, err := req.Query()
 	assert.NoError(t, err)
 
 	assert.Equal(t, 1, len(res))
-	assert.Equal(t,"catalog-community",res[0].Catalog.Name)
+	assert.Equal(t, "catalog-community", res[0].Catalog.Name)
 }
 
 func TestQuery_ByWrongCatalogs(t *testing.T) {
@@ -167,16 +167,16 @@ func TestQuery_ByWrongCatalogs(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	req := Request{
-		Db:    tc.DB(),
-		Log:   tc.Logger("resource"),
-		Name:  "",
-		Kinds: []string{},
-		Catalogs:  []string{"catalog"},
-		Limit: 100,
+		Db:       tc.DB(),
+		Log:      tc.Logger("resource"),
+		Name:     "",
+		Kinds:    []string{},
+		Catalogs: []string{"catalog"},
+		Limit:    100,
 	}
 
 	res, err := req.Query()
-	assert.EqualError(t, err,"resource not found")
+	assert.EqualError(t, err, "resource not found")
 
 	assert.Equal(t, 0, len(res))
 }

@@ -18,6 +18,8 @@ import (
 	. "goa.design/goa/v3/dsl"
 )
 
+var PipelinesVersionRegex = `^\d+(?:\.\d+){0,2}$`
+
 var Tag = Type("Tag", func() {
 	Attribute("id", UInt, "ID is the unique id of tag", func() {
 		Example("id", 1)

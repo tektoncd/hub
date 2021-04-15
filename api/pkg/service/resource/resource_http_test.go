@@ -412,6 +412,41 @@ func TestByCatalogKindName_Http(t *testing.T) {
 	})
 }
 
+func TestByCatalogKindName_CompatibleVersion_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/task/tekton?minpipelinesversion=0.12.3").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
+func TestByCatalogKindName_NoCompatibleVersion_Http_ErrorCase(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/resource/catalog-official/task/tekton?minpipelinesversion=0.11.0").Check().
+		HasStatus(404).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		err := goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
+		assert.NoError(t, marshallErr)
+
+		assert.Equal(t, "not-found", err.Name)
+	})
+}
+
 func TestByCatalogKindName_Http_ErrorCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
