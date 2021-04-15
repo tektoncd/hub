@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_URL } from '../config/constants';
 import { ICategory } from '../store/category';
 import { IResource, IVersion } from '../store/resource';
-import { ITokenInfo } from '../store/auth';
+import { ITokenInfo, IUserProfile } from '../store/auth';
 
 interface Token {
   token: string;
@@ -35,6 +35,7 @@ export interface Api {
   setRating(resourceId: number, token: string, rating: number): Promise<void | null>;
   getRefreshToken(refreshToken: string): Promise<ITokenInfo>;
   getAccessToken(accessToken: string): Promise<ITokenInfo>;
+  profile(token: string): Promise<IUserProfile>;
 }
 
 export class Hub implements Api {
@@ -162,6 +163,21 @@ export class Hub implements Api {
           Authorization: `Bearer ${refreshToken}`
         }
       })
+        .then((response) => response.data)
+        .catch((err) => Promise.reject(err.response));
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async profile(token: string) {
+    try {
+      return axios
+        .get(`${API_URL}/user/info`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
     } catch (err) {

@@ -6,17 +6,22 @@ import {
   Dropdown,
   DropdownItem,
   DropdownToggle,
-  Modal
+  Modal,
+  DropdownSeparator
 } from '@patternfly/react-core';
-import imgAvatar from '../../assets/logo/imgAvatar.png';
+import { observer } from 'mobx-react';
 import { useMst } from '../../store/root';
 import './UserProfile.css';
 
-const UserProfile: React.FC = () => {
+const UserProfile: React.FC = observer(() => {
   const { user } = useMst();
 
   const [refreshId, setRefreshId] = useState<number>(0);
   const [accessId, setAccessId] = useState<number>(0);
+
+  useEffect(() => {
+    user.getProfile();
+  }, [user.profile.githubId]);
 
   const triggerInterval = useCallback(() => {
     const accessTokenInterval = user.accessTokenInfo.expiresAt * 1000 - new Date().getTime();
@@ -60,6 +65,8 @@ const UserProfile: React.FC = () => {
   const onToggle = (isOpen: React.SetStateAction<boolean>) => set(isOpen);
 
   const dropdownItems = [
+    <DropdownItem key="githubId">Hi {user.profile.githubId}</DropdownItem>,
+    <DropdownSeparator key="separator" />,
     <DropdownItem key="copyToken" onClick={() => setIsModalOpen(!isModalOpen)}>
       Copy Hub Token
     </DropdownItem>,
@@ -68,7 +75,9 @@ const UserProfile: React.FC = () => {
     </DropdownItem>
   ];
 
-  const userLogo: React.ReactNode = <Avatar className="hub-userlogo-size" src={imgAvatar} alt="" />;
+  const userLogo: React.ReactNode = (
+    <Avatar className="hub-userlogo-size" src={user.profile.avatarUrl} alt="" />
+  );
 
   return (
     <React.Fragment>
@@ -95,5 +104,5 @@ const UserProfile: React.FC = () => {
       </Modal>
     </React.Fragment>
   );
-};
+});
 export default UserProfile;
