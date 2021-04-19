@@ -118,7 +118,7 @@ type ByCatalogKindNamePayload struct {
 	// Name of resource
 	Name string
 	// To find resource compatible with a Tekton pipelines version, use this param
-	Minpipelinesversion *string
+	Pipelinesversion *string
 }
 
 // Resource is the result type of the resource service ByCatalogKindName method.

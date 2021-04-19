@@ -237,7 +237,7 @@ paths:
         resource
       operationId: resource#ByCatalogKindName
       parameters:
-      - name: minpipelinesversion
+      - name: pipelinesversion
         in: query
         description: To find resource compatible with a Tekton pipelines version,
           use this param

@@ -581,8 +581,8 @@ func EncodeByCatalogKindNameRequest(encoder func(*http.Request) goahttp.Encoder)
 			return goahttp.ErrInvalidType("resource", "ByCatalogKindName", "*resource.ByCatalogKindNamePayload", v)
 		}
 		values := req.URL.Query()
-		if p.Minpipelinesversion != nil {
-			values.Add("minpipelinesversion", *p.Minpipelinesversion)
+		if p.Pipelinesversion != nil {
+			values.Add("pipelinesversion", *p.Pipelinesversion)
 		}
 		req.URL.RawQuery = values.Encode()
 		return nil
