@@ -153,7 +153,7 @@ func TestByCatalogKindNameIfCompatible(t *testing.T) {
 
 	resourceSvc := New(tc)
 	version := "0.12.3"
-	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-official", Kind: "task", Name: "tekton", Minpipelinesversion: &version}
+	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-official", Kind: "task", Name: "tekton", Pipelinesversion: &version}
 	res, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
 	assert.NoError(t, err)
 	assert.Equal(t, "tekton", res.Data.Name)
@@ -167,7 +167,7 @@ func TestByCatalogKindName_CompatibleVersionNotFound(t *testing.T) {
 
 	resourceSvc := New(tc)
 	version := "0.11.0"
-	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-official", Kind: "task", Name: "tekton", Minpipelinesversion: &version}
+	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-official", Kind: "task", Name: "tekton", Pipelinesversion: &version}
 	_, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "resource not found compatible with minPipelinesVersion")
