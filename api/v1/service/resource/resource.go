@@ -205,9 +205,9 @@ func (s *service) ByCatalogKindName(ctx context.Context, p *resource.ByCatalogKi
 		}
 	}
 
-	// If minPipelinesVersion is passed then check for version compatible with pipelines version
-	if p.Minpipelinesversion != nil {
-		r = filterCompatibleVersions(r, *p.Minpipelinesversion)
+	// If pipelinesVersion is passed then check for version compatible with pipelines version
+	if p.Pipelinesversion != nil {
+		r = filterCompatibleVersions(r, *p.Pipelinesversion)
 		if len(r.Versions) == 0 {
 			return nil, resource.MakeNotFound(fmt.Errorf("resource not found compatible with minPipelinesVersion"))
 		}
@@ -248,11 +248,11 @@ func (s *service) ByID(ctx context.Context, p *resource.ByIDPayload) (*resource.
 	return &resource.Resource{Data: res}, nil
 }
 
-func filterCompatibleVersions(r model.Resource, minPipelinesVersion string) model.Resource {
+func filterCompatibleVersions(r model.Resource, pipelinesVersion string) model.Resource {
 
 	var compatibleVersions []model.ResourceVersion
 	for _, v := range r.Versions {
-		if v.MinPipelinesVersion <= minPipelinesVersion {
+		if v.MinPipelinesVersion <= pipelinesVersion {
 			compatibleVersions = append(compatibleVersions, v)
 		}
 	}

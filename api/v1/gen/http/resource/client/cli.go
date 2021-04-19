@@ -183,7 +183,7 @@ func BuildByVersionIDPayload(resourceByVersionIDVersionID string) (*resource.ByV
 
 // BuildByCatalogKindNamePayload builds the payload for the resource
 // ByCatalogKindName endpoint from CLI flags.
-func BuildByCatalogKindNamePayload(resourceByCatalogKindNameCatalog string, resourceByCatalogKindNameKind string, resourceByCatalogKindNameName string, resourceByCatalogKindNameMinpipelinesversion string) (*resource.ByCatalogKindNamePayload, error) {
+func BuildByCatalogKindNamePayload(resourceByCatalogKindNameCatalog string, resourceByCatalogKindNameKind string, resourceByCatalogKindNameName string, resourceByCatalogKindNamePipelinesversion string) (*resource.ByCatalogKindNamePayload, error) {
 	var err error
 	var catalog string
 	{
@@ -203,12 +203,12 @@ func BuildByCatalogKindNamePayload(resourceByCatalogKindNameCatalog string, reso
 	{
 		name = resourceByCatalogKindNameName
 	}
-	var minpipelinesversion *string
+	var pipelinesversion *string
 	{
-		if resourceByCatalogKindNameMinpipelinesversion != "" {
-			minpipelinesversion = &resourceByCatalogKindNameMinpipelinesversion
-			if minpipelinesversion != nil {
-				err = goa.MergeErrors(err, goa.ValidatePattern("minpipelinesversion", *minpipelinesversion, "^\\d+(?:\\.\\d+){0,2}$"))
+		if resourceByCatalogKindNamePipelinesversion != "" {
+			pipelinesversion = &resourceByCatalogKindNamePipelinesversion
+			if pipelinesversion != nil {
+				err = goa.MergeErrors(err, goa.ValidatePattern("pipelinesversion", *pipelinesversion, "^\\d+(?:\\.\\d+){0,2}$"))
 			}
 			if err != nil {
 				return nil, err
@@ -219,7 +219,7 @@ func BuildByCatalogKindNamePayload(resourceByCatalogKindNameCatalog string, reso
 	v.Catalog = catalog
 	v.Kind = kind
 	v.Name = name
-	v.Minpipelinesversion = minpipelinesversion
+	v.Pipelinesversion = pipelinesversion
 
 	return v, nil
 }

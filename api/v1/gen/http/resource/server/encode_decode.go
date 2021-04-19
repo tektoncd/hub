@@ -456,11 +456,11 @@ func EncodeByCatalogKindNameResponse(encoder func(context.Context, http.Response
 func DecodeByCatalogKindNameRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			catalog             string
-			kind                string
-			name                string
-			minpipelinesversion *string
-			err                 error
+			catalog          string
+			kind             string
+			name             string
+			pipelinesversion *string
+			err              error
 
 			params = mux.Vars(r)
 		)
@@ -470,17 +470,17 @@ func DecodeByCatalogKindNameRequest(mux goahttp.Muxer, decoder func(*http.Reques
 			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
 		}
 		name = params["name"]
-		minpipelinesversionRaw := r.URL.Query().Get("minpipelinesversion")
-		if minpipelinesversionRaw != "" {
-			minpipelinesversion = &minpipelinesversionRaw
+		pipelinesversionRaw := r.URL.Query().Get("pipelinesversion")
+		if pipelinesversionRaw != "" {
+			pipelinesversion = &pipelinesversionRaw
 		}
-		if minpipelinesversion != nil {
-			err = goa.MergeErrors(err, goa.ValidatePattern("minpipelinesversion", *minpipelinesversion, "^\\d+(?:\\.\\d+){0,2}$"))
+		if pipelinesversion != nil {
+			err = goa.MergeErrors(err, goa.ValidatePattern("pipelinesversion", *pipelinesversion, "^\\d+(?:\\.\\d+){0,2}$"))
 		}
 		if err != nil {
 			return nil, err
 		}
-		payload := NewByCatalogKindNamePayload(catalog, kind, name, minpipelinesversion)
+		payload := NewByCatalogKindNamePayload(catalog, kind, name, pipelinesversion)
 
 		return payload, nil
 	}

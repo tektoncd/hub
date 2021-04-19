@@ -176,9 +176,9 @@ var _ = Service("resource", func() {
 			Attribute("name", String, "Name of resource", func() {
 				Example("name", "buildah")
 			})
-			Attribute("minpipelinesversion", String, "To find resource compatible with a Tekton pipelines version, use this param", func() {
+			Attribute("pipelinesversion", String, "To find resource compatible with a Tekton pipelines version, use this param", func() {
 				Pattern(types.PipelinesVersionRegex)
-				Example("minpipelinesversion", "0.21.0")
+				Example("pipelinesversion", "0.21.0")
 			})
 			Required("catalog", "kind", "name")
 		})
@@ -187,7 +187,7 @@ var _ = Service("resource", func() {
 		HTTP(func() {
 			GET("/resource/{catalog}/{kind}/{name}")
 
-			Param("minpipelinesversion")
+			Param("pipelinesversion")
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
