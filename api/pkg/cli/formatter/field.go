@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/tektoncd/hub/api/gen/http/resource/client"
 	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"golang.org/x/term"
@@ -164,4 +165,16 @@ func FormatInstallCMD(res hub.ResourceData, resVer hub.ResourceWithVersionData, 
 		sb.WriteString(" --from " + *res.Catalog.Name)
 	}
 	return sb.String()
+}
+
+func DecorateAttr(attrString, message string) string {
+	attr := color.Reset
+	switch attrString {
+	case "underline bold":
+		return color.New(color.Underline).Add(color.Bold).Sprintf(message)
+	case "bold":
+		attr = color.Bold
+	}
+
+	return color.New(attr).Sprintf(message)
 }
