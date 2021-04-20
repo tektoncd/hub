@@ -47,13 +47,13 @@ var resource = &res.ResourceData{
 		UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
 	},
 	Tags: []*res.Tag{
-		&res.Tag{
+		{
 			ID:   3,
 			Name: "cli",
 		},
 	},
 	Versions: []*res.ResourceVersionData{
-		&res.ResourceVersionData{
+		{
 			ID:      11,
 			Version: "0.1",
 		},
@@ -79,7 +79,7 @@ var pipelineResWithVersion = &res.ResourceVersionData{
 		},
 		Rating: 4.3,
 		Tags: []*res.Tag{
-			&res.Tag{
+			{
 				ID:   3,
 				Name: "fruit",
 			},

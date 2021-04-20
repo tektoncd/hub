@@ -52,10 +52,10 @@ func TestFormatTags(t *testing.T) {
 	tagName2 := "tag2"
 
 	res := []*client.TagResponseBody{
-		&client.TagResponseBody{
+		{
 			Name: &tagName1,
 		},
-		&client.TagResponseBody{
+		{
 			Name: &tagName2,
 		},
 	}
@@ -90,4 +90,9 @@ func TestFormatVersion(t *testing.T) {
 func TestIcon(t *testing.T) {
 	got := Icon("bullet")
 	assert.Equal(t, "∙ ", got)
+}
+
+func TestDecorate(t *testing.T) {
+	got := DecorateAttr("bold", "world")
+	assert.Equal(t, "world", got)
 }

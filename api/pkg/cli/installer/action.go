@@ -145,6 +145,16 @@ func (i *Installer) LookupInstalled(name, kind, namespace string) (*unstructured
 	return i.existingRes, nil
 }
 
+func (i *Installer) ListInstalled(kind, namespace string) ([]unstructured.Unstructured, error) {
+	i.TektonPipelinesVersion()
+	listResources, err := i.list(kind, namespace, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	return listResources.Items, nil
+}
+
 // Update will updates an existing resource with the passed resource if exist
 func (i *Installer) Update(data []byte, catalog, namespace string) (*unstructured.Unstructured, []error) {
 	return i.updateByAction(data, catalog, namespace, update)
