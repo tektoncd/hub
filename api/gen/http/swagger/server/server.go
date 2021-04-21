@@ -56,7 +56,7 @@ func New(
 	return &Server{
 		Mounts: []*MountPoint{
 			{"CORS", "OPTIONS", "/schema/swagger.json"},
-			{"gen/http/openapi3.yaml", "GET", "/schema/swagger.json"},
+			{"docs/openapi3.json", "GET", "/schema/swagger.json"},
 		},
 		CORS: NewCORSHandler(),
 	}
@@ -73,14 +73,14 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 // Mount configures the mux to serve the swagger endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountCORSHandler(mux, h.CORS)
-	MountGenHTTPOpenapi3Yaml(mux, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "gen/http/openapi3.yaml")
+	MountDocsOpenapi3JSON(mux, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "docs/openapi3.json")
 	}))
 }
 
-// MountGenHTTPOpenapi3Yaml configures the mux to serve GET request made to
+// MountDocsOpenapi3JSON configures the mux to serve GET request made to
 // "/schema/swagger.json".
-func MountGenHTTPOpenapi3Yaml(mux goahttp.Muxer, h http.Handler) {
+func MountDocsOpenapi3JSON(mux goahttp.Muxer, h http.Handler) {
 	mux.Handle("GET", "/schema/swagger.json", handleSwaggerOrigin(h).ServeHTTP)
 }
 

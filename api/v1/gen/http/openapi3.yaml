@@ -722,7 +722,7 @@ paths:
     get:
       tags:
       - swagger
-      summary: Download v1/gen/http/openapi3.yaml
+      summary: Download docs/v1/openapi3.json
       description: JSON document containing the API swagger definition
       operationId: swagger#/v1/schema/swagger.json
       responses:
