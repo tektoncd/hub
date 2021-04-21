@@ -15,8 +15,8 @@ WORKDIR /app
 COPY --from=builder /go/src/github.com/tektoncd/hub/api/api-server /app/api-server
 
 # For each new version, doc has to be copied 
-COPY gen/http/openapi3.yaml /app/gen/http/openapi3.yaml
-COPY v1/gen/http/openapi3.yaml /app/v1/gen/http/openapi3.yaml
+COPY gen/http/openapi3.json /app/docs/openapi3.json
+COPY v1/gen/http/openapi3.json /app/docs/v1/openapi3.json
 
 EXPOSE 8000
 

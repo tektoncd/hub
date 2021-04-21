@@ -535,7 +535,7 @@ paths:
     get:
       tags:
       - swagger
-      summary: Download gen/http/openapi3.yaml
+      summary: Download docs/openapi3.json
       description: JSON document containing the API swagger definition
       operationId: swagger#/schema/swagger.json
       responses:

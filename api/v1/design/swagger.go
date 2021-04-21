@@ -22,8 +22,11 @@ var _ = Service("swagger", func() {
 	HTTP(func() {
 		Path("/v1/schema")
 	})
-
-	Files("/swagger.json", "v1/gen/http/openapi3.yaml", func() {
+	// NOTE: The path is changed to docs/v1/openapi3.json to make it work in container.
+	// Copying the gen as it is doesn't seems to work properly, so in dockerfile, swagger will
+	// file is copied to /docs. This will make the swagger api not work locally, as the file
+	// generated is in gen directory. 
+	Files("/swagger.json", "docs/v1/openapi3.json", func() {
 		Description("JSON document containing the API swagger definition")
 	})
 })
