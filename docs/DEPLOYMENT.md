@@ -29,6 +29,18 @@
 
 Lets build and push all images to a registry and then create deployments.
 
+**Note** : You can use images from quay and skip the build image section.
+
+- The image tag would be same as release tag. You can check the latest release [here](https://github.com/tektoncd/hub/releases)
+
+- For example:
+
+  - UI Image: quay.io/tekton-hub/ui:v1.3.0
+
+  - DB Migration Image: quay.io/tekton-hub/db-migration:v1.3.0
+
+  - API Image: quay.io/tekton-hub/api:v1.3.0
+
 ### UI Image
 
 Ensure you are in `ui` directory and logged in you image registry.
@@ -71,8 +83,9 @@ Navigate to `config` directoy in the root of the project.
 Execute below command
 
 ```
-kubectl apply -f 00-init/
+kubectl apply -f 00-init/ -n tekton-hub
 ```
+
 This will create `tekton-hub` namespace, db deployment with `postgres` image, secret to save db credentials, pvc for the db and a ClusterIP service to expose the db internally.
 
 All resources are created in `tekton-hub` namespace.
@@ -90,7 +103,7 @@ Once the pod is in running state now we can run db migration. This will create a
 Edit the `01-db/10-db-migration.yaml` and add the replace the image you created previously and apply the yaml.
 
 ```
-kubectl apply -f 01-db/10-db-migration.yaml
+kubectl apply -f 01-db/10-db-migration.yaml -n tekton-hub
 ```
 
 This will create a job which will read the db credentials from the secret created while deploying database and create all required tables.
@@ -139,7 +152,27 @@ stringData:
 
 ### Update API ConfigMap
 
-If you want to change the config file passed to hub, you can edit the `02-api/21-api-configmap.yaml` and change the URL to the file. By default it is pointing to [config.yaml][config-yaml] in Hub which has Application Data.
+- Update the [config.yaml][config-yaml] to add at least one user with all scopes such as
+
+  - refresh a catalog,
+  - refresh config file
+  - create an agent token
+
+- For example
+
+```
+scopes:
+  - name: agent:create
+    users: [foo]        <<< Where `foo` is your Github Handle
+  - name: catalog:refresh
+    users: [foo]
+  - name: config:refresh
+    users: [foo]
+```
+
+- Commit the changes and push the changes to your fork
+
+- Edit the `02-api/21-api-configmap.yaml` and change the URL to point to your fork. By default it is pointing to [config.yaml][config-yaml] in Hub which has Application Data.
 
 ```yaml
 apiVersion: v1
@@ -150,26 +183,22 @@ metadata:
   labels:
     app: api
 data:
-  CONFIG_FILE_URL: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml        ## Change the file URL here
-
+  CONFIG_FILE_URL: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml ## Change the file URL here
 ```
 
-In this file we add users who have additional scopes which can be used to
-- refresh a catalog,
-- refresh config file 
-- create an agent token 
+All users have default scopes `rating:read` and `rating:write`. Once user get login to Hub, they get the appropriate scopes which allows them to rate the resource
 
-All users have default scopes `rating:read` and `rating:write` they get after login which allows them to rate the resources.
+**WARN** : Make sure you have updated Hub config before starting the api server
 
 ### Update API Image
 
 Edit the `02-api/22-api-deployment.yaml` and replace the image with the one created previously and executed below command
 
 ```bash
-kubectl apply -f 02-api/
+kubectl apply -f 02-api/ -n tekton-hub
 ```
 
-This will create the deployment, secret, configmap and a NodePort service to expose the API server. 
+This will create the deployment, secret, configmap and a NodePort service to expose the API server.
 
 ### Setup Route or Ingress
 
@@ -178,7 +207,7 @@ After the deployment is done successfully, we need to expose the URL to access t
 - If deploying on OpenShift:-
 
   ```bash
-  kubectl apply -f 04-openshift/40-api-route.yaml
+  kubectl apply -f 04-openshift/40-api-route.yaml -n tekton-hub
   ```
 
 - If deploying on Kubernetes:-
@@ -192,7 +221,7 @@ After the deployment is done successfully, we need to expose the URL to access t
   - Apply the Ingress
 
     ```bash
-    kubectl apply -f 04-kubernetes/40-api-ingress.yaml
+    kubectl apply -f 04-kubernetes/40-api-ingress.yaml -n tekton-hub
     ```
 
 #### Verify if api route is accessible
@@ -228,6 +257,7 @@ metadata:
 data:
   API_URL: API URL   <<< Update this by API url
   GH_CLIENT_ID: GH OAuth Client ID   <<< Update this OAuth client id
+  API_VERSION: API VERSION  <<< Update this by API version (For e.g-"v1")
 ```
 
 ### Update UI Image
@@ -235,17 +265,19 @@ data:
 Edit the `03-ui/30-ui-configmap.yaml` and replace the image with the one created previously and executed below command
 
 ```bash
-kubectl apply -f 03-ui/
+kubectl apply -f 03-ui/ -n tekton-hub
 ```
 
-This will create the deployment, configmap and a NodePort service to expose the UI. 
+This will create the deployment, configmap and a NodePort service to expose the UI.
 
 Ensure pods are up and running
 
 ```bash
 kubectl get pods -n tekton-hub
 ```
+
 eg. wait till status of UI pod is running
+
 ```
 NAME                   READY   STATUS      RESTARTS   AGE
 api-6dfc6f97d9-vk66r   1/1     Running     3          21m
@@ -261,7 +293,7 @@ After the deployment is done successfully, we need to expose the URL to access t
 - If deploying on OpenShift:-
 
   ```bash
-  kubectl apply -f 04-openshift/41-ui-route.yaml
+  kubectl apply -f 04-openshift/41-ui-route.yaml -n tekton-hub
   ```
 
 - If deploying on Kubernetes:-
@@ -275,9 +307,9 @@ After the deployment is done successfully, we need to expose the URL to access t
   - Apply the Ingress
 
     ```bash
-    kubectl apply -f 04-kubernetes/41-ui-ingress.yaml
+    kubectl apply -f 04-kubernetes/41-ui-ingress.yaml -n tekton-hub
     ```
-    
+
 #### Verify if ui route is accessible
 
 For `OpenShift`:-
@@ -294,95 +326,72 @@ Update your GitHub OAuth created with the UI route in place of `Homepage URL` an
 
 ## Add resources in DB
 
-1. Add your GitHub username with required scopes in [config.yaml][config-yaml]. For adding resources in DB, you will need   `catalog:refresh` scope.
+1. Login through the Hub UI. Click on `Login` on right corner and then `Sign in with GitHub`.
 
-2. Login through the UI. Click on `Login` on right corner and then `Sign in with GitHub`.
+2. Copy the Hub Token by clicking on the user profile which is at the right corner on the Home Page
 
-  This will add you in db, but yet you have only the default scopes i.e. `rating:read` and `rating:write` which you can check with your jwt. On UI, in right corner there is an option to `Copy Hub Token` and paste in any jwt decoder. for eg. https://jwt.io/
-    
-2. We save the checksum of config file in db to avoid reading the config file again and again if the api pod is deleted due to some reason. The config file is read by API pod before starting the server. 
+3. Call the Catalog Refresh API:
 
-3. To make API pod read config we need to delete the entry in db. Exec into the database pod
-   ```bash
-   kubectl exec -n tekton-hub -it <db-pod-name> bash
-   ```
-4. Open PostgreSQL terminal by executing the command
+   - To refresh a catalog with name
 
-   ```bash
-   psql -U postgres -d hub
-   ```
+     ```
+     curl -X POST -H "Authorization: <jwt-token>" \
+         <api-url>/catalog/<catalogName>/refresh
+     ```
 
-   You'll see the terminal changed to
+     Replace `<access-token>` with your Hub token copied from UI and replace `<api-url>` with your api pod url.
 
-   ```bash
-   hub=#
-   ```
-5. Execute the SQL query
+     This will give an output as below
 
-   ```sql
-   hub=# delete from configs;
-   ```
+     ```
+     [{"id":1,"catalogName":"tekton","status":"queued"}]
+     ```
 
-6. Quit the database pod by first executing
+   - To refresh all catalogs
 
-   ```sql
-   hub=# \q
-   ```
+     ```
+     curl -X POST -H "Authorization: <jwt-token>" \
+         <api-url>/catalog/refresh
+     ```
 
-   and then `exit`.
+     Replace `<access-token>` with your Hub token copied from UI and replace `<api-url>` with your api pod url.
 
-7. Delete the API pod by executing the following command
-   ```bash
-   kubectl delete pod -n tekton-hub <pod-name>
-   ```
-   This will delete the previously created pod and spin a new pod which will add the additional scopes from hub config in the DB.
-   
-8. Once the pod is running again, Logout from Hub UI and login again.
+     This will give an output as below
 
-9. Now, if you copy your token from UI and check in jwt decoder, you will have additional scopes.
+     ```
+     [{"id":1,"catalogName":"tekton","status":"queued"}]
+     ```
 
-10. To add resources, you need to make a POST api call passing your jwt token with the additional scopes in Header.
+4. Refresh your UI, you will be able to see resources.
 
-```
-curl -X POST -H "Authorization: <access-token>" \
-    <api-url>/catalog/refresh 
-```
-Replace `<access-token>`  with your Hub token copied from UI and replace `<api-url>` with your api pod url.
+## Setup Catalog Refresh CronJob (Optional)
 
-This will give an output as below
-
-```
-{"id":1,"status":"queued"}
-```
-
-11. Refresh your UI, you will be able to see resources.
-
-## Setup Catalog Refresh CronJob
-
-You can setup a cronjob which will refresh your db after an interval if there are any changes in your catalog. 
+You can setup a cronjob which will refresh your db after an interval if there are any changes in your catalog.
 
 NOTE: The catalog refresh will add new resources or update existing resource if it is updated in catalog but it doesn't delete a resource in db even if it is deleted in catalog.
 
 1. You will need a JWT token with catalog refresh scope which can be used.
 
-
 2. A User token is short lived so you can create an agent token which will not expire.
 
 3. To create an agent, you can use the `/system/user/agent`. You will need `agent:create` scope in your JWT which has to be added in config.yaml
 
-    ```
-    curl -X PUT --header "Content-Type: application/json" \
-        -H "Authorization: <access-token>" \
-        --data '{"name":"catalog-refresh-agent","scopes": ["catalog:refresh"]}' \
-        <api-route>/system/user/agent
-    ```
-    Replace `<access-token>` with your JWT, you can create an agent with any required scopes. In this case we need the agent with `catalog:refresh`. You can give any name to agent.
+   ```
+   curl -X PUT --header "Content-Type: application/json" \
+       -H "Authorization: <access-token>" \
+       --data '{"name":"catalog-refresh-agent","scopes": ["catalog:refresh"]}' \
+       <api-route>/system/user/agent
+   ```
 
-    This will gives an output as:
-    ```
-    {"token":"agent jwt token"}
-    ```
-    A token will be returned with the requested scopes. You can check using the jwt decoder. Use this token for the catalog refresh cron job.
+   Replace `<access-token>` with your JWT, you can create an agent with any required scopes. In this case we need the agent with `catalog:refresh`. You can give any name to agent.
+
+   This will gives an output as:
+
+   ```
+   {"token":"agent jwt token"}
+   ```
+
+   A token will be returned with the requested scopes. You can check using the jwt decoder. Use this token for the catalog refresh cron job.
 
 4. Edit `05-catalog-refresh-cj/50-catalog-refresh-secret.yaml` and Set the Hub Token
 
@@ -401,7 +410,7 @@ NOTE: The catalog refresh will add new resources or update existing resource if 
 4. Apply the YAMLs 
 
     ```
-    kubectl apply -f 05-catalog-refresh-cj/
+    kubectl apply -f 05-catalog-refresh-cj/ -n tekton-hub
     ```
     The cron job is configured to run every 30 min, you can change the interval in `05-catalog-refresh-cj/51-catalog-refresh-cronjob.yaml`.
     
