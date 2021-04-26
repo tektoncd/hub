@@ -117,14 +117,14 @@ yaml-lint() {
 api-build(){
   info Running Api build
 
-  go mod vendor -v
+  go mod vendor
   go build -mod=vendor ./cmd/... || {
     err 'Api build failed'
     return 1
   }
 
   info 'check for goa gen'
-  go get -u goa.design/goa/v3/...@v3
+  go get goa.design/goa/v3/...@v3
 
   oldChecksum=$(tar c . | md5sum)
 
