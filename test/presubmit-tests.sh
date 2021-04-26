@@ -185,18 +185,19 @@ ui-build(){
 build_tests() {
   # run in a subshell so that path and shell options -eu -o pipefail will
   # will remain the same when it exits
-  (
-    set -eu -o pipefail
-
-    cd "$API_DIR"
-    api-build
-  ) || exit 1
 
   (
     set -eu -o pipefail
 
     cd "$API_DIR"
     goa-gen
+  ) || exit 1
+
+  (
+    set -eu -o pipefail
+
+    cd "$API_DIR"
+    api-build
   ) || exit 1
 
   (
