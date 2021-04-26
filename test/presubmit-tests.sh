@@ -130,12 +130,14 @@ api-build(){
 
   info 'run goa gen'
   goa gen github.com/tektoncd/hub/api/design
+  info 'run goa gen in v1'
   cd v1
   goa gen github.com/tektoncd/hub/api/v1/design
   cd ..
 
   newChecksum=$(tar c . | md5sum)
 
+  info 'validate checksum'
   if [ $str1 != $str2 ];
   then
     info "files are changing after running goa gen"
