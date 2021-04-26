@@ -141,6 +141,15 @@ goa-gen(){
   ls 
   echo 'ls again'
 
+  echo 'go mod'
+  go mod tidy
+
+
+  echo 'status'
+  git status
+
+  echo '---------'
+
   info 'run goa gen'
   goa gen github.com/tektoncd/hub/api/design
   info 'run goa gen in v1'
