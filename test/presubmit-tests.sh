@@ -117,11 +117,31 @@ yaml-lint() {
 api-build(){
   info Running Api build
 
-  go mod vendor
+  go mod vendor -v
   go build -mod=vendor ./cmd/... || {
     err 'Api build failed'
     return 1
   }
+
+  info 'check for goa gen'
+  go get -u goa.design/goa/v3/...@v3
+
+  oldChecksum=$(tar c . | md5sum)
+
+  info 'run goa gen'
+  goa gen github.com/tektoncd/hub/api/design
+  cd v1
+  goa gen github.com/tektoncd/hub/api/v1/design
+  cd ..
+
+  newChecksum=$(tar c . | md5sum)
+
+  if [ $str1 != $str2 ];
+  then
+    info "files are changing after running goa gen"
+    err "run goa gen"
+    return 1
+  fi
 }
 
 ui-build(){
