@@ -141,8 +141,8 @@ goa-gen(){
   ls 
   echo 'ls again'
 
-  echo 'go mod'
-  go mod tidy
+  #echo 'go mod'
+  #go mod tidy
 
 
   echo 'status'
