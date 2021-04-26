@@ -123,6 +123,7 @@ api-build(){
     return 1
   }
 
+  rm -rf vendor/
   info 'check for goa gen'
   go get goa.design/goa/v3/...@v3
 
