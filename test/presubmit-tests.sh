@@ -127,6 +127,7 @@ api-build(){
 
 goa-gen(){
   info 'check for goa gen'
+  ls
   go get goa.design/goa/v3/...@v3
 
   oldChecksum=$(tar c . | md5sum)
