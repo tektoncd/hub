@@ -142,7 +142,7 @@ goa-gen(){
   echo 'ls again'
 
   #echo 'go mod'
-  #go mod tidy
+  go mod vendor
 
 
   echo 'status'
