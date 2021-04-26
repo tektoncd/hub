@@ -134,6 +134,13 @@ goa-gen(){
   info 'goa gen'
   goa --help
 
+  pwd
+  echo 'remove vendor'
+  rm -rf ./vendor/
+  echo 'removed'
+  ls 
+  echo 'ls again'
+
   info 'run goa gen'
   goa gen github.com/tektoncd/hub/api/design
   info 'run goa gen in v1'
