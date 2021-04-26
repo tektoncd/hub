@@ -122,8 +122,10 @@ api-build(){
     err 'Api build failed'
     return 1
   }
+}
 
-  rm -rf vendor/
+
+goa-gen(){
   info 'check for goa gen'
   go get goa.design/goa/v3/...@v3
 
@@ -173,7 +175,14 @@ build_tests() {
     api-build
   ) || exit 1
 
-   (
+  (
+    set -eu -o pipefail
+
+    cd "$API_DIR"
+    goa-gen
+  ) || exit 1
+
+  (
     set -eu -o pipefail
 
     cd "$UI_DIR"
