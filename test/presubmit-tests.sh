@@ -142,13 +142,13 @@ goa-gen(){
   echo 'ls again'
 
   #echo 'go mod'
-  #go mod vendor
-  echo '---------'
-  echo $PATH
-  echo '---------go env'
-  go env
-  echo '---------pwd'
-  pwd
+  go mod vendor
+  # echo '---------'
+  # echo $PATH
+  # echo '---------go env'
+  # go env
+  # echo '---------pwd'
+  # pwd
 
 
   echo 'status'
