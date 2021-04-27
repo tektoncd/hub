@@ -145,7 +145,15 @@ goa-gen(){
   #go mod vendor
   echo '---------'
   echo $PATH
+  echo '---------go env'
+  go env
   echo '---------'
+  export GOPATH="$HOME/go"
+  export PATH="$GOPATH/bin:$PATH"
+
+  echo '---------'
+  echo '---------go env again'
+  go env
 
 
   echo 'status'
