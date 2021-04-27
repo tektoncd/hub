@@ -147,13 +147,8 @@ goa-gen(){
   echo $PATH
   echo '---------go env'
   go env
-  echo '---------'
-  export GOPATH="$HOME/go"
-  export PATH="$GOPATH/bin:$PATH"
-
-  echo '---------'
-  echo '---------go env again'
-  go env
+  echo '---------pwd'
+  pwd
 
 
   echo 'status'
