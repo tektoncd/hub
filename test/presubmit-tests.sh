@@ -128,21 +128,21 @@ api-build(){
 goa-gen(){
   info 'check for goa gen'
   ls
-  go get goa.design/goa/v3/...@v3
+  go get goa.design/goa/v3/...@v3.3.1
 
-  oldChecksum=$(tar c . | md5sum)
+  #oldChecksum=$(tar c . | md5sum)
   info 'goa gen'
   goa --help
 
   pwd
-  echo 'remove vendor'
-  rm -rf ./vendor/
-  echo 'removed'
-  ls 
-  echo 'ls again'
+  # echo 'remove vendor'
+  # rm -rf ./vendor/
+  # echo 'removed'
+  # ls 
+  # echo 'ls again'
 
   #echo 'go mod'
-  go mod vendor
+  #go mod vendor
   # echo '---------'
   # echo $PATH
   echo '---------go env'
@@ -151,8 +151,8 @@ goa-gen(){
   # pwd
 
 
-  echo 'status'
-  git status
+  # echo 'status'
+  # git status
 
   echo '---------'
 
@@ -163,15 +163,15 @@ goa-gen(){
   goa gen github.com/tektoncd/hub/api/v1/design
   cd ..
 
-  newChecksum=$(tar c . | md5sum)
+  # newChecksum=$(tar c . | md5sum)
 
-  info 'validate checksum'
-  if [ $str1 != $str2 ];
-  then
-    info "files are changing after running goa gen"
-    err "run goa gen"
-    return 1
-  fi
+  # info 'validate checksum'
+  # if [ $str1 != $str2 ];
+  # then
+  #   info "files are changing after running goa gen"
+  #   err "run goa gen"
+  #   return 1
+  # fi
 }
 
 ui-build(){
