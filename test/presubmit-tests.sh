@@ -145,8 +145,8 @@ goa-gen(){
   go mod vendor
   # echo '---------'
   # echo $PATH
-  # echo '---------go env'
-  # go env
+  echo '---------go env'
+  go env
   # echo '---------pwd'
   # pwd
 
