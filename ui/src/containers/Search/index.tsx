@@ -1,28 +1,48 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useObserver } from 'mobx-react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { TextInput } from '@patternfly/react-core';
 import { useMst } from '../../store/root';
-import { useDebounce } from '../../utils/useDebounce';
+import { observer } from 'mobx-react';
+import { TextInput } from '@patternfly/react-core';
+import { useDebouncedCallback } from 'use-debounce';
 import { assert } from '../../store/utils';
 import './Search.css';
 
-const Search: React.FC = () => {
+const Search: React.FC = observer(() => {
+  const { resources } = useMst();
+  const [value, setValue] = React.useState(resources.search);
+
+  React.useEffect(() => {
+    setValue(resources.search);
+  }, [resources.search]);
+
+  const inputRef = React.useRef<HTMLInputElement>(null);
   useHotkeys('/', () => {
     // Without timeout the hotkey will be sent to select input
     setTimeout(() => {
-      const currentInput = inputRef.current;
-      assert(currentInput);
-      currentInput.focus();
+      assert(inputRef.current);
+      inputRef.current.focus();
     }, 20);
   });
 
-  const { resources } = useMst();
+  /* Debounce callback
+     This function delay the invoking func for 500ms after
+     when users stop searching
+  */
+  const debounced = useDebouncedCallback(
+    (value: string) => {
+      resources.setSearch(value);
+    },
+    // Delay in ms
+    500
+  );
 
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
-  const onSearchChange = useDebounce(resources.search, 400);
+  const onSearchChange = () => {
+    const currentInput = inputRef.current;
+    assert(currentInput);
+    setValue(currentInput.value);
+    debounced(currentInput.value);
+  };
 
   const history = useHistory();
   const onSearchKeyPress = (e: React.KeyboardEvent<HTMLElement>) => {
@@ -33,22 +53,19 @@ const Search: React.FC = () => {
     return;
   };
 
-  return useObserver(() => (
+  return (
     <TextInput
       ref={inputRef}
-      value={resources.search}
       type="search"
-      onChange={(resourceName: string) => {
-        resources.setSearch(resourceName);
-        return onSearchChange;
-      }}
+      value={value}
+      onChange={onSearchChange}
       onKeyPress={onSearchKeyPress}
       aria-label="text input example"
       placeholder="Search for resources..."
       spellCheck="false"
       className="hub-search"
     />
-  ));
-};
+  );
+});
 
 export default Search;

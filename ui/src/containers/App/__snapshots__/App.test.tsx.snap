@@ -29,13 +29,13 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                           <div className=\\"pf-l-grid\\">
                             <GridItem span={11}>
                               <div className=\\"pf-l-grid__item pf-m-11-col\\">
-                                <Search>
-                                  <ForwardRef value=\\"\\" type=\\"search\\" onChange={[Function: onChange]} onKeyPress={[Function: onSearchKeyPress]} aria-label=\\"text input example\\" placeholder=\\"Search for resources...\\" spellCheck=\\"false\\" className=\\"hub-search\\">
-                                    <TextInputBase value=\\"\\" type=\\"search\\" onChange={[Function: onChange]} onKeyPress={[Function: onSearchKeyPress]} aria-label=\\"text input example\\" placeholder=\\"Search for resources...\\" spellCheck=\\"false\\" className=\\"hub-search\\" innerRef={{...}} isRequired={false} validated=\\"default\\" isDisabled={false} isReadOnly={false} isLeftTruncated={false}>
+                                <Memo(wrappedComponent)>
+                                  <ForwardRef type=\\"search\\" value=\\"\\" onChange={[Function: onSearchChange]} onKeyPress={[Function: onSearchKeyPress]} aria-label=\\"text input example\\" placeholder=\\"Search for resources...\\" spellCheck=\\"false\\" className=\\"hub-search\\">
+                                    <TextInputBase type=\\"search\\" value=\\"\\" onChange={[Function: onSearchChange]} onKeyPress={[Function: onSearchKeyPress]} aria-label=\\"text input example\\" placeholder=\\"Search for resources...\\" spellCheck=\\"false\\" className=\\"hub-search\\" innerRef={{...}} isRequired={false} validated=\\"default\\" isDisabled={false} isReadOnly={false} isLeftTruncated={false}>
                                       <input onKeyPress={[Function: onSearchKeyPress]} aria-label=\\"text input example\\" placeholder=\\"Search for resources...\\" spellCheck=\\"false\\" onFocus={[Function (anonymous)]} onBlur={[Function (anonymous)]} className=\\"pf-c-form-control hub-search\\" onChange={[Function (anonymous)]} type=\\"search\\" value=\\"\\" aria-invalid={false} required={false} disabled={false} readOnly={false} />
                                     </TextInputBase>
                                   </ForwardRef>
-                                </Search>
+                                </Memo(wrappedComponent)>
                               </div>
                             </GridItem>
                           </div>
