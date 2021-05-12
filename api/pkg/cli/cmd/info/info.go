@@ -15,6 +15,7 @@
 package info
 
 import (
+	"fmt"
 	"strings"
 	"text/template"
 
@@ -24,6 +25,7 @@ import (
 	"github.com/tektoncd/hub/api/pkg/cli/formatter"
 	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/printer"
+	so "github.com/tektoncd/hub/api/pkg/cli/select_options"
 )
 
 var cmdExamples string = `
@@ -38,7 +40,7 @@ Display info of a %S of name 'foo' of version '0.3':
     tkn hub info %s foo --version 0.3
 `
 
-const resTemplate = `{{ icon "name" }}Name: {{ .Resource.Name }} 
+const resTemplate = `{{ icon "name" }}Name: {{ .Resource.Name }}
 {{ $n := .ResVersion.DisplayName }}{{ if ne (default $n "") "" }}
 {{ icon "displayName" }}Display Name: {{ $n }}
 {{ end }}
@@ -80,11 +82,13 @@ type templateData struct {
 }
 
 type options struct {
-	cli     app.CLI
-	from    string
-	version string
-	kind    string
-	args    []string
+	cli          app.CLI
+	from         string
+	version      string
+	kind         string
+	args         []string
+	hubClient    hub.Client
+	selectOption so.Options
 }
 
 func Command(cli app.CLI) *cobra.Command {
@@ -104,7 +108,7 @@ func Command(cli app.CLI) *cobra.Command {
 		commandForKind("task", opts),
 	)
 
-	cmd.PersistentFlags().StringVar(&opts.from, "from", "tekton", "Name of Catalog to which resource belongs.")
+	cmd.PersistentFlags().StringVar(&opts.from, "from", "", "Name of Catalog to which resource belongs.")
 	cmd.PersistentFlags().StringVar(&opts.version, "version", "", "Version of Resource")
 
 	return cmd
@@ -123,7 +127,6 @@ func commandForKind(kind string, opts *options) *cobra.Command {
 		Annotations: map[string]string{
 			"commandType": "main",
 		},
-		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.kind = kind
 			opts.args = args
@@ -138,9 +141,40 @@ func (opts *options) run() error {
 		return err
 	}
 
-	hubClient := opts.cli.Hub()
-	res := hubClient.GetResource(hub.ResourceOption{
-		Name:    opts.name(),
+	opts.hubClient = opts.cli.Hub()
+	var err error
+
+	// Check if catalog name is passed else
+	// ask the user to select the catalog
+	if opts.from == "" {
+		opts.from, err = opts.AskCatalogName()
+		if err != nil {
+			return err
+		}
+	}
+
+	name := opts.name()
+
+	// Check if resource name is passed else
+	// ask the user to select the resource
+	if name == "" {
+		name, err = opts.AskResourceName()
+		if err != nil {
+			return err
+		}
+	}
+
+	// Check if version of the resource is passed else
+	// ask the user to select the version of resource
+	if opts.version == "" {
+		opts.version, err = opts.AskVersion(name)
+		if err != nil {
+			return err
+		}
+	}
+
+	res := opts.hubClient.GetResource(hub.ResourceOption{
+		Name:    name,
 		Catalog: opts.from,
 		Kind:    opts.kind,
 		Version: opts.version,
@@ -153,23 +187,89 @@ func (opts *options) run() error {
 
 	out := opts.cli.Stream().Out
 
-	if opts.version != "" {
-		resVersion := resource.(hub.ResourceWithVersionData)
-		tmplData := templateData{
-			ResVersion: &resVersion,
-			Resource:   resVersion.Resource,
-			Latest:     false,
-		}
-		return printer.New(out).Tabbed(tmpl, tmplData)
-	}
-
-	hubRes := resource.(hub.ResourceData)
+	resVersion := resource.(hub.ResourceWithVersionData)
 	tmplData := templateData{
-		Resource:   &hubRes,
-		ResVersion: hubRes.LatestVersion,
-		Latest:     true,
+		ResVersion: &resVersion,
+		Resource:   resVersion.Resource,
+		Latest:     false,
 	}
 	return printer.New(out).Tabbed(tmpl, tmplData)
+}
+
+func (opts *options) AskCatalogName() (string, error) {
+	// Get all Catalogs
+	catalog, err := opts.hubClient.GetCatalogsList()
+	if err != nil {
+		return "", err
+	}
+	switch len(catalog) {
+	case 0:
+		return "", fmt.Errorf("No catalogs found")
+	case 1:
+		return catalog[0], nil
+	default:
+		// Ask the catalog
+		err = opts.selectOption.Ask("catalog", catalog)
+		if err != nil {
+			return "", err
+		}
+		return opts.selectOption.Catalog, nil
+	}
+
+}
+
+func (opts *options) AskResourceName() (string, error) {
+	// Get all resources from the Catalog selected
+	resources, err := opts.hubClient.GetResourcesList(hub.SearchOption{
+		Kinds:   []string{opts.kind},
+		Catalog: opts.from,
+	})
+	if err != nil {
+		return "", err
+	}
+	switch len(resources) {
+	case 0:
+		return "", fmt.Errorf("No resources found")
+	case 1:
+		return resources[0], nil
+	default:
+		// Ask the resource name
+		err = opts.selectOption.Ask(opts.kind, resources)
+		if err != nil {
+			return "", err
+		}
+		return opts.selectOption.Name, nil
+	}
+}
+
+func (opts *options) AskVersion(name string) (string, error) {
+	// Get all the versions of the resource selected
+	ver, err := opts.hubClient.GetResourceVersionslist(hub.ResourceOption{
+		Name:    name,
+		Kind:    opts.kind,
+		Catalog: opts.from,
+	})
+	if err != nil {
+		return "", err
+	}
+	switch len(ver) {
+	case 1:
+		return ver[0], nil
+	default:
+		latestVersion := ver[0]
+		ver[0] = ver[0] + " (latest)"
+
+		// Ask the version
+		err = opts.selectOption.Ask("version", ver)
+		if err != nil {
+			return "", err
+		}
+
+		if strings.Contains(opts.selectOption.Version, "(latest)") {
+			opts.selectOption.Version = latestVersion
+		}
+		return opts.selectOption.Version, nil
+	}
 }
 
 func (opts *options) validate() error {
@@ -177,6 +277,9 @@ func (opts *options) validate() error {
 }
 
 func (opts *options) name() string {
+	if len(opts.args) == 0 {
+		return ""
+	}
 	return strings.TrimSpace(opts.args[0])
 }
 

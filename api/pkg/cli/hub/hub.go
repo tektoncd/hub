@@ -29,9 +29,12 @@ const (
 type Client interface {
 	SetURL(u string) error
 	Get(endpoint string) ([]byte, int, error)
+	GetCatalogsList() ([]string, error)
 	Search(opt SearchOption) SearchResult
 	GetResource(opt ResourceOption) ResourceResult
+	GetResourcesList(opt SearchOption) ([]string, error)
 	GetResourceVersions(opt ResourceOption) ResourceVersionResult
+	GetResourceVersionslist(opt ResourceOption) ([]string, error)
 }
 
 type client struct {
