@@ -28,12 +28,6 @@ paths:
                 - error: unable to reach db
                   name: api
                   status: ok
-                - error: unable to reach db
-                  name: api
-                  status: ok
-                - error: unable to reach db
-                  name: api
-                  status: ok
   /auth/login:
     post:
       tags:
@@ -109,6 +103,60 @@ paths:
                 id: 3F1FKVRR
                 message: Value of ID must be an integer
                 name: bad_request
+  /catalog/{catalogName}/error:
+    get:
+      tags:
+      - catalog
+      summary: CatalogError catalog
+      description: List all errors occurred refreshing a catalog
+      operationId: catalog#CatalogError
+      parameters:
+      - name: catalogName
+        in: path
+        description: Name of catalog
+        required: true
+        schema:
+          type: string
+          description: Name of catalog
+          example: tekton
+        example: tekton
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogErrorResponseBody'
+              example:
+                data:
+                - errors:
+                  - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display
+                    name
+                  - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+                  type: warning
+                - errors:
+                  - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display
+                    name
+                  - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+                  type: warning
+        "500":
+          description: Internal Server Error response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+      security:
+      - jwt_header_Authorization:
+        - rating:read
+        - rating:write
+        - agent:create
+        - catalog:refresh
+        - config:refresh
+        - refresh:token
   /catalog/{catalogName}/refresh:
     post:
       tags:
@@ -191,6 +239,9 @@ paths:
                 - catalogName: tekton
                   id: 1
                   status: queued
+                - catalogName: tekton
+                  id: 1
+                  status: queued
               example:
               - catalogName: tekton
                 id: 1
@@ -259,13 +310,6 @@ paths:
                     name: image-build
                   - id: 2
                     name: kaniko
-                - id: 1
-                  name: Image Builder
-                  tags:
-                  - id: 1
-                    name: image-build
-                  - id: 2
-                    name: kaniko
         "500":
           description: Internal Server Error response.
           content:
@@ -302,7 +346,7 @@ paths:
           type: array
           items:
             type: string
-            example: Eius non illo accusantium.
+            example: Ipsam ad dicta sunt fugiat.
           description: Catalogs of resource to filter by
           example:
           - tekton
@@ -318,7 +362,7 @@ paths:
           type: array
           items:
             type: string
-            example: Iste et similique temporibus sequi est.
+            example: Eum in similique labore.
           description: Kinds of resource to filter by
           example:
           - task
@@ -334,7 +378,7 @@ paths:
           type: array
           items:
             type: string
-            example: Facilis adipisci.
+            example: Laboriosam placeat eveniet perspiciatis.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -497,7 +541,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: task
+        example: pipeline
       - name: name
         in: path
         description: Name of resource
@@ -587,7 +631,7 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: task
+          example: pipeline
           enum:
           - task
           - pipeline
@@ -746,8 +790,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 9941447640867000916
-        example: 2975478370849669386
+          example: 4748836856209207639
+        example: 17835074238948411605
       responses:
         "200":
           description: OK response.
@@ -819,8 +863,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 928452093406780591
-        example: 8692421372001101966
+          example: 9285005120921241060
+        example: 11505831677112471131
       requestBody:
         required: true
         content:
@@ -828,7 +872,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateRequestBody'
             example:
-              rating: 3
+              rating: 4
       responses:
         "200":
           description: OK response.
@@ -1429,12 +1473,6 @@ paths:
                 - error: unable to reach db
                   name: api
                   status: ok
-                - error: unable to reach db
-                  name: api
-                  status: ok
-                - error: unable to reach db
-                  name: api
-                  status: ok
   /v1/categories:
     get:
       tags:
@@ -1451,13 +1489,6 @@ paths:
                 $ref: '#/components/schemas/ListResponseBody'
               example:
                 data:
-                - id: 1
-                  name: Image Builder
-                  tags:
-                  - id: 1
-                    name: image-build
-                  - id: 2
-                    name: kaniko
                 - id: 1
                   name: Image Builder
                   tags:
@@ -1568,6 +1599,76 @@ components:
       - name
       - type
       - url
+    CatalogErrorResponseBody:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogErrors'
+          description: Catalog errors
+          example:
+          - errors:
+            - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+            - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+            type: warning
+          - errors:
+            - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+            - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+            type: warning
+          - errors:
+            - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+            - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+            type: warning
+          - errors:
+            - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+            - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+            type: warning
+      example:
+        data:
+        - errors:
+          - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+          - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+          type: warning
+        - errors:
+          - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+          - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+          type: warning
+        - errors:
+          - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+          - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+          type: warning
+        - errors:
+          - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+          - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+          type: warning
+      required:
+      - data
+    CatalogErrors:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+            example: Est nihil facilis adipisci.
+          description: Catalog Error message
+          example:
+          - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+          - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+        type:
+          type: string
+          description: Catalog Errror type
+          example: warning
+      description: CatalogErrors define the errors that occurred during catalog refresh
+      example:
+        errors:
+        - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+        - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+        type: warning
+      required:
+      - type
+      - errors
     Category:
       type: object
       properties:
@@ -1625,7 +1726,7 @@ components:
         temporary:
           type: boolean
           description: Is the error temporary?
-          example: true
+          example: false
         timeout:
           type: boolean
           description: Is the error a timeout?
@@ -1737,22 +1838,22 @@ components:
               name: image-build
             - id: 2
               name: kaniko
-          - id: 1
-            name: Image Builder
-            tags:
-            - id: 1
-              name: image-build
-            - id: 2
-              name: kaniko
-          - id: 1
-            name: Image Builder
-            tags:
-            - id: 1
-              name: image-build
-            - id: 2
-              name: kaniko
       example:
         data:
+        - id: 1
+          name: Image Builder
+          tags:
+          - id: 1
+            name: image-build
+          - id: 2
+            name: kaniko
+        - id: 1
+          name: Image Builder
+          tags:
+          - id: 1
+            name: image-build
+          - id: 2
+            name: kaniko
         - id: 1
           name: Image Builder
           tags:
@@ -1934,58 +2035,6 @@ components:
       items:
         $ref: '#/components/schemas/ResourceData'
       example:
-      - catalog:
-          id: 1
-          name: tekton
-          type: community
-        id: 1
-        kind: task
-        latestVersion:
-          description: Buildah task builds source into a container image and then
-            pushes it to a container registry.
-          displayName: Buildah
-          id: 1
-          minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-          updatedAt: 2020-01-01 12:00:00 +0000 UTC
-          version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-        name: buildah
-        rating: 4.3
-        tags:
-        - id: 1
-          name: image-build
-        versions:
-        - id: 1
-          version: "0.1"
-        - id: 2
-          version: "0.2"
-      - catalog:
-          id: 1
-          name: tekton
-          type: community
-        id: 1
-        kind: task
-        latestVersion:
-          description: Buildah task builds source into a container image and then
-            pushes it to a container registry.
-          displayName: Buildah
-          id: 1
-          minPipelinesVersion: 0.12.1
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-          updatedAt: 2020-01-01 12:00:00 +0000 UTC
-          version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-        name: buildah
-        rating: 4.3
-        tags:
-        - id: 1
-          name: image-build
-        versions:
-        - id: 1
-          version: "0.1"
-        - id: 2
-          version: "0.2"
       - catalog:
           id: 1
           name: tekton
@@ -2240,9 +2289,6 @@ components:
           - error: unable to reach db
             name: api
             status: ok
-          - error: unable to reach db
-            name: api
-            status: ok
       example:
         services:
         - error: unable to reach db
@@ -2304,7 +2350,7 @@ components:
           type: array
           items:
             type: string
-            example: Beatae est.
+            example: Voluptas eius non illo accusantium aut.
           description: Scopes required for Agent
           example:
           - catalog-refresh
@@ -2338,7 +2384,7 @@ components:
           minimum: 0
           maximum: 5
       example:
-        rating: 0
+        rating: 1
       required:
       - rating
     UserData:

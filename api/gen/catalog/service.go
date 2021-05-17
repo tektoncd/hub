@@ -21,6 +21,8 @@ type Service interface {
 	Refresh(context.Context, *RefreshPayload) (res *Job, err error)
 	// Refresh all catalogs
 	RefreshAll(context.Context, *RefreshAllPayload) (res []*Job, err error)
+	// List all errors occurred refreshing a catalog
+	CatalogError(context.Context, *CatalogErrorPayload) (res *CatalogErrorResult, err error)
 }
 
 // Auther defines the authorization functions to be implemented by the service.
@@ -37,7 +39,7 @@ const ServiceName = "catalog"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"Refresh", "RefreshAll"}
+var MethodNames = [3]string{"Refresh", "RefreshAll", "CatalogError"}
 
 // RefreshPayload is the payload type of the catalog service Refresh method.
 type RefreshPayload struct {
@@ -62,6 +64,30 @@ type Job struct {
 type RefreshAllPayload struct {
 	// JWT
 	Token string
+}
+
+// CatalogErrorPayload is the payload type of the catalog service CatalogError
+// method.
+type CatalogErrorPayload struct {
+	// Name of catalog
+	CatalogName string
+	// JWT
+	Token string
+}
+
+// CatalogErrorResult is the result type of the catalog service CatalogError
+// method.
+type CatalogErrorResult struct {
+	// Catalog errors
+	Data []*CatalogErrors
+}
+
+// CatalogErrors define the errors that occurred during catalog refresh
+type CatalogErrors struct {
+	// Catalog Errror type
+	Type string
+	// Catalog Error message
+	Errors []string
 }
 
 // MakeInternalError builds a goa.ServiceError from an error.

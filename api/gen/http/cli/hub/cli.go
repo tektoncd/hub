@@ -32,7 +32,7 @@ import (
 func UsageCommands() string {
 	return `admin (update-agent|refresh-config)
 auth authenticate
-catalog (refresh|refresh-all)
+catalog (refresh|refresh-all|catalog-error)
 category list
 rating (get|update)
 resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
@@ -51,9 +51,9 @@ func UsageExamples() string {
       ]
    }' --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM"` + "\n" +
 		os.Args[0] + ` auth authenticate --code "5628b69ec09c09512eef"` + "\n" +
-		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Occaecati officia inventore adipisci."` + "\n" +
+		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Inventore adipisci molestiae quaerat animi qui qui."` + "\n" +
 		os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` rating get --id 11281538076509796713 --token "Placeat hic accusamus."` + "\n" +
+		os.Args[0] + ` rating get --id 18445012574457005975 --token "Rerum qui hic."` + "\n" +
 		""
 }
 
@@ -89,6 +89,10 @@ func ParseEndpoint(
 
 		catalogRefreshAllFlags     = flag.NewFlagSet("refresh-all", flag.ExitOnError)
 		catalogRefreshAllTokenFlag = catalogRefreshAllFlags.String("token", "REQUIRED", "")
+
+		catalogCatalogErrorFlags           = flag.NewFlagSet("catalog-error", flag.ExitOnError)
+		catalogCatalogErrorCatalogNameFlag = catalogCatalogErrorFlags.String("catalog-name", "REQUIRED", "Name of catalog")
+		catalogCatalogErrorTokenFlag       = catalogCatalogErrorFlags.String("token", "REQUIRED", "")
 
 		categoryFlags = flag.NewFlagSet("category", flag.ContinueOnError)
 
@@ -164,6 +168,7 @@ func ParseEndpoint(
 	catalogFlags.Usage = catalogUsage
 	catalogRefreshFlags.Usage = catalogRefreshUsage
 	catalogRefreshAllFlags.Usage = catalogRefreshAllUsage
+	catalogCatalogErrorFlags.Usage = catalogCatalogErrorUsage
 
 	categoryFlags.Usage = categoryUsage
 	categoryListFlags.Usage = categoryListUsage
@@ -259,6 +264,9 @@ func ParseEndpoint(
 
 			case "refresh-all":
 				epf = catalogRefreshAllFlags
+
+			case "catalog-error":
+				epf = catalogCatalogErrorFlags
 
 			}
 
@@ -370,6 +378,9 @@ func ParseEndpoint(
 			case "refresh-all":
 				endpoint = c.RefreshAll()
 				data, err = catalogc.BuildRefreshAllPayload(*catalogRefreshAllTokenFlag)
+			case "catalog-error":
+				endpoint = c.CatalogError()
+				data, err = catalogc.BuildCatalogErrorPayload(*catalogCatalogErrorCatalogNameFlag, *catalogCatalogErrorTokenFlag)
 			}
 		case "category":
 			c := categoryc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -518,6 +529,7 @@ Usage:
 COMMAND:
     refresh: Refresh a Catalog by it's name
     refresh-all: Refresh all catalogs
+    catalog-error: List all errors occurred refreshing a catalog
 
 Additional help:
     %s catalog COMMAND --help
@@ -531,7 +543,7 @@ Refresh a Catalog by it's name
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Occaecati officia inventore adipisci."
+    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Inventore adipisci molestiae quaerat animi qui qui."
 `, os.Args[0])
 }
 
@@ -542,7 +554,19 @@ Refresh all catalogs
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh-all --token "Quaerat animi qui."
+    `+os.Args[0]+` catalog refresh-all --token "Consequuntur rerum optio omnis harum placeat."
+`, os.Args[0])
+}
+
+func catalogCatalogErrorUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] catalog catalog-error -catalog-name STRING -token STRING
+
+List all errors occurred refreshing a catalog
+    -catalog-name STRING: Name of catalog
+    -token STRING: 
+
+Example:
+    `+os.Args[0]+` catalog catalog-error --catalog-name "tekton" --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODM2MDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJlZnJlc2g6dG9rZW4iXSwidHlwZSI6InJlZnJlc2gtdG9rZW4ifQ.4RdUk5ttHdDiymurlZ_f7Uy5Pas3Lq9w04BjKQKRiCE"
 `, os.Args[0])
 }
 
@@ -591,7 +615,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 11281538076509796713 --token "Placeat hic accusamus."
+    `+os.Args[0]+` rating get --id 18445012574457005975 --token "Rerum qui hic."
 `, os.Args[0])
 }
 
@@ -605,8 +629,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 3
-   }' --id 13327540982832606309 --token "Quaerat ea rerum qui hic fugit inventore."
+      "rating": 4
+   }' --id 7308543305544376604 --token "Provident ducimus."
 `, os.Args[0])
 }
 
@@ -650,7 +674,7 @@ Example:
    ]' --tags '[
       "image",
       "build"
-   ]' --limit 100 --match "exact"
+   ]' --limit 100 --match "contains"
 `, os.Args[0])
 }
 

@@ -410,3 +410,15 @@ var UserData = Type("UserData", func() {
 	})
 	Required("githubId", "name", "avatarUrl")
 })
+
+var CatalogErrors = Type("CatalogErrors", func() {
+	Description("CatalogErrors define the errors that occurred during catalog refresh")
+	Attribute("type", String, "Catalog Errror type", func() {
+		Example("type", "warning")
+
+	})
+	Attribute("errors", ArrayOf(String), "Catalog Error message", func() {
+		Example("errors", []string{"Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name", "Resource tekton.dev/v1beta1, Kind=task - curl has no display name"})
+	})
+	Required("type", "errors")
+})

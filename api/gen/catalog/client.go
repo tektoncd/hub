@@ -15,15 +15,17 @@ import (
 
 // Client is the "catalog" service client.
 type Client struct {
-	RefreshEndpoint    goa.Endpoint
-	RefreshAllEndpoint goa.Endpoint
+	RefreshEndpoint      goa.Endpoint
+	RefreshAllEndpoint   goa.Endpoint
+	CatalogErrorEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "catalog" service client given the endpoints.
-func NewClient(refresh, refreshAll goa.Endpoint) *Client {
+func NewClient(refresh, refreshAll, catalogError goa.Endpoint) *Client {
 	return &Client{
-		RefreshEndpoint:    refresh,
-		RefreshAllEndpoint: refreshAll,
+		RefreshEndpoint:      refresh,
+		RefreshAllEndpoint:   refreshAll,
+		CatalogErrorEndpoint: catalogError,
 	}
 }
 
@@ -45,4 +47,14 @@ func (c *Client) RefreshAll(ctx context.Context, p *RefreshAllPayload) (res []*J
 		return
 	}
 	return ires.([]*Job), nil
+}
+
+// CatalogError calls the "CatalogError" endpoint of the "catalog" service.
+func (c *Client) CatalogError(ctx context.Context, p *CatalogErrorPayload) (res *CatalogErrorResult, err error) {
+	var ires interface{}
+	ires, err = c.CatalogErrorEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*CatalogErrorResult), nil
 }

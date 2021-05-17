@@ -20,3 +20,8 @@ func RefreshCatalogPath(catalogName string) string {
 func RefreshAllCatalogPath() string {
 	return "/catalog/refresh"
 }
+
+// CatalogErrorCatalogPath returns the URL path to the catalog service CatalogError HTTP endpoint.
+func CatalogErrorCatalogPath(catalogName string) string {
+	return fmt.Sprintf("/catalog/%v/error", catalogName)
+}

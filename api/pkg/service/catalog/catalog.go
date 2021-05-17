@@ -33,6 +33,7 @@ type service struct {
 
 var (
 	internalError = catalog.MakeInternalError(fmt.Errorf("failed to refresh catalog"))
+	fetchError    = catalog.MakeInternalError(fmt.Errorf("failed to fetch catalog errors"))
 )
 
 // New returns the catalog service implementation.
@@ -104,6 +105,49 @@ func (s *service) RefreshAll(ctx context.Context, p *catalog.RefreshAllPayload) 
 	}
 
 	return res, nil
+}
+
+// List all errors occurred refreshing a catalog
+func (s *service) CatalogError(ctx context.Context, p *catalog.CatalogErrorPayload) (*catalog.CatalogErrorResult, error) {
+
+	log := s.Logger(ctx)
+	db := s.DB(ctx)
+
+	ctg := model.Catalog{}
+	if err := db.Where(&model.Catalog{Name: p.CatalogName}).First(&ctg).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, catalogNotFoundErr(p.CatalogName)
+		}
+		log.Error(err)
+		return nil, internalError
+	}
+
+	allCtgError := []model.CatalogError{}
+	if err := db.Where(&model.CatalogError{CatalogID: ctg.ID}).Find(&allCtgError).Error; err != nil {
+		log.Error(err)
+		return nil, fetchError
+	}
+
+	rs := map[string][]string{}
+
+	for _, item := range allCtgError {
+		switch item.Type {
+		case "info", "warning", "critical":
+			rs[item.Type] = append(rs[item.Type], item.Detail)
+		default:
+			rs["unknown"] = append(rs["unknown"], item.Detail)
+		}
+	}
+
+	allError := []*catalog.CatalogErrors{}
+
+	for key, element := range rs {
+		if len(element) > 0 {
+			allError = append(allError, &catalog.CatalogErrors{Type: key, Errors: element})
+		}
+	}
+
+	return &catalog.CatalogErrorResult{Data: allError}, nil
 }
 
 func catalogNotFoundErr(name string) error {

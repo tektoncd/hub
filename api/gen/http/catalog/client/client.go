@@ -25,6 +25,10 @@ type Client struct {
 	// endpoint.
 	RefreshAllDoer goahttp.Doer
 
+	// CatalogError Doer is the HTTP client used to make requests to the
+	// CatalogError endpoint.
+	CatalogErrorDoer goahttp.Doer
+
 	// CORS Doer is the HTTP client used to make requests to the  endpoint.
 	CORSDoer goahttp.Doer
 
@@ -50,6 +54,7 @@ func NewClient(
 	return &Client{
 		RefreshDoer:         doer,
 		RefreshAllDoer:      doer,
+		CatalogErrorDoer:    doer,
 		CORSDoer:            doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
@@ -102,6 +107,30 @@ func (c *Client) RefreshAll() goa.Endpoint {
 		resp, err := c.RefreshAllDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("catalog", "RefreshAll", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// CatalogError returns an endpoint that makes HTTP requests to the catalog
+// service CatalogError server.
+func (c *Client) CatalogError() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeCatalogErrorRequest(c.encoder)
+		decodeResponse = DecodeCatalogErrorResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildCatalogErrorRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.CatalogErrorDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("catalog", "CatalogError", err)
 		}
 		return decodeResponse(resp)
 	}
