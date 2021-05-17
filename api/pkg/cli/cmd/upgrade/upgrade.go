@@ -151,7 +151,6 @@ func (opts *options) run() error {
 
 		resourcePipelineMinVersion, vErr := opts.hubRes.MinPipelinesVersion()
 		if vErr != nil {
-			fmt.Println("yha aya")
 			return vErr
 		}
 
