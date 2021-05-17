@@ -33,9 +33,9 @@ const Footer: React.FC = () => {
           </GridItem>
           <GridItem span={12} className="hub-footer-description">
             <Text>
-              © 2020 The Linux Foundation®. All rights reserved. The Linux Foundation has registered
-              trademarks and uses trademarks. For a list of trademarks of The Linux Foundation,
-              please see our{' '}
+              © {new Date().getFullYear()} The Linux Foundation®. All rights reserved. The Linux
+              Foundation has registered trademarks and uses trademarks. For a list of trademarks of
+              The Linux Foundation, please see our{' '}
               <Text
                 component={TextVariants.a}
                 href="https://www.linuxfoundation.org/trademark-usage/"
