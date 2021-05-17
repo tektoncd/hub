@@ -19,10 +19,11 @@ import (
 
 // Server lists the catalog service endpoint HTTP handlers.
 type Server struct {
-	Mounts     []*MountPoint
-	Refresh    http.Handler
-	RefreshAll http.Handler
-	CORS       http.Handler
+	Mounts       []*MountPoint
+	Refresh      http.Handler
+	RefreshAll   http.Handler
+	CatalogError http.Handler
+	CORS         http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -60,12 +61,15 @@ func New(
 		Mounts: []*MountPoint{
 			{"Refresh", "POST", "/catalog/{catalogName}/refresh"},
 			{"RefreshAll", "POST", "/catalog/refresh"},
+			{"CatalogError", "GET", "/catalog/{catalogName}/error"},
 			{"CORS", "OPTIONS", "/catalog/{catalogName}/refresh"},
 			{"CORS", "OPTIONS", "/catalog/refresh"},
+			{"CORS", "OPTIONS", "/catalog/{catalogName}/error"},
 		},
-		Refresh:    NewRefreshHandler(e.Refresh, mux, decoder, encoder, errhandler, formatter),
-		RefreshAll: NewRefreshAllHandler(e.RefreshAll, mux, decoder, encoder, errhandler, formatter),
-		CORS:       NewCORSHandler(),
+		Refresh:      NewRefreshHandler(e.Refresh, mux, decoder, encoder, errhandler, formatter),
+		RefreshAll:   NewRefreshAllHandler(e.RefreshAll, mux, decoder, encoder, errhandler, formatter),
+		CatalogError: NewCatalogErrorHandler(e.CatalogError, mux, decoder, encoder, errhandler, formatter),
+		CORS:         NewCORSHandler(),
 	}
 }
 
@@ -76,6 +80,7 @@ func (s *Server) Service() string { return "catalog" }
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.Refresh = m(s.Refresh)
 	s.RefreshAll = m(s.RefreshAll)
+	s.CatalogError = m(s.CatalogError)
 	s.CORS = m(s.CORS)
 }
 
@@ -83,6 +88,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountRefreshHandler(mux, h.Refresh)
 	MountRefreshAllHandler(mux, h.RefreshAll)
+	MountCatalogErrorHandler(mux, h.CatalogError)
 	MountCORSHandler(mux, h.CORS)
 }
 
@@ -188,6 +194,57 @@ func NewRefreshAllHandler(
 	})
 }
 
+// MountCatalogErrorHandler configures the mux to serve the "catalog" service
+// "CatalogError" endpoint.
+func MountCatalogErrorHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := handleCatalogOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/catalog/{catalogName}/error", f)
+}
+
+// NewCatalogErrorHandler creates a HTTP handler which loads the HTTP request
+// and calls the "catalog" service "CatalogError" endpoint.
+func NewCatalogErrorHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeCatalogErrorRequest(mux, decoder)
+		encodeResponse = EncodeCatalogErrorResponse(encoder)
+		encodeError    = EncodeCatalogErrorError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "CatalogError")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "catalog")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
 // MountCORSHandler configures the mux to serve the CORS endpoints for the
 // service catalog.
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
@@ -200,6 +257,7 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	}
 	mux.Handle("OPTIONS", "/catalog/{catalogName}/refresh", f)
 	mux.Handle("OPTIONS", "/catalog/refresh", f)
+	mux.Handle("OPTIONS", "/catalog/{catalogName}/error", f)
 }
 
 // NewCORSHandler creates a HTTP handler which returns a simple 200 response.

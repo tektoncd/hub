@@ -120,3 +120,43 @@ func TestRefresh_All(t *testing.T) {
 	assert.Contains(t, []string{"catalog-official", "catalog-community"}, jobs[1].CatalogName)
 	assert.Equal(t, "queued", jobs[1].Status)
 }
+
+func TestCatalogError(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// User with catalog:refresh scope
+	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	catalogSvc := NewServiceTest(tc)
+	ctx := auth.WithUserID(context.Background(), user.ID)
+
+	payload := &catalog.CatalogErrorPayload{CatalogName: "catalog-official"}
+	res, err := catalogSvc.CatalogError(ctx, payload)
+	assert.NoError(t, err)
+
+	assert.Equal(t, 3, len(res.Data))
+	assert.Equal(t, "info", res.Data[0].Type)
+	assert.Equal(t, "display name is missing for buildah task", res.Data[0].Errors[0])
+}
+
+func TestCatalogErrorHavingNoError(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// User with catalog:refresh scope
+	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
+	assert.Equal(t, user.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	catalogSvc := NewServiceTest(tc)
+	ctx := auth.WithUserID(context.Background(), user.ID)
+
+	payload := &catalog.CatalogErrorPayload{CatalogName: "catalog-community"}
+	res, err := catalogSvc.CatalogError(ctx, payload)
+	assert.NoError(t, err)
+
+	assert.Equal(t, 0, len(res.Data))
+}

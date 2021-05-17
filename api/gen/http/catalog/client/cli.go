@@ -41,3 +41,21 @@ func BuildRefreshAllPayload(catalogRefreshAllToken string) (*catalog.RefreshAllP
 
 	return v, nil
 }
+
+// BuildCatalogErrorPayload builds the payload for the catalog CatalogError
+// endpoint from CLI flags.
+func BuildCatalogErrorPayload(catalogCatalogErrorCatalogName string, catalogCatalogErrorToken string) (*catalog.CatalogErrorPayload, error) {
+	var catalogName string
+	{
+		catalogName = catalogCatalogErrorCatalogName
+	}
+	var token string
+	{
+		token = catalogCatalogErrorToken
+	}
+	v := &catalog.CatalogErrorPayload{}
+	v.CatalogName = catalogName
+	v.Token = token
+
+	return v, nil
+}

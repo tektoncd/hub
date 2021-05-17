@@ -69,4 +69,34 @@ var _ = Service("catalog", func() {
 		})
 	})
 
+	Method("CatalogError", func() {
+		Description("List all errors occurred refreshing a catalog")
+		Security(types.JWTAuth, func() {
+			Scope("catalog:refresh")
+		})
+		Payload(func() {
+			Attribute("catalogName", String, "Name of catalog", func() {
+				Example("catalogName", "tekton")
+			})
+			Token("token", String, "JWT", func() {
+				Example("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."+
+					"eyJleHAiOjE1Nzc4ODM2MDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJlZnJlc2g6dG9rZW4iXSwidHlwZSI6InJlZnJlc2gtdG9rZW4ifQ."+
+					"4RdUk5ttHdDiymurlZ_f7Uy5Pas3Lq9w04BjKQKRiCE")
+			})
+			Required("catalogName", "token")
+		})
+		Result(func() {
+			Attribute("data", ArrayOf(types.CatalogErrors), "Catalog errors")
+			Required("data")
+		})
+
+		HTTP(func() {
+			GET("/catalog/{catalogName}/error")
+			Header("token:Authorization")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+		})
+	})
+
 })
