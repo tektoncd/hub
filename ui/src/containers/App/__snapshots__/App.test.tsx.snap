@@ -307,7 +307,9 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                             <div className=\\"pf-l-grid__item pf-m-12-col hub-footer-description\\">
                               <Text>
                                 <p data-pf-content={true} className=\\"\\">
-                                  © 2020 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
+                                  © 
+                                  2021
+                                   The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
                                    
                                   <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\">
                                     <a href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
