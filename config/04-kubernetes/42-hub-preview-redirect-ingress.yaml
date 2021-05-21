@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: redirect-to-tekton-hub
+  namespace: tekton-hub-preview
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: 'true'
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/permanent-redirect: https://hub.tekton.dev
+    nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
+    dns.gardener.cloud/dnsnames: hub-preview.tekton.dev
+    dns.gardener.cloud/ttl: '3600'
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - secretName: ui-hub-preview-tekton-dev-tls
+      hosts: [hub-preview.tekton.dev]
+  rules:
+    - host: hub-preview.tekton.dev
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: ui
+              servicePort: 8080
