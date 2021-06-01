@@ -46,7 +46,6 @@ func (s *service) List(ctx context.Context) (*category.ListResult, error) {
 	if err := db.Model(&model.Category{}).Order("name").Find(&all).Error; err != nil {
 		log.Error(err)
 		return nil, fetchError
-
 	}
 
 	res := []*category.Category{}

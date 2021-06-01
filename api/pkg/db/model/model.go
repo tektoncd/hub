@@ -24,15 +24,12 @@ type (
 	Category struct {
 		gorm.Model
 		Name string `gorm:"not null;unique"`
-		Tags []Tag
 	}
 
 	Tag struct {
 		gorm.Model
-		Name       string `gorm:"not null;unique"`
-		Category   Category
-		CategoryID uint
-		Resources  []*Resource `gorm:"many2many:resource_tags;"`
+		Name      string      `gorm:"not null;unique"`
+		Resources []*Resource `gorm:"many2many:resource_tags;"`
 	}
 
 	Catalog struct {

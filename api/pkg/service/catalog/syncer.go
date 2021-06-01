@@ -269,12 +269,10 @@ func (s *syncer) updateResourceTags(
 	if len(tags) == 0 {
 		return
 	}
-	others := model.Category{}
-	txn.Model(&model.Category{}).Where(&model.Category{Name: "Others"}).First(&others)
 
 	for _, t := range tags {
 
-		tag := model.Tag{Name: t, CategoryID: others.ID}
+		tag := model.Tag{Name: t}
 
 		txn.Model(&model.Tag{}).Where(&model.Tag{Name: t}).FirstOrCreate(&tag)
 
