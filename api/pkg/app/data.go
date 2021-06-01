@@ -31,7 +31,6 @@ type Data struct {
 
 type Category struct {
 	Name string
-	Tags []string
 }
 
 type Catalog struct {

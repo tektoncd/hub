@@ -88,13 +88,6 @@ func addCategories(db *gorm.DB, log *log.Logger, data *app.Data) error {
 			log.Error(err)
 			return err
 		}
-		for _, t := range c.Tags {
-			tag := model.Tag{Name: t, CategoryID: cat.ID}
-			if err := db.Where(tag).FirstOrCreate(&tag).Error; err != nil {
-				log.Error(err)
-				return err
-			}
-		}
 	}
 	return nil
 }
