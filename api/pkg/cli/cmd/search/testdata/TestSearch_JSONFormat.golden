@@ -9,6 +9,7 @@
 				"Type": "community",
 				"URL": null
 			},
+			"Categories": [],
 			"Kind": "Pipeline",
 			"LatestVersion": {
 				"ID": 12,

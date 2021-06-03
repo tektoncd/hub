@@ -111,13 +111,14 @@ func ParseEndpoint(
 
 		resourceFlags = flag.NewFlagSet("resource", flag.ContinueOnError)
 
-		resourceQueryFlags        = flag.NewFlagSet("query", flag.ExitOnError)
-		resourceQueryNameFlag     = resourceQueryFlags.String("name", "", "")
-		resourceQueryCatalogsFlag = resourceQueryFlags.String("catalogs", "", "")
-		resourceQueryKindsFlag    = resourceQueryFlags.String("kinds", "", "")
-		resourceQueryTagsFlag     = resourceQueryFlags.String("tags", "", "")
-		resourceQueryLimitFlag    = resourceQueryFlags.String("limit", "1000", "")
-		resourceQueryMatchFlag    = resourceQueryFlags.String("match", "contains", "")
+		resourceQueryFlags          = flag.NewFlagSet("query", flag.ExitOnError)
+		resourceQueryNameFlag       = resourceQueryFlags.String("name", "", "")
+		resourceQueryCatalogsFlag   = resourceQueryFlags.String("catalogs", "", "")
+		resourceQueryCategoriesFlag = resourceQueryFlags.String("categories", "", "")
+		resourceQueryKindsFlag      = resourceQueryFlags.String("kinds", "", "")
+		resourceQueryTagsFlag       = resourceQueryFlags.String("tags", "", "")
+		resourceQueryLimitFlag      = resourceQueryFlags.String("limit", "1000", "")
+		resourceQueryMatchFlag      = resourceQueryFlags.String("match", "contains", "")
 
 		resourceListFlags     = flag.NewFlagSet("list", flag.ExitOnError)
 		resourceListLimitFlag = resourceListFlags.String("limit", "1000", "")
@@ -404,7 +405,7 @@ func ParseEndpoint(
 			switch epn {
 			case "query":
 				endpoint = c.Query()
-				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryCatalogsFlag, *resourceQueryKindsFlag, *resourceQueryTagsFlag, *resourceQueryLimitFlag, *resourceQueryMatchFlag)
+				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryCatalogsFlag, *resourceQueryCategoriesFlag, *resourceQueryKindsFlag, *resourceQueryTagsFlag, *resourceQueryLimitFlag, *resourceQueryMatchFlag)
 			case "list":
 				endpoint = c.List()
 				data, err = resourcec.BuildListPayload(*resourceListLimitFlag)
@@ -654,11 +655,12 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func resourceQueryUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -catalogs JSON -kinds JSON -tags JSON -limit UINT -match STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -catalogs JSON -categories JSON -kinds JSON -tags JSON -limit UINT -match STRING
 
 Find resources by a combination of name, kind , catalog and tags
     -name STRING: 
     -catalogs JSON: 
+    -categories JSON: 
     -kinds JSON: 
     -tags JSON: 
     -limit UINT: 
@@ -668,6 +670,9 @@ Example:
     `+os.Args[0]+` resource query --name "buildah" --catalogs '[
       "tekton",
       "openshift"
+   ]' --categories '[
+      "build",
+      "tools"
    ]' --kinds '[
       "task",
       "pipelines"

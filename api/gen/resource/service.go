@@ -50,6 +50,8 @@ type QueryPayload struct {
 	Catalogs []string
 	// Kinds of resource to filter by
 	Kinds []string
+	// Category associated with a resource to filter by
+	Categories []string
 	// Tags associated with a resource to filter by
 	Tags []string
 	// Maximum number of resources to be returned
@@ -142,6 +144,8 @@ type ResourceData struct {
 	Name string
 	// Type of catalog to which resource belongs
 	Catalog *Catalog
+	// Categories related to resource
+	Categories []*Category
 	// Kind of resource
 	Kind string
 	// Latest version of resource
@@ -163,6 +167,13 @@ type Catalog struct {
 	Type string
 	// URL of catalog
 	URL string
+}
+
+type Category struct {
+	// ID is the unique id of the category
+	ID uint
+	// Name of category
+	Name string
 }
 
 // The Version result type describes resource's version information.
@@ -409,6 +420,12 @@ func newResourceDataWithoutVersion(vres *resourceviews.ResourceDataView) *Resour
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
 	}
+	if vres.Categories != nil {
+		res.Categories = make([]*Category, len(vres.Categories))
+		for i, val := range vres.Categories {
+			res.Categories[i] = transformResourceviewsCategoryViewToCategory(val)
+		}
+	}
 	if vres.Tags != nil {
 		res.Tags = make([]*Tag, len(vres.Tags))
 		for i, val := range vres.Tags {
@@ -439,6 +456,12 @@ func newResourceData(vres *resourceviews.ResourceDataView) *ResourceData {
 	}
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
+	}
+	if vres.Categories != nil {
+		res.Categories = make([]*Category, len(vres.Categories))
+		for i, val := range vres.Categories {
+			res.Categories[i] = transformResourceviewsCategoryViewToCategory(val)
+		}
 	}
 	if vres.Tags != nil {
 		res.Tags = make([]*Tag, len(vres.Tags))
@@ -491,6 +514,12 @@ func newResourceDataViewWithoutVersion(res *ResourceData) *resourceviews.Resourc
 		Kind:   &res.Kind,
 		Rating: &res.Rating,
 	}
+	if res.Categories != nil {
+		vres.Categories = make([]*resourceviews.CategoryView, len(res.Categories))
+		for i, val := range res.Categories {
+			vres.Categories[i] = transformCategoryToResourceviewsCategoryView(val)
+		}
+	}
 	if res.Tags != nil {
 		vres.Tags = make([]*resourceviews.TagView, len(res.Tags))
 		for i, val := range res.Tags {
@@ -514,6 +543,12 @@ func newResourceDataView(res *ResourceData) *resourceviews.ResourceDataView {
 		Name:   &res.Name,
 		Kind:   &res.Kind,
 		Rating: &res.Rating,
+	}
+	if res.Categories != nil {
+		vres.Categories = make([]*resourceviews.CategoryView, len(res.Categories))
+		for i, val := range res.Categories {
+			vres.Categories[i] = transformCategoryToResourceviewsCategoryView(val)
+		}
 	}
 	if res.Tags != nil {
 		vres.Tags = make([]*resourceviews.TagView, len(res.Tags))
@@ -860,6 +895,20 @@ func transformResourceviewsTagViewToTag(v *resourceviews.TagView) *Tag {
 	return res
 }
 
+// transformResourceviewsCategoryViewToCategory builds a value of type
+// *Category from a value of type *resourceviews.CategoryView.
+func transformResourceviewsCategoryViewToCategory(v *resourceviews.CategoryView) *Category {
+	if v == nil {
+		return nil
+	}
+	res := &Category{
+		ID:   *v.ID,
+		Name: *v.Name,
+	}
+
+	return res
+}
+
 // transformResourceviewsResourceVersionDataViewToResourceVersionData builds a
 // value of type *ResourceVersionData from a value of type
 // *resourceviews.ResourceVersionDataView.
@@ -900,6 +949,12 @@ func transformResourceviewsResourceDataViewToResourceData(v *resourceviews.Resou
 	if v.Rating != nil {
 		res.Rating = *v.Rating
 	}
+	if v.Categories != nil {
+		res.Categories = make([]*Category, len(v.Categories))
+		for i, val := range v.Categories {
+			res.Categories[i] = transformResourceviewsCategoryViewToCategory(val)
+		}
+	}
 	if v.Tags != nil {
 		res.Tags = make([]*Tag, len(v.Tags))
 		for i, val := range v.Tags {
@@ -920,6 +975,17 @@ func transformResourceviewsResourceDataViewToResourceData(v *resourceviews.Resou
 // *resourceviews.TagView from a value of type *Tag.
 func transformTagToResourceviewsTagView(v *Tag) *resourceviews.TagView {
 	res := &resourceviews.TagView{
+		ID:   &v.ID,
+		Name: &v.Name,
+	}
+
+	return res
+}
+
+// transformCategoryToResourceviewsCategoryView builds a value of type
+// *resourceviews.CategoryView from a value of type *Category.
+func transformCategoryToResourceviewsCategoryView(v *Category) *resourceviews.CategoryView {
+	res := &resourceviews.CategoryView{
 		ID:   &v.ID,
 		Name: &v.Name,
 	}
@@ -956,6 +1022,12 @@ func transformResourceDataToResourceviewsResourceDataView(v *ResourceData) *reso
 		Name:   &v.Name,
 		Kind:   &v.Kind,
 		Rating: &v.Rating,
+	}
+	if v.Categories != nil {
+		res.Categories = make([]*resourceviews.CategoryView, len(v.Categories))
+		for i, val := range v.Categories {
+			res.Categories[i] = transformCategoryToResourceviewsCategoryView(val)
+		}
 	}
 	if v.Tags != nil {
 		res.Tags = make([]*resourceviews.TagView, len(v.Tags))

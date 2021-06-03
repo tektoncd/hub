@@ -44,6 +44,8 @@ var Category = Type("Category", func() {
 	Required("id", "name")
 })
 
+var Categories = ArrayOf(Category)
+
 var Catalog = ResultType("application/vnd.hub.catalog", "Catalog", func() {
 	Attribute("id", UInt, "ID is the unique id of the catalog", func() {
 		Example("id", 1)
@@ -172,6 +174,13 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 			Value(Val{"id": 1, "name": "tekton", "type": "community"})
 		})
 	})
+	Attribute("categories", Categories, "Categories related to resource", func() {
+		Example("categories", func() {
+			Value([]Val{
+				{"id": 1, "name": "image-build"},
+			})
+		})
+	})
 	Attribute("kind", String, "Kind of resource", func() {
 		Example("kind", "task")
 	})
@@ -227,6 +236,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Attribute("catalog", func() {
 			View("min")
 		})
+		Attribute("categories")
 		Attribute("kind")
 		Attribute("latestVersion")
 		Attribute("tags")
@@ -237,6 +247,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Attribute("id")
 		Attribute("name")
 		Attribute("catalog")
+		Attribute("categories")
 		Attribute("kind")
 		Attribute("latestVersion")
 		Attribute("tags")
@@ -246,7 +257,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		})
 	})
 
-	Required("id", "name", "catalog", "kind", "latestVersion", "tags", "rating", "versions")
+	Required("id", "name", "catalog", "categories", "kind", "latestVersion", "tags", "rating", "versions")
 })
 
 var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {
