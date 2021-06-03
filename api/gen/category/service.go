@@ -39,15 +39,6 @@ type Category struct {
 	ID uint
 	// Name of category
 	Name string
-	// List of tags associated with the category
-	Tags []*Tag
-}
-
-type Tag struct {
-	// ID is the unique id of tag
-	ID uint
-	// Name of tag
-	Name string
 }
 
 // MakeInternalError builds a goa.ServiceError from an error.

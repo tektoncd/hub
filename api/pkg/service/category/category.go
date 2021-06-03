@@ -21,7 +21,6 @@ import (
 	"github.com/tektoncd/hub/api/gen/category"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
-	"gorm.io/gorm"
 )
 
 type service struct {
@@ -44,22 +43,15 @@ func (s *service) List(ctx context.Context) (*category.ListResult, error) {
 	db := s.DB(ctx)
 
 	var all []model.Category
-	if err := db.Order("name").
-		Preload("Tags", func(db *gorm.DB) *gorm.DB {
-			return db.Order("tags.name ASC")
-		}).
-		Find(&all).Error; err != nil {
+	if err := db.Model(&model.Category{}).Order("name").Find(&all).Error; err != nil {
 		log.Error(err)
 		return nil, fetchError
+
 	}
 
 	res := []*category.Category{}
 	for _, c := range all {
-		tags := []*category.Tag{}
-		for _, t := range c.Tags {
-			tags = append(tags, &category.Tag{ID: t.ID, Name: t.Name})
-		}
-		res = append(res, &category.Category{ID: c.ID, Name: c.Name, Tags: tags})
+		res = append(res, &category.Category{ID: c.ID, Name: c.Name})
 	}
 
 	return &category.ListResult{Data: res}, nil

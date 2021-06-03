@@ -2,37 +2,15 @@
 	"data": [
 		{
 			"id": 2,
-			"name": "abc",
-			"tags": [
-				{
-					"id": 4,
-					"name": "atag"
-				},
-				{
-					"id": 2,
-					"name": "rtag"
-				}
-			]
+			"name": "abc"
 		},
 		{
 			"id": 3,
-			"name": "pqr",
-			"tags": [
-				{
-					"id": 3,
-					"name": "ptag"
-				}
-			]
+			"name": "pqr"
 		},
 		{
 			"id": 1,
-			"name": "xyz",
-			"tags": [
-				{
-					"id": 1,
-					"name": "ztag"
-				}
-			]
+			"name": "xyz"
 		}
 	]
 }

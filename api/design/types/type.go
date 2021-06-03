@@ -40,16 +40,8 @@ var Category = Type("Category", func() {
 	Attribute("name", String, "Name of category", func() {
 		Example("name", "Image Builder")
 	})
-	Attribute("tags", Tags, "List of tags associated with the category", func() {
-		Example("tags", func() {
-			Value([]Val{
-				{"id": 1, "name": "image-build"},
-				{"id": 2, "name": "kaniko"},
-			})
-		})
-	})
 
-	Required("id", "name", "tags")
+	Required("id", "name")
 })
 
 var Catalog = ResultType("application/vnd.hub.catalog", "Catalog", func() {

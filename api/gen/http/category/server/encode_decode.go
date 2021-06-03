@@ -66,23 +66,6 @@ func marshalCategoryCategoryToCategoryResponseBody(v *category.Category) *Catego
 		ID:   v.ID,
 		Name: v.Name,
 	}
-	if v.Tags != nil {
-		res.Tags = make([]*TagResponseBody, len(v.Tags))
-		for i, val := range v.Tags {
-			res.Tags[i] = marshalCategoryTagToTagResponseBody(val)
-		}
-	}
-
-	return res
-}
-
-// marshalCategoryTagToTagResponseBody builds a value of type *TagResponseBody
-// from a value of type *category.Tag.
-func marshalCategoryTagToTagResponseBody(v *category.Tag) *TagResponseBody {
-	res := &TagResponseBody{
-		ID:   v.ID,
-		Name: v.Name,
-	}
 
 	return res
 }

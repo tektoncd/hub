@@ -42,16 +42,6 @@ type CategoryResponseBody struct {
 	ID uint `form:"id" json:"id" xml:"id"`
 	// Name of category
 	Name string `form:"name" json:"name" xml:"name"`
-	// List of tags associated with the category
-	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
-}
-
-// TagResponseBody is used to define fields on response body types.
-type TagResponseBody struct {
-	// ID is the unique id of tag
-	ID uint `form:"id" json:"id" xml:"id"`
-	// Name of tag
-	Name string `form:"name" json:"name" xml:"name"`
 }
 
 // NewListResponseBody builds the HTTP response body from the result of the
