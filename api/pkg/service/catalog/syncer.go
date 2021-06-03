@@ -255,6 +255,7 @@ func (s *syncer) updateResources(
 
 		log.Infof("Resource: %s  ID: %d stored", r.Name, dbRes.ID)
 
+		s.updateResourceCategory(txn, log, &dbRes, r.Categories)
 		s.updateResourceTags(txn, log, &dbRes, r.Tags)
 		s.updateResourceVersions(txn, log, catalog, dbRes.ID, r.Versions)
 
@@ -279,6 +280,23 @@ func (s *syncer) updateResourceTags(
 		resTag := model.ResourceTag{ResourceID: res.ID, TagID: tag.ID}
 		txn.Model(&model.ResourceTag{}).Where(resTag).FirstOrCreate(&resTag)
 		log.Infof("Resource: %d: %s | tag: %s (%d)", res.ID, res.Name, tag.Name, tag.ID)
+	}
+}
+
+func (s *syncer) updateResourceCategory(txn *gorm.DB, log *zap.SugaredLogger,
+	res *model.Resource, categories []string) {
+	if len(categories) == 0 {
+		return
+	}
+
+	for _, t := range categories {
+
+		c := model.Category{}
+		txn.Model(&model.Category{}).Where(&model.Category{Name: t}).FirstOrCreate(&c)
+
+		resCategory := model.ResourceCategory{ResourceID: res.ID, CategoryID: c.ID}
+		txn.Model(&model.ResourceCategory{}).Where(resCategory).FirstOrCreate(&resCategory)
+
 	}
 }
 
