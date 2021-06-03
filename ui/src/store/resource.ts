@@ -352,17 +352,17 @@ export const ResourceStore = types
 
   .views((self) => ({
     get filteredResources() {
-      const { resources, kinds, categories, search, sortBy } = self;
-      const { selectedTags } = categories;
+      const { resources, kinds, search, sortBy } = self;
+      // TODO: add logic to filter resources based on selected categories
 
       let filteredItems: IResource[] = [];
       resources.forEach((r: IResource) => {
         const matchesKind = kinds.selected.size === 0 || kinds.selected.has(r.kind.name);
         const matchesCatalogs =
           self.catalogs.selected.size === 0 || self.catalogs.selected.has(r.catalog.id);
-        const matchesTags = selectedTags.size === 0 || r.tags.some((t) => selectedTags.has(t.id));
+        // TODO: Add Mapping of resource category to the selected categories list
 
-        if (matchesKind && matchesCatalogs && matchesTags) {
+        if (matchesKind && matchesCatalogs) {
           filteredItems.push(r);
         }
       });

@@ -18,12 +18,10 @@ describe('Store Object', () => {
   it('can create a category object', () => {
     const category = Category.create({
       id: 1,
-      name: 'test',
-      tags: ['1']
+      name: 'test'
     });
 
     expect(category.name).toBe('test');
-    expect(category.tags.length).toBe(1);
   });
 });
 
@@ -89,34 +87,6 @@ describe('Store functions', () => {
 
         store.clearSelected();
         expect(c1.selected).toBe(false);
-
-        done();
-      }
-    );
-  });
-
-  it('can return the tags for the categories which are selected', (done) => {
-    const store = CategoryStore.create({}, { api });
-    expect(store.count).toBe(0);
-    expect(store.isLoading).toBe(true);
-
-    when(
-      () => !store.isLoading,
-      () => {
-        expect(store.count).toBe(5);
-        expect(store.isLoading).toBe(false);
-
-        // Gets the category with id as 1
-        const c1 = store.items.get('1');
-        assert(c1);
-        c1.toggle();
-
-        // Gets the category with id as 2
-        const c2 = store.items.get('2');
-        assert(c2);
-        c2.toggle();
-
-        expect(store.selectedTags.size).toBe(2);
 
         done();
       }
