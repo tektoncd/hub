@@ -100,21 +100,6 @@ func unmarshalCategoryResponseBodyToCategoryCategory(v *CategoryResponseBody) *c
 		ID:   *v.ID,
 		Name: *v.Name,
 	}
-	res.Tags = make([]*category.Tag, len(v.Tags))
-	for i, val := range v.Tags {
-		res.Tags[i] = unmarshalTagResponseBodyToCategoryTag(val)
-	}
-
-	return res
-}
-
-// unmarshalTagResponseBodyToCategoryTag builds a value of type *category.Tag
-// from a value of type *TagResponseBody.
-func unmarshalTagResponseBodyToCategoryTag(v *TagResponseBody) *category.Tag {
-	res := &category.Tag{
-		ID:   *v.ID,
-		Name: *v.Name,
-	}
 
 	return res
 }

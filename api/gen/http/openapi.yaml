@@ -1770,48 +1770,18 @@ definitions:
         example:
         - id: 1
           name: Image Builder
-          tags:
-          - id: 1
-            name: image-build
-          - id: 2
-            name: kaniko
         - id: 1
           name: Image Builder
-          tags:
-          - id: 1
-            name: image-build
-          - id: 2
-            name: kaniko
     example:
       data:
       - id: 1
         name: Image Builder
-        tags:
-        - id: 1
-          name: image-build
-        - id: 2
-          name: kaniko
       - id: 1
         name: Image Builder
-        tags:
-        - id: 1
-          name: image-build
-        - id: 2
-          name: kaniko
       - id: 1
         name: Image Builder
-        tags:
-        - id: 1
-          name: image-build
-        - id: 2
-          name: kaniko
       - id: 1
         name: Image Builder
-        tags:
-        - id: 1
-          name: image-build
-        - id: 2
-          name: kaniko
   CategoryResponseBody:
     title: CategoryResponseBody
     type: object
@@ -1825,28 +1795,12 @@ definitions:
         type: string
         description: Name of category
         example: Image Builder
-      tags:
-        type: array
-        items:
-          $ref: '#/definitions/TagResponseBody'
-        description: List of tags associated with the category
-        example:
-        - id: 1
-          name: image-build
-        - id: 2
-          name: kaniko
     example:
       id: 1
       name: Image Builder
-      tags:
-      - id: 1
-        name: image-build
-      - id: 2
-        name: kaniko
     required:
     - id
     - name
-    - tags
   HubServiceResponseBody:
     title: HubServiceResponseBody
     type: object

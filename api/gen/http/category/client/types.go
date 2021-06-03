@@ -42,16 +42,6 @@ type CategoryResponseBody struct {
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Name of category
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
-	// List of tags associated with the category
-	Tags []*TagResponseBody `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
-}
-
-// TagResponseBody is used to define fields on response body types.
-type TagResponseBody struct {
-	// ID is the unique id of tag
-	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
-	// Name of tag
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
 // NewListResultOK builds a "category" service "list" endpoint result from a
@@ -122,27 +112,6 @@ func ValidateListInternalErrorResponseBody(body *ListInternalErrorResponseBody) 
 // ValidateCategoryResponseBody runs the validations defined on
 // CategoryResponseBody
 func ValidateCategoryResponseBody(body *CategoryResponseBody) (err error) {
-	if body.ID == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
-	}
-	if body.Name == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
-	}
-	if body.Tags == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "body"))
-	}
-	for _, e := range body.Tags {
-		if e != nil {
-			if err2 := ValidateTagResponseBody(e); err2 != nil {
-				err = goa.MergeErrors(err, err2)
-			}
-		}
-	}
-	return
-}
-
-// ValidateTagResponseBody runs the validations defined on TagResponseBody
-func ValidateTagResponseBody(body *TagResponseBody) (err error) {
 	if body.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
 	}
