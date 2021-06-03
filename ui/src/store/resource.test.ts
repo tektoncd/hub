@@ -130,6 +130,36 @@ describe('Store functions', () => {
     );
   });
 
+  it('filter resources based on selected categories', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        catalogs: CatalogStore.create({}, { api }),
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        const caetgoryA = store.categories.items.get('1');
+        const categoryB = store.categories.items.get('2');
+
+        assert(caetgoryA);
+        assert(categoryB);
+
+        caetgoryA.toggle();
+        categoryB.toggle();
+
+        expect(store.filteredResources.length).toBe(2);
+        expect(store.filteredResources[0].name).toBe('golang-build');
+        done();
+      }
+    );
+  });
+
   it('filter resources based on selected kind and catalog', (done) => {
     const store = ResourceStore.create(
       {},
@@ -683,7 +713,7 @@ describe('Store functions', () => {
         store.setURLParams('?category=Automation%2CBuild+Tools&catalog=tekton');
         store.parseUrl();
 
-        expect(store.filteredResources.length).toBe(7);
+        expect(store.filteredResources.length).toBe(1);
         expect(store.categories.selectedByName).toEqual(['Build Tools']);
 
         done();
