@@ -1,11 +1,6 @@
 import { types, getEnv, flow, Instance } from 'mobx-state-tree';
 import { Api } from '../api';
 
-export const Tag = types.model('Tags', {
-  id: types.identifierNumber,
-  name: types.string
-});
-
 export const Category = types
   .model('Category', {
     id: types.identifierNumber,
@@ -19,7 +14,6 @@ export const Category = types
     }
   }));
 
-export type ITag = Instance<typeof Tag>;
 export type ICategory = Instance<typeof Category>;
 export type ICategoryStore = Instance<typeof CategoryStore>;
 
@@ -48,6 +42,17 @@ export const CategoryStore = types
       return Array.from(self.items.values())
         .filter((c: ICategory) => c.selected)
         .reduce((acc: string[], c: ICategory) => [...acc, c.name], []);
+    },
+
+    // This returns set of selected category
+    get selected() {
+      const list = new Set();
+      self.items.forEach((c: ICategory) => {
+        if (c.selected) {
+          list.add(c.id);
+        }
+      });
+      return list;
     }
   }))
 

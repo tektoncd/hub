@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Store Object creates a tag store 1`] = `
+Object {
+  "cli": Object {
+    "id": 10,
+    "name": "cli",
+  },
+}
+`;

@@ -26,7 +26,7 @@ import { useObserver } from 'mobx-react';
 import { useParams } from 'react-router-dom';
 import { useMst } from '../../store/root';
 import { IResource } from '../../store/resource';
-import { ITag } from '../../store/category';
+import { ITag } from '../../store/tag';
 import { Icons } from '../../common/icons';
 import Icon from '../../components/Icon';
 import TooltipDisplay from '../../components/TooltipDisplay';

@@ -13,7 +13,7 @@ import {
 import { Link } from 'react-router-dom';
 import { IconSize } from '@patternfly/react-icons';
 import { IResource } from '../../store/resource';
-import { ITag } from '../../store/category';
+import { ITag } from '../../store/tag';
 import Icon from '../Icon';
 import { Icons } from '../../common/icons';
 import TooltipDisplay from '../TooltipDisplay';

@@ -8,6 +8,11 @@
         "name": "tekton",
         "type": "community"
       },
+      "categories": [
+        {
+          "id": 19,
+          "name": "Image-Build"
+        }],
       "kind": "Task",
       "latestVersion": {
         "id": 105,
@@ -35,6 +40,12 @@
         "name": "tekton",
         "type": "community"
       },
+      "categories": [
+        {
+          "id": 3,
+          "name": "CLI"
+        }
+      ],
       "kind": "Task",
       "latestVersion": {
         "id": 4,
@@ -62,6 +73,12 @@
         "name": "tekton",
         "type": "community"
       },
+      "categories": [
+        {
+          "id": 2,
+          "name": "Build Tools"
+        }
+      ],
       "kind": "Task",
       "latestVersion": {
         "id": 47,
@@ -89,6 +106,12 @@
         "name": "tekton",
         "type": "community"
       },
+      "categories": [
+        {
+          "id": 1,
+          "name": "Automation"
+        }
+      ],
       "kind": "Task",
       "latestVersion": {
         "id": 104,
@@ -120,6 +143,12 @@
         "name": "tekton",
         "type": "community"
       },
+      "categories": [
+        {
+          "id": 19,
+          "name": "Image-Build"
+        }
+      ],
       "kind": "Task",
       "latestVersion": {
         "id": 57,
@@ -147,6 +176,12 @@
         "name": "tekton",
         "type": "community"
       },
+      "categories": [
+        {
+          "id": 3,
+          "name": "CLI"
+        }
+      ],
       "kind": "Task",
       "latestVersion": {
         "id": 1,
@@ -174,6 +209,12 @@
         "name": "tekton",
         "type": "community"
       },
+      "categories": [
+        {
+          "id": 19,
+          "name": "Image-Build"
+        }
+      ],
       "kind": "Task",
       "latestVersion": {
         "id": 57,
@@ -201,6 +242,12 @@
         "name": "tekton-hub",
         "type": "official"
       },
+      "categories": [
+        {
+          "id": 30,
+          "name": "Tekton"
+        }
+      ],
       "kind": "Pipeline",
       "latestVersion": {
         "id": 1,
