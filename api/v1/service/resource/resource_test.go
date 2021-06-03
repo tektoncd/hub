@@ -46,6 +46,18 @@ func TestQuery_ByNameAndKind(t *testing.T) {
 	assert.Equal(t, "build-pipeline", all.Data[0].Name)
 }
 
+func TestQuery_ByCategories(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.QueryPayload{Name: "", Kinds: []string{}, Categories: []string{"abc"}, Limit: 100}
+	all, err := resourceSvc.Query(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(all.Data))
+	assert.Equal(t, "build-pipeline", all.Data[0].Name)
+}
+
 func TestQuery_NotFoundError(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())

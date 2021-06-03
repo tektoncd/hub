@@ -60,6 +60,8 @@ type ResourceDataView struct {
 	Name *string
 	// Type of catalog to which resource belongs
 	Catalog *CatalogView
+	// Categories related to resource
+	Categories []*CategoryView
 	// Kind of resource
 	Kind *string
 	// Latest version of resource
@@ -82,6 +84,14 @@ type CatalogView struct {
 	Type *string
 	// URL of catalog
 	URL *string
+}
+
+// CategoryView is a type that runs validations on a projected type.
+type CategoryView struct {
+	// ID is the unique id of the category
+	ID *uint
+	// Name of category
+	Name *string
 }
 
 // ResourceVersionDataView is a type that runs validations on a projected type.
@@ -181,6 +191,7 @@ var (
 			"id",
 			"name",
 			"catalog",
+			"categories",
 			"kind",
 			"latestVersion",
 			"tags",
@@ -190,6 +201,7 @@ var (
 			"id",
 			"name",
 			"catalog",
+			"categories",
 			"kind",
 			"latestVersion",
 			"tags",
@@ -212,6 +224,7 @@ var (
 			"id",
 			"name",
 			"catalog",
+			"categories",
 			"kind",
 			"latestVersion",
 			"tags",
@@ -221,6 +234,7 @@ var (
 			"id",
 			"name",
 			"catalog",
+			"categories",
 			"kind",
 			"latestVersion",
 			"tags",
@@ -423,6 +437,9 @@ func ValidateResourceDataViewWithoutVersion(result *ResourceDataView) (err error
 	if result.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
 	}
+	if result.Categories == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("categories", "result"))
+	}
 	if result.Kind == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "result"))
 	}
@@ -431,6 +448,13 @@ func ValidateResourceDataViewWithoutVersion(result *ResourceDataView) (err error
 	}
 	if result.Rating == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "result"))
+	}
+	for _, e := range result.Categories {
+		if e != nil {
+			if err2 := ValidateCategoryView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
 	}
 	for _, e := range result.Tags {
 		if e != nil {
@@ -461,6 +485,9 @@ func ValidateResourceDataView(result *ResourceDataView) (err error) {
 	if result.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
 	}
+	if result.Categories == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("categories", "result"))
+	}
 	if result.Kind == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "result"))
 	}
@@ -472,6 +499,13 @@ func ValidateResourceDataView(result *ResourceDataView) (err error) {
 	}
 	if result.Versions == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("versions", "result"))
+	}
+	for _, e := range result.Categories {
+		if e != nil {
+			if err2 := ValidateCategoryView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
 	}
 	for _, e := range result.Tags {
 		if e != nil {
@@ -539,6 +573,17 @@ func ValidateCatalogView(result *CatalogView) (err error) {
 		if !(*result.Type == "official" || *result.Type == "community") {
 			err = goa.MergeErrors(err, goa.InvalidEnumValueError("result.type", *result.Type, []interface{}{"official", "community"}))
 		}
+	}
+	return
+}
+
+// ValidateCategoryView runs the validations defined on CategoryView.
+func ValidateCategoryView(result *CategoryView) (err error) {
+	if result.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "result"))
+	}
+	if result.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
 	}
 	return
 }

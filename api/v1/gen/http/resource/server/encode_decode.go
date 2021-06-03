@@ -34,19 +34,21 @@ func EncodeQueryResponse(encoder func(context.Context, http.ResponseWriter) goah
 func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			name     string
-			catalogs []string
-			kinds    []string
-			tags     []string
-			limit    uint
-			match    string
-			err      error
+			name       string
+			catalogs   []string
+			categories []string
+			kinds      []string
+			tags       []string
+			limit      uint
+			match      string
+			err        error
 		)
 		nameRaw := r.URL.Query().Get("name")
 		if nameRaw != "" {
 			name = nameRaw
 		}
 		catalogs = r.URL.Query()["catalogs"]
+		categories = r.URL.Query()["categories"]
 		kinds = r.URL.Query()["kinds"]
 		tags = r.URL.Query()["tags"]
 		{
@@ -73,7 +75,7 @@ func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 		if err != nil {
 			return nil, err
 		}
-		payload := NewQueryPayload(name, catalogs, kinds, tags, limit, match)
+		payload := NewQueryPayload(name, catalogs, categories, kinds, tags, limit, match)
 
 		return payload, nil
 	}
@@ -618,6 +620,12 @@ func marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersio
 	if v.Catalog != nil {
 		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v.Catalog)
 	}
+	if v.Categories != nil {
+		res.Categories = make([]*CategoryResponseBody, len(v.Categories))
+		for i, val := range v.Categories {
+			res.Categories[i] = marshalResourceviewsCategoryViewToCategoryResponseBody(val)
+		}
+	}
 	if v.LatestVersion != nil {
 		res.LatestVersion = marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBodyWithoutResource(v.LatestVersion)
 	}
@@ -638,6 +646,17 @@ func marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v *resourceviews.Ca
 		ID:   *v.ID,
 		Name: *v.Name,
 		Type: *v.Type,
+	}
+
+	return res
+}
+
+// marshalResourceviewsCategoryViewToCategoryResponseBody builds a value of
+// type *CategoryResponseBody from a value of type *resourceviews.CategoryView.
+func marshalResourceviewsCategoryViewToCategoryResponseBody(v *resourceviews.CategoryView) *CategoryResponseBody {
+	res := &CategoryResponseBody{
+		ID:   *v.ID,
+		Name: *v.Name,
 	}
 
 	return res
@@ -759,6 +778,12 @@ func marshalResourceviewsResourceDataViewToResourceDataResponseBody(v *resourcev
 	}
 	if v.Catalog != nil {
 		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v.Catalog)
+	}
+	if v.Categories != nil {
+		res.Categories = make([]*CategoryResponseBody, len(v.Categories))
+		for i, val := range v.Categories {
+			res.Categories[i] = marshalResourceviewsCategoryViewToCategoryResponseBody(val)
+		}
 	}
 	if v.LatestVersion != nil {
 		res.LatestVersion = marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBodyWithoutResource(v.LatestVersion)
