@@ -8,6 +8,12 @@
 				"name": "catalog-official",
 				"type": "official"
 			},
+			"categories": [
+				{
+					"id": 1,
+					"name": "xyz"
+				}
+			],
 			"kind": "task",
 			"latestVersion": {
 				"id": 5,
@@ -35,6 +41,12 @@
 				"name": "catalog-official",
 				"type": "official"
 			},
+			"categories": [
+				{
+					"id": 3,
+					"name": "pqr"
+				}
+			],
 			"kind": "task",
 			"latestVersion": {
 				"id": 8,
@@ -62,6 +74,7 @@
 				"name": "catalog-enterprise",
 				"type": "enterprise"
 			},
+			"categories": [],
 			"kind": "task",
 			"latestVersion": {
 				"id": 11,
@@ -89,6 +102,12 @@
 				"name": "catalog-official",
 				"type": "official"
 			},
+			"categories": [
+				{
+					"id": 1,
+					"name": "xyz"
+				}
+			],
 			"kind": "task",
 			"latestVersion": {
 				"id": 10,
@@ -116,6 +135,12 @@
 				"name": "catalog-official",
 				"type": "official"
 			},
+			"categories": [
+				{
+					"id": 2,
+					"name": "abc"
+				}
+			],
 			"kind": "pipeline",
 			"latestVersion": {
 				"id": 4,
@@ -147,6 +172,7 @@
 				"name": "catalog-community",
 				"type": "community"
 			},
+			"categories": [],
 			"kind": "task",
 			"latestVersion": {
 				"id": 9,
@@ -169,6 +195,12 @@
 				"name": "catalog-official",
 				"type": "official"
 			},
+			"categories": [
+				{
+					"id": 3,
+					"name": "pqr"
+				}
+			],
 			"kind": "task",
 			"latestVersion": {
 				"id": 3,
@@ -196,6 +228,12 @@
 				"name": "catalog-official",
 				"type": "official"
 			},
+			"categories": [
+				{
+					"id": 2,
+					"name": "abc"
+				}
+			],
 			"kind": "task",
 			"latestVersion": {
 				"id": 7,

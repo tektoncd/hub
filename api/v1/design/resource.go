@@ -45,6 +45,9 @@ var _ = Service("resource", func() {
 			Attribute("kinds", ArrayOf(String), "Kinds of resource to filter by", func() {
 				Example([]string{"task", "pipelines"})
 			})
+			Attribute("categories", ArrayOf(String), "Category associated with a resource to filter by", func() {
+				Example([]string{"build", "tools"})
+			})
 			Attribute("tags", ArrayOf(String), "Tags associated with a resource to filter by", func() {
 				Example([]string{"image", "build"})
 			})
@@ -65,6 +68,7 @@ var _ = Service("resource", func() {
 
 			Param("name")
 			Param("catalogs")
+			Param("categories")
 			Param("kinds")
 			Param("tags")
 			Param("limit")
