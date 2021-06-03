@@ -62,7 +62,8 @@ var res2 = &res.ResourceData{
 		Name: "foo",
 		Type: "community",
 	},
-	Rating: 4,
+	Categories: []*res.Category{},
+	Rating:     4,
 	LatestVersion: &res.ResourceVersionData{
 		ID:                  12,
 		Version:             "0.2",

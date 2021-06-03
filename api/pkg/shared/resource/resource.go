@@ -25,19 +25,20 @@ import (
 )
 
 type Request struct {
-	Db        *gorm.DB
-	Log       *log.Logger
-	ID        uint
-	Name      string
-	Match     string
-	Kinds     []string
-	Catalogs  []string
-	Tags      []string
-	Limit     uint
-	Version   string
-	Kind      string
-	Catalog   string
-	VersionID uint
+	Db         *gorm.DB
+	Log        *log.Logger
+	ID         uint
+	Name       string
+	Match      string
+	Kinds      []string
+	Catalogs   []string
+	Categories []string
+	Tags       []string
+	Limit      uint
+	Version    string
+	Kind       string
+	Catalog    string
+	VersionID  uint
 }
 
 var (
@@ -47,7 +48,7 @@ var (
 
 // Query resources based on name, kind, tags.
 // Match is the type of search: 'exact' or 'contains'
-// Fields: name, []kinds,[]Catalogs []Tags, Match, Limit
+// Fields: name, []kinds, []Catalogs, []Categories, []Tags, Match, Limit
 func (r *Request) Query() ([]model.Resource, error) {
 
 	// Validate the kinds passed are supported by Hub
@@ -66,6 +67,7 @@ func (r *Request) Query() ([]model.Resource, error) {
 		filterByTags(r.Tags),
 		filterByKinds(r.Kinds),
 		filterByCatalogs(r.Catalogs),
+		filterByCategories(r.Categories),
 		filterResourceName(r.Match, r.Name),
 		withResourceDetails,
 	).Limit(int(r.Limit))
@@ -192,6 +194,7 @@ func withCatalogAndTags(db *gorm.DB) *gorm.DB {
 func withResourceDetails(db *gorm.DB) *gorm.DB {
 	return db.
 		Order("rating DESC, resources.name").
+		Preload("Categories").
 		Scopes(withCatalogAndTags).
 		Preload("Versions", orderByVersion)
 }
@@ -283,6 +286,20 @@ func filterByTags(tags []string) func(db *gorm.DB) *gorm.DB {
 			Joins("JOIN resource_tags as rt on rt.resource_id = resources.id").
 			Joins("JOIN tags on tags.id = rt.tag_id").
 			Where("lower(tags.name) in (?)", tags)
+	}
+}
+
+func filterByCategories(categories []string) func(db *gorm.DB) *gorm.DB {
+	if categories == nil {
+		return noop
+	}
+
+	categories = lower(categories)
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Model(&model.Resource{}).
+			Joins("JOIN resource_categories as rc on rc.resource_id = resources.id").
+			Joins("JOIN categories on categories.id = rc.category_id").
+			Where("lower(categories.name) in (?)", categories)
 	}
 }
 

@@ -53,14 +53,15 @@ func New(api app.BaseConfig) resource.Service {
 func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (*resource.Resources, error) {
 
 	req := res.Request{
-		Db:       s.DB(ctx),
-		Log:      s.Logger(ctx),
-		Name:     p.Name,
-		Kinds:    p.Kinds,
-		Catalogs: p.Catalogs,
-		Tags:     p.Tags,
-		Limit:    p.Limit,
-		Match:    p.Match,
+		Db:         s.DB(ctx),
+		Log:        s.Logger(ctx),
+		Name:       p.Name,
+		Kinds:      p.Kinds,
+		Catalogs:   p.Catalogs,
+		Categories: p.Categories,
+		Tags:       p.Tags,
+		Limit:      p.Limit,
+		Match:      p.Match,
 	}
 
 	rArr, err := req.Query()
@@ -302,6 +303,15 @@ func initResource(r model.Resource) *resource.ResourceData {
 			ID:   tag.ID,
 			Name: tag.Name,
 		})
+	}
+
+	res.Categories = []*resource.Category{}
+	for _, category := range r.Categories {
+		res.Categories = append(res.Categories, &resource.Category{
+			ID:   category.ID,
+			Name: category.Name,
+		})
+
 	}
 
 	return res

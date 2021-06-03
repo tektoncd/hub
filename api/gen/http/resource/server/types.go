@@ -323,6 +323,8 @@ type ResourceDataResponseBodyWithoutVersion struct {
 	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog to which resource belongs
 	Catalog *CatalogResponseBodyMin `form:"catalog" json:"catalog" xml:"catalog"`
+	// Categories related to resource
+	Categories []*CategoryResponseBody `form:"categories" json:"categories" xml:"categories"`
 	// Kind of resource
 	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Latest version of resource
@@ -341,6 +343,14 @@ type CatalogResponseBodyMin struct {
 	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog
 	Type string `form:"type" json:"type" xml:"type"`
+}
+
+// CategoryResponseBody is used to define fields on response body types.
+type CategoryResponseBody struct {
+	// ID is the unique id of the category
+	ID uint `form:"id" json:"id" xml:"id"`
+	// Name of category
+	Name string `form:"name" json:"name" xml:"name"`
 }
 
 // ResourceVersionDataResponseBodyWithoutResource is used to define fields on
@@ -440,6 +450,8 @@ type ResourceDataResponseBody struct {
 	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog to which resource belongs
 	Catalog *CatalogResponseBodyMin `form:"catalog" json:"catalog" xml:"catalog"`
+	// Categories related to resource
+	Categories []*CategoryResponseBody `form:"categories" json:"categories" xml:"categories"`
 	// Kind of resource
 	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Latest version of resource
@@ -738,10 +750,11 @@ func NewByIDNotFoundResponseBody(res *goa.ServiceError) *ByIDNotFoundResponseBod
 }
 
 // NewQueryPayload builds a resource service Query endpoint payload.
-func NewQueryPayload(name string, catalogs []string, kinds []string, tags []string, limit uint, match string) *resource.QueryPayload {
+func NewQueryPayload(name string, catalogs []string, categories []string, kinds []string, tags []string, limit uint, match string) *resource.QueryPayload {
 	v := &resource.QueryPayload{}
 	v.Name = name
 	v.Catalogs = catalogs
+	v.Categories = categories
 	v.Kinds = kinds
 	v.Tags = tags
 	v.Limit = limit

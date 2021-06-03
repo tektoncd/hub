@@ -339,6 +339,22 @@ paths:
         example:
         - tekton
         - openshift
+      - name: categories
+        in: query
+        description: Category associated with a resource to filter by
+        allowEmptyValue: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: Eum in similique labore.
+          description: Category associated with a resource to filter by
+          example:
+          - build
+          - tools
+        example:
+        - build
+        - tools
       - name: kinds
         in: query
         description: Kinds of resource to filter by
@@ -347,7 +363,7 @@ paths:
           type: array
           items:
             type: string
-            example: Eum in similique labore.
+            example: Laboriosam placeat eveniet perspiciatis.
           description: Kinds of resource to filter by
           example:
           - task
@@ -363,7 +379,7 @@ paths:
           type: array
           items:
             type: string
-            example: Laboriosam placeat eveniet perspiciatis.
+            example: Ut debitis quia sed ipsa velit dolorem.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -393,7 +409,7 @@ paths:
           enum:
           - exact
           - contains
-        example: contains
+        example: exact
       responses:
         "200":
           description: OK response.
@@ -407,6 +423,9 @@ paths:
                     id: 1
                     name: tekton
                     type: community
+                  categories:
+                  - id: 1
+                    name: image-build
                   id: 1
                   kind: task
                   latestVersion:
@@ -433,6 +452,9 @@ paths:
                     id: 1
                     name: tekton
                     type: community
+                  categories:
+                  - id: 1
+                    name: image-build
                   id: 1
                   kind: task
                   latestVersion:
@@ -522,7 +544,7 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: task
+          example: pipeline
           enum:
           - task
           - pipeline
@@ -549,6 +571,9 @@ paths:
                     id: 1
                     name: tekton
                     type: community
+                  categories:
+                  - id: 1
+                    name: image-build
                   id: 1
                   kind: task
                   latestVersion:
@@ -718,6 +743,9 @@ paths:
                     id: 1
                     name: tekton
                     type: community
+                  categories:
+                  - id: 1
+                    name: image-build
                   id: 1
                   kind: task
                   latestVersion:
@@ -1066,6 +1094,9 @@ paths:
                     id: 1
                     name: tekton
                     type: community
+                  categories:
+                  - id: 1
+                    name: image-build
                   id: 1
                   kind: task
                   latestVersion:
@@ -1092,6 +1123,9 @@ paths:
                     id: 1
                     name: tekton
                     type: community
+                  categories:
+                  - id: 1
+                    name: image-build
                   id: 1
                   kind: task
                   latestVersion:
@@ -1851,6 +1885,9 @@ components:
             id: 1
             name: tekton
             type: community
+          categories:
+          - id: 1
+            name: image-build
           id: 1
           kind: task
           latestVersion:
@@ -1880,6 +1917,14 @@ components:
       properties:
         catalog:
           $ref: '#/components/schemas/Catalog'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+          description: Categories related to resource
+          example:
+          - id: 1
+            name: image-build
         id:
           type: integer
           description: ID is the unique id of the resource
@@ -1923,6 +1968,9 @@ components:
           id: 1
           name: tekton
           type: community
+        categories:
+        - id: 1
+          name: image-build
         id: 1
         kind: task
         latestVersion:
@@ -1949,6 +1997,7 @@ components:
       - id
       - name
       - catalog
+      - categories
       - kind
       - latestVersion
       - tags
@@ -1963,6 +2012,9 @@ components:
           id: 1
           name: tekton
           type: community
+        categories:
+        - id: 1
+          name: image-build
         id: 1
         kind: task
         latestVersion:
@@ -1989,6 +2041,9 @@ components:
           id: 1
           name: tekton
           type: community
+        categories:
+        - id: 1
+          name: image-build
         id: 1
         kind: task
         latestVersion:
@@ -2148,6 +2203,9 @@ components:
             id: 1
             name: tekton
             type: community
+          categories:
+          - id: 1
+            name: image-build
           id: 1
           kind: task
           latestVersion:
@@ -2174,6 +2232,9 @@ components:
             id: 1
             name: tekton
             type: community
+          categories:
+          - id: 1
+            name: image-build
           id: 1
           kind: task
           latestVersion:

@@ -23,7 +23,8 @@ import (
 type (
 	Category struct {
 		gorm.Model
-		Name string `gorm:"not null;unique"`
+		Name      string      `gorm:"not null;unique"`
+		Resources []*Resource `gorm:"many2many:resource_categories;"`
 	}
 
 	Tag struct {
@@ -55,13 +56,14 @@ type (
 
 	Resource struct {
 		gorm.Model
-		Name      string `gorm:"not null;default:null"`
-		Kind      string `gorm:"not null;default:null"`
-		Rating    float64
-		Catalog   Catalog
-		CatalogID uint
-		Versions  []ResourceVersion
-		Tags      []*Tag `gorm:"many2many:resource_tags;"`
+		Name       string `gorm:"not null;default:null"`
+		Kind       string `gorm:"not null;default:null"`
+		Rating     float64
+		Catalog    Catalog
+		Categories []*Category `gorm:"many2many:resource_categories;"`
+		CatalogID  uint
+		Versions   []ResourceVersion
+		Tags       []*Tag `gorm:"many2many:resource_tags;"`
 	}
 
 	ResourceVersion struct {
@@ -79,6 +81,11 @@ type (
 	ResourceTag struct {
 		ResourceID uint
 		TagID      uint
+	}
+
+	ResourceCategory struct {
+		ResourceID uint
+		CategoryID uint
 	}
 
 	User struct {
