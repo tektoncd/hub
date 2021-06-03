@@ -683,7 +683,7 @@ describe('Store functions', () => {
         store.setURLParams('?category=Automation%2CBuild+Tools&catalog=tekton');
         store.parseUrl();
 
-        expect(store.filteredResources.length).toBe(1);
+        expect(store.filteredResources.length).toBe(7);
         expect(store.categories.selectedByName).toEqual(['Build Tools']);
 
         done();

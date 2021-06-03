@@ -10,7 +10,6 @@ export const Category = types
   .model('Category', {
     id: types.identifierNumber,
     name: types.string,
-    tags: types.array(types.reference(Tag)),
     selected: false
   })
 
@@ -27,7 +26,6 @@ export type ICategoryStore = Instance<typeof CategoryStore>;
 export const CategoryStore = types
   .model('CategoryStore', {
     items: types.map(Category),
-    tags: types.optional(types.map(Tag), {}),
     isLoading: true,
     err: ''
   })
@@ -50,14 +48,6 @@ export const CategoryStore = types
       return Array.from(self.items.values())
         .filter((c: ICategory) => c.selected)
         .reduce((acc: string[], c: ICategory) => [...acc, c.name], []);
-    },
-
-    get selectedTags() {
-      return new Set(
-        Array.from(self.items.values())
-          .filter((c: ICategory) => c.selected)
-          .reduce((acc: number[], c: ICategory) => [...acc, ...c.tags.map((t: ITag) => t.id)], [])
-      );
     }
   }))
 
@@ -93,16 +83,10 @@ export const CategoryStore = types
 
         const json = yield api.categories();
 
-        // adding the tags to the store - normalized
-        const tags: ITag[] = json.data.flatMap((item: ICategory) => item.tags);
-
-        tags.forEach((t) => self.tags.put(t));
-
         // creating the model only after the store has the tags normalized
         const categories: ICategory[] = json.data.map((c: ICategory) => ({
           id: c.id,
-          name: c.name,
-          tags: c.tags.map((tag: ITag) => tag.id)
+          name: c.name
         }));
 
         categories.forEach((c: ICategory) => self.add(c));
