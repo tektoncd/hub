@@ -16,6 +16,7 @@
 - [Add resources in DB](#add-resources-in-db)
 - [Setup Catalog Refresh CronJob](#setup-catalog-refresh-cronjob)
 - [Adding New Users in Config](#adding-new-users-in-config)
+- [Deploying on Disconnected Cluster](#deploying-on-disconnected)
 - [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
@@ -434,6 +435,34 @@ curl -X POST -H "Authorization: <access-token>" \
 ```
 Replace `<access-token>` with your JWT token. you must have `config-refresh` scope to call this API. 
 
+## Deploying on Disconnected Cluster
+
+- To deploy on a disconnected cluster you need to fork the [tektoncd/catalog][catalog] or you can use your own catalog but it must follow the [Catalog TEP][catalog-tep].
+- Fork the tektoncd/hub and update the [hub config][hub-config] file for your catalog details.
+    - Update the catalog details with your catalog
+    ```
+    catalogs:
+      - name: tekton
+        org: tektoncd
+        type: community
+        url: https://github.com/tektoncd/catalog
+        revision: main
+    ```
+    You can find the template at bottom of [hub config][hub-config] file.
+- Mirror the Hub Deployment Images to the registry disconnected cluster has access to. 
+You can use release images or build your own. For hub release images, you can use latest release tag as image tag. for eg. `quay.io/tekton-hub/ui:v1.3.0`. You can check the latest release [here][hub-releases].
+- List of images to be mirrored
+    - UI - `quay.io/tekton-hub/ui`
+    - API - `quay.io/tekton-hub/api`
+    - DB-Migration - `quay.io/tekton-hub/db-migration`
+    - DB - `postgres:13@sha256:260a98d976574b439712c35914fdcb840755233f79f3e27ea632543f78b7a21e`
+
+    You can mirror the images using `oc` as below
+    ```
+    oc image mirror quay.io/tekton-hub/ui:v1.3.0 your.registry/project/ui:v1.3.0
+    ``` 
+- Now, follow the steps from [Deploy Database Section](#deploy-database) above. Make sure you update the images in deployment files before applying.
+
 ## Troubleshooting
 
 #### UI is not showing resources but catalog refresh is successful
@@ -449,7 +478,6 @@ Replace `<access-token>` with your JWT token. you must have `config-refresh` sco
 
 
 
-
 [ko]: https://github.com/google/ko
 [kubectl]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 [kind]: https://kind.sigs.k8s.io/docs/user/quick-start/
@@ -459,3 +487,6 @@ Replace `<access-token>` with your JWT token. you must have `config-refresh` sco
 [podman]: https://podman.io/getting-started/installation
 [config-yaml]: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml
 [oauth-steps]:https://docs.github.com/en/developers/apps/creating-an-oauth-app
+[catalog]:https://github.com/tektoncd/catalog
+[catalog-tep]:https://github.com/tektoncd/community/blob/main/teps/0003-tekton-catalog-organization.md
+[hub-config]:https://github.com/tektoncd/hub/blob/main/config.yaml
