@@ -11,6 +11,12 @@
 			"name": "catalog-community",
 			"type": "community",
 			"url": "https:/github.com/tektoncd/catalog-community"
+		},
+		{
+			"id": 3,
+			"name": "catalog-enterprise",
+			"type": "enterprise",
+			"url": "https:/myghe.com/tektoncd/catalog-enterprise"
 		}
 	]
 }

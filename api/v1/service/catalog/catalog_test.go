@@ -30,6 +30,6 @@ func TestCatalog_List(t *testing.T) {
 	all, err := catalog.List(context.Background())
 
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(all.Data))
+	assert.Equal(t, 3, len(all.Data))
 
 }

@@ -122,3 +122,14 @@
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
   modified_at: 2013-01-01 00:00:01 UTC
+
+- id: 11
+  version: "0.1"
+  display_name: Tkn EnterpriseTask
+  description: Desc8
+  min_pipelines_version: 0.12.1
+  url: https://myghe.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-enterprise/0.1/tkn-enterprise.yaml
+  resource_id: 8
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC
+  modified_at: 2013-01-01 00:00:01 UTC

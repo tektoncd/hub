@@ -147,6 +147,17 @@ func TestByCatalogKindName(t *testing.T) {
 	assert.Equal(t, "img", res.Data.Name)
 }
 
+func TestByEnterpriseCatalogKindName(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByCatalogKindNamePayload{Catalog: "catalog-enterprise", Kind: "task", Name: "tkn-enterprise"}
+	res, err := resourceSvc.ByCatalogKindName(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, "tkn-enterprise", res.Data.Name)
+}
+
 func TestByCatalogKindNameIfCompatible(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
@@ -204,4 +215,12 @@ func TestByID_NotFoundError(t *testing.T) {
 	_, err := resourceSvc.ByID(context.Background(), payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "resource not found")
+}
+
+func TestCreationRawURL(t *testing.T) {
+	url := "https://ghe.myhost.com/org/repo/tree/main/task/name/0.1/name.yaml"
+	replacer := getStringReplacer(url)
+	rawUrl := replacer.Replace(url)
+	expected := "https://raw.ghe.myhost.com/org/repo/main/task/name/0.1/name.yaml"
+	assert.Equal(t, expected, rawUrl)
 }

@@ -35,7 +35,7 @@ func TestQuery_DefaultLimit(t *testing.T) {
 
 	res, err := req.Query()
 	assert.NoError(t, err)
-	assert.Equal(t, 7, len(res))
+	assert.Equal(t, 8, len(res))
 }
 
 func TestQuery_ByLimit(t *testing.T) {
@@ -121,7 +121,7 @@ func TestQuery_ByMultipleKinds(t *testing.T) {
 
 	res, err := req.Query()
 	assert.NoError(t, err)
-	assert.Equal(t, 7, len(res))
+	assert.Equal(t, 8, len(res))
 }
 
 func TestQuery_ByTags(t *testing.T) {

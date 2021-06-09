@@ -113,12 +113,14 @@ func TestRefresh_All(t *testing.T) {
 	payload := &catalog.RefreshAllPayload{}
 	jobs, err := catalogSvc.RefreshAll(ctx, payload)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(jobs))
+	assert.Equal(t, 3, len(jobs))
 
-	assert.Contains(t, []string{"catalog-official", "catalog-community"}, jobs[0].CatalogName)
+	assert.Contains(t, []string{"catalog-official", "catalog-community", "catalog-enterprise"}, jobs[0].CatalogName)
 	assert.Equal(t, "queued", jobs[0].Status)
-	assert.Contains(t, []string{"catalog-official", "catalog-community"}, jobs[1].CatalogName)
+	assert.Contains(t, []string{"catalog-official", "catalog-community", "catalog-enterprise"}, jobs[1].CatalogName)
 	assert.Equal(t, "queued", jobs[1].Status)
+	assert.Contains(t, []string{"catalog-official", "catalog-community", "catalog-enterprise"}, jobs[2].CatalogName)
+	assert.Equal(t, "queued", jobs[2].Status)
 }
 
 func TestCatalogError(t *testing.T) {

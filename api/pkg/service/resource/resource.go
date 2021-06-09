@@ -17,6 +17,7 @@ package resource
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
@@ -30,7 +31,18 @@ type service struct {
 	app.Service
 }
 
-var replaceGHtoRaw = strings.NewReplacer("github.com", "raw.githubusercontent.com", "/tree/", "/")
+var replacerStrings = []string{"github.com", "raw.githubusercontent.com", "/tree/", "/"}
+
+// Returns a replacer object which replaces a list of strings with replacements.
+// This function basically helps create the raw URL
+func getStringReplacer(resourceUrl string) *strings.Replacer {
+	if !strings.HasPrefix(resourceUrl, "https://github.com") {
+		parsedUrl, _ := url.Parse(resourceUrl)
+		host := "raw." + parsedUrl.Host
+		replacerStrings = append(replacerStrings, parsedUrl.Host, host)
+	}
+	return strings.NewReplacer(replacerStrings...)
+}
 
 // New returns the resource service implementation.
 func New(api app.BaseConfig) resource.Service {
@@ -281,7 +293,7 @@ func initResource(r model.Resource) *resource.ResourceData {
 		DisplayName:         lv.DisplayName,
 		MinPipelinesVersion: lv.MinPipelinesVersion,
 		WebURL:              lv.URL,
-		RawURL:              replaceGHtoRaw.Replace(lv.URL),
+		RawURL:              getStringReplacer(lv.URL).Replace(lv.URL),
 		UpdatedAt:           lv.ModifiedAt.UTC().Format(time.RFC3339),
 	}
 	res.Tags = []*resource.Tag{}
@@ -309,7 +321,7 @@ func minVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 
 	res := tinyVersionInfo(r)
 	res.WebURL = r.URL
-	res.RawURL = replaceGHtoRaw.Replace(r.URL)
+	res.RawURL = getStringReplacer(r.URL).Replace(r.URL)
 
 	return res
 }
@@ -344,7 +356,7 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		DisplayName:         v.DisplayName,
 		MinPipelinesVersion: v.MinPipelinesVersion,
 		WebURL:              v.URL,
-		RawURL:              replaceGHtoRaw.Replace(v.URL),
+		RawURL:              getStringReplacer(v.URL).Replace(v.URL),
 		UpdatedAt:           v.ModifiedAt.UTC().Format(time.RFC3339),
 		Resource:            res,
 	}
