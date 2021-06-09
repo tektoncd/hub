@@ -22,6 +22,7 @@ import (
 	"github.com/tektoncd/hub/api/gen/catalog"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
+	"github.com/tektoncd/hub/api/pkg/parser"
 	"github.com/tektoncd/hub/api/pkg/service/auth"
 	"gorm.io/gorm"
 )
@@ -35,6 +36,12 @@ var (
 	internalError = catalog.MakeInternalError(fmt.Errorf("failed to refresh catalog"))
 	fetchError    = catalog.MakeInternalError(fmt.Errorf("failed to fetch catalog errors"))
 )
+
+var errorTypes = []string{
+	parser.Critical.String(),
+	parser.Info.String(),
+	parser.Warning.String(),
+}
 
 // New returns the catalog service implementation.
 func New(api app.Config) catalog.Service {
@@ -122,8 +129,8 @@ func (s *service) CatalogError(ctx context.Context, p *catalog.CatalogErrorPaylo
 		return nil, internalError
 	}
 
-	allCtgError := []model.CatalogError{}
-	if err := db.Where(&model.CatalogError{CatalogID: ctg.ID}).Find(&allCtgError).Error; err != nil {
+	var allCtgError []model.CatalogError
+	if err := db.Where(&model.CatalogError{CatalogID: ctg.ID}).Order("id").Find(&allCtgError).Error; err != nil {
 		log.Error(err)
 		return nil, fetchError
 	}
@@ -131,19 +138,14 @@ func (s *service) CatalogError(ctx context.Context, p *catalog.CatalogErrorPaylo
 	rs := map[string][]string{}
 
 	for _, item := range allCtgError {
-		switch item.Type {
-		case "info", "warning", "critical":
-			rs[item.Type] = append(rs[item.Type], item.Detail)
-		default:
-			rs["unknown"] = append(rs["unknown"], item.Detail)
-		}
+		rs[item.Type] = append(rs[item.Type], item.Detail)
 	}
 
 	allError := []*catalog.CatalogErrors{}
 
-	for key, element := range rs {
-		if len(element) > 0 {
-			allError = append(allError, &catalog.CatalogErrors{Type: key, Errors: element})
+	for _, element := range errorTypes {
+		if _, ok := rs[element]; ok {
+			allError = append(allError, &catalog.CatalogErrors{Type: element, Errors: rs[element]})
 		}
 	}
 

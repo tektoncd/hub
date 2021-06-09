@@ -1,6 +1,12 @@
 {
 	"data": [
 		{
+			"type": "critical",
+			"errors": [
+				"failed to find any resource matching /tmp/catalog/github.com/tektoncd/catalog-offical@main/task/abc/*/abc.yaml"
+			]
+		},
+		{
 			"type": "info",
 			"errors": [
 				"display name is missing for buildah task"
@@ -10,12 +16,6 @@
 			"type": "warning",
 			"errors": [
 				"failed to find pipeline resource matching /temp/catalog/github.com/tektoncd/catalog-official@main/pipeline"
-			]
-		},
-		{
-			"type": "critical",
-			"errors": [
-				"failed to find any resource matching /tmp/catalog/github.com/tektoncd/catalog-offical@main/task/abc/*/abc.yaml"
 			]
 		}
 	]

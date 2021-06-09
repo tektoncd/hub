@@ -138,8 +138,8 @@ func TestCatalogError(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, 3, len(res.Data))
-	assert.Equal(t, "info", res.Data[0].Type)
-	assert.Equal(t, "display name is missing for buildah task", res.Data[0].Errors[0])
+	assert.Equal(t, "info", res.Data[1].Type)
+	assert.Equal(t, "display name is missing for buildah task", res.Data[1].Errors[0])
 }
 
 func TestCatalogErrorHavingNoError(t *testing.T) {
