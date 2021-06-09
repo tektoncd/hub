@@ -19,6 +19,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -29,7 +30,6 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/github"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"maze.io/x/duration"
@@ -60,14 +60,24 @@ type Config interface {
 	BaseConfig
 	OAuthConfig() *oauth2.Config
 	JWTConfig() *JWTConfig
+	GhConfig() *GHConfig
 }
 
-// APIConfig defines struct on top of APIBase with GitHub Oauth
-// & JWT Configurations
+// APIConfig defines struct on top of APIBase with GitHub Oauth,
+// GHEConfig & JWT Configurations
 type APIConfig struct {
 	*APIBase
 	conf      *oauth2.Config
 	jwtConfig *JWTConfig
+	ghConfig  *GHConfig
+}
+
+// GHConfig struct defines the github configuration
+type GHConfig struct {
+	IsGhe     bool
+	Url       string
+	ApiUrl    string
+	UploadUrl string
 }
 
 // JWTConfig defines configuration requires to create token
@@ -207,6 +217,13 @@ func (ac *APIConfig) OAuthConfig() *oauth2.Config {
 	return ac.conf
 }
 
+// GheConfig returns Github Enterprise object which stores
+// whether GHE url is present or not and some other urls which
+// are generated on the basis of GHE url
+func (ac *APIConfig) GhConfig() *GHConfig {
+	return ac.ghConfig
+}
+
 // JWTConfig returns JWTConfig Object
 func (ac *APIConfig) JWTConfig() *JWTConfig {
 	return ac.jwtConfig
@@ -236,7 +253,12 @@ func FromEnvFile(file string) (*APIConfig, error) {
 	}
 
 	ac := &APIConfig{APIBase: ab}
-	if ac.conf, err = initOAuthConfig(); err != nil {
+
+	if ac.ghConfig, err = initGh(); err != nil {
+		return nil, err
+	}
+
+	if ac.conf, err = initOAuthConfig(ac.ghConfig.Url); err != nil {
 		return nil, err
 	}
 	if ac.jwtConfig, err = jwtConfig(); err != nil {
@@ -370,9 +392,35 @@ func configFileURL() (string, error) {
 	return val, nil
 }
 
+// initGh looks for Github Enterprise url from the environment variables
+// and initialises the GHEConfig
+func initGh() (*GHConfig, error) {
+	ghe := &GHConfig{}
+	if ghe.Url = viper.GetString("GHE_URL"); ghe.Url == "" {
+		ghe.Url = "https://github.com"
+	}
+	if !strings.HasPrefix(ghe.Url, "https://github.com") {
+		parsedUrl, err := url.Parse(ghe.Url)
+		if err != nil {
+			return nil, fmt.Errorf("There was some problem while parsing the Github Enterprise URL")
+		}
+
+		if parsedUrl.Path != "" || parsedUrl.RawQuery != "" {
+			return nil, fmt.Errorf("Invalid Github Enterprise URL")
+		}
+
+		ghe.IsGhe = true
+		ghe.ApiUrl = fmt.Sprintf("%s://api.%s", parsedUrl.Scheme, parsedUrl.Host)        // https://api.myghe.com
+		ghe.UploadUrl = fmt.Sprintf("%s://uploads.%s", parsedUrl.Scheme, parsedUrl.Host) // https://uploads.myghe.com
+
+	}
+
+	return ghe, nil
+}
+
 // initOAuthConfig looks for configuration among environment variables
-// and intialises the GitHub Oauth Config
-func initOAuthConfig() (*oauth2.Config, error) {
+// and intialises the GitHub Oauth Config on the basis of github url
+func initOAuthConfig(ghUrl string) (*oauth2.Config, error) {
 
 	var clientID, clientSecret string
 	if clientID = viper.GetString("GH_CLIENT_ID"); clientID == "" {
@@ -382,10 +430,15 @@ func initOAuthConfig() (*oauth2.Config, error) {
 		return nil, fmt.Errorf("no GH_CLIENT_SECRET environment variable defined")
 	}
 
+	gheEndpoint := oauth2.Endpoint{
+		AuthURL:  fmt.Sprintf("%s/oauth/authorize", ghUrl),
+		TokenURL: fmt.Sprintf("%s/login/oauth/access_token", ghUrl),
+	}
+
 	conf := &oauth2.Config{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
-		Endpoint:     github.Endpoint,
+		Endpoint:     gheEndpoint,
 	}
 	return conf, nil
 }

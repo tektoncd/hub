@@ -42,6 +42,7 @@ type request struct {
 	oauth         *oauth2.Config
 	defaultScopes []string
 	jwtConfig     *app.JWTConfig
+	gheConfig     *app.GHConfig
 }
 
 var (
@@ -66,6 +67,7 @@ func (s *service) Authenticate(ctx context.Context, p *auth.AuthenticatePayload)
 		oauth:         s.api.OAuthConfig(),
 		defaultScopes: s.api.Data().Default.Scopes,
 		jwtConfig:     s.api.JWTConfig(),
+		gheConfig:     s.api.GhConfig(),
 	}
 
 	return req.authenticate(p.Code)
@@ -81,7 +83,20 @@ func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
 
 	// gets user details from github using the access_token
 	oauthClient := r.oauth.Client(context.Background(), token)
-	ghClient := github.NewClient(oauthClient)
+
+	var ghClient *github.Client
+
+	// check if the url is enterprise url and then create the
+	// client accordingly
+	if r.gheConfig.IsGhe {
+		ghClient, err = github.NewEnterpriseClient(r.gheConfig.ApiUrl, r.gheConfig.UploadUrl, oauthClient)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		ghClient = github.NewClient(oauthClient)
+	}
+
 	ghUser, _, err := ghClient.Users.Get(context.Background(), "")
 	if err != nil {
 		r.log.Error(err)

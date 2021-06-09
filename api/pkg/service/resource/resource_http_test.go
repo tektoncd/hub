@@ -412,6 +412,23 @@ func TestByCatalogKindName_Http(t *testing.T) {
 	})
 }
 
+func TestByEnterpriseCatalogKindName_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/resource/catalog-enterprise/task/tkn-enterprise").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
 func TestByCatalogKindName_CompatibleVersion_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
