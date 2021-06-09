@@ -6,3 +6,4 @@ window.config = window.config || {
 export const API_URL = window.config.API_URL;
 export const GH_CLIENT_ID = window.config.GH_CLIENT_ID;
 export const API_VERSION = window.config.API_VERSION;
+export const GHE_URL = window.config.GHE_URL;

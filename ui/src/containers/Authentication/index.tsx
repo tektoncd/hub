@@ -1,9 +1,9 @@
 import React from 'react';
-import GitHubLogin from 'react-github-login';
+import GitHubLogin from 'react-ghe-login';
 import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Card, CardBody, CardHeader, AlertVariant } from '@patternfly/react-core';
-import { GH_CLIENT_ID } from '../../config/constants';
+import { GHE_URL, GH_CLIENT_ID } from '../../config/constants';
 import { useMst } from '../../store/root';
 import { AuthCodeProps } from '../../store/auth';
 import { Icons } from '../../common/icons';
@@ -34,6 +34,7 @@ const Authentication: React.FC = observer(() => {
             redirectUri=""
             onSuccess={onSuccess}
             onFailure={user.onFailure}
+            host={GHE_URL || 'https://github.com'}
           />
         </CardBody>
       </Card>

@@ -19,6 +19,11 @@ spec:
         - name: ui
           image: quay.io/tekton-hub/ui
           env:
+            - name: GHE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ui
+                  key: GHE_URL
             - name: API_URL
               valueFrom:
                 configMapKeyRef:
