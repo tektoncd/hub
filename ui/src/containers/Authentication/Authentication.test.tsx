@@ -2,7 +2,7 @@ import { Card } from '@patternfly/react-core';
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import renderer from 'react-test-renderer';
-import GitHubLogin from 'react-github-login';
+import GitHubLogin from 'react-ghe-login';
 import Authentication from '.';
 import { FakeHub } from '../../api/testutil';
 import { createProviderAndStore } from '../../store/root';
