@@ -26,6 +26,34 @@ const Description: React.FC<Props> = (props) => {
   const { catalog, kind, name } = props;
   const resource = resources.resources.get(`${catalog}/${titleCase(kind)}/${name}`);
 
+  const { webURL, version } = resource.displayVersion;
+
+  const resourceDirUrl = webURL.slice(0, webURL.indexOf(name));
+  const resourceWebUrl = resourceDirUrl + `${name}`;
+
+  // This function transform relative uri of readme into absoulte uri
+  const transformUri = (uri: string) => {
+    if (!uri.includes('./') && !uri.includes('http')) {
+      return resourceWebUrl + `/${version}/${uri}`;
+    }
+
+    if (uri.includes('./')) {
+      const uriPath = uri.slice(uri.lastIndexOf('./') + 1);
+
+      if (uri.includes('../../')) {
+        return resourceDirUrl + uriPath;
+      }
+
+      if (!/\d/.test(uriPath.slice(0, 3))) {
+        return resourceWebUrl + `/${version}${uriPath}`;
+      }
+
+      return resourceWebUrl + uriPath;
+    }
+
+    return uri;
+  };
+
   return useObserver(() =>
     resource.readme === '' || resource.yaml === '' ? (
       <Spinner className="hub-details-spinner" />
@@ -41,6 +69,8 @@ const Description: React.FC<Props> = (props) => {
                       <Tab eventKey={0} title="Description" id={props.name}>
                         <hr className="hub-horizontal-line"></hr>
                         <ReactMarkDown
+                          linkTarget={' '}
+                          transformLinkUri={(uri: string) => transformUri(uri)}
                           plugins={[[gfm, { tablePipeAlign: false }]]}
                           source={resource.readme}
                           escapeHtml={true}
