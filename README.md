@@ -1,4 +1,4 @@
-# Tekton Hub
+# Tekton Hub 
 
 <p align="center">
 <img width="250" height="175" src="https://github.com/cdfoundation/artwork/blob/main/tekton/additional-artwork/tekton-hub/color/TektonHub_color.svg" alt="Tekton Hub logo"></img>
@@ -8,21 +8,15 @@ The Tekton hub is a web based platform for developers to discover,
 share and contribute tasks and pipelines for Tekton. This repository
 contains the source code of this service.
 
-
-> Currently, Hub is launched as [hub.tekton.dev](https://hub.tekton.dev) :mega:
-
+> Hub is launched as [hub.tekton.dev](https://hub.tekton.dev) :mega:
 
 ## Key features
 
-
 * Tekton Hub provides the following features:
-
-
 
 1. Display of resources in a curated way:
 
      User gets detailed information such as description, YAML, tags and rating of resources.
-
 
   2. Filter by  categories :
 
@@ -39,16 +33,34 @@ contains the source code of this service.
 
   6. Install resources on cluster :
      - The Tekton Hub provides cluster installation commands for tasks or pipelines.
+    
+## Hub APIs for Integration
 
-## Contributing and Support
+The public hub APIs are exposed for Integration outside hub. You can find the API Policy [here](docs/API_POLICY.md).
 
-If you want to contribute to this repository, please see our [contributing](./CONTRIBUTING.md) guidelines.
+For documentation of public APIs, you can use [swagger definition][swagger-def] in a swagger ui. 
+for eg. https://editor.swagger.io/
 
-If you are looking for support, enter an [issue](https://github.com/tektoncd/hub/issues/new) or join our [Slack workspace](https://github.com/tektoncd/community/blob/main/contact.md#slack)
+There is work in progress to provide Swagger UI along with Tekton Hub.
 
-## Status of the Project
+## Deploy your own instance
 
-This project is still under active development, so you might run into
-[issues](https://github.com/tektoncd/hub/issues). If you do,
-please don't be shy about letting us know, or better yet, contribute a
-fix or feature. Its folder structure is not yet set in stone either.
+You can deploy your own instance of Tekton Hub. You can find the documentation [here](docs/DEPLOYMENT.md).
+
+## Want to Contribute
+
+We are so excited to have you!
+
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for an overview of our processes
+- See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for how to get started
+- See [ROADMAP.md](ROADMAP.md) for the current roadmap
+- Look at our
+  [good first issues](https://github.com/tektoncd/hub/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+  and our
+  [help wanted issues](https://github.com/tektoncd/hub/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+- If you are looking for support, enter an [issue][issue] or join our [Slack workspace][slack]
+
+
+[swagger-def]:https://raw.githubusercontent.com/tektoncd/hub/main/api/v1/gen/http/openapi3.yaml
+[issue]:https://github.com/tektoncd/hub/issues/new
+[slack]:https://github.com/tektoncd/community/blob/main/contact.md#slack
