@@ -74,6 +74,10 @@ eg. `quay.io/<username>/db-migration`
 
 Make sure all images are public before creating deployments.
 
+---
+> ### NOTE: In case of using Github Enterprise make sure you deploy Hub in the same network where Github Enterprise server is running. Example if your Github Enterprise is running behind VPN then your Kubernetes Cluster should also be behind VPN.
+---
+
 ## Deploy Database
 
 Now, we have all images pushed to registry. Lets deploy the database first.
@@ -148,6 +152,7 @@ stringData:
   JWT_SIGNING_KEY: a-long-signing-key
   ACCESS_JWT_EXPIRES_IN: time such as 15m
   REFRESH_JWT_EXPIRES_IN: time such as 15m
+  GHE_URL: Add Github Enterprise URL in case of authenticating through Github Enterprise (Example (https|http)://myghe.com) --> Do not provide the catalog URL
 ```
 
 ### Update API ConfigMap
@@ -258,6 +263,7 @@ data:
   API_URL: API URL   <<< Update this by API url
   GH_CLIENT_ID: GH OAuth Client ID   <<< Update this OAuth client id
   API_VERSION: API VERSION  <<< Update this by API version (For e.g-"v1")
+  GHE_URL: Github Enterprise URL <<< Update this if you are getting logged in via Github Enterprise
 ```
 
 ### Update UI Image
@@ -326,7 +332,7 @@ Update your GitHub OAuth created with the UI route in place of `Homepage URL` an
 
 ## Add resources in DB
 
-1. Login through the Hub UI. Click on `Login` on right corner and then `Sign in with GitHub`.
+1. Login through the Hub UI. Click on `Login` on right corner and then `Sign in with GitHub/Github Enterprise`.
 
 2. Copy the Hub Token by clicking on the user profile which is at the right corner on the Home Page
 
