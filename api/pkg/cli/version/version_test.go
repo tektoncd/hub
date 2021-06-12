@@ -59,3 +59,36 @@ func TestGetPipelineVersion(t *testing.T) {
 		})
 	}
 }
+
+func TestGetPipelineVersionViaConfigMap(t *testing.T) {
+
+	testParams := []struct {
+		name                  string
+		namespace             string
+		userProvidedNamespace string
+		configMap             *unstructured.Unstructured
+		want                  string
+	}{{
+		name:      "empty deployment items",
+		namespace: "tekton-pipelines",
+		configMap: &unstructured.Unstructured{},
+		want:      "",
+	}, {
+		name:      "deployment spec have labels specific to master version (new labels)",
+		namespace: "tekton-pipelines",
+		configMap: test.GetConfigMapData("pipelines-info", "master-tekton-pipelines"),
+		want:      "master-tekton-pipelines",
+	}}
+	for _, tp := range testParams {
+		t.Run(tp.name, func(t *testing.T) {
+			dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme())
+			deploymentRes := schema.GroupVersionResource{Group: "", Version: "v1", Resource: "configmaps"}
+			_, err := dynamic.Resource(deploymentRes).Namespace(tp.namespace).Create(context.TODO(), tp.configMap, metav1.CreateOptions{})
+			if err != nil {
+				t.Errorf("failed to create deployment: %v", err)
+			}
+			version, _ := GetPipelineVersion(dynamic)
+			assert.Equal(t, tp.want, version)
+		})
+	}
+}
