@@ -68,6 +68,25 @@ func GetDeploymentData(name, version string) *unstructured.Unstructured {
 	return deployment
 }
 
+func GetConfigMapData(name string, version string) *unstructured.Unstructured {
+	return &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": "v1",
+			"kind":       "ConfigMap",
+			"metadata": map[string]interface{}{
+				"name": name,
+				"labels": map[string]interface{}{
+					"app.kubernetes.io/part-of":  "tekton-pipelines",
+					"app.kubernetes.io/instance": "default",
+				},
+			},
+			"data": map[string]interface{}{
+				"version": version,
+			},
+		},
+	}
+}
+
 func CreateTektonPipelineController(dynamic dynamic.Interface, version string) error {
 
 	deployment := GetDeploymentData("test", version)
