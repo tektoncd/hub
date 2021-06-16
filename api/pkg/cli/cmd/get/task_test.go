@@ -26,7 +26,7 @@ import (
 	"gotest.tools/v3/golden"
 )
 
-var resource = &res.ResourceData{
+var task = &res.ResourceData{
 	ID:   1,
 	Name: "foo",
 	Kind: "Task",
@@ -47,20 +47,28 @@ var resource = &res.ResourceData{
 		UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
 	},
 	Tags: []*res.Tag{
-		&res.Tag{
+		{
 			ID:   3,
 			Name: "cli",
 		},
 	},
 	Versions: []*res.ResourceVersionData{
-		&res.ResourceVersionData{
-			ID:      11,
+		{
+			ID:      1,
 			Version: "0.1",
+		},
+		{
+			ID:      10,
+			Version: "0.2",
+		},
+		{
+			ID:      11,
+			Version: "0.3",
 		},
 	},
 }
 
-var resVersion = &res.ResourceVersionData{
+var taskWithNewVersion = &res.ResourceVersionData{
 	ID:                  11,
 	Version:             "0.3",
 	DisplayName:         "foo-bar",
@@ -80,7 +88,7 @@ var resVersion = &res.ResourceVersionData{
 		},
 		Rating: 4.8,
 		Tags: []*res.Tag{
-			&res.Tag{
+			{
 				ID:   3,
 				Name: "cli",
 			},
@@ -88,52 +96,77 @@ var resVersion = &res.ResourceVersionData{
 	},
 }
 
-func TestGetTask_WithoutVersion(t *testing.T) {
-	cli := test.NewCLI()
-
-	defer gock.Off()
-
-	resource := &res.Resource{Data: resource}
-	res := res.NewViewedResource(resource, "default")
-	gock.New(test.API).
-		Get("/resource/tekton/task/foo").
-		Reply(200).
-		JSON(&res.Projected)
-
-	gock.New("http://raw.github.url").
-		Get("/foo/0.1/foo.yaml").
-		Reply(200).
-		File("./testdata/foo-v0.1.yaml")
-
-	buf := new(bytes.Buffer)
-	cli.SetStream(buf, buf)
-
-	opts := taskOptions{
-		options: &options{
-			cli:  cli,
-			kind: "task",
-			args: []string{"foo"},
-			from: "tekton",
+var taskWithOldVersion = &res.ResourceVersionData{
+	ID:                  1,
+	Version:             "0.1",
+	DisplayName:         "foo-bar",
+	Description:         "v0.1 Task to run foo",
+	MinPipelinesVersion: "0.12",
+	RawURL:              "http://raw.github.url/foo/0.1/foo.yaml",
+	WebURL:              "http://web.github.com/foo/0.1/foo.yaml",
+	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
+	Resource: &res.ResourceData{
+		ID:   1,
+		Name: "foo",
+		Kind: "Task",
+		Catalog: &res.Catalog{
+			ID:   1,
+			Name: "tekton",
+			Type: "community",
 		},
-	}
-
-	err := opts.run()
-	assert.NoError(t, err)
-	golden.Assert(t, buf.String(), fmt.Sprintf("%s.golden", t.Name()))
-	assert.Equal(t, gock.IsDone(), true)
+		Rating: 4.8,
+		Tags: []*res.Tag{
+			{
+				ID:   3,
+				Name: "cli",
+			},
+		},
+	},
 }
 
-func TestGetTask_WithVersion(t *testing.T) {
+var verArr = &res.Versions{
+	Latest: &res.ResourceVersionData{
+		ID:      11,
+		Version: "0.3",
+		RawURL:  "http://raw.github.url/foo/0.3/foo.yaml",
+		WebURL:  "http://web.github.com/foo/0.3/foo.yaml",
+	},
+	Versions: []*res.ResourceVersionData{
+		{
+			ID:      11,
+			Version: "0.3",
+			RawURL:  "http://raw.github.url/foo/0.3/foo.yaml",
+			WebURL:  "http://web.github.com/foo/0.3/foo.yaml",
+		},
+		{
+			ID:      10,
+			Version: "0.2",
+			RawURL:  "http://raw.github.url/foo/0.2/foo.yaml",
+			WebURL:  "http://web.github.com/foo/0.2/foo.yaml",
+		},
+		{
+			ID:      1,
+			Version: "0.1",
+			RawURL:  "http://raw.github.url/foo/0.1/foo.yaml",
+			WebURL:  "http://web.github.com/foo/0.1/foo.yaml",
+		},
+	},
+}
+
+func TestGetTask_WithNewVersion(t *testing.T) {
 	cli := test.NewCLI()
 
 	defer gock.Off()
 
-	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
-	gock.New(test.API).
-		Get("/resource/tekton/task/foo/0.3").
-		Reply(200).
-		JSON(&res.Projected)
+	mockApi(InfoOptions{
+		ResId:      12,
+		Name:       "foo",
+		Kind:       "task",
+		Catalog:    "tekton",
+		Version:    "0.3",
+		Resource:   task,
+		VersionArr: verArr,
+	}, taskWithNewVersion)
 
 	gock.New("http://raw.github.url").
 		Get("/foo/0.3/foo.yaml").
@@ -164,15 +197,18 @@ func TestGetTask_AsClusterTask(t *testing.T) {
 
 	defer gock.Off()
 
-	resource := &res.Resource{Data: resource}
-	res := res.NewViewedResource(resource, "default")
-	gock.New(test.API).
-		Get("/resource/tekton/task/foo").
-		Reply(200).
-		JSON(&res.Projected)
+	mockApi(InfoOptions{
+		ResId:      12,
+		Name:       "foo",
+		Kind:       "task",
+		Catalog:    "tekton",
+		Version:    "0.1",
+		Resource:   task,
+		VersionArr: verArr,
+	}, taskWithOldVersion)
 
 	gock.New("http://raw.github.url").
-		Get("/foo").
+		Get("/foo/0.1/foo.yaml").
 		Reply(200).
 		File("./testdata/foo-v0.1.yaml")
 
@@ -181,10 +217,11 @@ func TestGetTask_AsClusterTask(t *testing.T) {
 
 	opts := taskOptions{
 		options: &options{
-			cli:  cli,
-			kind: "task",
-			args: []string{"foo"},
-			from: "tekton",
+			cli:     cli,
+			kind:    "task",
+			args:    []string{"foo"},
+			from:    "tekton",
+			version: "0.1",
 		},
 		clusterTask: true,
 	}

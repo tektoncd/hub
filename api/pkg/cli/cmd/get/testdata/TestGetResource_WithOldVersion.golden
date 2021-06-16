@@ -2,12 +2,12 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: apple
+  name: mango
   annotations:
-    tekton.dev/pipelines.minVersion: '0.17.1'
+    tekton.dev/pipelines.minVersion: '0.18'
     tekton.dev/tags: fruit
-    tekton.dev/displayName: 'Red apple'
+    tekton.dev/displayName: 'Alphanso'
 spec:
   description: >-
-    v0.1 of Pipeline apple
+    v0.2 of Pipeline mango
 
