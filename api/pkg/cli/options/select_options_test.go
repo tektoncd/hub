@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package select_options
+package options
 
 import (
 	"testing"
@@ -64,7 +64,7 @@ func TestOptions_Ask(t *testing.T) {
 			options: options,
 			want: Options{
 				Name:    "buildah",
-				Catalog: "",
+				From:    "",
 				Version: "",
 			},
 		},
@@ -86,7 +86,7 @@ func TestOptions_Ask(t *testing.T) {
 			options: options1,
 			want: Options{
 				Name:    "",
-				Catalog: "foo",
+				From:    "foo",
 				Version: "",
 			},
 		},
@@ -108,7 +108,7 @@ func TestOptions_Ask(t *testing.T) {
 			options: options2,
 			want: Options{
 				Name:    "",
-				Catalog: "",
+				From:    "",
 				Version: "0.1",
 			},
 		},
@@ -124,7 +124,7 @@ func TestOptions_Ask(t *testing.T) {
 			if opts.Name != tp.want.Name {
 				t.Errorf("Unexpected Task Name")
 			}
-			if opts.Catalog != tp.want.Catalog {
+			if opts.From != tp.want.From {
 				t.Errorf("Unexpected Catalog Name")
 			}
 			if opts.Version != tp.want.Version {
