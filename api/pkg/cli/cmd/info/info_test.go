@@ -22,7 +22,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	res "github.com/tektoncd/hub/api/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
-	cat "github.com/tektoncd/hub/api/v1/gen/catalog"
 	"gopkg.in/h2non/gock.v1"
 	"gotest.tools/v3/golden"
 )
@@ -33,69 +32,6 @@ type InfoOptions struct {
 	Kind    string
 	Catalog string
 	Version string
-}
-
-var catalogs = &cat.ListResult{
-	Data: []*cat.Catalog{
-		{
-			ID:   1,
-			Name: "tekton",
-			Type: "community",
-			URL:  "https://github.com/tektoncd/catalog",
-		},
-		{
-			ID:   2,
-			Name: "fruit",
-			Type: "community",
-			URL:  "https://github.com/fruit/catalog",
-		},
-	},
-}
-
-var res2 = &res.ResourceData{
-	ID:   2,
-	Name: "foo-bar",
-	Kind: "Task",
-	Catalog: &res.Catalog{
-		ID:   1,
-		Name: "tekton",
-		Type: "community",
-	},
-	Rating: 4,
-	LatestVersion: &res.ResourceVersionData{
-		ID:                  12,
-		Version:             "0.2",
-		Description:         "Description for task foo-bar version 0.2",
-		DisplayName:         "foo-bar-0.1",
-		MinPipelinesVersion: "0.12",
-		RawURL:              "http://raw.github.url/foo-bar/",
-		WebURL:              "http://web.github.com/foo-bar/",
-		UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
-	},
-	Tags: []*res.Tag{},
-}
-
-var ver = &res.Versions{
-	Latest: &res.ResourceVersionData{
-		ID:      12,
-		Version: "0.2",
-		RawURL:  "http://raw.github.url/foo-bar/",
-		WebURL:  "http://web.github.com/foo-bar/",
-	},
-	Versions: []*res.ResourceVersionData{
-		{
-			ID:      13,
-			Version: "0.1",
-			RawURL:  "http://raw.github.url/foo-bar/",
-			WebURL:  "https://github.com/tektoncd/catalog/tree/main/task/buildah/0.1/buildah.yaml",
-		},
-		{
-			ID:      12,
-			Version: "0.2",
-			RawURL:  "http://raw.github.url/foo-bar/",
-			WebURL:  "http://web.github.com/foo-bar/",
-		},
-	},
 }
 
 var taskResWithLatestVersion = &res.ResourceVersionData{
@@ -154,40 +90,10 @@ var taskResWithOldVersion = &res.ResourceVersionData{
 
 func mockApi(io InfoOptions, taskWithVersion *res.ResourceVersionData) {
 
-	// Get all catalogs
-	gock.New(test.API).
-		Get("/v1/catalogs").
-		Reply(200).
-		JSON(&catalogs)
-
-	// Get all resources with catalog as Tekton
-	rArr := &res.Resources{Data: res.ResourceDataCollection{res2}}
-	resources := res.NewViewedResources(rArr, "withoutVersion")
-	gock.New(test.API).
-		Get("/query").
-		MatchParam("catalogs", io.Catalog).
-		Reply(200).
-		JSON(&resources.Projected)
-
 	// Get ResourceId in order to get all versions of resource
 	rVer := &res.ResourceVersion{Data: taskWithVersion}
 	resWithVersion := res.NewViewedResourceVersion(rVer, "default")
-
 	resInfo := fmt.Sprintf("%s/%s/%s", io.Catalog, io.Kind, io.Name)
-	gock.New(test.API).
-		Get("/resource/" + resInfo).
-		Reply(200).
-		JSON(&resWithVersion.Projected)
-
-	// Get all versios of the resource
-	v := &res.ResourceVersions{Data: ver}
-	version := res.NewViewedResourceVersions(v, "min")
-
-	vArr := fmt.Sprintf("%d/versions", io.ResId)
-	gock.New(test.API).
-		Get("/resource/" + vArr).
-		Reply(200).
-		JSON(&version.Projected)
 
 	gock.New(test.API).
 		Get("/resource/" + resInfo + "/" + io.Version).
@@ -222,7 +128,7 @@ func TestInfoTask_WithLatestVersion(t *testing.T) {
 	err := opts.run()
 	assert.NoError(t, err)
 	golden.Assert(t, buf.String(), fmt.Sprintf("%s.golden", t.Name()))
-	assert.Equal(t, gock.IsDone(), false)
+	assert.Equal(t, gock.IsDone(), true)
 }
 
 func TestInfoTask_WithOldVersion(t *testing.T) {
@@ -252,7 +158,7 @@ func TestInfoTask_WithOldVersion(t *testing.T) {
 	err := opts.run()
 	assert.NoError(t, err)
 	golden.Assert(t, buf.String(), fmt.Sprintf("%s.golden", t.Name()))
-	assert.Equal(t, gock.IsDone(), false)
+	assert.Equal(t, gock.IsDone(), true)
 }
 
 func TestPipelineTask_MultiLineDescription(t *testing.T) {
@@ -284,5 +190,5 @@ func TestPipelineTask_MultiLineDescription(t *testing.T) {
 	err := opts.run()
 	assert.NoError(t, err)
 	golden.Assert(t, buf.String(), fmt.Sprintf("%s.golden", t.Name()))
-	assert.Equal(t, gock.IsDone(), false)
+	assert.Equal(t, gock.IsDone(), true)
 }
