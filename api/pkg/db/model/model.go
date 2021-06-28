@@ -33,6 +33,12 @@ type (
 		Resources []*Resource `gorm:"many2many:resource_tags;"`
 	}
 
+	Platform struct {
+		gorm.Model
+		Name      string      `gorm:"not null;unique"`
+		Resources []*Resource `gorm:"many2many:resource_platforms;"`
+	}
+
 	Catalog struct {
 		gorm.Model
 		Name       string `gorm:"uniqueIndex:uix_name_org"`
@@ -64,6 +70,7 @@ type (
 		CatalogID  uint
 		Versions   []ResourceVersion
 		Tags       []*Tag `gorm:"many2many:resource_tags;"`
+                Platforms []*Platform `gorm:"many2many:resource_platforms;"`
 	}
 
 	ResourceVersion struct {
@@ -86,6 +93,11 @@ type (
 	ResourceCategory struct {
 		ResourceID uint
 		CategoryID uint
+	}
+
+	ResourcePlatform struct {
+		ResourceID uint
+		PlatformID uint
 	}
 
 	User struct {

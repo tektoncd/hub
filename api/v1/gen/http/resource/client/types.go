@@ -329,6 +329,8 @@ type ResourceDataResponseBody struct {
 	LatestVersion *ResourceVersionDataResponseBody `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
 	// Tags related to resource
 	Tags []*TagResponseBody `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
+	// Platforms related to resource
+	Platforms []*PlatformResponseBody `form:"platforms,omitempty" json:"platforms,omitempty" xml:"platforms,omitempty"`
 	// Rating of resource
 	Rating *float64 `form:"rating,omitempty" json:"rating,omitempty" xml:"rating,omitempty"`
 	// List of all versions of a resource
@@ -383,6 +385,14 @@ type TagResponseBody struct {
 	// ID is the unique id of tag
 	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Name of tag
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
+// PlatformResponseBody is used to define fields on response body types.
+type PlatformResponseBody struct {
+	// ID is the unique id of Platform
+	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name of platform
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
@@ -1044,6 +1054,9 @@ func ValidateResourceDataResponseBody(body *ResourceDataResponseBody) (err error
 	if body.Tags == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "body"))
 	}
+	if body.Platforms == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("platforms", "body"))
+	}
 	if body.Rating == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "body"))
 	}
@@ -1070,6 +1083,13 @@ func ValidateResourceDataResponseBody(body *ResourceDataResponseBody) (err error
 	for _, e := range body.Tags {
 		if e != nil {
 			if err2 := ValidateTagResponseBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	for _, e := range body.Platforms {
+		if e != nil {
+			if err2 := ValidatePlatformResponseBody(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
@@ -1168,6 +1188,18 @@ func ValidateResourceVersionDataResponseBody(body *ResourceVersionDataResponseBo
 
 // ValidateTagResponseBody runs the validations defined on TagResponseBody
 func ValidateTagResponseBody(body *TagResponseBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	return
+}
+
+// ValidatePlatformResponseBody runs the validations defined on
+// PlatformResponseBody
+func ValidatePlatformResponseBody(body *PlatformResponseBody) (err error) {
 	if body.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
 	}

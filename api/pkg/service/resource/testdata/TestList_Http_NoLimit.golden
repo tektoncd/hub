@@ -31,6 +31,12 @@
 					"name": "rtag"
 				}
 			],
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
+				}
+			],
 			"rating": 5
 		},
 		{
@@ -64,6 +70,12 @@
 					"name": "rtag"
 				}
 			],
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
+				}
+			],
 			"rating": 5
 		},
 		{
@@ -92,6 +104,7 @@
 					"name": "rtag"
 				}
 			],
+			"platforms": [],
 			"rating": 5
 		},
 		{
@@ -123,6 +136,12 @@
 				{
 					"id": 2,
 					"name": "rtag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
 				}
 			],
 			"rating": 5
@@ -162,6 +181,16 @@
 					"name": "ztag"
 				}
 			],
+			"platforms": [
+				{
+					"id": 1,
+					"name": "linux/amd64"
+				},
+				{
+					"id": 4,
+					"name": "linux/ppc64le"
+				}
+			],
 			"rating": 4.4
 		},
 		{
@@ -185,6 +214,7 @@
 				"updatedAt": "2013-01-01T00:00:01Z"
 			},
 			"tags": [],
+			"platforms": [],
 			"rating": 2.3
 		},
 		{
@@ -218,6 +248,12 @@
 					"name": "ptag"
 				}
 			],
+			"platforms": [
+				{
+					"id": 3,
+					"name": "linux/arm64"
+				}
+			],
 			"rating": 2
 		},
 		{
@@ -249,6 +285,12 @@
 				{
 					"id": 1,
 					"name": "ztag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 1,
+					"name": "linux/amd64"
 				}
 			],
 			"rating": 1.3

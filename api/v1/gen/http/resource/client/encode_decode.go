@@ -785,6 +785,10 @@ func unmarshalResourceDataResponseBodyToResourceviewsResourceDataView(v *Resourc
 	for i, val := range v.Tags {
 		res.Tags[i] = unmarshalTagResponseBodyToResourceviewsTagView(val)
 	}
+	res.Platforms = make([]*resourceviews.PlatformView, len(v.Platforms))
+	for i, val := range v.Platforms {
+		res.Platforms[i] = unmarshalPlatformResponseBodyToResourceviewsPlatformView(val)
+	}
 	res.Versions = make([]*resourceviews.ResourceVersionDataView, len(v.Versions))
 	for i, val := range v.Versions {
 		res.Versions[i] = unmarshalResourceVersionDataResponseBodyToResourceviewsResourceVersionDataView(val)
@@ -840,6 +844,17 @@ func unmarshalResourceVersionDataResponseBodyToResourceviewsResourceVersionDataV
 // *resourceviews.TagView from a value of type *TagResponseBody.
 func unmarshalTagResponseBodyToResourceviewsTagView(v *TagResponseBody) *resourceviews.TagView {
 	res := &resourceviews.TagView{
+		ID:   v.ID,
+		Name: v.Name,
+	}
+
+	return res
+}
+
+// unmarshalPlatformResponseBodyToResourceviewsPlatformView builds a value of
+// type *resourceviews.PlatformView from a value of type *PlatformResponseBody.
+func unmarshalPlatformResponseBodyToResourceviewsPlatformView(v *PlatformResponseBody) *resourceviews.PlatformView {
+	res := &resourceviews.PlatformView{
 		ID:   v.ID,
 		Name: v.Name,
 	}

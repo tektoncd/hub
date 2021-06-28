@@ -142,6 +142,26 @@ func TestQuery_ByTags(t *testing.T) {
 	assert.Equal(t, 1, len(res))
 }
 
+func TestQuery_ByPlatforms(t *testing.T) {
+        tc := testutils.Setup(t)
+        testutils.LoadFixtures(t, tc.FixturePath())
+
+        req := Request{
+                Db:    tc.DB(),
+                Log:   tc.Logger("resource"),
+                Name:  "",
+                Kinds: []string{},
+                Platforms:  []string{"linux/amd64"},
+                Limit: 100,
+        }
+
+        res, err := req.Query()
+        assert.NoError(t, err)
+        assert.Equal(t, 2, len(res))
+	assert.Equal(t, "build-pipeline", res[0].Name)
+	assert.Equal(t, "buildah", res[1].Name)
+}
+
 func TestQuery_ByCatalogs(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
