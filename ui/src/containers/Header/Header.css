@@ -1,4 +1,10 @@
 .hub-header-login {
   color: white;
-  fontsize: 1em;
+  font-size: 1em;
+}
+
+.header-search-hint svg {
+  vertical-align: 0em !important;
+  margin-left: 0.2em;
+  cursor: pointer;
 }
