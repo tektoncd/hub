@@ -389,6 +389,12 @@ func newResourceDataInfo(vres *resourceviews.ResourceDataView) *ResourceData {
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
 	}
+	if vres.Categories != nil {
+		res.Categories = make([]*Category, len(vres.Categories))
+		for i, val := range vres.Categories {
+			res.Categories[i] = transformResourceviewsCategoryViewToCategory(val)
+		}
+	}
 	if vres.Tags != nil {
 		res.Tags = make([]*Tag, len(vres.Tags))
 		for i, val := range vres.Tags {
@@ -492,6 +498,12 @@ func newResourceDataViewInfo(res *ResourceData) *resourceviews.ResourceDataView 
 		Name:   &res.Name,
 		Kind:   &res.Kind,
 		Rating: &res.Rating,
+	}
+	if res.Categories != nil {
+		vres.Categories = make([]*resourceviews.CategoryView, len(res.Categories))
+		for i, val := range res.Categories {
+			vres.Categories[i] = transformCategoryToResourceviewsCategoryView(val)
+		}
 	}
 	if res.Tags != nil {
 		vres.Tags = make([]*resourceviews.TagView, len(res.Tags))
@@ -881,20 +893,6 @@ func newResourceView(res *Resource) *resourceviews.ResourceView {
 	return vres
 }
 
-// transformResourceviewsTagViewToTag builds a value of type *Tag from a value
-// of type *resourceviews.TagView.
-func transformResourceviewsTagViewToTag(v *resourceviews.TagView) *Tag {
-	if v == nil {
-		return nil
-	}
-	res := &Tag{
-		ID:   *v.ID,
-		Name: *v.Name,
-	}
-
-	return res
-}
-
 // transformResourceviewsCategoryViewToCategory builds a value of type
 // *Category from a value of type *resourceviews.CategoryView.
 func transformResourceviewsCategoryViewToCategory(v *resourceviews.CategoryView) *Category {
@@ -902,6 +900,20 @@ func transformResourceviewsCategoryViewToCategory(v *resourceviews.CategoryView)
 		return nil
 	}
 	res := &Category{
+		ID:   *v.ID,
+		Name: *v.Name,
+	}
+
+	return res
+}
+
+// transformResourceviewsTagViewToTag builds a value of type *Tag from a value
+// of type *resourceviews.TagView.
+func transformResourceviewsTagViewToTag(v *resourceviews.TagView) *Tag {
+	if v == nil {
+		return nil
+	}
+	res := &Tag{
 		ID:   *v.ID,
 		Name: *v.Name,
 	}
@@ -971,10 +983,10 @@ func transformResourceviewsResourceDataViewToResourceData(v *resourceviews.Resou
 	return res
 }
 
-// transformTagToResourceviewsTagView builds a value of type
-// *resourceviews.TagView from a value of type *Tag.
-func transformTagToResourceviewsTagView(v *Tag) *resourceviews.TagView {
-	res := &resourceviews.TagView{
+// transformCategoryToResourceviewsCategoryView builds a value of type
+// *resourceviews.CategoryView from a value of type *Category.
+func transformCategoryToResourceviewsCategoryView(v *Category) *resourceviews.CategoryView {
+	res := &resourceviews.CategoryView{
 		ID:   &v.ID,
 		Name: &v.Name,
 	}
@@ -982,10 +994,10 @@ func transformTagToResourceviewsTagView(v *Tag) *resourceviews.TagView {
 	return res
 }
 
-// transformCategoryToResourceviewsCategoryView builds a value of type
-// *resourceviews.CategoryView from a value of type *Category.
-func transformCategoryToResourceviewsCategoryView(v *Category) *resourceviews.CategoryView {
-	res := &resourceviews.CategoryView{
+// transformTagToResourceviewsTagView builds a value of type
+// *resourceviews.TagView from a value of type *Tag.
+func transformTagToResourceviewsTagView(v *Tag) *resourceviews.TagView {
+	res := &resourceviews.TagView{
 		ID:   &v.ID,
 		Name: &v.Name,
 	}
