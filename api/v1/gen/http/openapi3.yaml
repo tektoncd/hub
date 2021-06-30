@@ -426,6 +426,9 @@ paths:
                     catalog:
                       id: 1
                       type: community
+                    categories:
+                    - id: 1
+                      name: Build Tools
                     id: 1
                     kind: task
                     name: buildah
@@ -627,6 +630,9 @@ paths:
                     catalog:
                       id: 1
                       type: community
+                    categories:
+                    - id: 1
+                      name: Build Tools
                     id: 1
                     kind: task
                     name: buildah
@@ -1130,6 +1136,9 @@ components:
             catalog:
               id: 1
               type: community
+            categories:
+            - id: 1
+              name: Build Tools
             id: 1
             kind: task
             name: buildah
@@ -1196,6 +1205,9 @@ components:
           catalog:
             id: 1
             type: community
+          categories:
+          - id: 1
+            name: Build Tools
           id: 1
           kind: task
           name: buildah

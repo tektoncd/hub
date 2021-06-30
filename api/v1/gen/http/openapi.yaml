@@ -725,6 +725,9 @@ definitions:
           catalog:
             id: 1
             type: community
+          categories:
+          - id: 1
+            name: Build Tools
           id: 1
           kind: task
           name: buildah
@@ -976,6 +979,9 @@ definitions:
           catalog:
             id: 1
             type: community
+          categories:
+          - id: 1
+            name: Build Tools
           id: 1
           kind: task
           name: buildah
@@ -1087,6 +1093,14 @@ definitions:
     properties:
       catalog:
         $ref: '#/definitions/CatalogResponseBodyMin'
+      categories:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryResponseBody'
+        description: Categories related to resource
+        example:
+        - id: 1
+          name: image-build
       id:
         type: integer
         description: ID is the unique id of the resource
@@ -1119,6 +1133,9 @@ definitions:
         id: 1
         name: tekton
         type: community
+      categories:
+      - id: 1
+        name: image-build
       id: 1
       kind: task
       name: buildah
@@ -1130,6 +1147,7 @@ definitions:
     - id
     - name
     - catalog
+    - categories
     - kind
     - tags
     - rating
@@ -1728,6 +1746,9 @@ definitions:
         catalog:
           id: 1
           type: community
+        categories:
+        - id: 1
+          name: Build Tools
         id: 1
         kind: task
         name: buildah

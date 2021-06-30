@@ -345,12 +345,22 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 			Name: tag.Name,
 		})
 	}
+
+	var categories []*resource.Category
+	for _, category := range r.Categories {
+		categories = append(categories, &resource.Category{
+			ID:   category.ID,
+			Name: category.Name,
+		})
+	}
+
 	res := &resource.ResourceData{
-		ID:     r.ID,
-		Name:   r.Name,
-		Kind:   r.Kind,
-		Rating: r.Rating,
-		Tags:   tags,
+		ID:         r.ID,
+		Name:       r.Name,
+		Kind:       r.Kind,
+		Rating:     r.Rating,
+		Tags:       tags,
+		Categories: categories,
 		Catalog: &resource.Catalog{
 			ID:   r.Catalog.ID,
 			Name: r.Catalog.Name,

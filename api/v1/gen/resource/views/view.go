@@ -183,6 +183,7 @@ var (
 			"id",
 			"name",
 			"catalog",
+			"categories",
 			"kind",
 			"tags",
 			"rating",
@@ -216,6 +217,7 @@ var (
 			"id",
 			"name",
 			"catalog",
+			"categories",
 			"kind",
 			"tags",
 			"rating",
@@ -404,6 +406,9 @@ func ValidateResourceDataViewInfo(result *ResourceDataView) (err error) {
 	if result.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
 	}
+	if result.Categories == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("categories", "result"))
+	}
 	if result.Kind == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "result"))
 	}
@@ -412,6 +417,13 @@ func ValidateResourceDataViewInfo(result *ResourceDataView) (err error) {
 	}
 	if result.Rating == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "result"))
+	}
+	for _, e := range result.Categories {
+		if e != nil {
+			if err2 := ValidateCategoryView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
 	}
 	for _, e := range result.Tags {
 		if e != nil {

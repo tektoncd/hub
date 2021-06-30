@@ -16,6 +16,12 @@
 				"name": "catalog-official",
 				"type": "official"
 			},
+			"categories": [
+				{
+					"id": 3,
+					"name": "pqr"
+				}
+			],
 			"kind": "task",
 			"tags": [
 				{

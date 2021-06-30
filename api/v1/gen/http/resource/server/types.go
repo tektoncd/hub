@@ -434,6 +434,8 @@ type ResourceDataResponseBodyInfo struct {
 	Name string `form:"name" json:"name" xml:"name"`
 	// Type of catalog to which resource belongs
 	Catalog *CatalogResponseBodyMin `form:"catalog" json:"catalog" xml:"catalog"`
+	// Categories related to resource
+	Categories []*CategoryResponseBody `form:"categories" json:"categories" xml:"categories"`
 	// Kind of resource
 	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Tags related to resource
