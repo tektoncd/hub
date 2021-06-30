@@ -111,12 +111,13 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		View("info")
 		Example("resource", func() {
 			Value(Val{
-				"id":      1,
-				"name":    "buildah",
-				"catalog": Val{"id": 1, "type": "community"},
-				"kind":    "task",
-				"tags":    []Val{{"id": 1, "name": "image-build"}},
-				"rating":  4.3,
+				"id":         1,
+				"name":       "buildah",
+				"catalog":    Val{"id": 1, "type": "community"},
+				"categories": []Val{{"id": 1, "name": "Build Tools"}},
+				"kind":       "task",
+				"tags":       []Val{{"id": 1, "name": "image-build"}},
+				"rating":     4.3,
 			})
 		})
 	})
@@ -225,6 +226,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Attribute("id")
 		Attribute("name")
 		Attribute("catalog")
+		Attribute("categories")
 		Attribute("kind")
 		Attribute("tags")
 		Attribute("rating")

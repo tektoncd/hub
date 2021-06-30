@@ -194,7 +194,7 @@ func withCatalogAndTags(db *gorm.DB) *gorm.DB {
 func withResourceDetails(db *gorm.DB) *gorm.DB {
 	return db.
 		Order("rating DESC, resources.name").
-		Preload("Categories").
+		Preload("Categories", orderByCategories).
 		Scopes(withCatalogAndTags).
 		Preload("Versions", orderByVersion)
 }
@@ -215,7 +215,12 @@ func withResourceVersionDetails(db *gorm.DB) *gorm.DB {
 	return db.
 		Preload("Resource").
 		Preload("Resource.Catalog").
+		Preload("Resource.Categories", orderByCategories).
 		Preload("Resource.Tags", orderByTags)
+}
+
+func orderByCategories(db *gorm.DB) *gorm.DB {
+	return db.Order("categories.name ASC")
 }
 
 func orderByTags(db *gorm.DB) *gorm.DB {

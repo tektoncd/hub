@@ -756,6 +756,12 @@ func marshalResourceviewsResourceDataViewToResourceDataResponseBodyInfo(v *resou
 	if v.Catalog != nil {
 		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v.Catalog)
 	}
+	if v.Categories != nil {
+		res.Categories = make([]*CategoryResponseBody, len(v.Categories))
+		for i, val := range v.Categories {
+			res.Categories[i] = marshalResourceviewsCategoryViewToCategoryResponseBody(val)
+		}
+	}
 	if v.Tags != nil {
 		res.Tags = make([]*TagResponseBody, len(v.Tags))
 		for i, val := range v.Tags {
