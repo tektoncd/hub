@@ -331,6 +331,8 @@ type ResourceDataResponseBodyWithoutVersion struct {
 	LatestVersion *ResourceVersionDataResponseBodyWithoutResource `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
 	// Tags related to resource
 	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
+	// Platforms related to resource
+	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
 	// Rating of resource
 	Rating float64 `form:"rating" json:"rating" xml:"rating"`
 }
@@ -379,6 +381,14 @@ type TagResponseBody struct {
 	// ID is the unique id of tag
 	ID uint `form:"id" json:"id" xml:"id"`
 	// Name of tag
+	Name string `form:"name" json:"name" xml:"name"`
+}
+
+// PlatformResponseBody is used to define fields on response body types.
+type PlatformResponseBody struct {
+	// ID is the unique id of Platform
+	ID uint `form:"id" json:"id" xml:"id"`
+	// Name of platform
 	Name string `form:"name" json:"name" xml:"name"`
 }
 
@@ -438,6 +448,8 @@ type ResourceDataResponseBodyInfo struct {
 	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Tags related to resource
 	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
+	// Platforms related to resource
+	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
 	// Rating of resource
 	Rating float64 `form:"rating" json:"rating" xml:"rating"`
 }
@@ -458,6 +470,8 @@ type ResourceDataResponseBody struct {
 	LatestVersion *ResourceVersionDataResponseBodyWithoutResource `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
 	// Tags related to resource
 	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
+	// Platforms related to resource
+	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
 	// Rating of resource
 	Rating float64 `form:"rating" json:"rating" xml:"rating"`
 	// List of all versions of a resource

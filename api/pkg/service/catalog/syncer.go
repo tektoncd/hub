@@ -257,6 +257,7 @@ func (s *syncer) updateResources(
 
 		s.updateResourceCategory(txn, log, &dbRes, r.Categories)
 		s.updateResourceTags(txn, log, &dbRes, r.Tags)
+		s.updateResourcePlatforms(txn, log, &dbRes, r.Platforms)
 		s.updateResourceVersions(txn, log, catalog, dbRes.ID, r.Versions)
 
 	}
@@ -296,7 +297,28 @@ func (s *syncer) updateResourceCategory(txn *gorm.DB, log *zap.SugaredLogger,
 
 		resCategory := model.ResourceCategory{ResourceID: res.ID, CategoryID: c.ID}
 		txn.Model(&model.ResourceCategory{}).Where(resCategory).FirstOrCreate(&resCategory)
+	}
+}
 
+func (s *syncer) updateResourcePlatforms(
+	txn *gorm.DB, log *zap.SugaredLogger,
+	res *model.Resource, platforms []string) {
+
+	if len(platforms) == 0 {
+		return
+	}
+
+	// clean existing platforms
+	txn.Unscoped().Where(&model.ResourcePlatform{ResourceID: res.ID}).Delete(&model.ResourcePlatform{})
+
+	for _, p := range platforms {
+
+		platform := model.Platform{Name: p}
+
+		txn.Model(&model.Platform{}).Where(&model.Platform{Name: p}).FirstOrCreate(&platform)
+		resPlatform := model.ResourcePlatform{ResourceID: res.ID, PlatformID: platform.ID}
+		txn.Model(&model.ResourcePlatform{}).Where(resPlatform).FirstOrCreate(&resPlatform)
+		log.Infof("Resource: %d: %s | platform: %s (%d)", res.ID, res.Name, platform.Name, platform.ID)
 	}
 }
 

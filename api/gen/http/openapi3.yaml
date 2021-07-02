@@ -439,6 +439,9 @@ paths:
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -468,6 +471,9 @@ paths:
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -587,6 +593,9 @@ paths:
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -686,6 +695,9 @@ paths:
                     id: 1
                     kind: task
                     name: buildah
+                    platforms:
+                    - id: 1
+                      name: linux/amd64
                     rating: 4.3
                     tags:
                     - id: 1
@@ -759,6 +771,9 @@ paths:
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -1036,6 +1051,9 @@ paths:
                     id: 1
                     kind: task
                     name: buildah
+                    platforms:
+                    - id: 1
+                      name: linux/amd64
                     rating: 4.3
                     tags:
                     - id: 1
@@ -1110,6 +1128,9 @@ paths:
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -1139,6 +1160,9 @@ paths:
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -1901,6 +1925,9 @@ components:
             version: "0.1"
             webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
           name: buildah
+          platforms:
+          - id: 1
+            name: linux/amd64
           rating: 4.3
           tags:
           - id: 1
@@ -1939,6 +1966,14 @@ components:
           type: string
           description: Name of resource
           example: buildah
+        platforms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+          description: Platforms related to resource
+          example:
+          - id: 1
+            name: linux/amd64
         rating:
           type: number
           description: Rating of resource
@@ -1984,6 +2019,9 @@ components:
           version: "0.1"
           webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
         rating: 4.3
         tags:
         - id: 1
@@ -2001,6 +2039,7 @@ components:
       - kind
       - latestVersion
       - tags
+      - platforms
       - rating
       - versions
     ResourceDataCollection:
@@ -2028,6 +2067,9 @@ components:
           version: "0.1"
           webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
         rating: 4.3
         tags:
         - id: 1
@@ -2057,6 +2099,9 @@ components:
           version: "0.1"
           webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
         rating: 4.3
         tags:
         - id: 1
@@ -2086,6 +2131,9 @@ components:
             id: 1
             kind: task
             name: buildah
+            platforms:
+            - id: 1
+              name: linux/amd64
             rating: 4.3
             tags:
             - id: 1
@@ -2152,6 +2200,9 @@ components:
           id: 1
           kind: task
           name: buildah
+          platforms:
+          - id: 1
+            name: linux/amd64
           rating: 4.3
           tags:
           - id: 1
@@ -2219,6 +2270,9 @@ components:
             version: "0.1"
             webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
           name: buildah
+          platforms:
+          - id: 1
+            name: linux/amd64
           rating: 4.3
           tags:
           - id: 1
@@ -2248,6 +2302,9 @@ components:
             version: "0.1"
             webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
           name: buildah
+          platforms:
+          - id: 1
+            name: linux/amd64
           rating: 4.3
           tags:
           - id: 1

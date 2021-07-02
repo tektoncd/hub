@@ -30,6 +30,12 @@
 				"name": "rtag"
 			}
 		],
+		"platforms": [
+			{
+				"id": 2,
+				"name": "linux/s390x"
+			}
+		],
 		"rating": 5,
 		"versions": [
 			{

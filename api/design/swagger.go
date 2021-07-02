@@ -26,7 +26,7 @@ var _ = Service("swagger", func() {
 	// NOTE: The path is changed to docs/openapi3.json to make it work in container.
 	// Copying the gen as it is doesn't seems to work properly, so in dockerfile, swagger will
 	// file is copied to /docs. This will make the swagger api not work locally, as the file
-	// generated is in gen directory. 
+	// generated is in gen directory.
 	Files("/swagger.json", "docs/openapi3.json", func() {
 		Description("JSON document containing the API swagger definition")
 	})

@@ -31,6 +31,12 @@
 					"name": "rtag"
 				}
 			],
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
+				}
+			],
 			"rating": 5
 		},
 		{
@@ -62,6 +68,12 @@
 				{
 					"id": 2,
 					"name": "rtag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
 				}
 			],
 			"rating": 5

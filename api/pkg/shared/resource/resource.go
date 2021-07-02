@@ -34,6 +34,7 @@ type Request struct {
 	Catalogs   []string
 	Categories []string
 	Tags       []string
+	Platforms []string
 	Limit      uint
 	Version    string
 	Kind       string
@@ -48,7 +49,7 @@ var (
 
 // Query resources based on name, kind, tags.
 // Match is the type of search: 'exact' or 'contains'
-// Fields: name, []kinds, []Catalogs, []Categories, []Tags, Match, Limit
+// Fields: name, []kinds, []Catalogs, []Categories, []Tags, []Platforms, Match, Limit
 func (r *Request) Query() ([]model.Resource, error) {
 
 	// Validate the kinds passed are supported by Hub
@@ -65,6 +66,7 @@ func (r *Request) Query() ([]model.Resource, error) {
 
 	r.Db = r.Db.Select("DISTINCT(resources.id), resources.*").Scopes(
 		filterByTags(r.Tags),
+		filterByPlatforms(r.Platforms),
 		filterByKinds(r.Kinds),
 		filterByCatalogs(r.Catalogs),
 		filterByCategories(r.Categories),
@@ -187,7 +189,8 @@ func (r *Request) findAllResources() ([]model.Resource, error) {
 func withCatalogAndTags(db *gorm.DB) *gorm.DB {
 	return db.
 		Preload("Catalog").
-		Preload("Tags", orderByTags)
+		Preload("Tags", orderByTags).
+		Preload("Platforms", orderByPlatforms)
 }
 
 // withResourceDetails defines a gorm scope to include all details of resource.
@@ -215,11 +218,16 @@ func withResourceVersionDetails(db *gorm.DB) *gorm.DB {
 	return db.
 		Preload("Resource").
 		Preload("Resource.Catalog").
-		Preload("Resource.Tags", orderByTags)
+		Preload("Resource.Tags", orderByTags).
+		Preload("Resource.Platforms", orderByPlatforms)
 }
 
 func orderByTags(db *gorm.DB) *gorm.DB {
 	return db.Order("tags.name ASC")
+}
+
+func orderByPlatforms(db *gorm.DB) *gorm.DB {
+	return db.Order("platforms.name ASC")
 }
 
 func orderByVersion(db *gorm.DB) *gorm.DB {
@@ -300,6 +308,20 @@ func filterByCategories(categories []string) func(db *gorm.DB) *gorm.DB {
 			Joins("JOIN resource_categories as rc on rc.resource_id = resources.id").
 			Joins("JOIN categories on categories.id = rc.category_id").
 			Where("lower(categories.name) in (?)", categories)
+	}
+}
+
+func filterByPlatforms(platforms []string) func(db *gorm.DB) *gorm.DB {
+	if len(platforms) == 0 {
+		return noop
+	}
+
+	platforms = lower(platforms)
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Model(&model.Resource{}).
+			Joins("JOIN resource_platforms as rp on rp.resource_id = resources.id").
+			Joins("JOIN platforms on platforms.id = rp.platform_id").
+			Where("lower(platforms.name) in (?)", platforms)
 	}
 }
 
