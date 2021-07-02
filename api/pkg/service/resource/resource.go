@@ -297,6 +297,12 @@ func initResource(r model.Resource) *resource.ResourceData {
 		RawURL:              getStringReplacer(lv.URL).Replace(lv.URL),
 		UpdatedAt:           lv.ModifiedAt.UTC().Format(time.RFC3339),
 	}
+
+	// If latest version is deprecated then add it only
+	if lv.Deprecated == "true" {
+		res.LatestVersion.Deprecated = &lv.Deprecated
+	}
+
 	res.Tags = []*resource.Tag{}
 	for _, tag := range r.Tags {
 		res.Tags = append(res.Tags, &resource.Tag{
@@ -378,6 +384,11 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		RawURL:              getStringReplacer(v.URL).Replace(v.URL),
 		UpdatedAt:           v.ModifiedAt.UTC().Format(time.RFC3339),
 		Resource:            res,
+	}
+
+	// If version is deprecated then add it only
+	if v.Deprecated == "true" {
+		ver.Deprecated = &v.Deprecated
 	}
 
 	return &resource.ResourceVersion{Data: ver}
