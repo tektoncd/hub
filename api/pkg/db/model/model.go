@@ -72,6 +72,7 @@ type (
 		Description         string
 		URL                 string `gorm:"not null;default:null"`
 		DisplayName         string
+		Deprecated          string
 		MinPipelinesVersion string `gorm:"not null;default:null"`
 		Resource            Resource
 		ResourceID          uint
