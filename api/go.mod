@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/AlecAivazis/survey/v2 v2.2.12
 	github.com/Netflix/go-expect v0.0.0-20200312175327-da48e75238e2
+	github.com/aws/aws-sdk-go v1.37.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dimfeld/httptreemux/v5 v5.3.0 // indirect
 	github.com/fatih/color v1.9.0
@@ -12,7 +13,7 @@ require (
 	github.com/go-testfixtures/testfixtures/v3 v3.2.0
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-github v17.0.0+incompatible
-	github.com/hinshun/vt10x v0.0.0-20180616224451-1954e6464174
+	github.com/hinshun/vt10x v0.0.0-20180809195222-d55458df857c
 	github.com/ikawaha/goahttpcheck v1.3.1
 	github.com/joho/godotenv v1.3.0
 	github.com/mitchellh/go-homedir v1.1.0
