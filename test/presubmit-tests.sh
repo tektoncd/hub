@@ -124,6 +124,21 @@ ui-build(){
   }
 }
 
+api-e2e(){
+  info Runnning Hub CLI E2E tests
+
+  go mod vendor
+  go build -o tkn-hub github.com/tektoncd/hub/api/cmd/tkn-hub
+
+  export TEST_CLIENT_BINARY="${PWD}/tkn-hub"
+
+  go test -count=1 -tags=e2e ./test/... || {
+    err 'api e2e test failed'
+    return 1
+  }
+
+}
+
 ### presubmit hooks ###
 
 build_tests() {
@@ -167,8 +182,13 @@ unit_tests() {
 }
 
 integration_tests() {
-  warn "No integration tests to run"
-  return 0
+  (
+    set -eu -o pipefail
+
+    cd "$API_DIR"
+    api-e2e || return 1
+  ) || exit 1
+
 }
 
 main $@
