@@ -20,7 +20,7 @@ require (
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.0
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/tektoncd/pipeline v0.24.1
 	go.uber.org/zap v1.16.0
 	goa.design/goa/v3 v3.3.1
