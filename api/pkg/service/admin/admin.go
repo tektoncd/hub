@@ -191,7 +191,7 @@ func (r *agentRequest) addScopesForAgent(agent *model.User, scopes []string) err
 func (r *agentRequest) userExistWithAgentName(name string) error {
 
 	user := model.User{}
-	q := r.db.Where("LOWER(github_name) = ?", strings.ToLower(name))
+	q := r.db.Where("LOWER(name) = ?", strings.ToLower(name))
 
 	if err := q.First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {

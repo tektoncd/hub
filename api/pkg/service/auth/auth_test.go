@@ -58,12 +58,12 @@ func TestLogin(t *testing.T) {
 
 	// expected access jwt for user
 	user, accessToken, err := tc.UserWithScopes("test", "rating:read", "rating:write")
-	assert.Equal(t, user.GithubLogin, "test")
+	assert.Equal(t, user.GitUsername, "test")
 	assert.NoError(t, err)
 
 	// expected refresh jwt for user
 	user, refreshToken, err := tc.RefreshTokenForUser("test")
-	assert.Equal(t, user.GithubLogin, "test")
+	assert.Equal(t, user.GitUsername, "test")
 	assert.NoError(t, err)
 
 	accessExpiryTime := testutils.Now().Add(tc.JWTConfig().AccessExpiresIn).Unix()
@@ -112,12 +112,12 @@ func TestLogin_again(t *testing.T) {
 
 	// expected access jwt for user
 	user, accessToken, err := tc.UserWithScopes("test", "rating:read", "rating:write")
-	assert.Equal(t, user.GithubLogin, "test")
+	assert.Equal(t, user.GitUsername, "test")
 	assert.NoError(t, err)
 
 	// expected refresh jwt for user
 	user, refreshToken, err := tc.RefreshTokenForUser("test")
-	assert.Equal(t, user.GithubLogin, "test")
+	assert.Equal(t, user.GitUsername, "test")
 	assert.NoError(t, err)
 
 	assert.Equal(t, accessToken, res.Data.Access.Token)
@@ -183,7 +183,7 @@ func TestLogin_UserWithExtraScope(t *testing.T) {
 
 	// foo user is fetched from db to check its existing token checksum
 	user, _, err := tc.UserWithScopes("foo")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// validate existing checksum
@@ -199,12 +199,12 @@ func TestLogin_UserWithExtraScope(t *testing.T) {
 
 	// expected access jwt for user
 	user, accessToken, err := tc.UserWithScopes("foo", "rating:read", "rating:write", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// expected refresh jwt for user
 	user, refreshToken, err := tc.RefreshTokenForUser("foo")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	assert.Equal(t, accessToken, res.Data.Access.Token)
@@ -250,7 +250,7 @@ func TestLogin_UserAddedByConfig(t *testing.T) {
 
 	// expected access jwt for user
 	user, accessToken, err := tc.UserWithScopes("config-user", "rating:read", "rating:write", "config:refresh")
-	assert.Equal(t, user.GithubLogin, "config-user")
+	assert.Equal(t, user.GitUsername, "config-user")
 	assert.NoError(t, err)
 
 	// validate the avatar_url of user after login
@@ -261,7 +261,7 @@ func TestLogin_UserAddedByConfig(t *testing.T) {
 
 	// expected refresh jwt for user
 	user, refreshToken, err := tc.RefreshTokenForUser("config-user")
-	assert.Equal(t, user.GithubLogin, "config-user")
+	assert.Equal(t, user.GitUsername, "config-user")
 	assert.NoError(t, err)
 
 	accessExpiryTime := testutils.Now().Add(tc.JWTConfig().AccessExpiresIn).Unix()

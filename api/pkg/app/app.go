@@ -60,22 +60,29 @@ type Config interface {
 	BaseConfig
 	OAuthConfig() *oauth2.Config
 	JWTConfig() *JWTConfig
-	GhConfig() *GHConfig
+	GitConfig() *GitConfig
 }
 
-// APIConfig defines struct on top of APIBase with GitHub Oauth,
-// GHEConfig & JWT Configurations
+// APIConfig defines struct on top of APIBase with Git Oauth,
+// GitConfig & JWT Configurations
 type APIConfig struct {
 	*APIBase
 	conf      *oauth2.Config
 	jwtConfig *JWTConfig
-	ghConfig  *GHConfig
+	gitConfig *GitConfig
+}
+
+// GitConfig defines the configuration of git provider which is being
+// used as oauth2 provider
+type GitConfig struct {
+	Provider     string
+	IsEnterprise bool
+	Url          string
+	GhConfig     *GHConfig
 }
 
 // GHConfig struct defines the github configuration
 type GHConfig struct {
-	IsGhe     bool
-	Url       string
 	ApiUrl    string
 	UploadUrl string
 }
@@ -217,11 +224,9 @@ func (ac *APIConfig) OAuthConfig() *oauth2.Config {
 	return ac.conf
 }
 
-// GheConfig returns Github Enterprise object which stores
-// whether GHE url is present or not and some other urls which
-// are generated on the basis of GHE url
-func (ac *APIConfig) GhConfig() *GHConfig {
-	return ac.ghConfig
+// GitConfig returns the GitConfig object
+func (ac *APIConfig) GitConfig() *GitConfig {
+	return ac.gitConfig
 }
 
 // JWTConfig returns JWTConfig Object
@@ -254,13 +259,14 @@ func FromEnvFile(file string) (*APIConfig, error) {
 
 	ac := &APIConfig{APIBase: ab}
 
-	if ac.ghConfig, err = initGh(); err != nil {
+	if ac.gitConfig, err = initGit(); err != nil {
 		return nil, err
 	}
 
-	if ac.conf, err = initOAuthConfig(ac.ghConfig.Url); err != nil {
+	if ac.conf, err = initOAuthConfig(ac.gitConfig.Url, ac.gitConfig.Provider); err != nil {
 		return nil, err
 	}
+
 	if ac.jwtConfig, err = jwtConfig(); err != nil {
 		return nil, err
 	}
@@ -392,54 +398,98 @@ func configFileURL() (string, error) {
 	return val, nil
 }
 
+// Read the git provider and enterprise url from env and
+// based on that set the GitConfig for oauth2 process
+func initGit() (*GitConfig, error) {
+	var err error
+	gitConfig := &GitConfig{}
+	if gitConfig.Provider = viper.GetString("GIT_PROVIDER"); gitConfig.Provider == "" {
+		gitConfig.Provider = "github"
+	}
+	gitConfig.Provider = strings.ToLower(gitConfig.Provider)
+
+	gitConfig.IsEnterprise = true
+
+	// If ENTERPRISE_URL env value is empty then fallback to default url
+	if gitConfig.Url = viper.GetString("ENTERPRISE_URL"); gitConfig.Url == "" {
+
+		gitConfig.IsEnterprise = false
+
+		switch gitConfig.Provider {
+		case "github":
+			gitConfig.Url = "https://github.com"
+		}
+	}
+
+	// Based on provider set the extra params needed to perform oauth2
+	switch gitConfig.Provider {
+	case "github":
+		if gitConfig.GhConfig, err = initGh(gitConfig.Url); err != nil {
+			return nil, err
+		}
+	}
+
+	return gitConfig, nil
+}
+
 // initGh looks for Github Enterprise url from the environment variables
-// and initialises the GHEConfig
-func initGh() (*GHConfig, error) {
-	ghe := &GHConfig{}
-	if ghe.Url = viper.GetString("GHE_URL"); ghe.Url == "" {
-		ghe.Url = "https://github.com"
-	}
-	if !strings.HasPrefix(ghe.Url, "https://github.com") {
-		parsedUrl, err := url.Parse(ghe.Url)
+// and initialises the GHConfig
+func initGh(ghUrl string) (*GHConfig, error) {
+	gh := &GHConfig{}
+	if !strings.HasPrefix(ghUrl, "https://github.com") {
+
+		parsedUrl, err := parseEnterpriseUrl(ghUrl)
 		if err != nil {
-			return nil, fmt.Errorf("There was some problem while parsing the Github Enterprise URL")
+			return nil, err
 		}
 
-		if parsedUrl.Path != "" || parsedUrl.RawQuery != "" {
-			return nil, fmt.Errorf("Invalid Github Enterprise URL")
-		}
-
-		ghe.IsGhe = true
-		ghe.ApiUrl = fmt.Sprintf("%s://api.%s", parsedUrl.Scheme, parsedUrl.Host)        // https://api.myghe.com
-		ghe.UploadUrl = fmt.Sprintf("%s://uploads.%s", parsedUrl.Scheme, parsedUrl.Host) // https://uploads.myghe.com
+		gh.ApiUrl = fmt.Sprintf("%s://api.%s", parsedUrl.Scheme, parsedUrl.Host)        // https://api.myghe.com
+		gh.UploadUrl = fmt.Sprintf("%s://uploads.%s", parsedUrl.Scheme, parsedUrl.Host) // https://uploads.myghe.com
 
 	}
 
-	return ghe, nil
+	return gh, nil
+}
+
+// Parse the Enterprise URL and return error if url
+// is not in format scheme://myenterpriseurl.com
+func parseEnterpriseUrl(gitUrl string) (*url.URL, error) {
+	parsedUrl, err := url.Parse(gitUrl)
+	if err != nil {
+		return nil, fmt.Errorf("There was some problem while parsing the Enterprise URL")
+	}
+
+	if parsedUrl.Path != "" || parsedUrl.RawQuery != "" {
+		return nil, fmt.Errorf("Invalid Enterprise URL")
+	}
+	return parsedUrl, nil
 }
 
 // initOAuthConfig looks for configuration among environment variables
-// and intialises the GitHub Oauth Config on the basis of github url
-func initOAuthConfig(ghUrl string) (*oauth2.Config, error) {
+// and intialises the Oauth Config on the basis of git provider url and git provider
+func initOAuthConfig(gitUrl, provider string) (*oauth2.Config, error) {
 
 	var clientID, clientSecret string
-	if clientID = viper.GetString("GH_CLIENT_ID"); clientID == "" {
-		return nil, fmt.Errorf("no GH_CLIENT_ID environment variable defined")
+	if clientID = viper.GetString("CLIENT_ID"); clientID == "" {
+		return nil, fmt.Errorf("no CLIENT_ID environment variable defined")
 	}
-	if clientSecret = viper.GetString("GH_CLIENT_SECRET"); clientSecret == "" {
-		return nil, fmt.Errorf("no GH_CLIENT_SECRET environment variable defined")
-	}
-
-	gheEndpoint := oauth2.Endpoint{
-		AuthURL:  fmt.Sprintf("%s/oauth/authorize", ghUrl),
-		TokenURL: fmt.Sprintf("%s/login/oauth/access_token", ghUrl),
+	if clientSecret = viper.GetString("CLIENT_SECRET"); clientSecret == "" {
+		return nil, fmt.Errorf("no CLIENT_SECRET environment variable defined")
 	}
 
 	conf := &oauth2.Config{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
-		Endpoint:     gheEndpoint,
 	}
+
+	switch provider {
+	case "github":
+		conf.Endpoint = oauth2.Endpoint{
+			AuthURL:  fmt.Sprintf("%s/oauth/authorize", gitUrl),
+			TokenURL: fmt.Sprintf("%s/login/oauth/access_token", gitUrl),
+		}
+	}
+
 	return conf, nil
 }
 

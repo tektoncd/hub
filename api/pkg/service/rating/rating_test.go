@@ -30,7 +30,7 @@ func TestGet(t *testing.T) {
 
 	// user with rating:read scope
 	user, _, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
@@ -47,7 +47,7 @@ func TestGet_RatingNotFound(t *testing.T) {
 
 	// user with rating:read scope
 	user, _, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
@@ -64,7 +64,7 @@ func TestGet_ResourceNotFound(t *testing.T) {
 
 	// user with rating:read scope
 	user, _, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
@@ -81,7 +81,7 @@ func TestUpdate(t *testing.T) {
 
 	// user with rating:write scope
 	user, _, err := tc.UserWithScopes("foo", "rating:write")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
@@ -97,7 +97,7 @@ func TestUpdate_ResourceNotFound(t *testing.T) {
 
 	// user with rating:write scope
 	user, _, err := tc.UserWithScopes("foo", "rating:write")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)

@@ -43,7 +43,7 @@ func TestRefresh(t *testing.T) {
 
 	// user with catalog:refresh scope
 	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
@@ -62,7 +62,7 @@ func TestRefresh_CatalogNotFound(t *testing.T) {
 
 	// user with catalog:refresh scope
 	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
@@ -80,7 +80,7 @@ func TestRefreshAgain(t *testing.T) {
 
 	// user with catalog:refresh scopes
 	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
@@ -104,7 +104,7 @@ func TestRefresh_All(t *testing.T) {
 
 	// user with catalog:refresh scope
 	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
@@ -129,7 +129,7 @@ func TestCatalogError(t *testing.T) {
 
 	// User with catalog:refresh scope
 	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
@@ -150,7 +150,7 @@ func TestCatalogErrorHavingNoError(t *testing.T) {
 
 	// User with catalog:refresh scope
 	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)

@@ -13,8 +13,8 @@
 # limitations under the License.
 
 - id: 11
-  github_name: foo
-  github_login: foo
+  name: foo
+  git_username: foo
   avatar_url: 'https://foo'
   type: user
   refresh_token_checksum: test-checksum
@@ -22,8 +22,8 @@
   updated_at: 2016-01-01 12:30:12 UTC
 
 - id: 13
-  github_name: abc
-  github_login: abc
+  name: abc
+  git_username: abc
   avatar_url: 'https://bar'
   type: user
   refresh_token_checksum: 7bd024c1d9a3009dd4208891f2ffd49cb5e972c034bce46883a7c1d982ba9b39
@@ -37,7 +37,7 @@
   updated_at: 2016-01-01 12:30:12 UTC
 
 - id: 31
-  github_login: config-user
+  git_username: config-user
   avatar_url: ''
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
