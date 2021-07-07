@@ -277,6 +277,9 @@ func (c CatalogParser) appendVersion(res *Resource, filePath string) Result {
 
 	categories := annotations[CategoryAnnotation]
 	categoryList := strings.FieldsFunc(categories, func(c rune) bool { return c == ',' })
+	for c := range categoryList {
+		categoryList[c] = strings.TrimSpace(categoryList[c])
+	}
 	res.Categories = append(res.Categories, categoryList...)
 
 	res.Versions = append(res.Versions,

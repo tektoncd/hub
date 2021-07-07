@@ -16,6 +16,7 @@ package catalog
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/tektoncd/hub/api/pkg/app"
@@ -207,10 +208,13 @@ func (s *syncer) updateJob(syncJob model.SyncJob, sha string, res []parser.Resou
 	}
 	catalog.SHA = sha
 
-	if err := s.updateResources(txn, log, &catalog, res); err != nil {
+	rerr, err := s.updateResources(txn, log, &catalog, res)
+	if err != nil {
 		txn.Rollback()
 		return err
 	}
+
+	result.Combine(rerr)
 
 	if err := s.updateCatalogResult(txn, log, &catalog, result); err != nil {
 		txn.Rollback()
@@ -228,12 +232,13 @@ func (s *syncer) updateJob(syncJob model.SyncJob, sha string, res []parser.Resou
 
 func (s *syncer) updateResources(
 	txn *gorm.DB, log *zap.SugaredLogger,
-	catalog *model.Catalog, res []parser.Resource) error {
+	catalog *model.Catalog, res []parser.Resource) (parser.Result, error) {
 
 	if len(res) == 0 {
-		return nil
+		return parser.Result{}, nil
 	}
 
+	rerr := parser.Result{}
 	for _, r := range res {
 
 		log.Infof("Res: %s | Name: %s ", r.Kind, r.Name)
@@ -250,17 +255,17 @@ func (s *syncer) updateResources(
 
 		txn.Model(&model.Resource{}).Where(dbRes).FirstOrCreate(&dbRes)
 		if err := txn.Save(&dbRes).Error; err != nil {
-			return err
+			return parser.Result{}, err
 		}
 
 		log.Infof("Resource: %s  ID: %d stored", r.Name, dbRes.ID)
 
-		s.updateResourceCategory(txn, log, &dbRes, r.Categories)
+		rerr.Combine(s.updateResourceCategory(txn, log, &dbRes, r.Categories))
 		s.updateResourceTags(txn, log, &dbRes, r.Tags)
 		s.updateResourceVersions(txn, log, catalog, dbRes.ID, r.Versions)
 
 	}
-	return nil
+	return rerr, nil
 }
 
 func (s *syncer) updateResourceTags(
@@ -284,20 +289,25 @@ func (s *syncer) updateResourceTags(
 }
 
 func (s *syncer) updateResourceCategory(txn *gorm.DB, log *zap.SugaredLogger,
-	res *model.Resource, categories []string) {
+	res *model.Resource, categories []string) parser.Result {
 	if len(categories) == 0 {
-		return
+		return parser.Result{}
 	}
+	rerr := parser.Result{}
+	for _, cat := range categories {
+		c := model.Category{Name: cat}
 
-	for _, t := range categories {
-
-		c := model.Category{}
-		txn.Model(&model.Category{}).Where(&model.Category{Name: t}).FirstOrCreate(&c)
-
+		err := txn.Model(&model.Category{}).Where("LOWER(name) = ?", strings.ToLower(cat)).First(&c).Error
+		if err != nil && err == gorm.ErrRecordNotFound {
+			rerr.AddError(fmt.Errorf("Category `%s` for Resource `%s` is Invalid", strings.ReplaceAll(c.Name, " ", ""), res.Name))
+			continue
+		}
 		resCategory := model.ResourceCategory{ResourceID: res.ID, CategoryID: c.ID}
 		txn.Model(&model.ResourceCategory{}).Where(resCategory).FirstOrCreate(&resCategory)
-
+		log.Infof("Resource: %d: %s | category: %s (%d)", res.ID, res.Name, c.Name, c.ID)
 	}
+
+	return rerr
 }
 
 func (s *syncer) updateResourceVersions(
