@@ -1,4 +1,5 @@
 import { types, Instance } from 'mobx-state-tree';
+import { cast } from 'mobx-state-tree';
 import fuzzysort from 'fuzzysort';
 import moment, { Moment } from 'moment';
 import { flow, getEnv } from 'mobx-state-tree';
@@ -9,6 +10,7 @@ import { Kind, KindStore } from './kind';
 import { assert } from './utils';
 import { Params } from '../common/params';
 import { Tag, TagStore, ITag } from './tag';
+import { TagsKeyword } from '../containers/Search';
 
 export const updatedAt = types.custom<string, Moment>({
   name: 'momentDate',
@@ -54,6 +56,7 @@ export const Resource = types
     rating: types.number,
     versions: types.array(types.reference(Version)),
     displayName: '',
+    tagsString: '',
     readme: '',
     yaml: ''
   })
@@ -115,6 +118,8 @@ export const ResourceStore = types
     sortBy: types.optional(types.enumeration(Object.values(SortByFields)), SortByFields.Unknown),
     category: types.optional(types.map(Category), {}),
     search: '',
+    searchedTags: types.array(types.string),
+    tagsString: '',
     urlParams: '',
     err: '',
     isLoading: true
@@ -150,6 +155,9 @@ export const ResourceStore = types
     },
     setURLParams(url: string) {
       self.urlParams = url;
+    },
+    setSearchedTags(tags: Array<string>) {
+      self.searchedTags = cast(tags);
     }
   }))
 
@@ -159,6 +167,7 @@ export const ResourceStore = types
       self.catalogs.clearSelected();
       self.categories.clearSelected();
       self.setSearch('');
+      self.setSearchedTags([]);
       self.setSortBy(SortByFields.Unknown);
     },
 
@@ -289,8 +298,10 @@ export const ResourceStore = types
           categories: r.categories != null ? r.categories.map((c: ICategory) => c.id) : [],
           rating: r.rating,
           versions: [],
-          displayName: r.latestVersion.displayName
+          displayName: r.latestVersion.displayName,
+          tagsString: r.tags.map((tag: ITag) => tag.name).join(' ')
         }));
+
         resources.forEach((r: IResource) => {
           r.versions.push(r.latestVersion);
           self.add(r);
@@ -361,7 +372,9 @@ export const ResourceStore = types
 
   .views((self) => ({
     get filteredResources() {
-      const { resources, kinds, catalogs, search, sortBy, categories } = self;
+      const { resources, kinds, catalogs, search, sortBy, categories, searchedTags } = self;
+
+      const tags = new Set(searchedTags);
 
       let filteredItems: IResource[] = [];
       resources.forEach((r: IResource) => {
@@ -369,15 +382,20 @@ export const ResourceStore = types
         const matchesCatalogs = catalogs.selected.size === 0 || catalogs.selected.has(r.catalog.id);
         const matchesCategories =
           categories.selected.size === 0 || r.categories.some((c) => categories.selected.has(c.id));
+        const matchesTags = searchedTags.length === 0 || r.tags.some((t: ITag) => tags.has(t.name));
 
-        if (matchesKind && matchesCatalogs && matchesCategories) {
+        if (matchesKind && matchesCatalogs && matchesCategories && matchesTags) {
           filteredItems.push(r);
         }
       });
 
-      if (search.trim() !== '') {
+      if (search == TagsKeyword) {
+        return filteredItems;
+      }
+
+      if (search.trim() !== '' && searchedTags.length === 0) {
         filteredItems = fuzzysort
-          .go(search, filteredItems, { keys: ['name', 'displayName'] })
+          .go(search, filteredItems, { keys: ['name', 'displayName', 'tagsString'] })
           .map((resource: Fuzzysort.KeysResult<IResource>) => resource.obj);
       }
 

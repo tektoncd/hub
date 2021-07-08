@@ -274,6 +274,32 @@ describe('Store functions', () => {
         store.setSearch('golang');
         expect(store.filteredResources[0].name).toBe('golang-build');
 
+        store.setSearch('resource');
+        expect(store.filteredResources[0].name).toBe('hub');
+        expect(store.filteredResources[0].tags[0].name).toBe('resource');
+
+        done();
+      }
+    );
+  });
+
+  it('should filter return all resources if searched text is `tags:`', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        catalogs: CatalogStore.create({}, { api }),
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        store.setSearch('tags:');
+
+        expect(store.filteredResources.length).toBe(7);
+
         done();
       }
     );

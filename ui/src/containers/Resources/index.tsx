@@ -19,7 +19,7 @@ import './Resources.css';
 
 const Resources: React.FC = observer(() => {
   const { resources, categories } = useMst();
-  const { catalogs, kinds, search, sortBy } = resources;
+  const { catalogs, kinds, search, sortBy, searchedTags } = resources;
 
   const history = useHistory();
 
@@ -28,9 +28,16 @@ const Resources: React.FC = observer(() => {
     const selectedKinds = [...kinds.selected].join(',');
     const selectedCatalogs = catalogs.selectedByName.join(',');
 
-    const url = UpdateURL(search, sortBy, selectedcategories, selectedKinds, selectedCatalogs);
+    const url = UpdateURL(
+      search,
+      sortBy,
+      selectedcategories,
+      selectedKinds,
+      selectedCatalogs,
+      searchedTags
+    );
     if (!resources.isLoading) history.replace(`?${url}`);
-  }, [search, sortBy, categories.selectedByName, kinds.selected, catalogs.selected]);
+  }, [search, sortBy, categories.selectedByName, kinds.selected, catalogs.selected, searchedTags]);
 
   const clearFilter = () => {
     resources.clearAllFilters();
