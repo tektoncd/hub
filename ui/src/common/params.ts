@@ -3,5 +3,6 @@ export enum Params {
   SortBy = 'sortBy',
   Category = 'category',
   Kind = 'kind',
-  Catalog = 'catalog'
+  Catalog = 'catalog',
+  Tag = 'tag'
 }

@@ -8,7 +8,8 @@ export const UpdateURL = (
   sort: string,
   categories: string,
   kinds: string,
-  catalogs: string
+  catalogs: string,
+  tags: Array<string>
 ) => {
   // To get URLSearchParams object instance
   const searchParams = new URLSearchParams(window.location.search);
@@ -43,6 +44,17 @@ export const UpdateURL = (
 
   // Sets catalos params
   if (catalogs) searchParams.set(Params.Catalog, titleCase(catalogs));
+
+  // To delete tag param
+  if (tags.length === 0) searchParams.delete(Params.Tag);
+
+  // Sets tag params
+  if (tags.length > 0) {
+    searchParams.delete(Params.Query);
+    tags.forEach((t: string) => {
+      searchParams.append(Params.Tag, t);
+    });
+  }
 
   return searchParams.toString();
 };

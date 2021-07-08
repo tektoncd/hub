@@ -8,9 +8,16 @@ import { useDebouncedCallback } from 'use-debounce';
 import { assert } from '../../store/utils';
 import './Search.css';
 
+export const TagsKeyword = 'tags:';
+
 const Search: React.FC = observer(() => {
   const { resources } = useMst();
   const [value, setValue] = React.useState(resources.search);
+
+  interface SearchInfo {
+    search: string;
+    tags: Array<string>;
+  }
 
   React.useEffect(() => {
     setValue(resources.search);
@@ -30,8 +37,9 @@ const Search: React.FC = observer(() => {
      when users stop searching
   */
   const debounced = useDebouncedCallback(
-    (value: string) => {
-      resources.setSearch(value);
+    (data: SearchInfo) => {
+      resources.setSearchedTags(data.tags);
+      resources.setSearch(data.search);
     },
     // Delay in ms
     500
@@ -41,7 +49,26 @@ const Search: React.FC = observer(() => {
     const currentInput = inputRef.current;
     assert(currentInput);
     setValue(currentInput.value);
-    debounced(currentInput.value);
+
+    const searchInput = currentInput.value;
+    let tagList: Array<string>;
+
+    if (searchInput.includes(TagsKeyword)) {
+      const tagsString = searchInput.substr(5); // Removes `tags:` from search Input
+      tagList = tagsString
+        .split(',')
+        .filter((item: string) => item !== '')
+        .map((item: string) => item.trim());
+    } else {
+      tagList = [];
+    }
+
+    const searchedData: SearchInfo = {
+      search: searchInput,
+      tags: tagList
+    };
+
+    debounced(searchedData);
   };
 
   const history = useHistory();

@@ -10,6 +10,13 @@ const ParseUrl: React.FC = () => {
     if (searchParams.has(Params.Query)) {
       resources.setSearch(searchParams.get(Params.Query));
     }
+
+    if (searchParams.has(Params.Tag)) {
+      const tags = searchParams.getAll(Params.Tag);
+      resources.setSearch(`tags:${tags.join(',')}`);
+      resources.setSearchedTags(searchParams.getAll(Params.Tag));
+    }
+
     if (searchParams.has(Params.SortBy)) {
       resources.setSortBy(searchParams.get(Params.SortBy));
     }
