@@ -208,6 +208,11 @@ func (s *syncer) updateJob(syncJob model.SyncJob, sha string, res []parser.Resou
 	}
 	catalog.SHA = sha
 
+	if err := s.deleteDBResources(txn, log, &catalog, res); err != nil {
+		txn.Rollback()
+		return err
+	}
+
 	rerr, err := s.updateResources(txn, log, &catalog, res)
 	if err != nil {
 		txn.Rollback()
@@ -359,6 +364,97 @@ func (s *syncer) updateCatalogResult(
 		}).Error; err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+// Delete all versions of a resources and resource as well
+func (s *syncer) deleteResourceAndVersion(txn *gorm.DB, log *zap.SugaredLogger, id uint) error {
+
+	if err := txn.Unscoped().Where(&model.ResourceVersion{ResourceID: id}).Delete(&model.ResourceVersion{}).Error; err != nil {
+		return err
+	}
+	if err := txn.Unscoped().Where("id = ?", id).Delete(&model.Resource{}).Error; err != nil {
+		return err
+	}
+
+	log.Infof("Resource with ID: %d has been deleted", id)
+
+	return nil
+
+}
+
+// Delete the categories which doesn't belongs to any existing resources
+func (s *syncer) deleteCategory(txn *gorm.DB, log *zap.SugaredLogger, categories []model.ResourceCategory) error {
+
+	for _, c := range categories {
+		var resCat []model.ResourceCategory
+		txn.Where(&model.ResourceCategory{CategoryID: c.CategoryID}).Find(&resCat)
+
+		if len(resCat) == 0 {
+			if err := txn.Unscoped().Where("id = ?", c.CategoryID).Delete(&model.Category{}).Error; err != nil {
+				return err
+			}
+			log.Infof("Category with ID: %d has been deleted", c.CategoryID)
+		}
+	}
+	return nil
+}
+
+// Delete the tags which doesn't belongsto any existing resources
+func (s *syncer) deleteTag(txn *gorm.DB, log *zap.SugaredLogger, tags []model.ResourceTag) error {
+
+	for _, t := range tags {
+		var resTag []model.ResourceTag
+		txn.Where(&model.ResourceTag{TagID: t.TagID}).Find(&resTag)
+
+		if len(resTag) == 0 {
+			if err := txn.Unscoped().Where("id = ?", t.TagID).Delete(&model.Tag{}).Error; err != nil {
+				return err
+			}
+			log.Infof("Tag with ID: %d has been deleted", t.TagID)
+		}
+	}
+	return nil
+}
+
+func (s *syncer) deleteDBResources(
+	txn *gorm.DB, log *zap.SugaredLogger,
+	catalog *model.Catalog, res []parser.Resource) error {
+
+	if len(res) == 0 {
+		return nil
+	}
+
+	var dbResource []model.Resource
+	var dbResID []uint
+
+	txn.Model(&model.Resource{}).Where(&model.Resource{CatalogID: catalog.ID}).Find(&dbResource)
+
+	// Compare db resources to catalog resources to get removed resources info
+	for _, dbRes := range dbResource {
+		var flag bool
+		for _, catalogRes := range res {
+			if dbRes.Name == catalogRes.Name {
+				flag = true
+			}
+		}
+		if flag == false {
+			dbResID = append(dbResID, dbRes.ID)
+		}
+	}
+
+	for _, id := range dbResID {
+
+		var tags []model.ResourceTag
+		var categories []model.ResourceCategory
+
+		txn.Where(&model.ResourceTag{ResourceID: id}).Find(&tags)
+		txn.Where(&model.ResourceCategory{ResourceID: id}).Find(&categories)
+
+		s.deleteResourceAndVersion(txn, log, id)
+		s.deleteCategory(txn, log, categories)
+		s.deleteTag(txn, log, tags)
 	}
 	return nil
 }
