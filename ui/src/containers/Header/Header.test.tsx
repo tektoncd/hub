@@ -8,6 +8,7 @@ import UserProfile from '../UserProfile';
 import { FakeHub } from '../../api/testutil';
 import { createProviderAndStore } from '../../store/root';
 import { ActualDate, FakeDate } from '../../common/testutils';
+import Icon from '../../components/Icon';
 
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);
@@ -42,6 +43,17 @@ describe('Header', () => {
       </Provider>
     );
     expect(component.find('span').text()).toBe('Login');
+  });
+
+  fit('should find Icon in header', () => {
+    const component = mount(
+      <Provider>
+        <Router>
+          <Header />
+        </Router>
+      </Provider>
+    );
+    expect(component.find(Icon).length).toBe(1);
   });
 
   it('should render user profile', (done) => {

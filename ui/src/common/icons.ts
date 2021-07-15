@@ -8,5 +8,6 @@ export enum Icons {
   Star = 'star',
   Github = 'github',
   WarningTriangle = 'Warningtriangle',
-  Catalog = 'catalog'
+  Catalog = 'catalog',
+  Help = 'help'
 }
