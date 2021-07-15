@@ -49,7 +49,7 @@ func TestUpdateAgent_Http_NewAgent(t *testing.T) {
 
 	// user with agent:create scope
 	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -85,7 +85,7 @@ func TestUpdateAgent_Http_NormalUserExistWithName(t *testing.T) {
 
 	// user with agent:create scope
 	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -115,7 +115,7 @@ func TestUpdateAgent_Http_InvalidScopeCase(t *testing.T) {
 
 	// user with agent:create scope
 	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -145,7 +145,7 @@ func TestUpdateAgent_Http_UpdateCase(t *testing.T) {
 
 	// user with agent:create scope
 	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -189,7 +189,7 @@ func TestRefreshConfig_Http(t *testing.T) {
 
 	// user with config:refresh scope
 	user, token, err := tc.UserWithScopes("foo", "config:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -222,7 +222,7 @@ func TestRefreshConfig_Http(t *testing.T) {
 		err = tc.DB().Where(&scope).First(&scope).Error
 		assert.NoError(t, err)
 
-		user := model.User{GithubLogin: "test-user"}
+		user := model.User{GitUsername: "test-user"}
 		err = tc.DB().Where(&user).First(&user).Error
 		assert.NoError(t, err)
 	})

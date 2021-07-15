@@ -31,7 +31,7 @@ func TestRefreshAccessToken(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.Equal(t, testUser.GitUsername, "abc")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -45,7 +45,7 @@ func TestRefreshAccessToken(t *testing.T) {
 
 	// expected access jwt for user
 	user, accessToken, err := tc.UserWithScopes("abc", "rating:read", "rating:write")
-	assert.Equal(t, user.GithubLogin, "abc")
+	assert.Equal(t, user.GitUsername, "abc")
 	assert.NoError(t, err)
 
 	accessExpiryTime := testutils.Now().Add(tc.JWTConfig().AccessExpiresIn).Unix()
@@ -61,7 +61,7 @@ func TestRefreshAccessToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err := tc.RefreshTokenForUser("foo")
-	assert.Equal(t, testUser.GithubLogin, "foo")
+	assert.Equal(t, testUser.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	userSvc := New(tc)
@@ -78,7 +78,7 @@ func TestNewRefreshToken(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.Equal(t, testUser.GitUsername, "abc")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -92,7 +92,7 @@ func TestNewRefreshToken(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err = tc.RefreshTokenForUser("abc")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.Equal(t, testUser.GitUsername, "abc")
 	assert.NoError(t, err)
 
 	refreshExpiryTime := testutils.Now().Add(tc.JWTConfig().RefreshExpiresIn).Unix()
@@ -108,7 +108,7 @@ func TestNewRefreshToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err := tc.RefreshTokenForUser("foo")
-	assert.Equal(t, testUser.GithubLogin, "foo")
+	assert.Equal(t, testUser.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	userSvc := New(tc)
@@ -125,7 +125,7 @@ func TestInfo(t *testing.T) {
 
 	// user Access Token
 	testUser, accessToken, err := tc.UserWithScopes("abc", "rating:read", "rating:write")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.Equal(t, testUser.GitUsername, "abc")
 	assert.NoError(t, err)
 
 	userSvc := New(tc)

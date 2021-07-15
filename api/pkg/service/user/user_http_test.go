@@ -46,7 +46,7 @@ func TestRefreshAccessToken_Http(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.Equal(t, testUser.GitUsername, "abc")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -66,7 +66,7 @@ func TestRefreshAccessToken_Http(t *testing.T) {
 
 		// expected access jwt
 		user, accessToken, err := tc.UserWithScopes("abc", "rating:read", "rating:write")
-		assert.Equal(t, user.GithubName, "abc")
+		assert.Equal(t, user.Name, "abc")
 		assert.NoError(t, err)
 
 		assert.Equal(t, accessToken, res.Data.Access.Token)
@@ -79,7 +79,7 @@ func TestRefreshAccessToken_Http_ExpiredRefreshToken(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.Equal(t, testUser.GitUsername, "abc")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -105,7 +105,7 @@ func TestRefreshAccessToken_Http_RefreshTokenChecksumIsDifferent(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err := tc.RefreshTokenForUser("foo")
-	assert.Equal(t, testUser.GithubLogin, "foo")
+	assert.Equal(t, testUser.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -140,7 +140,7 @@ func TestNewRefreshToken_Http(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.Equal(t, testUser.GitUsername, "abc")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -160,7 +160,7 @@ func TestNewRefreshToken_Http(t *testing.T) {
 
 		// user refresh token
 		testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
-		assert.Equal(t, testUser.GithubLogin, "abc")
+		assert.Equal(t, testUser.GitUsername, "abc")
 		assert.NoError(t, err)
 
 		refreshExpiryTime := testutils.Now().Add(tc.JWTConfig().RefreshExpiresIn).Unix()
@@ -177,7 +177,7 @@ func TestNewRefreshToken_Http_RefreshTokenChecksumIsDifferent(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err := tc.RefreshTokenForUser("foo")
-	assert.Equal(t, testUser.GithubLogin, "foo")
+	assert.Equal(t, testUser.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -211,7 +211,7 @@ func TestUserInfo_Http(t *testing.T) {
 
 	// user refresh token
 	testUser, accessToken, err := tc.UserWithScopes("abc", "rating:read")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.Equal(t, testUser.GitUsername, "abc")
 	assert.NoError(t, err)
 
 	// Mocks the time

@@ -65,7 +65,7 @@ func TestGet_Http_ExpiredToken(t *testing.T) {
 
 	// user with rating:read scope
 	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -93,7 +93,7 @@ func TestGet_Http_InvalidScopes(t *testing.T) {
 
 	// invalid user access token, does not have required scopes
 	user, accessToken, err := tc.UserWithScopes("abc", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "abc")
+	assert.Equal(t, user.GitUsername, "abc")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -120,7 +120,7 @@ func TestGet_Http(t *testing.T) {
 
 	// user with rating:read scope
 	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -147,7 +147,7 @@ func TestGet_Http_RatingNotFound(t *testing.T) {
 
 	// user with rating:read scope
 	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -174,7 +174,7 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 
 	// user with rating:read scope
 	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -210,7 +210,7 @@ func TestUpdate_Http(t *testing.T) {
 
 	// user with rating:write scope
 	user, accessToken, err := tc.UserWithScopes("foo", "rating:write")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -236,7 +236,7 @@ func TestUpdate_Http_Existing(t *testing.T) {
 
 	// user with rating:write scope
 	user, accessToken, err := tc.UserWithScopes("foo", "rating:write")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -262,7 +262,7 @@ func TestUpdate_Http_ResourceNotFound(t *testing.T) {
 
 	// user with rating:write scope
 	user, accessToken, err := tc.UserWithScopes("foo", "rating:write")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time

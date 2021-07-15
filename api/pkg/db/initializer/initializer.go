@@ -127,7 +127,7 @@ func addUsers(db *gorm.DB, log *log.Logger, data *app.Data) error {
 		for _, userID := range s.Users {
 
 			// Checks if user exists
-			q := db.Where("LOWER(github_login) = ?", strings.ToLower(userID))
+			q := db.Where("LOWER(git_username) = ?", strings.ToLower(userID))
 
 			user := model.User{}
 			if err := q.First(&user).Error; err != nil {
@@ -138,7 +138,7 @@ func addUsers(db *gorm.DB, log *log.Logger, data *app.Data) error {
 				}
 
 				log.Infof("user %s not found, create a new user", userID)
-				user.GithubLogin = strings.ToLower(userID)
+				user.GitUsername = strings.ToLower(userID)
 				if err = db.Create(&user).Error; err != nil {
 					log.Error(err)
 					return err

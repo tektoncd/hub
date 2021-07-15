@@ -38,6 +38,7 @@ func Migrate(api *app.APIBase) error {
 			addAvatarURLColumnInUsersTable(log),
 			removeCatgoryIdColumnAndConstraintsFromTagtable(log),
 			updateResourcesCategoryTable(log),
+			renameGithubNameAndGithubLoginToNameAndGitUsername(log),
 		},
 	)
 

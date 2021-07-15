@@ -121,7 +121,7 @@ func (r *request) userScopes() ([]string, error) {
 
 	var userScopes []string = r.defaultScopes
 
-	q := r.db.Preload("Scopes").Where(&model.User{GithubLogin: r.user.GithubLogin})
+	q := r.db.Preload("Scopes").Where(&model.User{GitUsername: r.user.GitUsername})
 
 	dbUser := &model.User{}
 	if err := q.Find(dbUser).Error; err != nil {
@@ -190,8 +190,8 @@ func (s *service) Info(ctx context.Context, p *user.InfoPayload) (*user.InfoResu
 		return nil, err
 	}
 	res := &user.InfoResult{Data: &user.UserData{
-		GithubID:  data.GithubLogin,
-		Name:      data.GithubName,
+		GithubID:  data.GitUsername,
+		Name:      data.Name,
 		AvatarURL: data.AvatarURL,
 	},
 	}

@@ -42,7 +42,7 @@ type request struct {
 	oauth         *oauth2.Config
 	defaultScopes []string
 	jwtConfig     *app.JWTConfig
-	gheConfig     *app.GHConfig
+	gitConfig     *app.GitConfig
 }
 
 var (
@@ -67,18 +67,19 @@ func (s *service) Authenticate(ctx context.Context, p *auth.AuthenticatePayload)
 		oauth:         s.api.OAuthConfig(),
 		defaultScopes: s.api.Data().Default.Scopes,
 		jwtConfig:     s.api.JWTConfig(),
-		gheConfig:     s.api.GhConfig(),
+		gitConfig:     s.api.GitConfig(),
 	}
 
 	return req.authenticate(p.Code)
 }
 
-func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
+// Perform oauth request and get the user details from GitHub
+func (r *request) authGithub(code string) (model.User, error) {
 
 	// gets access_token for user using authorization_code
 	token, err := r.oauth.Exchange(context.Background(), code)
 	if err != nil {
-		return nil, invalidCode
+		return model.User{}, invalidCode
 	}
 
 	// gets user details from github using the access_token
@@ -88,10 +89,10 @@ func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
 
 	// check if the url is enterprise url and then create the
 	// client accordingly
-	if r.gheConfig.IsGhe {
-		ghClient, err = github.NewEnterpriseClient(r.gheConfig.ApiUrl, r.gheConfig.UploadUrl, oauthClient)
+	if r.gitConfig.IsEnterprise {
+		ghClient, err = github.NewEnterpriseClient(r.gitConfig.GhConfig.ApiUrl, r.gitConfig.GhConfig.UploadUrl, oauthClient)
 		if err != nil {
-			return nil, err
+			return model.User{}, err
 		}
 	} else {
 		ghClient = github.NewClient(oauthClient)
@@ -100,11 +101,31 @@ func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
 	ghUser, _, err := ghClient.Users.Get(context.Background(), "")
 	if err != nil {
 		r.log.Error(err)
-		return nil, internalError
+		return model.User{}, internalError
+	}
+
+	return model.User{
+		Name:        ghUser.GetName(),
+		GitUsername: strings.ToLower(ghUser.GetLogin()),
+		Type:        model.NormalUserType,
+		AvatarURL:   ghUser.GetAvatarURL(),
+	}, nil
+}
+
+func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
+
+	var remoteUser model.User
+	var err error
+	switch r.gitConfig.Provider {
+	case "github":
+		remoteUser, err = r.authGithub(code)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// adds user in db if not exist
-	user, err := r.addUser(ghUser)
+	user, err := r.addUser(remoteUser)
 	if err != nil {
 		return nil, err
 	}
@@ -119,22 +140,16 @@ func (r *request) authenticate(code string) (*auth.AuthenticateResult, error) {
 	return r.createTokens(user, scopes)
 }
 
-func (r *request) addUser(ghUser *github.User) (*model.User, error) {
+func (r *request) addUser(user model.User) (*model.User, error) {
+	var dbUser model.User
 
 	// Check if user exist
 	q := r.db.Model(&model.User{}).
-		Where("LOWER(github_login) = ?", strings.ToLower(ghUser.GetLogin()))
-
-	var user model.User
-	err := q.First(&user).Error
+		Where("LOWER(git_username) = ?", user.GitUsername)
+	err := q.First(&dbUser).Error
 	if err != nil {
 		// If user doesn't exist, create a new record
 		if err == gorm.ErrRecordNotFound {
-
-			user.GithubName = ghUser.GetName()
-			user.GithubLogin = strings.ToLower(ghUser.GetLogin())
-			user.Type = model.NormalUserType
-			user.AvatarURL = ghUser.GetAvatarURL()
 
 			err = r.db.Create(&user).Error
 			if err != nil {
@@ -150,28 +165,27 @@ func (r *request) addUser(ghUser *github.User) (*model.User, error) {
 	// User already exist, check if GitHub Name is empty
 	// If Name is empty, then user is inserted through config.yaml
 	// Update user with remaining details
-
-	if user.GithubName == "" {
-		user.GithubName = ghUser.GetName()
-		user.Type = model.NormalUserType
+	if dbUser.Name == "" {
+		dbUser.Name = user.Name
+		dbUser.Type = model.NormalUserType
 	}
 	// For existing user, check if URL is not added
-	if user.AvatarURL == "" {
-		user.AvatarURL = ghUser.GetAvatarURL()
-		if err = r.db.Save(&user).Error; err != nil {
+	if dbUser.AvatarURL == "" {
+		dbUser.AvatarURL = user.AvatarURL
+		if err = r.db.Save(&dbUser).Error; err != nil {
 			r.log.Error(err)
 			return nil, err
 		}
 	}
 
-	return &user, nil
+	return &dbUser, nil
 }
 
 func (r *request) userScopes(user *model.User) ([]string, error) {
 
 	var userScopes []string = r.defaultScopes
 
-	q := r.db.Preload("Scopes").Where(&model.User{GithubLogin: user.GithubLogin})
+	q := r.db.Preload("Scopes").Where(&model.User{GitUsername: user.GitUsername})
 
 	dbUser := model.User{}
 	if err := q.Find(&dbUser).Error; err != nil {

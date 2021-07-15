@@ -31,7 +31,7 @@ func TestUpdateAgent(t *testing.T) {
 
 	// user with agent:create scope
 	user, _, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -57,7 +57,7 @@ func TestUpdateAgent_NormalUserExistsWithName(t *testing.T) {
 
 	// user with agent:create scope
 	user, _, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	adminSvc := New(tc)
@@ -74,7 +74,7 @@ func TestUpdateAgent_InvalidScopeInPayload(t *testing.T) {
 
 	// user with agent:create scope
 	user, _, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	adminSvc := New(tc)
@@ -91,7 +91,7 @@ func TestUpdateAgent_UpdateScopesCase(t *testing.T) {
 
 	// user with agent:create scope
 	user, _, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	assert.Equal(t, user.GitUsername, "foo")
 	assert.NoError(t, err)
 
 	// Mocks the time

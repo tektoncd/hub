@@ -81,12 +81,12 @@ func TestLogin_Http(t *testing.T) {
 
 		// expected access jwt for user
 		user, accessToken, err := tc.UserWithScopes("test", "rating:read", "rating:write")
-		assert.Equal(t, user.GithubLogin, "test")
+		assert.Equal(t, user.GitUsername, "test")
 		assert.NoError(t, err)
 
 		// expected refresh jwt for user
 		user, refreshToken, err := tc.RefreshTokenForUser("test")
-		assert.Equal(t, user.GithubLogin, "test")
+		assert.Equal(t, user.GitUsername, "test")
 		assert.NoError(t, err)
 
 		assert.Equal(t, accessToken, res.Data.Access.Token)
@@ -170,12 +170,12 @@ func TestLogin_Http_UserWithExtraScope(t *testing.T) {
 
 		// expected access jwt for user
 		user, accessToken, err := tc.UserWithScopes("foo", "rating:read", "rating:write", "agent:create")
-		assert.Equal(t, user.GithubLogin, "foo")
+		assert.Equal(t, user.GitUsername, "foo")
 		assert.NoError(t, err)
 
 		// expected refresh jwt for user
 		user, refreshToken, err := tc.RefreshTokenForUser("foo")
-		assert.Equal(t, user.GithubLogin, "foo")
+		assert.Equal(t, user.GitUsername, "foo")
 		assert.NoError(t, err)
 
 		assert.Equal(t, accessToken, res.Data.Access.Token)

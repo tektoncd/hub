@@ -49,8 +49,8 @@ func FormatJSON(b []byte) (string, error) {
 // User will have same github login and github name in db
 func (tc *TestConfig) UserWithScopes(name string, scopes ...string) (*model.User, string, error) {
 
-	user := &model.User{GithubLogin: name, GithubName: name, Type: model.NormalUserType}
-	if err := tc.DB().Where(&model.User{GithubLogin: name}).
+	user := &model.User{GitUsername: name, Name: name, Type: model.NormalUserType}
+	if err := tc.DB().Where(&model.User{GitUsername: name}).
 		FirstOrCreate(user).Error; err != nil {
 		return nil, "", err
 	}
@@ -74,8 +74,8 @@ func (tc *TestConfig) UserWithScopes(name string, scopes ...string) (*model.User
 // User will have same github login and github name in db
 func (tc *TestConfig) RefreshTokenForUser(name string) (*model.User, string, error) {
 
-	user := &model.User{GithubLogin: name, GithubName: name, Type: model.NormalUserType}
-	if err := tc.DB().Where(&model.User{GithubLogin: name}).
+	user := &model.User{GitUsername: name, Name: name, Type: model.NormalUserType}
+	if err := tc.DB().Where(&model.User{GitUsername: name}).
 		FirstOrCreate(user).Error; err != nil {
 		return nil, "", err
 	}
