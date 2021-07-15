@@ -60,10 +60,10 @@ type (
 		Kind       string `gorm:"not null;default:null"`
 		Rating     float64
 		Catalog    Catalog
-		Categories []*Category `gorm:"many2many:resource_categories;"`
+		Categories []*Category `gorm:"many2many:resource_categories;constraint:OnDelete:CASCADE;"`
 		CatalogID  uint
 		Versions   []ResourceVersion
-		Tags       []*Tag `gorm:"many2many:resource_tags;"`
+		Tags       []*Tag `gorm:"many2many:resource_tags;constraint:OnDelete:CASCADE;"`
 	}
 
 	ResourceVersion struct {
