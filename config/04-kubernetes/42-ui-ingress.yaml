@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ui
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    dns.gardener.cloud/dnsnames: hub.tekton.dev
+    dns.gardener.cloud/ttl: "3600"
+    kubernetes.io/ingress.class: gce
+    networking.gke.io/v1beta1.FrontendConfig: hub-config
+spec:
+  rules:
+  - host: hub.tekton.dev
+    http:
+      paths:
+      - backend:
+          serviceName: ui
+          servicePort: 8080
+        path: /*
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - hub.tekton.dev
+    secretName: ui-hub-tekton-dev-tls
