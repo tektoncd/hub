@@ -79,15 +79,18 @@ func TestParse_ValidRepo(t *testing.T) {
 	assert.Equal(t, "", result.Error())
 
 	assert.Equal(t, 2, len(res))
-
 	gitCLI := res[0]
 	assert.Equal(t, "git-cli", gitCLI.Name)
 	assert.Equal(t, 1, len(gitCLI.Versions))
+	assert.Equal(t, "linux/s390x", gitCLI.Versions[0].Platforms[0])
 
 	maven := res[1]
 	assert.Equal(t, "maven", maven.Name)
 	assert.Equal(t, 2, len(maven.Versions))
 	assert.Equal(t, now, maven.Versions[0].ModifiedAt)
+	assert.Equal(t, "linux/amd64", maven.Versions[0].Platforms[0])
+	assert.Equal(t, "linux/ppc64le", maven.Versions[1].Platforms[0])
+	assert.Equal(t, "linux/s390x", maven.Versions[1].Platforms[1])
 }
 
 func TestParse_InvalidTask(t *testing.T) {

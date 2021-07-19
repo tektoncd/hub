@@ -50,6 +50,9 @@ var _ = Service("resource", func() {
 			Attribute("tags", ArrayOf(String), "Tags associated with a resource to filter by", func() {
 				Example([]string{"image", "build"})
 			})
+			Attribute("platforms", ArrayOf(String), "Platforms associated with a resource to filter by", func() {
+				Example([]string{"linux/s390x", "linux/amd64"})
+			})
 			Attribute("limit", UInt, "Maximum number of resources to be returned", func() {
 				Default(1000)
 				Example("limit", 100)
@@ -70,6 +73,7 @@ var _ = Service("resource", func() {
 			Param("categories")
 			Param("kinds")
 			Param("tags")
+			Param("platforms")
 			Param("limit")
 			Param("match")
 

@@ -68,6 +68,8 @@ type ResourceDataView struct {
 	LatestVersion *ResourceVersionDataView
 	// Tags related to resource
 	Tags []*TagView
+	// Platforms related to resource
+	Platforms []*PlatformView
 	// Rating of resource
 	Rating *float64
 	// List of all versions of a resource
@@ -112,8 +114,18 @@ type ResourceVersionDataView struct {
 	WebURL *string
 	// Timestamp when version was last updated
 	UpdatedAt *string
+	// Platforms related to resource version
+	Platforms []*PlatformView
 	// Resource to which the version belongs
 	Resource *ResourceDataView
+}
+
+// PlatformView is a type that runs validations on a projected type.
+type PlatformView struct {
+	// ID is the unique id of platform
+	ID *uint
+	// Name of platform
+	Name *string
 }
 
 // TagView is a type that runs validations on a projected type.
@@ -186,6 +198,7 @@ var (
 			"categories",
 			"kind",
 			"tags",
+			"platforms",
 			"rating",
 		},
 		"withoutVersion": []string{
@@ -196,6 +209,7 @@ var (
 			"kind",
 			"latestVersion",
 			"tags",
+			"platforms",
 			"rating",
 		},
 		"default": []string{
@@ -206,6 +220,7 @@ var (
 			"kind",
 			"latestVersion",
 			"tags",
+			"platforms",
 			"rating",
 			"versions",
 		},
@@ -220,6 +235,7 @@ var (
 			"categories",
 			"kind",
 			"tags",
+			"platforms",
 			"rating",
 		},
 		"withoutVersion": []string{
@@ -230,6 +246,7 @@ var (
 			"kind",
 			"latestVersion",
 			"tags",
+			"platforms",
 			"rating",
 		},
 		"default": []string{
@@ -240,6 +257,7 @@ var (
 			"kind",
 			"latestVersion",
 			"tags",
+			"platforms",
 			"rating",
 			"versions",
 		},
@@ -271,6 +289,7 @@ var (
 			"version",
 			"rawURL",
 			"webURL",
+			"platforms",
 		},
 		"withoutResource": []string{
 			"id",
@@ -281,6 +300,7 @@ var (
 			"rawURL",
 			"webURL",
 			"updatedAt",
+			"platforms",
 		},
 		"default": []string{
 			"id",
@@ -292,6 +312,7 @@ var (
 			"webURL",
 			"updatedAt",
 			"resource",
+			"platforms",
 		},
 	}
 	// VersionsMap is a map of attribute names in result type Versions indexed by
@@ -415,6 +436,9 @@ func ValidateResourceDataViewInfo(result *ResourceDataView) (err error) {
 	if result.Tags == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "result"))
 	}
+	if result.Platforms == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("platforms", "result"))
+	}
 	if result.Rating == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "result"))
 	}
@@ -428,6 +452,13 @@ func ValidateResourceDataViewInfo(result *ResourceDataView) (err error) {
 	for _, e := range result.Tags {
 		if e != nil {
 			if err2 := ValidateTagView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	for _, e := range result.Platforms {
+		if e != nil {
+			if err2 := ValidatePlatformView(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
@@ -458,6 +489,9 @@ func ValidateResourceDataViewWithoutVersion(result *ResourceDataView) (err error
 	if result.Tags == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "result"))
 	}
+	if result.Platforms == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("platforms", "result"))
+	}
 	if result.Rating == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "result"))
 	}
@@ -471,6 +505,13 @@ func ValidateResourceDataViewWithoutVersion(result *ResourceDataView) (err error
 	for _, e := range result.Tags {
 		if e != nil {
 			if err2 := ValidateTagView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	for _, e := range result.Platforms {
+		if e != nil {
+			if err2 := ValidatePlatformView(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
@@ -506,6 +547,9 @@ func ValidateResourceDataView(result *ResourceDataView) (err error) {
 	if result.Tags == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "result"))
 	}
+	if result.Platforms == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("platforms", "result"))
+	}
 	if result.Rating == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "result"))
 	}
@@ -522,6 +566,13 @@ func ValidateResourceDataView(result *ResourceDataView) (err error) {
 	for _, e := range result.Tags {
 		if e != nil {
 			if err2 := ValidateTagView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	for _, e := range result.Platforms {
+		if e != nil {
+			if err2 := ValidatePlatformView(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
@@ -627,11 +678,21 @@ func ValidateResourceVersionDataViewMin(result *ResourceVersionDataView) (err er
 	if result.WebURL == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("webURL", "result"))
 	}
+	if result.Platforms == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("platforms", "result"))
+	}
 	if result.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))
 	}
 	if result.WebURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.webURL", *result.WebURL, goa.FormatURI))
+	}
+	for _, e := range result.Platforms {
+		if e != nil {
+			if err2 := ValidatePlatformView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
 	}
 	return
 }
@@ -663,6 +724,9 @@ func ValidateResourceVersionDataViewWithoutResource(result *ResourceVersionDataV
 	if result.UpdatedAt == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("updatedAt", "result"))
 	}
+	if result.Platforms == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("platforms", "result"))
+	}
 	if result.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))
 	}
@@ -671,6 +735,13 @@ func ValidateResourceVersionDataViewWithoutResource(result *ResourceVersionDataV
 	}
 	if result.UpdatedAt != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.updatedAt", *result.UpdatedAt, goa.FormatDateTime))
+	}
+	for _, e := range result.Platforms {
+		if e != nil {
+			if err2 := ValidatePlatformView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
 	}
 	return
 }
@@ -702,6 +773,9 @@ func ValidateResourceVersionDataView(result *ResourceVersionDataView) (err error
 	if result.UpdatedAt == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("updatedAt", "result"))
 	}
+	if result.Platforms == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("platforms", "result"))
+	}
 	if result.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))
 	}
@@ -711,10 +785,28 @@ func ValidateResourceVersionDataView(result *ResourceVersionDataView) (err error
 	if result.UpdatedAt != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.updatedAt", *result.UpdatedAt, goa.FormatDateTime))
 	}
+	for _, e := range result.Platforms {
+		if e != nil {
+			if err2 := ValidatePlatformView(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
 	if result.Resource != nil {
 		if err2 := ValidateResourceDataViewInfo(result.Resource); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
+	}
+	return
+}
+
+// ValidatePlatformView runs the validations defined on PlatformView.
+func ValidatePlatformView(result *PlatformView) (err error) {
+	if result.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "result"))
+	}
+	if result.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
 	}
 	return
 }

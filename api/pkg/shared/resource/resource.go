@@ -34,6 +34,7 @@ type Request struct {
 	Catalogs   []string
 	Categories []string
 	Tags       []string
+	Platforms  []string
 	Limit      uint
 	Version    string
 	Kind       string
@@ -65,6 +66,7 @@ func (r *Request) Query() ([]model.Resource, error) {
 
 	r.Db = r.Db.Select("DISTINCT(resources.id), resources.*").Scopes(
 		filterByTags(r.Tags),
+		filterByPlatforms(r.Platforms),
 		filterByKinds(r.Kinds),
 		filterByCatalogs(r.Catalogs),
 		filterByCategories(r.Categories),
@@ -90,7 +92,7 @@ func (r *Request) AllResources() ([]model.Resource, error) {
 // Fields: ID (Resource ID)
 func (r *Request) AllVersions() ([]model.ResourceVersion, error) {
 
-	q := r.Db.Scopes(orderByVersion, filterByResourceID(r.ID))
+	q := r.Db.Scopes(orderByVersion, filterByResourceID(r.ID)).Preload("Platforms", orderByPlatforms)
 
 	var all []model.ResourceVersion
 	if err := q.Find(&all).Error; err != nil {
@@ -127,7 +129,7 @@ func (r *Request) ByCatalogKindNameVersion() (model.Resource, error) {
 // Field: VersionID
 func (r *Request) ByVersionID() (model.ResourceVersion, error) {
 
-	q := r.Db.Scopes(withResourceVersionDetails, filterByVersionID(r.VersionID))
+	q := r.Db.Scopes(withResourceVersionDetails, filterByVersionID(r.VersionID)).Preload("Platforms", orderByPlatforms)
 
 	var v model.ResourceVersion
 	if err := findOne(q, r.Log, &v); err != nil {
@@ -196,7 +198,9 @@ func withResourceDetails(db *gorm.DB) *gorm.DB {
 		Order("rating DESC, resources.name").
 		Preload("Categories", orderByCategories).
 		Scopes(withCatalogAndTags).
-		Preload("Versions", orderByVersion)
+		Preload("Versions", orderByVersion).
+		Preload("Versions.Platforms", orderByPlatforms).
+		Preload("Platforms", orderByPlatforms)
 }
 
 // withVersionInfo defines a gorm scope to include all details of resource
@@ -205,7 +209,8 @@ func withVersionInfo(version string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.
 			Scopes(withResourceDetails).
-			Preload("Versions", "version = ?", version)
+			Preload("Versions", "version = ?", version).
+			Preload("Versions.Platforms", orderByPlatforms)
 	}
 }
 
@@ -216,7 +221,8 @@ func withResourceVersionDetails(db *gorm.DB) *gorm.DB {
 		Preload("Resource").
 		Preload("Resource.Catalog").
 		Preload("Resource.Categories", orderByCategories).
-		Preload("Resource.Tags", orderByTags)
+		Preload("Resource.Tags", orderByTags).
+		Preload("Resource.Platforms", orderByPlatforms)
 }
 
 func orderByCategories(db *gorm.DB) *gorm.DB {
@@ -225,6 +231,10 @@ func orderByCategories(db *gorm.DB) *gorm.DB {
 
 func orderByTags(db *gorm.DB) *gorm.DB {
 	return db.Order("tags.name ASC")
+}
+
+func orderByPlatforms(db *gorm.DB) *gorm.DB {
+	return db.Order("platforms.name ASC")
 }
 
 func orderByVersion(db *gorm.DB) *gorm.DB {
@@ -291,6 +301,20 @@ func filterByTags(tags []string) func(db *gorm.DB) *gorm.DB {
 			Joins("JOIN resource_tags as rt on rt.resource_id = resources.id").
 			Joins("JOIN tags on tags.id = rt.tag_id").
 			Where("lower(tags.name) in (?)", tags)
+	}
+}
+
+func filterByPlatforms(platforms []string) func(db *gorm.DB) *gorm.DB {
+	if platforms == nil {
+		return noop
+	}
+
+	platforms = lower(platforms)
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Model(&model.Resource{}).
+			Joins("JOIN resource_platforms as rp on rp.resource_id = resources.id").
+			Joins("JOIN platforms on platforms.id = rp.platform_id").
+			Where("lower(platforms.name) in (?)", platforms)
 	}
 }
 

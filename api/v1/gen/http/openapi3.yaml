@@ -177,11 +177,17 @@ paths:
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
+                    platforms:
+                    - id: 1
+                      name: linux/amd64
                     rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
                     updatedAt: 2020-01-01 12:00:00 +0000 UTC
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -206,11 +212,17 @@ paths:
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
+                    platforms:
+                    - id: 1
+                      name: linux/amd64
                     rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
                     updatedAt: 2020-01-01 12:00:00 +0000 UTC
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -325,11 +337,17 @@ paths:
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
+                    platforms:
+                    - id: 1
+                      name: linux/amd64
                     rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
                     updatedAt: 2020-01-01 12:00:00 +0000 UTC
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -421,6 +439,9 @@ paths:
                   displayName: Buildah
                   id: 1
                   minPipelinesVersion: 0.12.1
+                  platforms:
+                  - id: 1
+                    name: linux/s390x
                   rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
                   resource:
                     catalog:
@@ -432,6 +453,9 @@ paths:
                     id: 1
                     kind: task
                     name: buildah
+                    platforms:
+                    - id: 1
+                      name: linux/amd64
                     rating: 4.3
                     tags:
                     - id: 1
@@ -500,11 +524,17 @@ paths:
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
+                    platforms:
+                    - id: 1
+                      name: linux/amd64
                     rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
                     updatedAt: 2020-01-01 12:00:00 +0000 UTC
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -625,6 +655,9 @@ paths:
                   displayName: Buildah
                   id: 1
                   minPipelinesVersion: 0.12.1
+                  platforms:
+                  - id: 1
+                    name: linux/s390x
                   rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
                   resource:
                     catalog:
@@ -636,6 +669,9 @@ paths:
                     id: 1
                     kind: task
                     name: buildah
+                    platforms:
+                    - id: 1
+                      name: linux/amd64
                     rating: 4.3
                     tags:
                     - id: 1
@@ -705,11 +741,17 @@ paths:
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
+                    platforms:
+                    - id: 1
+                      name: linux/amd64
                     rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
                     updatedAt: 2020-01-01 12:00:00 +0000 UTC
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -734,11 +776,17 @@ paths:
                     displayName: Buildah
                     id: 1
                     minPipelinesVersion: 0.12.1
+                    platforms:
+                    - id: 1
+                      name: linux/amd64
                     rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
                     updatedAt: 2020-01-01 12:00:00 +0000 UTC
                     version: "0.1"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
                   name: buildah
+                  platforms:
+                  - id: 1
+                    name: linux/amd64
                   rating: 4.3
                   tags:
                   - id: 1
@@ -920,11 +968,17 @@ components:
             displayName: Buildah
             id: 1
             minPipelinesVersion: 0.12.1
+            platforms:
+            - id: 1
+              name: linux/amd64
             rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
             updatedAt: 2020-01-01 12:00:00 +0000 UTC
             version: "0.1"
             webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
           name: buildah
+          platforms:
+          - id: 1
+            name: linux/amd64
           rating: 4.3
           tags:
           - id: 1
@@ -963,6 +1017,14 @@ components:
           type: string
           description: Name of resource
           example: buildah
+        platforms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+          description: Platforms related to resource
+          example:
+          - id: 1
+            name: linux/amd64
         rating:
           type: number
           description: Rating of resource
@@ -1003,11 +1065,17 @@ components:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
           rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
           webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
         rating: 4.3
         tags:
         - id: 1
@@ -1025,6 +1093,7 @@ components:
       - kind
       - latestVersion
       - tags
+      - platforms
       - rating
       - versions
     ResourceDataCollection:
@@ -1047,11 +1116,17 @@ components:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
           rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
           webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
         rating: 4.3
         tags:
         - id: 1
@@ -1076,11 +1151,17 @@ components:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
           rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
           webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
         rating: 4.3
         tags:
         - id: 1
@@ -1105,11 +1186,17 @@ components:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
           rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           updatedAt: 2020-01-01 12:00:00 +0000 UTC
           version: "0.1"
           webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
         rating: 4.3
         tags:
         - id: 1
@@ -1131,6 +1218,9 @@ components:
           displayName: Buildah
           id: 1
           minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/s390x
           rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
           resource:
             catalog:
@@ -1142,6 +1232,9 @@ components:
             id: 1
             kind: task
             name: buildah
+            platforms:
+            - id: 1
+              name: linux/amd64
             rating: 4.3
             tags:
             - id: 1
@@ -1172,6 +1265,14 @@ components:
           description: Minimum pipelines version the resource's version is compatible
             with
           example: 0.12.1
+        platforms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+          description: Platforms related to resource version
+          example:
+          - id: 1
+            name: linux/s390x
         rawURL:
           type: string
           description: Raw URL of resource's yaml file of the version
@@ -1200,6 +1301,9 @@ components:
         displayName: Buildah
         id: 1
         minPipelinesVersion: 0.12.1
+        platforms:
+        - id: 1
+          name: linux/s390x
         rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
         resource:
           catalog:
@@ -1211,6 +1315,9 @@ components:
           id: 1
           kind: task
           name: buildah
+          platforms:
+          - id: 1
+            name: linux/amd64
           rating: 4.3
           tags:
           - id: 1
@@ -1227,6 +1334,7 @@ components:
       - rawURL
       - webURL
       - updatedAt
+      - platforms
       - resource
     ResourceVersions:
       type: object
@@ -1273,11 +1381,17 @@ components:
             displayName: Buildah
             id: 1
             minPipelinesVersion: 0.12.1
+            platforms:
+            - id: 1
+              name: linux/amd64
             rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
             updatedAt: 2020-01-01 12:00:00 +0000 UTC
             version: "0.1"
             webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
           name: buildah
+          platforms:
+          - id: 1
+            name: linux/amd64
           rating: 4.3
           tags:
           - id: 1
@@ -1302,11 +1416,17 @@ components:
             displayName: Buildah
             id: 1
             minPipelinesVersion: 0.12.1
+            platforms:
+            - id: 1
+              name: linux/amd64
             rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
             updatedAt: 2020-01-01 12:00:00 +0000 UTC
             version: "0.1"
             webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
           name: buildah
+          platforms:
+          - id: 1
+            name: linux/amd64
           rating: 4.3
           tags:
           - id: 1

@@ -331,6 +331,8 @@ type ResourceDataResponseBodyWithoutVersion struct {
 	LatestVersion *ResourceVersionDataResponseBodyWithoutResource `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
 	// Tags related to resource
 	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
+	// Platforms related to resource
+	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
 	// Rating of resource
 	Rating float64 `form:"rating" json:"rating" xml:"rating"`
 }
@@ -372,6 +374,16 @@ type ResourceVersionDataResponseBodyWithoutResource struct {
 	WebURL string `form:"webURL" json:"webURL" xml:"webURL"`
 	// Timestamp when version was last updated
 	UpdatedAt string `form:"updatedAt" json:"updatedAt" xml:"updatedAt"`
+	// Platforms related to resource version
+	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
+}
+
+// PlatformResponseBody is used to define fields on response body types.
+type PlatformResponseBody struct {
+	// ID is the unique id of platform
+	ID uint `form:"id" json:"id" xml:"id"`
+	// Name of platform
+	Name string `form:"name" json:"name" xml:"name"`
 }
 
 // TagResponseBody is used to define fields on response body types.
@@ -401,6 +413,8 @@ type ResourceVersionDataResponseBodyMin struct {
 	RawURL string `form:"rawURL" json:"rawURL" xml:"rawURL"`
 	// Web URL of resource's yaml file of the version
 	WebURL string `form:"webURL" json:"webURL" xml:"webURL"`
+	// Platforms related to resource version
+	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
 }
 
 // ResourceVersionDataResponseBody is used to define fields on response body
@@ -424,6 +438,8 @@ type ResourceVersionDataResponseBody struct {
 	UpdatedAt string `form:"updatedAt" json:"updatedAt" xml:"updatedAt"`
 	// Resource to which the version belongs
 	Resource *ResourceDataResponseBodyInfo `form:"resource" json:"resource" xml:"resource"`
+	// Platforms related to resource version
+	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
 }
 
 // ResourceDataResponseBodyInfo is used to define fields on response body types.
@@ -440,6 +456,8 @@ type ResourceDataResponseBodyInfo struct {
 	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Tags related to resource
 	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
+	// Platforms related to resource
+	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
 	// Rating of resource
 	Rating float64 `form:"rating" json:"rating" xml:"rating"`
 }
@@ -460,6 +478,8 @@ type ResourceDataResponseBody struct {
 	LatestVersion *ResourceVersionDataResponseBodyWithoutResource `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
 	// Tags related to resource
 	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
+	// Platforms related to resource
+	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
 	// Rating of resource
 	Rating float64 `form:"rating" json:"rating" xml:"rating"`
 	// List of all versions of a resource
@@ -752,13 +772,14 @@ func NewByIDNotFoundResponseBody(res *goa.ServiceError) *ByIDNotFoundResponseBod
 }
 
 // NewQueryPayload builds a resource service Query endpoint payload.
-func NewQueryPayload(name string, catalogs []string, categories []string, kinds []string, tags []string, limit uint, match string) *resource.QueryPayload {
+func NewQueryPayload(name string, catalogs []string, categories []string, kinds []string, tags []string, platforms []string, limit uint, match string) *resource.QueryPayload {
 	v := &resource.QueryPayload{}
 	v.Name = name
 	v.Catalogs = catalogs
 	v.Categories = categories
 	v.Kinds = kinds
 	v.Tags = tags
+	v.Platforms = platforms
 	v.Limit = limit
 	v.Match = match
 

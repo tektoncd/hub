@@ -33,7 +33,23 @@
 					"name": "ztag"
 				}
 			],
+			"platforms": [
+				{
+					"id": 1,
+					"name": "linux/amd64"
+				},
+				{
+					"id": 4,
+					"name": "linux/ppc64le"
+				}
+			],
 			"rating": 4.4
-		}
+		},
+		"platforms": [
+			{
+				"id": 1,
+				"name": "linux/amd64"
+			}
+		]
 	}
 }

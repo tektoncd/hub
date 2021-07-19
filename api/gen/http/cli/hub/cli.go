@@ -117,6 +117,7 @@ func ParseEndpoint(
 		resourceQueryCategoriesFlag = resourceQueryFlags.String("categories", "", "")
 		resourceQueryKindsFlag      = resourceQueryFlags.String("kinds", "", "")
 		resourceQueryTagsFlag       = resourceQueryFlags.String("tags", "", "")
+		resourceQueryPlatformsFlag  = resourceQueryFlags.String("platforms", "", "")
 		resourceQueryLimitFlag      = resourceQueryFlags.String("limit", "1000", "")
 		resourceQueryMatchFlag      = resourceQueryFlags.String("match", "contains", "")
 
@@ -405,7 +406,7 @@ func ParseEndpoint(
 			switch epn {
 			case "query":
 				endpoint = c.Query()
-				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryCatalogsFlag, *resourceQueryCategoriesFlag, *resourceQueryKindsFlag, *resourceQueryTagsFlag, *resourceQueryLimitFlag, *resourceQueryMatchFlag)
+				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryCatalogsFlag, *resourceQueryCategoriesFlag, *resourceQueryKindsFlag, *resourceQueryTagsFlag, *resourceQueryPlatformsFlag, *resourceQueryLimitFlag, *resourceQueryMatchFlag)
 			case "list":
 				endpoint = c.List()
 				data, err = resourcec.BuildListPayload(*resourceListLimitFlag)
@@ -655,7 +656,7 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func resourceQueryUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -catalogs JSON -categories JSON -kinds JSON -tags JSON -limit UINT -match STRING
+	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -catalogs JSON -categories JSON -kinds JSON -tags JSON -platforms JSON -limit UINT -match STRING
 
 Find resources by a combination of name, kind , catalog and tags
     -name STRING: 
@@ -663,6 +664,7 @@ Find resources by a combination of name, kind , catalog and tags
     -categories JSON: 
     -kinds JSON: 
     -tags JSON: 
+    -platforms JSON: 
     -limit UINT: 
     -match STRING: 
 
@@ -679,6 +681,9 @@ Example:
    ]' --tags '[
       "image",
       "build"
+   ]' --platforms '[
+      "linux/s390x",
+      "linux/amd64"
    ]' --limit 100 --match "contains"
 `, os.Args[0])
 }

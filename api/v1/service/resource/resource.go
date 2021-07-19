@@ -287,6 +287,15 @@ func initResource(r model.Resource) *resource.ResourceData {
 	res.Rating = r.Rating
 
 	lv := (r.Versions)[len(r.Versions)-1]
+
+	platforms := []*resource.Platform{}
+	for _, platform := range lv.Platforms {
+		platforms = append(platforms, &resource.Platform{
+			ID:   platform.ID,
+			Name: platform.Name,
+		})
+	}
+
 	res.LatestVersion = &resource.ResourceVersionData{
 		ID:                  lv.ID,
 		Version:             lv.Version,
@@ -296,12 +305,21 @@ func initResource(r model.Resource) *resource.ResourceData {
 		WebURL:              lv.URL,
 		RawURL:              getStringReplacer(lv.URL).Replace(lv.URL),
 		UpdatedAt:           lv.ModifiedAt.UTC().Format(time.RFC3339),
+		Platforms:           platforms,
 	}
 	res.Tags = []*resource.Tag{}
 	for _, tag := range r.Tags {
 		res.Tags = append(res.Tags, &resource.Tag{
 			ID:   tag.ID,
 			Name: tag.Name,
+		})
+	}
+
+	res.Platforms = []*resource.Platform{}
+	for _, platform := range r.Platforms {
+		res.Platforms = append(res.Platforms, &resource.Platform{
+			ID:   platform.ID,
+			Name: platform.Name,
 		})
 	}
 
@@ -332,6 +350,14 @@ func minVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 	res := tinyVersionInfo(r)
 	res.WebURL = r.URL
 	res.RawURL = getStringReplacer(r.URL).Replace(r.URL)
+	platforms := []*resource.Platform{}
+	for _, platform := range r.Platforms {
+		platforms = append(platforms, &resource.Platform{
+			ID:   platform.ID,
+			Name: platform.Name,
+		})
+	}
+	res.Platforms = platforms
 
 	return res
 }
@@ -343,6 +369,14 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		tags = append(tags, &resource.Tag{
 			ID:   tag.ID,
 			Name: tag.Name,
+		})
+	}
+
+	var platforms []*resource.Platform
+	for _, platform := range r.Platforms {
+		platforms = append(platforms, &resource.Platform{
+			ID:   platform.ID,
+			Name: platform.Name,
 		})
 	}
 
@@ -360,6 +394,7 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		Kind:       r.Kind,
 		Rating:     r.Rating,
 		Tags:       tags,
+		Platforms:  platforms,
 		Categories: categories,
 		Catalog: &resource.Catalog{
 			ID:   r.Catalog.ID,
@@ -369,6 +404,13 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 	}
 
 	v := r.Versions[0]
+	var verPlatforms []*resource.Platform
+	for _, platform := range v.Platforms {
+		verPlatforms = append(verPlatforms, &resource.Platform{
+			ID:   platform.ID,
+			Name: platform.Name,
+		})
+	}
 	ver := &resource.ResourceVersionData{
 		ID:                  v.ID,
 		Version:             v.Version,
@@ -379,6 +421,7 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		RawURL:              getStringReplacer(v.URL).Replace(v.URL),
 		UpdatedAt:           v.ModifiedAt.UTC().Format(time.RFC3339),
 		Resource:            res,
+		Platforms:           verPlatforms,
 	}
 
 	return &resource.ResourceVersion{Data: ver}
