@@ -61,10 +61,12 @@ var taskResWithLatestVersion = &res.ResourceVersionData{
 	},
 }
 
+var deprecated = true
 var taskResWithOldVersion = &res.ResourceVersionData{
 	ID:                  12,
 	Version:             "0.1",
 	Description:         "Description for task foo-bar version 0.1",
+	Deprecated:          &deprecated,
 	MinPipelinesVersion: "0.12",
 	RawURL:              "http://raw.github.url/foo-bar/",
 	WebURL:              "http://web.github.com/foo-bar/",
