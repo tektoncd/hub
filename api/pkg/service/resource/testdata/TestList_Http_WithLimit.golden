@@ -23,12 +23,24 @@
 				"minPipelinesVersion": "0.15.0",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.2/tekton.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 2,
+						"name": "linux/s390x"
+					}
+				]
 			},
 			"tags": [
 				{
 					"id": 2,
 					"name": "rtag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
 				}
 			],
 			"rating": 5
@@ -56,12 +68,24 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tkn/0.1/tkn.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tkn/0.1/tkn.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 1,
+						"name": "linux/amd64"
+					}
+				]
 			},
 			"tags": [
 				{
 					"id": 2,
 					"name": "rtag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
 				}
 			],
 			"rating": 5

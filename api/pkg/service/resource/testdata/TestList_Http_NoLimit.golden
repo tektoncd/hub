@@ -23,12 +23,24 @@
 				"minPipelinesVersion": "0.15.0",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.2/tekton.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 2,
+						"name": "linux/s390x"
+					}
+				]
 			},
 			"tags": [
 				{
 					"id": 2,
 					"name": "rtag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
 				}
 			],
 			"rating": 5
@@ -56,12 +68,24 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tkn/0.1/tkn.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tkn/0.1/tkn.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 1,
+						"name": "linux/amd64"
+					}
+				]
 			},
 			"tags": [
 				{
 					"id": 2,
 					"name": "rtag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
 				}
 			],
 			"rating": 5
@@ -84,12 +108,24 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.myghe.com/Pipelines-Marketplace/catalog-community/master/task/tkn-enterprise/0.1/tkn-enterprise.yaml",
 				"webURL": "https://myghe.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-enterprise/0.1/tkn-enterprise.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 3,
+						"name": "linux/arm64"
+					}
+				]
 			},
 			"tags": [
 				{
 					"id": 2,
 					"name": "rtag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 1,
+					"name": "linux/amd64"
 				}
 			],
 			"rating": 5
@@ -117,12 +153,24 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog-community/master/task/tkn-hub/0.1/tkn-hub.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-hub/0.1/tkn-hub.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 1,
+						"name": "linux/amd64"
+					}
+				]
 			},
 			"tags": [
 				{
 					"id": 2,
 					"name": "rtag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
 				}
 			],
 			"rating": 5
@@ -150,7 +198,13 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/build/0.2/build.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/build/0.2/build.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 1,
+						"name": "linux/amd64"
+					}
+				]
 			},
 			"tags": [
 				{
@@ -160,6 +214,16 @@
 				{
 					"id": 1,
 					"name": "ztag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 1,
+					"name": "linux/amd64"
+				},
+				{
+					"id": 4,
+					"name": "linux/ppc64le"
 				}
 			],
 			"rating": 4.4
@@ -182,9 +246,16 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog-community/master/task/img/0.1/img.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/img/0.1/img.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 1,
+						"name": "linux/amd64"
+					}
+				]
 			},
 			"tags": [],
+			"platforms": [],
 			"rating": 2.3
 		},
 		{
@@ -210,12 +281,24 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/img/0.1/img.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/img/0.1/img.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 3,
+						"name": "linux/arm64"
+					}
+				]
 			},
 			"tags": [
 				{
 					"id": 3,
 					"name": "ptag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 3,
+					"name": "linux/arm64"
 				}
 			],
 			"rating": 2
@@ -243,12 +326,24 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/buildah/0.1/buildah.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/buildah/0.1/buildah.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 2,
+						"name": "linux/s390x"
+					}
+				]
 			},
 			"tags": [
 				{
 					"id": 1,
 					"name": "ztag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 1,
+					"name": "linux/amd64"
 				}
 			],
 			"rating": 1.3

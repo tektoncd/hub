@@ -33,6 +33,19 @@ var Tag = Type("Tag", func() {
 
 var Tags = ArrayOf(Tag)
 
+var Platform = Type("Platform", func() {
+	Attribute("id", UInt, "ID is the unique id of platform", func() {
+		Example("id", 1)
+	})
+	Attribute("name", String, "Name of platform", func() {
+		Example("name", "linux/amd64")
+	})
+
+	Required("id", "name")
+})
+
+var Platforms = ArrayOf(Platform)
+
 var Category = Type("Category", func() {
 	Attribute("id", UInt, "ID is the unique id of the category", func() {
 		Example("id", 1)
@@ -107,6 +120,13 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Format(FormatDateTime)
 		Example("updatedAt", "2020-01-01 12:00:00 +0000 UTC")
 	})
+	Attribute("platforms", Platforms, "Platforms related to resource version", func() {
+		Example("platforms", func() {
+			Value([]Val{
+				{"id": 1, "name": "linux/s390x"},
+			})
+		})
+	})
 	Attribute("resource", ResourceData, "Resource to which the version belongs", func() {
 		View("info")
 		Example("resource", func() {
@@ -117,6 +137,7 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 				"categories": []Val{{"id": 1, "name": "Build Tools"}},
 				"kind":       "task",
 				"tags":       []Val{{"id": 1, "name": "image-build"}},
+				"platforms":  []Val{{"id": 1, "name": "linux/amd64"}},
 				"rating":     4.3,
 			})
 		})
@@ -132,6 +153,7 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("version")
 		Attribute("rawURL")
 		Attribute("webURL")
+		Attribute("platforms")
 	})
 
 	View("withoutResource", func() {
@@ -143,6 +165,7 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("rawURL")
 		Attribute("webURL")
 		Attribute("updatedAt")
+		Attribute("platforms")
 	})
 
 	View("default", func() {
@@ -155,9 +178,10 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("webURL")
 		Attribute("updatedAt")
 		Attribute("resource")
+		Attribute("platforms")
 	})
 
-	Required("id", "version", "displayName", "description", "minPipelinesVersion", "rawURL", "webURL", "updatedAt", "resource")
+	Required("id", "version", "displayName", "description", "minPipelinesVersion", "rawURL", "webURL", "updatedAt", "platforms", "resource")
 })
 
 var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData", func() {
@@ -197,6 +221,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 				"rawURL":              "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml",
 				"webURL":              "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml",
 				"updatedAt":           "2020-01-01 12:00:00 +0000 UTC",
+				"platforms":           []Val{{"id": 1, "name": "linux/amd64"}},
 			})
 		})
 	})
@@ -204,6 +229,14 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Example("tags", func() {
 			Value([]Val{
 				{"id": 1, "name": "image-build"},
+			})
+		})
+	})
+
+	Attribute("platforms", Platforms, "Platforms related to resource", func() {
+		Example("platforms", func() {
+			Value([]Val{
+				{"id": 1, "name": "linux/amd64"},
 			})
 		})
 	})
@@ -229,6 +262,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Attribute("categories")
 		Attribute("kind")
 		Attribute("tags")
+		Attribute("platforms")
 		Attribute("rating")
 	})
 
@@ -242,6 +276,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Attribute("kind")
 		Attribute("latestVersion")
 		Attribute("tags")
+		Attribute("platforms")
 		Attribute("rating")
 	})
 
@@ -253,13 +288,14 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Attribute("kind")
 		Attribute("latestVersion")
 		Attribute("tags")
+		Attribute("platforms")
 		Attribute("rating")
 		Attribute("versions", func() {
 			View("tiny")
 		})
 	})
 
-	Required("id", "name", "catalog", "categories", "kind", "latestVersion", "tags", "rating", "versions")
+	Required("id", "name", "catalog", "categories", "kind", "latestVersion", "tags", "platforms", "rating", "versions")
 })
 
 var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {

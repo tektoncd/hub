@@ -23,7 +23,13 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/build/0.2/build.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/build/0.2/build.yaml",
-				"updatedAt": "2013-01-01T00:00:01Z"
+				"updatedAt": "2013-01-01T00:00:01Z",
+				"platforms": [
+					{
+						"id": 1,
+						"name": "linux/amd64"
+					}
+				]
 			},
 			"tags": [
 				{
@@ -33,6 +39,16 @@
 				{
 					"id": 1,
 					"name": "ztag"
+				}
+			],
+			"platforms": [
+				{
+					"id": 1,
+					"name": "linux/amd64"
+				},
+				{
+					"id": 4,
+					"name": "linux/ppc64le"
 				}
 			],
 			"rating": 4.4

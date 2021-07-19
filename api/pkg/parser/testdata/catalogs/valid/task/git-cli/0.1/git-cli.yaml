@@ -9,6 +9,7 @@ metadata:
     tekton.dev/pipelines.minVersion: "0.12.1"
     tekton.dev/tags: git
     tekton.dev/displayName: "git cli"
+    tekton.dev/platforms: "linux/s390x"
 spec:
   description: >-
     This task can be used to perform git operations.

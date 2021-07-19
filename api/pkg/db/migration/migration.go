@@ -38,6 +38,7 @@ func Migrate(api *app.APIBase) error {
 			addAvatarURLColumnInUsersTable(log),
 			refreshAllTables(log),
 			updateResourcesCategoryTable(log),
+			createPlatformTables(log),
 		},
 	)
 
@@ -54,6 +55,9 @@ func Migrate(api *app.APIBase) error {
 			&model.SyncJob{},
 			&model.Scope{},
 			&model.Config{},
+			&model.Platform{},
+			&model.VersionPlatform{},
+			&model.ResourcePlatform{},
 		); err != nil {
 			log.Error(err)
 			return err

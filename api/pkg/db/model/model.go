@@ -33,6 +33,13 @@ type (
 		Resources []*Resource `gorm:"many2many:resource_tags;"`
 	}
 
+	Platform struct {
+		gorm.Model
+		Name             string             `gorm:"not null;unique"`
+		ResourceVersions []*ResourceVersion `gorm:"many2many:version_platforms;"`
+		Resource         []*Resource        `gorm:"many2many:resource_platforms;"`
+	}
+
 	Catalog struct {
 		gorm.Model
 		Name       string `gorm:"uniqueIndex:uix_name_org"`
@@ -63,7 +70,8 @@ type (
 		Categories []*Category `gorm:"many2many:resource_categories;"`
 		CatalogID  uint
 		Versions   []ResourceVersion
-		Tags       []*Tag `gorm:"many2many:resource_tags;"`
+		Tags       []*Tag      `gorm:"many2many:resource_tags;"`
+		Platforms  []*Platform `gorm:"many2many:resource_platforms;constraint:OnDelete:CASCADE;"`
 	}
 
 	ResourceVersion struct {
@@ -75,12 +83,23 @@ type (
 		MinPipelinesVersion string `gorm:"not null;default:null"`
 		Resource            Resource
 		ResourceID          uint
+		Platforms           []*Platform `gorm:"many2many:version_platforms;constraint:OnDelete:CASCADE;"`
 		ModifiedAt          time.Time
 	}
 
 	ResourceTag struct {
 		ResourceID uint
 		TagID      uint
+	}
+
+	VersionPlatform struct {
+		ResourceVersionID uint
+		PlatformID        uint
+	}
+
+	ResourcePlatform struct {
+		ResourceID uint
+		PlatformID uint
 	}
 
 	ResourceCategory struct {

@@ -262,8 +262,10 @@ func (s *syncer) updateResources(
 
 		rerr.Combine(s.updateResourceCategory(txn, log, &dbRes, r.Categories))
 		s.updateResourceTags(txn, log, &dbRes, r.Tags)
-		s.updateResourceVersions(txn, log, catalog, dbRes.ID, r.Versions)
-
+		// platform ids on resource version level
+		verPlatformIds := map[uint]bool{}
+		s.updateResourceVersions(txn, log, catalog, dbRes.ID, r.Versions, &verPlatformIds)
+		s.updateResourcePlatforms(txn, log, &dbRes, verPlatformIds)
 	}
 	return rerr, nil
 }
@@ -286,6 +288,24 @@ func (s *syncer) updateResourceTags(
 		txn.Model(&model.ResourceTag{}).Where(resTag).FirstOrCreate(&resTag)
 		log.Infof("Resource: %d: %s | tag: %s (%d)", res.ID, res.Name, tag.Name, tag.ID)
 	}
+}
+
+func (s *syncer) updateResourcePlatforms(
+	txn *gorm.DB, log *zap.SugaredLogger,
+	res *model.Resource, verPlatformIds map[uint]bool) {
+	platformIds := []uint{}
+	for verPlatformId := range verPlatformIds {
+		platformIds = append(platformIds, verPlatformId)
+		platform := model.Platform{}
+		txn.First(&platform, verPlatformId)
+		resPlatform := model.ResourcePlatform{ResourceID: res.ID, PlatformID: verPlatformId}
+		txn.Model(&model.ResourcePlatform{}).Where(resPlatform).FirstOrCreate(&resPlatform)
+		log.Infof("Resource: %d: %s | platform: %s (%d)", res.ID, res.Name, platform.Name, platform.ID)
+	}
+	// remove mapping for the platforms, which are not in the list
+	txn.Unscoped().Where(&model.ResourcePlatform{ResourceID: res.ID}).
+		Not(map[string]interface{}{"platform_id": platformIds}).
+		Delete(&model.ResourcePlatform{})
 }
 
 func (s *syncer) updateResourceCategory(txn *gorm.DB, log *zap.SugaredLogger,
@@ -314,7 +334,8 @@ func (s *syncer) updateResourceVersions(
 	txn *gorm.DB, log *zap.SugaredLogger,
 	catalog *model.Catalog,
 	resourceID uint,
-	versions []parser.VersionInfo) {
+	versions []parser.VersionInfo,
+	verPlatformIds *map[uint]bool) {
 
 	for _, v := range versions {
 		ver := model.ResourceVersion{
@@ -333,6 +354,27 @@ func (s *syncer) updateResourceVersions(
 
 		txn.Save(&ver)
 		log.Infof(" Version: %d -> %s | Path: %s ", ver.ID, ver.Version, v.Path)
+
+		platforms := v.Platforms
+		if len(platforms) == 0 {
+			return
+		}
+		platformIds := []uint{}
+		for _, p := range platforms {
+
+			platform := model.Platform{Name: p}
+			txn.Model(&model.Platform{}).Where(&model.Platform{Name: p}).FirstOrCreate(&platform)
+			platformIds = append(platformIds, platform.ID)
+			verPlatform := model.VersionPlatform{ResourceVersionID: ver.ID, PlatformID: platform.ID}
+			txn.Model(&model.VersionPlatform{}).Where(verPlatform).FirstOrCreate(&verPlatform)
+			//save unique platform ids
+			(*verPlatformIds)[platform.ID] = true
+			log.Infof("Resource version: %d -> %s | platform: %s (%d)", ver.ID, ver.Version, platform.Name, platform.ID)
+		}
+		// remove mapping for the platforms, which are not in the list
+		txn.Unscoped().Where(&model.VersionPlatform{ResourceVersionID: ver.ID}).
+			Not(map[string]interface{}{"platform_id": platformIds}).
+			Delete(&model.VersionPlatform{})
 	}
 }
 

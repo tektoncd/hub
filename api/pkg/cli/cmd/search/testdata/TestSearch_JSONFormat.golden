@@ -20,9 +20,11 @@
 				"RawURL": "http://raw.github.url/foo-bar/",
 				"WebURL": "http://web.github.com/foo-bar/",
 				"UpdatedAt": "2020-01-01 12:00:00 +0000 UTC",
+				"Platforms": null,
 				"Resource": null
 			},
 			"Tags": [],
+			"Platforms": null,
 			"Rating": 4,
 			"Versions": null
 		}
