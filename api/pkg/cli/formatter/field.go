@@ -124,9 +124,12 @@ func findSpaceIndexFromLast(str string) int {
 
 // FormatVersion returns version appended with (latest) if the
 // latest field passed is true
-func FormatVersion(version string, latest bool) string {
+func FormatVersion(version string, latest bool, deprecated bool) string {
 	if latest {
 		return version + " (Latest)"
+	}
+	if deprecated {
+		return version + " (Deprecated)"
 	}
 	return version
 }

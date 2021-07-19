@@ -80,10 +80,13 @@ func TestWrapText(t *testing.T) {
 }
 
 func TestFormatVersion(t *testing.T) {
-	got := FormatVersion("0.1", false)
+	got := FormatVersion("0.1", false, false)
 	assert.Equal(t, "0.1", got)
 
-	got = FormatVersion("0.1", true)
+	got = FormatVersion("0.1", false, true)
+	assert.Equal(t, "0.1 (Deprecated)", got)
+
+	got = FormatVersion("0.1", true, false)
 	assert.Equal(t, "0.1 (Latest)", got)
 }
 
