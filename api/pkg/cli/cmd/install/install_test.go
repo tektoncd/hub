@@ -59,6 +59,36 @@ var resVersion = &res.ResourceVersionData{
 	},
 }
 
+var deprecated = true
+var resDeprecatedVersion = &res.ResourceVersionData{
+	ID:                  11,
+	Version:             "0.2",
+	DisplayName:         "foo-bar",
+	Description:         "v0.2 Task to run foo",
+	Deprecated:          &deprecated,
+	MinPipelinesVersion: "0.12",
+	RawURL:              "http://raw.github.url/foo/0.2/foo.yaml",
+	WebURL:              "http://web.github.com/foo/0.2/foo.yaml",
+	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
+	Resource: &res.ResourceData{
+		ID:   1,
+		Name: "foo",
+		Kind: "Task",
+		Catalog: &res.Catalog{
+			ID:   1,
+			Name: "tekton",
+			Type: "community",
+		},
+		Rating: 4.8,
+		Tags: []*res.Tag{
+			{
+				ID:   3,
+				Name: "cli",
+			},
+		},
+	},
+}
+
 func TestInstall_NewResource(t *testing.T) {
 	cli := test.NewCLI()
 
@@ -411,5 +441,47 @@ func TestInstall_RespectingPipelinesVersionFailure(t *testing.T) {
 	err = opts.run()
 	assert.Error(t, err)
 	assert.EqualError(t, err, "Task foo(0.3) requires Tekton Pipelines min version v0.12 but found v0.11.0")
+	assert.Equal(t, gock.IsDone(), true)
+}
+
+func TestInstall_DeprecatedVersion(t *testing.T) {
+	cli := test.NewCLI()
+
+	defer gock.Off()
+
+	resVersion := &res.ResourceVersion{Data: resDeprecatedVersion}
+	res := res.NewViewedResourceVersion(resVersion, "0.2")
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.2").
+		Reply(200).
+		JSON(&res.Projected)
+
+	gock.New("http://raw.github.url").
+		Get("/foo/0.2/foo.yaml").
+		Reply(200).
+		File("./testdata/foo-v0.2.yaml")
+
+	buf := new(bytes.Buffer)
+	cli.SetStream(buf, buf)
+
+	version := "v1beta1"
+	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme())
+
+	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{})
+	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
+
+	opts := &options{
+		cs:      test.FakeClientSet(cs.Pipeline, dynamic, "hub"),
+		cli:     cli,
+		kind:    "task",
+		args:    []string{"foo"},
+		from:    "tekton",
+		version: "0.2",
+	}
+
+	err := opts.run()
+
+	assert.NoError(t, err)
+	assert.Equal(t, "WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v0.12\nWARN: This version has been deprecated\nTask foo(0.2) installed in hub namespace\n", buf.String())
 	assert.Equal(t, gock.IsDone(), true)
 }
