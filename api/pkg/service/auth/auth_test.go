@@ -235,7 +235,7 @@ func TestLogin_UserAddedByConfig(t *testing.T) {
 		Get("/user").
 		Reply(200).
 		JSON(map[string]string{
-			"login":      "config-user",
+			"login":      "Config-user",
 			"name":       "config-user",
 			"avatar_url": "http://config",
 		})
@@ -248,20 +248,22 @@ func TestLogin_UserAddedByConfig(t *testing.T) {
 	res, err := authSvc.Authenticate(context.Background(), payload)
 	assert.NoError(t, err)
 
+
 	// expected access jwt for user
-	user, accessToken, err := tc.UserWithScopes("config-user", "rating:read", "rating:write", "config:refresh")
-	assert.Equal(t, user.GithubLogin, "config-user")
+	user, accessToken, err := tc.UserWithScopes("Config-user", "rating:read", "rating:write", "config:refresh")
+	assert.Equal(t, user.GithubLogin, "Config-user")
 	assert.NoError(t, err)
 
 	// validate the avatar_url of user after login
 	ut := &model.User{}
 	err = tc.DB().First(ut, user.ID).Error
 	assert.NoError(t, err)
+	assert.Equal(t, "Config-user", ut.GithubLogin)
 	assert.Equal(t, "http://config", ut.AvatarURL)
 
 	// expected refresh jwt for user
-	user, refreshToken, err := tc.RefreshTokenForUser("config-user")
-	assert.Equal(t, user.GithubLogin, "config-user")
+	user, refreshToken, err := tc.RefreshTokenForUser("Config-user")
+	assert.Equal(t, user.GithubLogin, "Config-user")
 	assert.NoError(t, err)
 
 	accessExpiryTime := testutils.Now().Add(tc.JWTConfig().AccessExpiresIn).Unix()
