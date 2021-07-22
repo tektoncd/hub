@@ -41,6 +41,7 @@ func Migrate(api *app.APIBase) error {
 			createPlatformTables(log),
 			addDeprecatedColumnInResoureVersionTable(log),
 			addProviderColumnInCatalogsTable(log),
+			addOnDeleteConstraints(log),
 		},
 	)
 
@@ -57,9 +58,6 @@ func Migrate(api *app.APIBase) error {
 			&model.SyncJob{},
 			&model.Scope{},
 			&model.Config{},
-			&model.Platform{},
-			&model.VersionPlatform{},
-			&model.ResourcePlatform{},
 		); err != nil {
 			log.Error(err)
 			return err

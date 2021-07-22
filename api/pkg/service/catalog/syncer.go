@@ -238,6 +238,7 @@ func (s *syncer) updateResources(
 		return parser.Result{}, nil
 	}
 
+	var syncResourceID []uint
 	rerr := parser.Result{}
 	for _, r := range res {
 
@@ -257,6 +258,7 @@ func (s *syncer) updateResources(
 		if err := txn.Save(&dbRes).Error; err != nil {
 			return parser.Result{}, err
 		}
+		syncResourceID = append(syncResourceID, dbRes.ID)
 
 		log.Infof("Resource: %s  ID: %d stored", r.Name, dbRes.ID)
 
@@ -267,6 +269,28 @@ func (s *syncer) updateResources(
 		s.updateResourceVersions(txn, log, catalog, dbRes.ID, r.Versions, &verPlatformIds)
 		s.updateResourcePlatforms(txn, log, &dbRes, verPlatformIds)
 	}
+
+	var dltRes []model.Resource
+	// Finds db resources which are deleted
+	if err := txn.Model(&model.Resource{}).Where(&model.Resource{CatalogID: catalog.ID}).Not(map[string]interface{}{"id": syncResourceID}).Find(&dltRes).Error; err != nil {
+		log.Error(err)
+		return rerr, err
+	}
+
+	for _, r := range dltRes {
+		var tags []model.ResourceTag
+		var platforms []model.ResourcePlatform
+		txn.Where(&model.ResourceTag{ResourceID: r.ID}).Find(&tags)
+		if err := txn.Where(&model.ResourcePlatform{ResourceID: r.ID}).Find(&platforms).Error; err != nil {
+			log.Error(err)
+			return rerr, err
+		}
+
+		s.deleteResource(txn, log, r)
+		s.deleteTag(txn, log, tags)
+		s.deletePlatform(txn, log, platforms)
+	}
+
 	return rerr, nil
 }
 
@@ -411,4 +435,40 @@ func (s *syncer) updateCatalogResult(
 		}
 	}
 	return nil
+}
+
+// Delete the resource by id
+func (s *syncer) deleteResource(txn *gorm.DB, log *zap.SugaredLogger, res model.Resource) {
+
+	txn.Unscoped().Where("id = ?", res.ID).Delete(&model.Resource{})
+
+	log.Infof("Resource %s of kind %s has been deleted", res.Name, res.Kind)
+}
+
+// Delete the tags which doesn't belongs to any other existing resources
+func (s *syncer) deleteTag(txn *gorm.DB, log *zap.SugaredLogger, tags []model.ResourceTag) {
+
+	for _, t := range tags {
+		var resTag []model.ResourceTag
+		txn.Where(&model.ResourceTag{TagID: t.TagID}).Find(&resTag)
+
+		if len(resTag) == 0 {
+			txn.Unscoped().Where("id = ?", t.TagID).Delete(&model.Tag{})
+			log.Infof("Tag with ID: %d has been deleted", t.TagID)
+		}
+	}
+}
+
+// Delete the platforms which doesn't belongs to any other existing resources
+func (s *syncer) deletePlatform(txn *gorm.DB, log *zap.SugaredLogger, platforms []model.ResourcePlatform) {
+
+	for _, t := range platforms {
+		var resPlatform []model.ResourcePlatform
+		txn.Model(&model.ResourcePlatform{}).Where("platform_id= ?", t.PlatformID).Find(&resPlatform)
+
+		if len(resPlatform) == 0 {
+			txn.Unscoped().Where("id = ?", t.PlatformID).Delete(&model.Platform{})
+			log.Infof("Platform with ID: %d has been deleted", t.PlatformID)
+		}
+	}
 }
