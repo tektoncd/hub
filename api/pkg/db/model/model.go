@@ -36,8 +36,8 @@ type (
 	Platform struct {
 		gorm.Model
 		Name             string             `gorm:"not null;unique"`
-		ResourceVersions []*ResourceVersion `gorm:"many2many:version_platforms;"`
-		Resource         []*Resource        `gorm:"many2many:resource_platforms;"`
+		ResourceVersions []*ResourceVersion `gorm:"many2many:version_platforms;constraint:OnDelete:CASCADE;"`
+		Resource         []*Resource        `gorm:"many2many:resource_platforms;constraint:OnDelete:CASCADE;"`
 	}
 
 	Catalog struct {
@@ -68,11 +68,11 @@ type (
 		Kind       string `gorm:"not null;default:null"`
 		Rating     float64
 		Catalog    Catalog
-		Categories []*Category `gorm:"many2many:resource_categories;"`
+		Categories []*Category `gorm:"many2many:resource_categories;constraint:OnDelete:CASCADE;"`
 		CatalogID  uint
-		Versions   []ResourceVersion
-		Tags       []*Tag      `gorm:"many2many:resource_tags;"`
-		Platforms  []*Platform `gorm:"many2many:resource_platforms;constraint:OnDelete:CASCADE;"`
+		Platforms  []*Platform       `gorm:"many2many:resource_platforms;constraint:OnDelete:CASCADE;"`
+		Versions   []ResourceVersion `gorm:"constraint:OnDelete:CASCADE;"`
+		Tags       []*Tag            `gorm:"many2many:resource_tags;constraint:OnDelete:CASCADE;"`
 	}
 
 	ResourceVersion struct {
@@ -81,9 +81,9 @@ type (
 		Description         string
 		URL                 string `gorm:"not null;default:null"`
 		DisplayName         string
-		Deprecated          bool   `gorm:"default:false"`
-		MinPipelinesVersion string `gorm:"not null;default:null"`
-		Resource            Resource
+		Deprecated          bool     `gorm:"default:false"`
+		MinPipelinesVersion string   `gorm:"not null;default:null"`
+		Resource            Resource `gorm:"constraint:OnDelete:CASCADE;"`
 		ResourceID          uint
 		Platforms           []*Platform `gorm:"many2many:version_platforms;constraint:OnDelete:CASCADE;"`
 		ModifiedAt          time.Time
@@ -129,7 +129,7 @@ type (
 		gorm.Model
 		UserID     uint
 		User       User
-		Resource   Resource
+		Resource   Resource `gorm:"constraint:OnDelete:CASCADE;"`
 		ResourceID uint
 		Rating     uint `gorm:"not null;default:null"`
 	}
