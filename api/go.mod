@@ -3,6 +3,7 @@ module github.com/tektoncd/hub/api
 go 1.14
 
 require (
+	git.maze.io/go/duration v0.0.0-20160924141736-faac084b6075
 	github.com/AlecAivazis/survey/v2 v2.2.12
 	github.com/Netflix/go-expect v0.0.0-20200312175327-da48e75238e2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -35,5 +36,4 @@ require (
 	k8s.io/apimachinery v0.19.7
 	k8s.io/client-go v0.19.7
 	knative.dev/pkg v0.0.0-20210331065221-952fdd90dbb0
-	maze.io/x/duration v0.0.0-20160924141736-faac084b6075
 )
