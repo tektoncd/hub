@@ -51,6 +51,7 @@ export const UpdateURL = (
   // Sets tag params
   if (tags.length > 0) {
     searchParams.delete(Params.Query);
+    searchParams.delete(Params.Tag);
     tags.forEach((t: string) => {
       searchParams.append(Params.Tag, t);
     });
