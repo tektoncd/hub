@@ -73,11 +73,10 @@ const Header: React.FC = observer(() => {
         <Grid>
           <TextContent>
             <TextList>
-              <TextListItem>Press `/` to quick focus on search</TextListItem>
-              <TextListItem>Search resources by it&#39;s name, displayName and tags</TextListItem>
+              <TextListItem>Press `/` to quickly focus on search.</TextListItem>
+              <TextListItem>Search resources by name, displayName, and tags.</TextListItem>
               <TextListItem>
-                Filter resources by tags with searching tags in a specific format e.g.
-                `tags:tagA,tagB`
+                Filter resources by tags using the qualifier like `tags:tagA,tagB`
               </TextListItem>
             </TextList>
           </TextContent>
