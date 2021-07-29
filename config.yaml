@@ -14,25 +14,37 @@
 ---
 categories:
   - name: Automation
+    tags: [ansible, boskos, ci, jenkins, operator, release-automation, tekton]
   - name: Build Tools
+    tags: [build-tool]
   - name: CLI
+    tags: [cli, kubectl]
   - name: Cloud
-  - name: Code Quality
-  - name: Continuous Integration
-  - name: Deployment
-  - name: Developer Tools
-  - name: Image Build
-  - name: Integration & Delivery
+    tags: [aws, azure, cloud, gcp, gke, openshift]
+  - name: Deploy
+    tags: [canary, deploy, deployment, helm, istio]
+  - name: Editor
+    tags: [editor, formatter, lint, linter, pylint]
   - name: Git
-  - name: Kubernetes
+    tags: [git, github, gitlab, scm]
+  - name: Image Build
+    tags: [docker, image-build, build, build-image]
+  - name: Language
+    tags: [golang, python]
   - name: Messaging
+    tags: [mail, messaging]
   - name: Monitoring
-  - name: Networking
-  - name: Openshift
-  - name: Publishing
+    tags: [prometheus]
+  - name: Notification
+    tags: [notification]
+  - name: Others
+    tags: [annotations, delete, dind, download, gate, generic, package, powershell, pwsh, remote, search, scorecard]
   - name: Security
+    Tags: [security, ssh, tokens]
   - name: Storage
-  - name: Testing
+    Tags: [gcs]
+  - name: Test Framework
+    tags: [coverage, test, pytest]
 
 catalogs:
   - name: tekton
@@ -53,6 +65,7 @@ default:
   scopes:
     - rating:read
     - rating:write
+
 # Template
 # catalogs:
 #   - name: Name of Catalog
