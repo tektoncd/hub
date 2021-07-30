@@ -1,2 +1,2 @@
 /// <reference types="react-scripts" />
-declare module 'react-ghe-login';
+declare module '@seiboston/react-ghe-login';
