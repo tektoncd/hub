@@ -15,11 +15,12 @@
 # NOTE:
 # This record is added to make sure the sync_jobs table state remains same
 # for every catalog refresh test. not adding this will fails the test due to the
-# sequence which will be out of sync and have to manually bring it back in sync. 
+# sequence which will be out of sync and have to manually bring it back in sync.
 # Error: ERROR: duplicate key value violates unique constraint "sync_jobs_pkey"
 
 - id: 1
-  user_id: 1
+  user_id: 11
+  catalog_id: 1
   status: done
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
