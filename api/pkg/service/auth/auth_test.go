@@ -235,7 +235,7 @@ func TestLogin_UserAddedByConfig(t *testing.T) {
 		Get("/user").
 		Reply(200).
 		JSON(map[string]string{
-			"login":      "Config-user",
+			"login":      "config-user",
 			"name":       "config-user",
 			"avatar_url": "http://config",
 		})
@@ -248,28 +248,86 @@ func TestLogin_UserAddedByConfig(t *testing.T) {
 	res, err := authSvc.Authenticate(context.Background(), payload)
 	assert.NoError(t, err)
 
-
 	// expected access jwt for user
-	user, accessToken, err := tc.UserWithScopes("Config-user", "rating:read", "rating:write", "config:refresh")
-	assert.Equal(t, user.GithubLogin, "Config-user")
+	user, accessToken, err := tc.UserWithScopes("config-user", "rating:read", "rating:write", "config:refresh")
+	assert.Equal(t, user.GithubLogin, "config-user")
 	assert.NoError(t, err)
 
 	// validate the avatar_url of user after login
 	ut := &model.User{}
 	err = tc.DB().First(ut, user.ID).Error
 	assert.NoError(t, err)
-	assert.Equal(t, "Config-user", ut.GithubLogin)
 	assert.Equal(t, "http://config", ut.AvatarURL)
 
 	// expected refresh jwt for user
-	user, refreshToken, err := tc.RefreshTokenForUser("Config-user")
-	assert.Equal(t, user.GithubLogin, "Config-user")
+	user, refreshToken, err := tc.RefreshTokenForUser("config-user")
+	assert.Equal(t, user.GithubLogin, "config-user")
 	assert.NoError(t, err)
 
 	accessExpiryTime := testutils.Now().Add(tc.JWTConfig().AccessExpiresIn).Unix()
 	refreshExpiryTime := testutils.Now().Add(tc.JWTConfig().RefreshExpiresIn).Unix()
 
 	assert.Equal(t, accessToken, res.Data.Access.Token)
+	assert.Equal(t, tc.JWTConfig().AccessExpiresIn.String(), res.Data.Access.RefreshInterval)
+	assert.Equal(t, accessExpiryTime, res.Data.Access.ExpiresAt)
+
+	assert.Equal(t, refreshToken, res.Data.Refresh.Token)
+	assert.Equal(t, tc.JWTConfig().RefreshExpiresIn.String(), res.Data.Refresh.RefreshInterval)
+	assert.Equal(t, refreshExpiryTime, res.Data.Refresh.ExpiresAt)
+
+	assert.Equal(t, gock.IsDone(), true)
+}
+
+func TestLogin_UserWitMixedUSerName(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	defer gock.Off()
+
+	gock.New("https://github.com").
+		Post("/login/oauth/access_token").
+		Reply(200).
+		JSON(map[string]string{
+			"access_token": "test-token",
+		})
+
+	gock.New("https://api.github.com").
+		Get("/user").
+		Reply(200).
+		JSON(map[string]string{
+			"login":      "conFIG-UsER",
+			"name":       "config-user",
+			"avatar_url": "http://config",
+		})
+
+	// Mocks the time
+	token.Now = testutils.Now
+
+	//get old user id
+	old_user := model.User{}
+	err := tc.DB().Where("github_login = ?", "config-user").First(&old_user).Error
+	assert.NoError(t, err)
+
+	authSvc := New(tc)
+	payload := &auth.AuthenticatePayload{Code: "test-code"}
+	res, err := authSvc.Authenticate(context.Background(), payload)
+	assert.NoError(t, err)
+
+	// validate the github login of user after login
+	ut := &model.User{}
+	err = tc.DB().Where("github_login = ?", "conFIG-UsER").First(ut).Error
+	assert.NoError(t, err)
+	// check shouldn't create no new user due to mixed user name 
+	assert.Equal(t, old_user.ID, ut.ID)
+
+	// expected refresh jwt for user
+	user, refreshToken, err := tc.RefreshTokenForUser("conFIG-UsER")
+	assert.Equal(t, user.GithubLogin, "conFIG-UsER")
+	assert.NoError(t, err)
+
+	accessExpiryTime := testutils.Now().Add(tc.JWTConfig().AccessExpiresIn).Unix()
+	refreshExpiryTime := testutils.Now().Add(tc.JWTConfig().RefreshExpiresIn).Unix()
+
 	assert.Equal(t, tc.JWTConfig().AccessExpiresIn.String(), res.Data.Access.RefreshInterval)
 	assert.Equal(t, accessExpiryTime, res.Data.Access.ExpiresAt)
 
