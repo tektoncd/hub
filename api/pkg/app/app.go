@@ -24,6 +24,7 @@ import (
 	"strings"
 	"time"
 
+	"git.maze.io/go/duration"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 	"github.com/tektoncd/hub/api/gen/log"
@@ -32,7 +33,6 @@ import (
 	"golang.org/x/oauth2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"maze.io/x/duration"
 )
 
 // BaseConfig defines methods on APIBase

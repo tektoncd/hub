@@ -5,6 +5,7 @@
   "dependencies": {
     "@patternfly/patternfly": "^4.80.3",
     "@patternfly/react-core": "^4.47.0",
+    "@seiboston/react-ghe-login": "^1.0.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -25,7 +26,6 @@
     "mst-persist": "^0.1.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-ghe-login": "^1.2.0",
     "react-hotkeys-hook": "^3.3.1",
     "react-markdown": "^5.0.3",
     "react-router-dom": "^5.2.0",

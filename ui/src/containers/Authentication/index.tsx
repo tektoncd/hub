@@ -1,5 +1,5 @@
 import React from 'react';
-import GitHubLogin from 'react-ghe-login';
+import GitHubLogin from '@seiboston/react-ghe-login';
 import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Card, CardBody, CardHeader, AlertVariant } from '@patternfly/react-core';
