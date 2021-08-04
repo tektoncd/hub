@@ -82,13 +82,29 @@ type initFn func(*gorm.DB, *log.Logger, *app.Data) error
 
 func addCategories(db *gorm.DB, log *log.Logger, data *app.Data) error {
 
+	var configCatID []uint
 	for _, c := range data.Categories {
 		cat := model.Category{Name: c.Name}
 		if err := db.Where(cat).FirstOrCreate(&cat).Error; err != nil {
 			log.Error(err)
 			return err
 		}
+		configCatID = append(configCatID, cat.ID)
 	}
+
+	if len(configCatID) > 0 {
+		// Deletes mapping of removed categories and resources from the database
+		if err := db.Unscoped().Not(map[string]interface{}{"category_id": configCatID}).Delete(&model.ResourceCategory{}).Error; err != nil {
+			log.Error(err)
+			return err
+		}
+		// Deletes categories from database which are removed from the config
+		if err := db.Unscoped().Not(map[string]interface{}{"id": configCatID}).Delete(&model.Category{}).Error; err != nil {
+			log.Error(err)
+			return err
+		}
+	}
+
 	return nil
 }
 
