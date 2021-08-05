@@ -38,7 +38,6 @@ func Migrate(api *app.APIBase) error {
 			addAvatarURLColumnInUsersTable(log),
 			removeCatgoryIdColumnAndConstraintsFromTagtable(log),
 			updateResourcesCategoryTable(log),
-			removeExistingCategories(log),
 		},
 	)
 
