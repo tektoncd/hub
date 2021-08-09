@@ -15,6 +15,8 @@
 package migration
 
 import (
+	"fmt"
+
 	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/db/model"
@@ -50,6 +52,12 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 		return err
 	}
 
+	var users_last_value uint
+	if err := txn.Table("users_id_seq").Pluck("last_value", &users_last_value).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
 	var user_scopes []model.UserScope
 	if err := txn.Find(&user_scopes).Error; err != nil {
 		log.Error(err)
@@ -62,8 +70,20 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 		return err
 	}
 
+	var user_resource_ratings_last_value uint
+	if err := txn.Table("user_resource_ratings_id_seq").Pluck("last_value", &user_resource_ratings_last_value).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
 	var categories []model.Category
 	if err := txn.Find(&categories).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
+	var categories_last_value uint
+	if err := txn.Table("categories_id_seq").Pluck("last_value", &categories_last_value).Error; err != nil {
 		log.Error(err)
 		return err
 	}
@@ -74,8 +94,20 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 		return err
 	}
 
+	var tags_last_value uint
+	if err := txn.Table("tags_id_seq").Pluck("last_value", &tags_last_value).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
 	var sync_job []model.SyncJob
 	if err := txn.Find(&sync_job).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
+	var sync_jobs_last_value uint
+	if err := txn.Table("sync_jobs_id_seq").Pluck("last_value", &sync_jobs_last_value).Error; err != nil {
 		log.Error(err)
 		return err
 	}
@@ -86,14 +118,32 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 		return err
 	}
 
+	var scopes_last_value uint
+	if err := txn.Table("scopes_id_seq").Pluck("last_value", &scopes_last_value).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
 	var resources []model.Resource
 	if err := txn.Find(&resources).Error; err != nil {
 		log.Error(err)
 		return err
 	}
 
+	var resources_last_value uint
+	if err := txn.Table("resources_id_seq").Pluck("last_value", &resources_last_value).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
 	var resource_versions []model.ResourceVersion
 	if err := txn.Find(&resource_versions).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
+	var resource_versions_last_value uint
+	if err := txn.Table("resource_versions_id_seq").Pluck("last_value", &resource_versions_last_value).Error; err != nil {
 		log.Error(err)
 		return err
 	}
@@ -110,14 +160,32 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 		return err
 	}
 
+	var configs_last_value uint
+	if err := txn.Table("configs_id_seq").Pluck("last_value", &configs_last_value).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
 	var catalog []model.Catalog
 	if err := txn.Find(&catalog).Error; err != nil {
 		log.Error(err)
 		return err
 	}
 
+	var catalogs_last_value uint
+	if err := txn.Table("catalogs_id_seq").Pluck("last_value", &catalogs_last_value).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
 	var catalog_error []model.CatalogError
 	if err := txn.Find(&catalog_error).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
+	var catalog_errors_last_value uint
+	if err := txn.Table("catalog_errors_id_seq").Pluck("last_value", &catalog_errors_last_value).Error; err != nil {
 		log.Error(err)
 		return err
 	}
@@ -167,12 +235,24 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 			log.Error(err)
 			return err
 		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE catalogs_id_seq RESTART WITH %d", catalogs_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
+			log.Error(err)
+			return err
+		}
 	}
 
 	if len(catalog_error) > 0 {
 		if err := txn.Create(
 			&catalog_error,
 		).Error; err != nil {
+			log.Error(err)
+			return err
+		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE catalog_errors_id_seq RESTART WITH %d", catalog_errors_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
 			log.Error(err)
 			return err
 		}
@@ -185,12 +265,24 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 			log.Error(err)
 			return err
 		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE resources_id_seq RESTART WITH %d", resources_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
+			log.Error(err)
+			return err
+		}
 	}
 
 	if len(resource_versions) > 0 {
 		if err := txn.Create(
 			&resource_versions,
 		).Error; err != nil {
+			log.Error(err)
+			return err
+		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE resource_versions_id_seq RESTART WITH %d", resource_versions_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
 			log.Error(err)
 			return err
 		}
@@ -203,12 +295,24 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 			log.Error(err)
 			return err
 		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE tags_id_seq RESTART WITH %d", tags_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
+			log.Error(err)
+			return err
+		}
 	}
 
 	if len(categories) > 0 {
 		if err := txn.Create(
 			&categories,
 		).Error; err != nil {
+			log.Error(err)
+			return err
+		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE categories_id_seq RESTART WITH %d", categories_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
 			log.Error(err)
 			return err
 		}
@@ -221,12 +325,24 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 			log.Error(err)
 			return err
 		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE users_id_seq RESTART WITH %d", users_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
+			log.Error(err)
+			return err
+		}
 	}
 
 	if len(user_rating) > 0 {
 		if err := txn.Create(
 			&user_rating,
 		).Error; err != nil {
+			log.Error(err)
+			return err
+		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE user_resource_ratings_id_seq RESTART WITH %d", user_resource_ratings_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
 			log.Error(err)
 			return err
 		}
@@ -239,12 +355,24 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 			log.Error(err)
 			return err
 		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE sync_jobs_id_seq RESTART WITH %d", sync_jobs_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
+			log.Error(err)
+			return err
+		}
 	}
 
 	if len(scopes) > 0 {
 		if err := txn.Create(
 			&scopes,
 		).Error; err != nil {
+			log.Error(err)
+			return err
+		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE scopes_id_seq RESTART WITH %d", scopes_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
 			log.Error(err)
 			return err
 		}
@@ -263,6 +391,12 @@ func migrateDB(txn *gorm.DB, log *log.Logger) error {
 		if err := txn.Create(
 			&configs,
 		).Error; err != nil {
+			log.Error(err)
+			return err
+		}
+
+		query := fmt.Sprintf("ALTER SEQUENCE configs_id_seq RESTART WITH %d", configs_last_value+1)
+		if err := txn.Exec(query).Error; err != nil {
 			log.Error(err)
 			return err
 		}
