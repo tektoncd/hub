@@ -48,10 +48,18 @@ var res1 = &res.ResourceData{
 		RawURL:              "http://raw.github.url/foo/",
 		WebURL:              "http://web.github.com/foo/",
 		UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
+		Platforms: []*res.Platform{
+			{ID: 3, Name: "linux/amd64"},
+			{ID: 1, Name: "linux/s390x"},
+		},
 	},
 	Tags: []*res.Tag{
 		{ID: 3, Name: "tag3"},
 		{ID: 1, Name: "tag1"},
+	},
+	Platforms: []*res.Platform{
+		{ID: 3, Name: "linux/amd64"},
+		{ID: 1, Name: "linux/s390x"},
 	},
 }
 
@@ -106,7 +114,7 @@ func TestValidate_ErrorCases(t *testing.T) {
 	opt := options{}
 	err := opt.validate()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "please specify a resource name, --tags, --categories or --kinds flag to search")
+	assert.EqualError(t, err, "please specify a resource name, --tags, --platforms, --categories or --kinds flag to search")
 
 	opt = options{
 		kinds:  []string{"abc"},

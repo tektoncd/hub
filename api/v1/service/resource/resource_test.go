@@ -34,6 +34,17 @@ func TestQuery_ByTags(t *testing.T) {
 	assert.Equal(t, 1, len(all.Data))
 }
 
+func TestQuery_ByPlatforms(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.QueryPayload{Name: "", Kinds: []string{}, Platforms: []string{"linux/amd64"}, Limit: 100}
+	all, err := resourceSvc.Query(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, 3, len(all.Data))
+}
+
 func TestQuery_ByNameAndKind(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())

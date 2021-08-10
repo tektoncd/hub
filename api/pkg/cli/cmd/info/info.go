@@ -65,6 +65,13 @@ const resTemplate = `{{ icon "name" }}Name: {{ .Resource.Name }}
  {{- end }}
 {{- end }}
 
+{{ $ps := len .ResVersion.Platforms }}{{ if ne $ps 0 }}
+{{- icon "platforms" }}Platforms
+ {{- range $p := .ResVersion.Platforms }}
+  {{ icon "bullet" }}{{ $p.Name }}
+ {{- end }}
+{{- end }}
+
 {{ icon "install" }}Install Command:
   {{ formatInstallCMD .Resource .ResVersion .Latest }}
 `

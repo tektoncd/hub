@@ -39,6 +39,7 @@ func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 			categories []string
 			kinds      []string
 			tags       []string
+			platforms  []string
 			limit      uint
 			match      string
 			err        error
@@ -51,6 +52,7 @@ func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 		categories = r.URL.Query()["categories"]
 		kinds = r.URL.Query()["kinds"]
 		tags = r.URL.Query()["tags"]
+		platforms = r.URL.Query()["platforms"]
 		{
 			limitRaw := r.URL.Query().Get("limit")
 			if limitRaw == "" {
@@ -75,7 +77,7 @@ func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 		if err != nil {
 			return nil, err
 		}
-		payload := NewQueryPayload(name, catalogs, categories, kinds, tags, limit, match)
+		payload := NewQueryPayload(name, catalogs, categories, kinds, tags, platforms, limit, match)
 
 		return payload, nil
 	}

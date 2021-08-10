@@ -77,6 +77,14 @@ paths:
         items:
           type: string
         collectionFormat: multi
+      - name: platforms
+        in: query
+        description: Platforms associated with a resource to filter by
+        required: false
+        type: array
+        items:
+          type: string
+        collectionFormat: multi
       - name: limit
         in: query
         description: Maximum number of resources to be returned

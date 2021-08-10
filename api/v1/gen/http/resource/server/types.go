@@ -776,13 +776,14 @@ func NewByIDNotFoundResponseBody(res *goa.ServiceError) *ByIDNotFoundResponseBod
 }
 
 // NewQueryPayload builds a resource service Query endpoint payload.
-func NewQueryPayload(name string, catalogs []string, categories []string, kinds []string, tags []string, limit uint, match string) *resource.QueryPayload {
+func NewQueryPayload(name string, catalogs []string, categories []string, kinds []string, tags []string, platforms []string, limit uint, match string) *resource.QueryPayload {
 	v := &resource.QueryPayload{}
 	v.Name = name
 	v.Catalogs = catalogs
 	v.Categories = categories
 	v.Kinds = kinds
 	v.Tags = tags
+	v.Platforms = platforms
 	v.Limit = limit
 	v.Match = match
 

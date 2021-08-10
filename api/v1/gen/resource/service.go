@@ -54,6 +54,8 @@ type QueryPayload struct {
 	Categories []string
 	// Tags associated with a resource to filter by
 	Tags []string
+	// Platforms associated with a resource to filter by
+	Platforms []string
 	// Maximum number of resources to be returned
 	Limit uint
 	// Strategy used to find matching resources

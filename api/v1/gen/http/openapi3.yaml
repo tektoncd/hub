@@ -130,6 +130,22 @@ paths:
         example:
         - image
         - build
+      - name: platforms
+        in: query
+        description: Platforms associated with a resource to filter by
+        allowEmptyValue: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: Accusantium assumenda at aliquam.
+          description: Platforms associated with a resource to filter by
+          example:
+          - linux/s390x
+          - linux/amd64
+        example:
+        - linux/s390x
+        - linux/amd64
       - name: limit
         in: query
         description: Maximum number of resources to be returned
@@ -299,11 +315,11 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: task
+          example: pipeline
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: Name of resource
@@ -406,7 +422,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: name of resource

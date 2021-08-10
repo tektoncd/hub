@@ -33,6 +33,7 @@ var icons = map[string]string{
 	"minPipelineVersion": "🗒  ",
 	"rating":             "⭐ ️",
 	"tags":               "🏷 ",
+	"platforms":          "💻 ",
 	"install":            "⚒ ",
 	"categories":         "🏷️  ️",
 }
@@ -86,6 +87,22 @@ func FormatCategories(categories []*client.CategoryResponseBody) string {
 			continue
 		}
 		sb.WriteString(strings.Trim(*c.Name, " "))
+	}
+	return sb.String()
+}
+
+// FormatPlatforms returns list of platforms seperated by comma
+func FormatPlatforms(platforms []*client.PlatformResponseBody) string {
+	var sb strings.Builder
+	if len(platforms) == 0 {
+		return "---"
+	}
+	for i, p := range platforms {
+		if i != len(platforms)-1 {
+			sb.WriteString(strings.Trim(*p.Name, " ") + ", ")
+			continue
+		}
+		sb.WriteString(strings.Trim(*p.Name, " "))
 	}
 	return sb.String()
 }

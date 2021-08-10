@@ -57,6 +57,9 @@ func EncodeQueryRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.
 		for _, value := range p.Tags {
 			values.Add("tags", value)
 		}
+		for _, value := range p.Platforms {
+			values.Add("platforms", value)
+		}
 		values.Add("limit", fmt.Sprintf("%v", p.Limit))
 		values.Add("match", p.Match)
 		req.URL.RawQuery = values.Encode()

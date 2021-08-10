@@ -31,9 +31,9 @@ import (
 const resTemplate = `{{- $rl := len .Resources }}{{ if eq $rl 0 -}}
 No Resources found
 {{ else -}}
-NAME	KIND	CATALOG	DESCRIPTION	TAGS	CATEGORIES
+NAME	KIND	CATALOG	DESCRIPTION	PLATFORMS	TAGS	CATEGORIES
 {{ range $_, $r := .Resources -}}
-{{ formatName $r.Name $r.LatestVersion.Version }}	{{ $r.Kind }}	{{ formatCatalogName $r.Catalog.Name }}	{{ formatDesc $r.LatestVersion.Description 40 }}	{{ formatTags $r.Tags }}	{{ formatCategories $r.Categories }}
+{{ formatName $r.Name $r.LatestVersion.Version }}	{{ $r.Kind }}	{{ formatCatalogName $r.Catalog.Name }}	{{ formatDesc $r.LatestVersion.Description 40 }}	{{ formatPlatforms $r.LatestVersion.Platforms }}	{{ formatTags $r.Tags }}	{{ formatCategories $r.Categories }}
 {{ end }}
 {{- end -}}
 `
@@ -55,6 +55,7 @@ var (
 		"formatDesc":        formatter.FormatDesc,
 		"formatTags":        formatter.FormatTags,
 		"formatCategories":  formatter.FormatCategories,
+		"formatPlatforms":   formatter.FormatPlatforms,
 	}
 	tmpl    = template.Must(template.New("List Resources").Funcs(funcMap).Parse(resTemplate))
 	minTmpl = template.Must(template.New("List Resources").Funcs(funcMap).Parse(minResTemplate))
@@ -68,6 +69,7 @@ type options struct {
 	tags       []string
 	categories []string
 	kinds      []string
+	platforms  []string
 	args       []string
 }
 
@@ -108,6 +110,7 @@ func Command(cli app.CLI) *cobra.Command {
 	cmd.Flags().StringArrayVar(&opts.kinds, "kinds", nil, "Accepts a comma separated list of kinds")
 	cmd.Flags().StringArrayVar(&opts.tags, "tags", nil, "Accepts a comma separated list of tags")
 	cmd.Flags().StringArrayVar(&opts.categories, "categories", nil, "Accepts a comma separated list of categories")
+	cmd.Flags().StringArrayVar(&opts.platforms, "platforms", nil, "Accepts a comma separated list of platforms")
 	cmd.Flags().StringVarP(&opts.output, "output", "o", "table", "Accepts output format: [table, json, wide]")
 
 	return cmd
@@ -126,6 +129,7 @@ func (opts *options) run() error {
 		Kinds:      opts.kinds,
 		Tags:       opts.tags,
 		Categories: opts.categories,
+		Platforms:  opts.platforms,
 		Match:      opts.match,
 		Limit:      opts.limit,
 	})
@@ -155,8 +159,8 @@ func (opts *options) run() error {
 
 func (opts *options) validate() error {
 
-	if flag.AllEmpty(opts.args, opts.kinds, opts.tags, opts.categories) {
-		return fmt.Errorf("please specify a resource name, --tags, --categories or --kinds flag to search")
+	if flag.AllEmpty(opts.args, opts.kinds, opts.tags, opts.categories, opts.platforms) {
+		return fmt.Errorf("please specify a resource name, --tags, --platforms, --categories or --kinds flag to search")
 	}
 
 	if err := flag.InList("match", opts.match, []string{"contains", "exact"}); err != nil {
@@ -170,6 +174,7 @@ func (opts *options) validate() error {
 	opts.kinds = flag.TrimArray(opts.kinds)
 	opts.tags = flag.TrimArray(opts.tags)
 	opts.categories = flag.TrimArray(opts.categories)
+	opts.platforms = flag.TrimArray(opts.platforms)
 
 	for _, k := range opts.kinds {
 		if !parser.IsSupportedKind(k) {
