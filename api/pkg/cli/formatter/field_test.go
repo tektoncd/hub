@@ -90,6 +90,28 @@ func TestFormatCategories(t *testing.T) {
 	assert.Equal(t, "---", categories)
 }
 
+func TestFormatPlatforms(t *testing.T) {
+
+	pName1 := "linux/amd64"
+	pName2 := "linux/s390x"
+
+	pRes := []*client.PlatformResponseBody{
+		{
+			Name: &pName1,
+		},
+		{
+			Name: &pName2,
+		},
+	}
+
+	platforms := FormatPlatforms(pRes)
+	assert.Equal(t, "linux/amd64, linux/s390x", platforms)
+
+	// No Tags
+	platforms = FormatTags(nil)
+	assert.Equal(t, "---", platforms)
+}
+
 func TestWrapText(t *testing.T) {
 
 	// Description of resource with just summa

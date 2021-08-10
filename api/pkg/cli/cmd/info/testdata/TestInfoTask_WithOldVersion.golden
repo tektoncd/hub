@@ -14,5 +14,8 @@
 🏷 Tags
   ∙ foo
 
+💻 Platforms
+  ∙ linux/s390x
+
 ⚒ Install Command:
   tkn hub install task foo-bar --version 0.1

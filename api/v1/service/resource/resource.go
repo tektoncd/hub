@@ -60,6 +60,7 @@ func (s *service) Query(ctx context.Context, p *resource.QueryPayload) (*resourc
 		Catalogs:   p.Catalogs,
 		Categories: p.Categories,
 		Tags:       p.Tags,
+		Platforms:  p.Platforms,
 		Limit:      p.Limit,
 		Match:      p.Match,
 	}

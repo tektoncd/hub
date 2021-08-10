@@ -108,6 +108,23 @@ func TestQueryWithTags_Http(t *testing.T) {
 	})
 }
 
+func TestQueryWithPlatforms_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	QueryChecker(tc).Test(t, http.MethodGet, "/query?platforms=linux/s390x&platforms=linux/amd64").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
 func TestQueryWithExactName_Http(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())

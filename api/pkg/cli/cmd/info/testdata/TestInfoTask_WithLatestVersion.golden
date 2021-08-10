@@ -14,5 +14,8 @@
 🏷 Tags
   ∙ foo
 
+💻 Platforms
+  ∙ linux/amd64
+
 ⚒ Install Command:
   tkn hub install task foo-bar --version 0.2

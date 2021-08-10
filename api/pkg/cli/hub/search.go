@@ -29,6 +29,7 @@ type SearchOption struct {
 	Kinds      []string
 	Tags       []string
 	Categories []string
+	Platforms  []string
 	Match      string
 	Limit      uint
 	Catalog    string
@@ -94,6 +95,9 @@ func (so SearchOption) Endpoint() string {
 	}
 	if len(so.Categories) != 0 {
 		addArraytoURL("categories", so.Categories, v)
+	}
+	if len(so.Platforms) != 0 {
+		addArraytoURL("platforms", so.Platforms, v)
 	}
 	if so.Limit != 0 {
 		v.Set("limit", strconv.FormatUint(uint64(so.Limit), 10))

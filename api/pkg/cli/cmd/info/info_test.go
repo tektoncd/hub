@@ -42,6 +42,12 @@ var taskResWithLatestVersion = &res.ResourceVersionData{
 	RawURL:              "http://raw.github.url/foo-bar/",
 	WebURL:              "http://web.github.com/foo-bar/",
 	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
+	Platforms: []*res.Platform{
+		{
+			ID:   3,
+			Name: "linux/amd64",
+		},
+	},
 	Resource: &res.ResourceData{
 		ID:   2,
 		Name: "foo-bar",
@@ -62,6 +68,12 @@ var taskResWithLatestVersion = &res.ResourceVersionData{
 			{
 				ID:   3,
 				Name: "foo",
+			},
+		},
+		Platforms: []*res.Platform{
+			{
+				ID:   3,
+				Name: "linux/amd64",
 			},
 		},
 	},
@@ -77,6 +89,12 @@ var taskResWithOldVersion = &res.ResourceVersionData{
 	RawURL:              "http://raw.github.url/foo-bar/",
 	WebURL:              "http://web.github.com/foo-bar/",
 	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
+	Platforms: []*res.Platform{
+		{
+			ID:   2,
+			Name: "linux/s390x",
+		},
+	},
 	Resource: &res.ResourceData{
 		ID:   2,
 		Name: "foo-bar",
@@ -97,6 +115,12 @@ var taskResWithOldVersion = &res.ResourceVersionData{
 			{
 				ID:   3,
 				Name: "foo",
+			},
+		},
+		Platforms: []*res.Platform{
+			{
+				ID:   2,
+				Name: "linux/s390x",
 			},
 		},
 	},
