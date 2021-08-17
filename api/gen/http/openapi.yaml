@@ -2524,6 +2524,7 @@ definitions:
     description: ByCatalogKindNameVersionResponseBody result type (default view)
     example:
       data:
+        deprecated: true
         description: Buildah task builds source into a container image and then pushes
           it to a container registry.
         displayName: Buildah
@@ -2790,6 +2791,7 @@ definitions:
     description: ByVersionIdResponseBody result type (default view)
     example:
       data:
+        deprecated: true
         description: Buildah task builds source into a container image and then pushes
           it to a container registry.
         displayName: Buildah
@@ -3573,6 +3575,10 @@ definitions:
     title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
     type: object
     properties:
+      deprecated:
+        type: boolean
+        description: Deprecation status of a version
+        example: true
       description:
         type: string
         description: Description of version
@@ -3623,6 +3629,7 @@ definitions:
         format: uri
     description: The Version result type describes resource's version information.
     example:
+      deprecated: true
       description: Buildah task builds source into a container image and then pushes
         it to a container registry.
       displayName: Buildah
@@ -3735,6 +3742,10 @@ definitions:
     title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
     type: object
     properties:
+      deprecated:
+        type: boolean
+        description: Deprecation status of a version
+        example: true
       description:
         type: string
         description: Description of version
@@ -3784,6 +3795,7 @@ definitions:
     description: The Version result type describes resource's version information.
       (default view)
     example:
+      deprecated: true
       description: Buildah task builds source into a container image and then pushes
         it to a container registry.
       displayName: Buildah

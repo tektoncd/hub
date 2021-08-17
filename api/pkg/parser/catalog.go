@@ -44,6 +44,7 @@ const (
 	CategoryAnnotation            = "tekton.dev/categories"
 	PlatformsAnnotation           = "tekton.dev/platforms"
 	DefaultPlatform               = "linux/amd64"
+	DeprecatedAnnotation          = "tekton.dev/deprecated"
 )
 
 type (
@@ -59,6 +60,7 @@ type (
 	VersionInfo struct {
 		Version             string
 		DisplayName         string
+		Deprecated          bool
 		MinPipelinesVersion string
 		Description         string
 		Path                string
@@ -268,6 +270,18 @@ func (c CatalogParser) appendVersion(res *Resource, filePath string) Result {
 		result.Info(issue)
 	}
 
+	// optional check
+	isDeprecated, ok := annotations[DeprecatedAnnotation]
+	if ok {
+		issue := fmt.Sprintf("Resource %s - %s version of %s has been deprecated", tkn.GVK, version, tkn.Name)
+		log.With("action", "ignore").Info(issue)
+	}
+
+	var deprecated bool
+	if isDeprecated == "true" {
+		deprecated = true
+	}
+
 	description, found, err := unstructured.NestedString(u.Object, "spec", "description")
 	if !found || err != nil {
 		issue := fmt.Sprintf("Resource %s - %s has no description", tkn.GVK, tkn.Name)
@@ -299,6 +313,7 @@ func (c CatalogParser) appendVersion(res *Resource, filePath string) Result {
 		VersionInfo{
 			Version:             version,
 			DisplayName:         displayName,
+			Deprecated:          deprecated,
 			MinPipelinesVersion: MinPipelinesVersion,
 			Description:         description,
 			Path:                relPath,

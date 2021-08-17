@@ -186,6 +186,8 @@ type ResourceVersionData struct {
 	Version string
 	// Display name of version
 	DisplayName string
+	// Deprecation status of a version
+	Deprecated *bool
 	// Description of version
 	Description string
 	// Minimum pipelines version the resource's version is compatible with
@@ -733,7 +735,9 @@ func newResourceVersionDataMin(vres *resourceviews.ResourceVersionDataView) *Res
 // newResourceVersionDataWithoutResource converts projected type
 // ResourceVersionData to service type ResourceVersionData.
 func newResourceVersionDataWithoutResource(vres *resourceviews.ResourceVersionDataView) *ResourceVersionData {
-	res := &ResourceVersionData{}
+	res := &ResourceVersionData{
+		Deprecated: vres.Deprecated,
+	}
 	if vres.ID != nil {
 		res.ID = *vres.ID
 	}
@@ -773,7 +777,9 @@ func newResourceVersionDataWithoutResource(vres *resourceviews.ResourceVersionDa
 // newResourceVersionData converts projected type ResourceVersionData to
 // service type ResourceVersionData.
 func newResourceVersionData(vres *resourceviews.ResourceVersionDataView) *ResourceVersionData {
-	res := &ResourceVersionData{}
+	res := &ResourceVersionData{
+		Deprecated: vres.Deprecated,
+	}
 	if vres.ID != nil {
 		res.ID = *vres.ID
 	}
@@ -846,6 +852,7 @@ func newResourceVersionDataViewWithoutResource(res *ResourceVersionData) *resour
 		ID:                  &res.ID,
 		Version:             &res.Version,
 		DisplayName:         &res.DisplayName,
+		Deprecated:          res.Deprecated,
 		Description:         &res.Description,
 		MinPipelinesVersion: &res.MinPipelinesVersion,
 		RawURL:              &res.RawURL,
@@ -868,6 +875,7 @@ func newResourceVersionDataView(res *ResourceVersionData) *resourceviews.Resourc
 		ID:                  &res.ID,
 		Version:             &res.Version,
 		DisplayName:         &res.DisplayName,
+		Deprecated:          res.Deprecated,
 		Description:         &res.Description,
 		MinPipelinesVersion: &res.MinPipelinesVersion,
 		RawURL:              &res.RawURL,
@@ -1029,6 +1037,7 @@ func transformResourceviewsResourceVersionDataViewToResourceVersionData(v *resou
 		ID:                  *v.ID,
 		Version:             *v.Version,
 		DisplayName:         *v.DisplayName,
+		Deprecated:          v.Deprecated,
 		Description:         *v.Description,
 		MinPipelinesVersion: *v.MinPipelinesVersion,
 		RawURL:              *v.RawURL,
@@ -1133,6 +1142,7 @@ func transformResourceVersionDataToResourceviewsResourceVersionDataView(v *Resou
 		ID:                  &v.ID,
 		Version:             &v.Version,
 		DisplayName:         &v.DisplayName,
+		Deprecated:          v.Deprecated,
 		Description:         &v.Description,
 		MinPipelinesVersion: &v.MinPipelinesVersion,
 		RawURL:              &v.RawURL,

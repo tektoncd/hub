@@ -102,6 +102,9 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 	Attribute("displayName", String, "Display name of version", func() {
 		Example("displayName", "Buildah")
 	})
+	Attribute("deprecated", Boolean, "Deprecation status of a version", func() {
+		Example("deprecated", true)
+	})
 	Attribute("description", String, "Description of version", func() {
 		Example("descripiton", "Buildah task builds source into a container image and then pushes it to a container registry.")
 	})
@@ -160,6 +163,7 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("id")
 		Attribute("version")
 		Attribute("displayName")
+		Attribute("deprecated")
 		Attribute("description")
 		Attribute("minPipelinesVersion")
 		Attribute("rawURL")
@@ -172,6 +176,7 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("id")
 		Attribute("version")
 		Attribute("displayName")
+		Attribute("deprecated")
 		Attribute("description")
 		Attribute("minPipelinesVersion")
 		Attribute("rawURL")

@@ -366,6 +366,8 @@ type ResourceVersionDataResponseBody struct {
 	Version *string `form:"version,omitempty" json:"version,omitempty" xml:"version,omitempty"`
 	// Display name of version
 	DisplayName *string `form:"displayName,omitempty" json:"displayName,omitempty" xml:"displayName,omitempty"`
+	// Deprecation status of a version
+	Deprecated *bool `form:"deprecated,omitempty" json:"deprecated,omitempty" xml:"deprecated,omitempty"`
 	// Description of version
 	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
 	// Minimum pipelines version the resource's version is compatible with
