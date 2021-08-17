@@ -707,6 +707,7 @@ paths:
                 $ref: '#/components/schemas/ResourceVersion'
               example:
                 data:
+                  deprecated: true
                   description: Buildah task builds source into a container image and
                     then pushes it to a container registry.
                   displayName: Buildah
@@ -1072,6 +1073,7 @@ paths:
                 $ref: '#/components/schemas/ResourceVersion'
               example:
                 data:
+                  deprecated: true
                   description: Buildah task builds source into a container image and
                     then pushes it to a container registry.
                   displayName: Buildah
@@ -2176,6 +2178,7 @@ components:
           $ref: '#/components/schemas/ResourceVersionData'
       example:
         data:
+          deprecated: true
           description: Buildah task builds source into a container image and then
             pushes it to a container registry.
           displayName: Buildah
@@ -2210,6 +2213,10 @@ components:
     ResourceVersionData:
       type: object
       properties:
+        deprecated:
+          type: boolean
+          description: Deprecation status of a version
+          example: true
         description:
           type: string
           description: Description of version
@@ -2259,6 +2266,7 @@ components:
           format: uri
       description: The Version result type describes resource's version information.
       example:
+        deprecated: true
         description: Buildah task builds source into a container image and then pushes
           it to a container registry.
         displayName: Buildah

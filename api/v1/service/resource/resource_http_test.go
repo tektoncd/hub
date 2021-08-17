@@ -641,3 +641,37 @@ func TestByID_Http_ErrorCase(t *testing.T) {
 		assert.Equal(t, "not-found", err.Name)
 	})
 }
+
+func TestDeprecationByVersionID_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByVersionIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/version/10").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
+func TestLatestVersionDeprecationByID_Http(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/7").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}

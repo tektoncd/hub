@@ -116,6 +116,7 @@
   version: "0.1"
   display_name: Tkn Hub
   description: Desc7
+  deprecated: "true"
   min_pipelines_version: 0.12.1
   url: https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-hub/0.1/tkn-hub.yaml
   resource_id: 7

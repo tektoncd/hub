@@ -149,6 +149,7 @@
 				"id": 10,
 				"version": "0.1",
 				"displayName": "Tkn Hub",
+				"deprecated": true,
 				"description": "Desc7",
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog-community/master/task/tkn-hub/0.1/tkn-hub.yaml",

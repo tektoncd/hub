@@ -104,6 +104,8 @@ type ResourceVersionDataView struct {
 	Version *string
 	// Display name of version
 	DisplayName *string
+	// Deprecation status of a version
+	Deprecated *bool
 	// Description of version
 	Description *string
 	// Minimum pipelines version the resource's version is compatible with
@@ -295,6 +297,7 @@ var (
 			"id",
 			"version",
 			"displayName",
+			"deprecated",
 			"description",
 			"minPipelinesVersion",
 			"rawURL",
@@ -306,6 +309,7 @@ var (
 			"id",
 			"version",
 			"displayName",
+			"deprecated",
 			"description",
 			"minPipelinesVersion",
 			"rawURL",

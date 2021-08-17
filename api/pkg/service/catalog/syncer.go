@@ -347,6 +347,7 @@ func (s *syncer) updateResourceVersions(
 			Where(&model.ResourceVersion{ResourceID: resourceID, Version: v.Version}).FirstOrInit(&ver)
 
 		ver.DisplayName = v.DisplayName
+		ver.Deprecated = v.Deprecated
 		ver.Description = v.Description
 		ver.ModifiedAt = v.ModifiedAt
 		ver.MinPipelinesVersion = v.MinPipelinesVersion

@@ -27,6 +27,7 @@ import (
 	"gotest.tools/v3/golden"
 )
 
+var deprecated bool
 var res1 = &res.ResourceData{
 	ID:   1,
 	Name: "foo",
@@ -42,6 +43,7 @@ var res1 = &res.ResourceData{
 		Version:             "0.1",
 		Description:         "Description for task abc version 0.1",
 		DisplayName:         "foo-0.1",
+		Deprecated:          &deprecated,
 		MinPipelinesVersion: "0.11",
 		RawURL:              "http://raw.github.url/foo/",
 		WebURL:              "http://web.github.com/foo/",
@@ -69,6 +71,7 @@ var res2 = &res.ResourceData{
 		Version:             "0.2",
 		Description:         "Description for pipeline foo-bar version 0.2",
 		DisplayName:         "foo-bar-0.1",
+		Deprecated:          &deprecated,
 		MinPipelinesVersion: "0.12",
 		RawURL:              "http://raw.github.url/foo-bar/",
 		WebURL:              "http://web.github.com/foo-bar/",

@@ -236,3 +236,26 @@ func TestCreationRawURL(t *testing.T) {
 	expected := "https://raw.ghe.myhost.com/org/repo/main/task/name/0.1/name.yaml"
 	assert.Equal(t, expected, rawUrl)
 }
+
+func TestDeprecationByVersionID(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByVersionIDPayload{VersionID: 10}
+	res, err := resourceSvc.ByVersionID(context.Background(), payload)
+	assert.NoError(t, err)
+
+	assert.Equal(t, true, *res.Data.Deprecated)
+}
+
+func TestLatestVersionDeprecationByID(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByIDPayload{ID: 7}
+	res, err := resourceSvc.ByID(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, true, *res.Data.LatestVersion.Deprecated)
+}

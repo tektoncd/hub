@@ -832,6 +832,7 @@ func unmarshalResourceVersionDataResponseBodyToResourceviewsResourceVersionDataV
 		ID:                  v.ID,
 		Version:             v.Version,
 		DisplayName:         v.DisplayName,
+		Deprecated:          v.Deprecated,
 		Description:         v.Description,
 		MinPipelinesVersion: v.MinPipelinesVersion,
 		RawURL:              v.RawURL,

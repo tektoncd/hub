@@ -39,6 +39,7 @@ func Migrate(api *app.APIBase) error {
 			refreshAllTables(log),
 			updateResourcesCategoryTable(log),
 			createPlatformTables(log),
+			addDeprecatedColumnInResoureVersionTable(log),
 		},
 	)
 

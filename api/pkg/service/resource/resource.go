@@ -305,6 +305,13 @@ func initResource(r model.Resource) *resource.ResourceData {
 		UpdatedAt:           lv.ModifiedAt.UTC().Format(time.RFC3339),
 		Platforms:           platforms,
 	}
+
+	// Adds deprecated field in resource's latest version
+	// if latest version of a resource is deprecated
+	if lv.Deprecated {
+		res.LatestVersion.Deprecated = &lv.Deprecated
+	}
+
 	res.Tags = []*resource.Tag{}
 	for _, tag := range r.Tags {
 		res.Tags = append(res.Tags, &resource.Tag{
@@ -419,6 +426,12 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		UpdatedAt:           v.ModifiedAt.UTC().Format(time.RFC3339),
 		Resource:            res,
 		Platforms:           verPlatforms,
+	}
+
+	// Adds deprecated field in resource's version
+	// if version is deprecated
+	if v.Deprecated {
+		ver.Deprecated = &v.Deprecated
 	}
 
 	return &resource.ResourceVersion{Data: ver}
