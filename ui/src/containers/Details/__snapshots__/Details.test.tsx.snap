@@ -62,6 +62,9 @@ exports[`Details component should render the details component 1`] = `
                                           </Icon>
                                         </li>
                                       </ListItem>
+                                      <ListItem>
+                                        <li />
+                                      </ListItem>
                                     </ul>
                                   </List>
                                 </div>
@@ -131,7 +134,7 @@ exports[`Details component should render the details component 1`] = `
                                     <div className=\\"pf-l-grid\\">
                                       <GridItem offset={3}>
                                         <div className=\\"pf-l-grid__item pf-m-offset-3-col\\">
-                                          <TooltipDisplay id=\\"star\\" name=\\"Average Rating\\">
+                                          <TooltipDisplay id=\\"star\\" size=\\"sm\\" name=\\"Average Rating\\">
                                             <Tooltip content={{...}}>
                                               <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
                                                 <FindRefWrapper onFoundRef={[Function: onFoundRef]}>

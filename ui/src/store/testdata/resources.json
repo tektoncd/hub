@@ -51,6 +51,7 @@
         "id": 4,
         "version": "0.1",
         "displayName": "aws cli",
+        "deprecated": true,
         "description": "This task performs operations on Amazon Web Services resources using aws.",
         "minPipelinesVersion": "0.12.1",
         "rawURL": "https://raw.githubusercontent.com/tektoncd/catalog/master/task/aws-cli/0.1/aws-cli.yaml",

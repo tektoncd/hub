@@ -7,13 +7,14 @@ import { Icons } from '../../common/icons';
 
 interface Props {
   id: Icons;
+  size?: IconSize;
   name: string;
 }
 
 const TooltipDisplay: React.FC<Props> = (props: Props) => {
   return (
     <Tooltip content={<b>{titleCase(props.name)}</b>}>
-      <Icon id={props.id} size={IconSize.sm} label={props.name} />
+      <Icon id={props.id} size={props.size || IconSize.sm} label={props.name} />
     </Tooltip>
   );
 };
