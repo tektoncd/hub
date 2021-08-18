@@ -746,4 +746,25 @@ describe('Store functions', () => {
       }
     );
   });
+
+  it('it should have deprecation info in the displayVersion for a deprecated version', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        const resource = store.resources.get('tekton/Task/aws-cli');
+        assert(resource);
+
+        expect(resource.displayVersion.deprecated).toBe(true);
+        done();
+      }
+    );
+  });
 });

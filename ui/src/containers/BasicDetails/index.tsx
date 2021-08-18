@@ -21,6 +21,7 @@ import {
   ListItem,
   ListVariant
 } from '@patternfly/react-core';
+
 import { IconSize } from '@patternfly/react-icons';
 import { useObserver } from 'mobx-react';
 import { useParams } from 'react-router-dom';
@@ -40,6 +41,7 @@ const BasicDetails: React.FC = () => {
 
   const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
   const resource: IResource = resources.resources.get(resourceKey);
+
   const dropdownItems = resource.versions.map((value) => (
     <DropdownItem
       id={String(value.id)}
@@ -55,6 +57,7 @@ const BasicDetails: React.FC = () => {
   const [isOpen, set] = useState(false);
   const onToggle = (isOpen: React.SetStateAction<boolean>) => set(isOpen);
   const onSelect = () => set(!isOpen);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const onModalToggle = () => setIsModalOpen(!isModalOpen);
 
@@ -89,6 +92,15 @@ const BasicDetails: React.FC = () => {
                           label={resource.catalog.name}
                         />
                       </ListItem>
+                      <ListItem>
+                        {resource.displayVersion.deprecated ? (
+                          <TooltipDisplay
+                            name={'This version has been deprecated'}
+                            id={Icons.WarningTriangle}
+                            size={IconSize.lg}
+                          />
+                        ) : null}
+                      </ListItem>
                     </List>
                   </GridItem>
                 </Grid>
@@ -121,7 +133,7 @@ const BasicDetails: React.FC = () => {
                   <GridItem offset={2} span={1}>
                     <Grid>
                       <GridItem offset={3}>
-                        <TooltipDisplay id={Icons.Star} name="Average Rating" />
+                        <TooltipDisplay id={Icons.Star} size={IconSize.sm} name="Average Rating" />
                       </GridItem>
                     </Grid>
                   </GridItem>
