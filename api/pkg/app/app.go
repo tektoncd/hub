@@ -410,8 +410,8 @@ func initGh() (*GHConfig, error) {
 		}
 
 		ghe.IsGhe = true
-		ghe.ApiUrl = fmt.Sprintf("%s://api.%s", parsedUrl.Scheme, parsedUrl.Host)        // https://api.myghe.com
-		ghe.UploadUrl = fmt.Sprintf("%s://uploads.%s", parsedUrl.Scheme, parsedUrl.Host) // https://uploads.myghe.com
+		ghe.ApiUrl = ghe.Url
+		ghe.UploadUrl = ghe.Url
 
 	}
 
