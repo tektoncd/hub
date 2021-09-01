@@ -52,6 +52,12 @@ var taskResWithLatestVersion = &res.ResourceVersionData{
 			Type: "community",
 		},
 		Rating: 4,
+		Categories: []*res.Category{
+			{
+				ID:   1,
+				Name: "foo-bar",
+			},
+		},
 		Tags: []*res.Tag{
 			{
 				ID:   3,
@@ -81,6 +87,12 @@ var taskResWithOldVersion = &res.ResourceVersionData{
 			Type: "community",
 		},
 		Rating: 4,
+		Categories: []*res.Category{
+			{
+				ID:   1,
+				Name: "foo-bar",
+			},
+		},
 		Tags: []*res.Tag{
 			{
 				ID:   3,

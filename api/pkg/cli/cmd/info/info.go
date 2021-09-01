@@ -51,6 +51,13 @@ const resTemplate = `{{ icon "name" }}Name: {{ .Resource.Name }}
 
 {{ icon "rating" }}Rating: {{ .Resource.Rating }}
 
+{{ $t := len .Resource.Categories }}{{ if ne $t 0 }}
+{{- icon "categories" }}Categories
+ {{- range $p := .Resource.Categories }}
+  {{ icon "bullet" }}{{ $p.Name }}
+ {{- end }}
+{{- end }}
+
 {{ $t := len .Resource.Tags }}{{ if ne $t 0 }}
 {{- icon "tags" }}Tags
  {{- range $p := .Resource.Tags }}

@@ -34,6 +34,7 @@ var icons = map[string]string{
 	"rating":             "⭐ ️",
 	"tags":               "🏷 ",
 	"install":            "⚒ ",
+	"categories":         "🏷️  ️",
 }
 
 // FormatName returns name of resource with its latest version
