@@ -74,6 +74,22 @@ func FormatTags(tags []*client.TagResponseBody) string {
 	return sb.String()
 }
 
+// FormatCategories returns list of categories seperated by comma
+func FormatCategories(categories []*client.CategoryResponseBody) string {
+	var sb strings.Builder
+	if len(categories) == 0 {
+		return "---"
+	}
+	for i, c := range categories {
+		if i != len(categories)-1 {
+			sb.WriteString(strings.Trim(*c.Name, " ") + ", ")
+			continue
+		}
+		sb.WriteString(strings.Trim(*c.Name, " "))
+	}
+	return sb.String()
+}
+
 // WrapText returns description broken down in multiple lines with
 // max width passed to it
 // titleLength would be the length of title on left hand side before the

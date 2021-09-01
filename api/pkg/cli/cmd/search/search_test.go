@@ -106,7 +106,7 @@ func TestValidate_ErrorCases(t *testing.T) {
 	opt := options{}
 	err := opt.validate()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "please specify a resource name, --tags or --kinds flag to search")
+	assert.EqualError(t, err, "please specify a resource name, --tags, --categories or --kinds flag to search")
 
 	opt = options{
 		kinds:  []string{"abc"},
@@ -133,7 +133,7 @@ func TestValidate_ErrorCases(t *testing.T) {
 	}
 	err = opt.validate()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "invalid value \"abc\" set for option output. Valid options: [table, json]")
+	assert.EqualError(t, err, "invalid value \"abc\" set for option output. Valid options: [table, json, wide]")
 }
 
 func TestSearch_TableFormat(t *testing.T) {
@@ -155,7 +155,7 @@ func TestSearch_TableFormat(t *testing.T) {
 		cli:    cli,
 		args:   []string{"foo"},
 		match:  "contains",
-		output: "table",
+		output: "wide",
 	}
 
 	err := opt.run()
