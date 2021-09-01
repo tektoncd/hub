@@ -68,6 +68,28 @@ func TestFormatTags(t *testing.T) {
 	assert.Equal(t, "---", tags)
 }
 
+func TestFormatCategories(t *testing.T) {
+
+	categoryName1 := "category1"
+	categoryName2 := "category2"
+
+	res := []*client.CategoryResponseBody{
+		{
+			Name: &categoryName1,
+		},
+		{
+			Name: &categoryName2,
+		},
+	}
+
+	categories := FormatCategories(res)
+	assert.Equal(t, "category1, category2", categories)
+
+	// No Categories
+	categories = FormatTags(nil)
+	assert.Equal(t, "---", categories)
+}
+
 func TestWrapText(t *testing.T) {
 
 	// Description of resource with just summa
