@@ -23,10 +23,7 @@ exports[`should render the readme file 1`] = `
             #
           </span>
           <span className=\\"token title\\" style={{...}}>
-             
-          </span>
-          <span className=\\"token code\\" style={{...}}>
-            &#96;az&#96;
+             &#96;az&#96;
           </span>
           <span className={[undefined]} style={{...}}>
             
@@ -40,7 +37,7 @@ exports[`should render the readme file 1`] = `
           <span className={[undefined]} style={{...}}>
             This task performs operations on Microsoft Azure resources using 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az&#96;
           </span>
           <span className={[undefined]} style={{...}}>
@@ -142,7 +139,7 @@ exports[`should render the readme file 1`] = `
           <span className={[undefined]} style={{...}}>
             : 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az&#96;
           </span>
           <span className={[undefined]} style={{...}}>
@@ -167,7 +164,7 @@ exports[`should render the readme file 1`] = `
           <span className={[undefined]} style={{...}}>
             : 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;mcr.microsoft.com/azure-cli:2.0.77&#96;
           </span>
           <span className={[undefined]} style={{...}}>
@@ -182,25 +179,25 @@ exports[`should render the readme file 1`] = `
           <span className={[undefined]} style={{...}}>
             You can use a specific version of the 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az&#96;
           </span>
           <span className={[undefined]} style={{...}}>
              CLI by specifying the 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az-image&#96;
           </span>
           <span className={[undefined]} style={{...}}>
              param with the 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;mcr.microsoft.com/azure-cli&#96;
           </span>
           <span className={[undefined]} style={{...}}>
              image tagged with the specific version of the CLI you would like to use (i.e. version 2.0.70 = 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;mcr.microsoft.com/azure-cli:2.0.70&#96;
           </span>
           <span className={[undefined]} style={{...}}>
@@ -213,12 +210,18 @@ exports[`should render the readme file 1`] = `
             Full Tag Listing
           </span>
           <span className=\\"token\\" style={{...}}>
-            ](https://hub.docker.com/_/microsoft-azure-cli)
+            ](
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            https://hub.docker.com/_/microsoft-azure-cli
+          </span>
+          <span className=\\"token\\" style={{...}}>
+            )
           </span>
           <span className={[undefined]} style={{...}}>
              section of the 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az&#96;
           </span>
           <span className={[undefined]} style={{...}}>
@@ -249,7 +252,7 @@ exports[`should render the readme file 1`] = `
           <span className={[undefined]} style={{...}}>
             : The arguments to pass to 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az&#96;
           </span>
           <span className={[undefined]} style={{...}}>
@@ -296,25 +299,25 @@ exports[`should render the readme file 1`] = `
           <span className={[undefined]} style={{...}}>
             After creating the task, you should now be able to execute 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az&#96;
           </span>
           <span className={[undefined]} style={{...}}>
              commands by specifying the command you would like to run as the 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;ARGS&#96;
           </span>
           <span className={[undefined]} style={{...}}>
              param. The 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;ARGS&#96;
           </span>
           <span className={[undefined]} style={{...}}>
              param takes an array of 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az&#96;
           </span>
           <span className={[undefined]} style={{...}}>
@@ -345,19 +348,19 @@ exports[`should render the readme file 1`] = `
           <span className={[undefined]} style={{...}}>
             Run 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az ad --help&#96;
           </span>
           <span className={[undefined]} style={{...}}>
              using 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az&#96;
           </span>
           <span className={[undefined]} style={{...}}>
             . Start the task using the Tekton CLI (
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;tkn&#96;
           </span>
           <span className={[undefined]} style={{...}}>
@@ -423,13 +426,13 @@ exports[`should render the readme file 1`] = `
           <span className={[undefined]} style={{...}}>
             Specify a different 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az-image&#96;
           </span>
           <span className={[undefined]} style={{...}}>
              to use with the 
           </span>
-          <span className=\\"token code\\" style={{...}}>
+          <span className=\\"token code-snippet code\\" style={{...}}>
             &#96;az&#96;
           </span>
           <span className={[undefined]} style={{...}}>
