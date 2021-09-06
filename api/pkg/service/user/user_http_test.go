@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/http/user/server"
