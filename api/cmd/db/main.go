@@ -32,7 +32,7 @@ func main() {
 
 	logger := api.Logger("main")
 	if err = migration.Migrate(api); err != nil {
-		logger.Errorf("DB initialisation failed !!")
+		logger.Fatalf("DB initialisation failed !!")
 		return
 	}
 	logger.Info("DB initialisation successful !!")
