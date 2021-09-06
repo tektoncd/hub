@@ -6,11 +6,11 @@ require (
 	git.maze.io/go/duration v0.0.0-20160924141736-faac084b6075
 	github.com/AlecAivazis/survey/v2 v2.2.12
 	github.com/Netflix/go-expect v0.0.0-20200312175327-da48e75238e2
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dimfeld/httptreemux/v5 v5.3.0 // indirect
 	github.com/fatih/color v1.9.0
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-testfixtures/testfixtures/v3 v3.2.0
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-github/v38 v38.1.0
 	github.com/hinshun/vt10x v0.0.0-20180616224451-1954e6464174

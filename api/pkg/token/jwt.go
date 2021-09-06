@@ -17,7 +17,7 @@ package token
 import (
 	"fmt"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"goa.design/goa/v3/security"
 )
 
