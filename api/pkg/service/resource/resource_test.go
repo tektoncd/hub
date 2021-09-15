@@ -231,7 +231,7 @@ func TestByID_NotFoundError(t *testing.T) {
 
 func TestCreationRawURL(t *testing.T) {
 	url := "https://ghe.myhost.com/org/repo/tree/main/task/name/0.1/name.yaml"
-	replacer := getStringReplacer(url)
+	replacer := getStringReplacer(url, "github")
 	rawUrl := replacer.Replace(url)
 	expected := "https://raw.ghe.myhost.com/org/repo/main/task/name/0.1/name.yaml"
 	assert.Equal(t, expected, rawUrl)
@@ -258,4 +258,28 @@ func TestLatestVersionDeprecationByID(t *testing.T) {
 	res, err := resourceSvc.ByID(context.Background(), payload)
 	assert.NoError(t, err)
 	assert.Equal(t, true, *res.Data.LatestVersion.Deprecated)
+}
+
+func TestCreationRawURLBitbucket(t *testing.T) {
+	url := "https://bitbucket.org/org/catalog/src/main/task/name/0.1/name.yaml"
+	replacer := getStringReplacer(url, "bitbucket")
+	rawUrl := replacer.Replace(url)
+	expected := "https://bitbucket.org/org/catalog/raw/main/task/name/0.1/name.yaml"
+	assert.Equal(t, expected, rawUrl)
+}
+
+func TestCreationRawURLGitlab(t *testing.T) {
+	url := "https://gitlab.com/org/catalog/-/blob/main/task/name/0.1/name.yaml"
+	replacer := getStringReplacer(url, "gitlab")
+	rawUrl := replacer.Replace(url)
+	expected := "https://gitlab.com/org/catalog/-/raw/main/task/name/0.1/name.yaml"
+	assert.Equal(t, expected, rawUrl)
+}
+
+func TestCreationRawURLGitlabEnterprise(t *testing.T) {
+	url := "https://gitlab.myhost.com/org/catalog/-/blob/main/task/name/0.1/name.yaml"
+	replacer := getStringReplacer(url, "gitlab")
+	rawUrl := replacer.Replace(url)
+	expected := "https://gitlab.myhost.com/org/catalog/-/raw/main/task/name/0.1/name.yaml"
+	assert.Equal(t, expected, rawUrl)
 }

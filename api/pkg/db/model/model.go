@@ -44,6 +44,7 @@ type (
 		gorm.Model
 		Name       string `gorm:"uniqueIndex:uix_name_org"`
 		Org        string `gorm:"uniqueIndex:uix_name_org"`
+		Provider   string `gorm:"not null;default:github"`
 		Type       string `gorm:"not null;default:null"`
 		URL        string `gorm:"not null;default:null"`
 		Revision   string `gorm:"not null;default:null"`

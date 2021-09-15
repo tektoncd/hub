@@ -38,6 +38,7 @@ catalogs:
   - name: tekton
     org: tektoncd
     type: community
+    provider: github
     url: https://github.com/tektoncd/catalog
     revision: main
 
@@ -61,3 +62,4 @@ default:
 #     url:  URL of repository
 #     revision: Branch of repository
 #     contextDir(Optional): Path to resource dir
+#     provider: Name of git provider such as github, gitlab, bitbucket
