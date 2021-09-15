@@ -31,12 +31,12 @@ type service struct {
 	app.Service
 }
 
-var replacerStrings = []string{"github.com", "raw.githubusercontent.com", "/tree/", "/"}
+var replacerStrings = []string{"github.com", "raw.githubusercontent.com", "/tree/", "/", "/blob/", "/raw/", "/src/", "/raw/"}
 
 // Returns a replacer object which replaces a list of strings with replacements.
 // This function basically helps create the raw URL
-func getStringReplacer(resourceUrl string) *strings.Replacer {
-	if !strings.HasPrefix(resourceUrl, "https://github.com") {
+func getStringReplacer(resourceUrl, provider string) *strings.Replacer {
+	if !strings.HasPrefix(resourceUrl, "https://github.com") && provider == "github" {
 		parsedUrl, _ := url.Parse(resourceUrl)
 		host := "raw." + parsedUrl.Host
 		replacerStrings = append(replacerStrings, parsedUrl.Host, host)
@@ -301,7 +301,7 @@ func initResource(r model.Resource) *resource.ResourceData {
 		DisplayName:         lv.DisplayName,
 		MinPipelinesVersion: lv.MinPipelinesVersion,
 		WebURL:              lv.URL,
-		RawURL:              getStringReplacer(lv.URL).Replace(lv.URL),
+		RawURL:              getStringReplacer(lv.URL, r.Catalog.Provider).Replace(lv.URL),
 		UpdatedAt:           lv.ModifiedAt.UTC().Format(time.RFC3339),
 		Platforms:           platforms,
 	}
@@ -353,7 +353,7 @@ func minVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 
 	res := tinyVersionInfo(r)
 	res.WebURL = r.URL
-	res.RawURL = getStringReplacer(r.URL).Replace(r.URL)
+	res.RawURL = getStringReplacer(r.URL, r.Resource.Catalog.Provider).Replace(r.URL)
 	platforms := []*resource.Platform{}
 	for _, platform := range r.Platforms {
 		platforms = append(platforms, &resource.Platform{
@@ -422,7 +422,7 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		DisplayName:         v.DisplayName,
 		MinPipelinesVersion: v.MinPipelinesVersion,
 		WebURL:              v.URL,
-		RawURL:              getStringReplacer(v.URL).Replace(v.URL),
+		RawURL:              getStringReplacer(v.URL, r.Catalog.Provider).Replace(v.URL),
 		UpdatedAt:           v.ModifiedAt.UTC().Format(time.RFC3339),
 		Resource:            res,
 		Platforms:           verPlatforms,

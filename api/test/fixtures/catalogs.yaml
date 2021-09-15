@@ -18,6 +18,7 @@
   type: official
   url: https:/github.com/tektoncd/catalog
   context_dir: /task
+  provider: github
   revision: master
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
@@ -28,6 +29,7 @@
   type: community
   url: https:/github.com/tektoncd/catalog-community
   context_dir: /task
+  provider: github
   revision: master
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
@@ -38,6 +40,7 @@
   type: enterprise
   url: https:/myghe.com/tektoncd/catalog-enterprise
   context_dir: /task
+  provider: github
   revision: master
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC

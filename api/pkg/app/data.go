@@ -40,6 +40,7 @@ type Catalog struct {
 	URL        string
 	ContextDir string
 	Revision   string
+	Provider   string
 }
 
 type Scope struct {

@@ -351,7 +351,14 @@ func (s *syncer) updateResourceVersions(
 		ver.Description = v.Description
 		ver.ModifiedAt = v.ModifiedAt
 		ver.MinPipelinesVersion = v.MinPipelinesVersion
-		ver.URL = fmt.Sprintf("%s/tree/%s/%s", catalog.URL, catalog.Revision, v.Path)
+		switch catalog.Provider {
+		case "github":
+			ver.URL = fmt.Sprintf("%s/tree/%s/%s", catalog.URL, catalog.Revision, v.Path)
+		case "bitbucket":
+			ver.URL = fmt.Sprintf("%s/src/%s/%s", catalog.URL, catalog.Revision, v.Path)
+		case "gitlab":
+			ver.URL = fmt.Sprintf("%s/-/blob/%s/%s", catalog.URL, catalog.Revision, v.Path)
+		}
 
 		txn.Save(&ver)
 		log.Infof(" Version: %d -> %s | Path: %s ", ver.ID, ver.Version, v.Path)
