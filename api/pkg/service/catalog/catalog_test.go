@@ -21,13 +21,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/catalog"
 	"github.com/tektoncd/hub/api/pkg/app"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 )
 
 // NewServiceTest returns the catalog service implementation for test.
 func NewServiceTest(api app.Config) catalog.Service {
-	svc := auth.NewService(api, "catalog")
+	svc := validator.NewService(api, "catalog")
 	wq := newSyncer(api)
 
 	s := &service{
@@ -47,7 +47,7 @@ func TestRefresh(t *testing.T) {
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 
 	payload := &catalog.RefreshPayload{CatalogName: "catalog-official"}
 	job, err := catalogSvc.Refresh(ctx, payload)
@@ -66,7 +66,7 @@ func TestRefresh_CatalogNotFound(t *testing.T) {
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 
 	payload := &catalog.RefreshPayload{CatalogName: "abc"}
 	_, err = catalogSvc.Refresh(ctx, payload)
@@ -84,7 +84,7 @@ func TestRefreshAgain(t *testing.T) {
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 
 	payload := &catalog.RefreshPayload{CatalogName: "catalog-official"}
 	res, err := catalogSvc.Refresh(ctx, payload)
@@ -108,7 +108,7 @@ func TestRefresh_All(t *testing.T) {
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 
 	payload := &catalog.RefreshAllPayload{}
 	jobs, err := catalogSvc.RefreshAll(ctx, payload)
@@ -133,7 +133,7 @@ func TestCatalogError(t *testing.T) {
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 
 	payload := &catalog.CatalogErrorPayload{CatalogName: "catalog-official"}
 	res, err := catalogSvc.CatalogError(ctx, payload)
@@ -154,7 +154,7 @@ func TestCatalogErrorHavingNoError(t *testing.T) {
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 
 	payload := &catalog.CatalogErrorPayload{CatalogName: "catalog-community"}
 	res, err := catalogSvc.CatalogError(ctx, payload)

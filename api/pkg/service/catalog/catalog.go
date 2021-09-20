@@ -23,12 +23,12 @@ import (
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/parser"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"gorm.io/gorm"
 )
 
 type service struct {
-	*auth.Service
+	*validator.Service
 	wq *syncer
 }
 
@@ -45,7 +45,7 @@ var errorTypes = []string{
 
 // New returns the catalog service implementation.
 func New(api app.Config) catalog.Service {
-	svc := auth.NewService(api, "catalog")
+	svc := validator.NewService(api, "catalog")
 	wq := newSyncer(api)
 
 	// start running after some delay to allow for all services to mount
@@ -75,7 +75,7 @@ func (s *service) Refresh(ctx context.Context, p *catalog.RefreshPayload) (*cata
 
 	log.Infof("going to enqueue")
 
-	job, err := s.wq.Enqueue(auth.UserID(ctx), ctg.ID)
+	job, err := s.wq.Enqueue(validator.UserID(ctx), ctg.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (s *service) RefreshAll(ctx context.Context, p *catalog.RefreshAllPayload) 
 
 	var res []*catalog.Job
 	for _, ctg := range ctgs {
-		job, err := s.wq.Enqueue(auth.UserID(ctx), ctg.ID)
+		job, err := s.wq.Enqueue(validator.UserID(ctx), ctg.ID)
 		if err != nil {
 			return nil, err
 		}

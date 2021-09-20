@@ -22,7 +22,7 @@ import (
 	"github.com/tektoncd/hub/api/gen/rating"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"gorm.io/gorm"
 )
 
@@ -33,7 +33,7 @@ var (
 )
 
 type service struct {
-	*auth.Service
+	*validator.Service
 }
 
 type request struct {
@@ -44,7 +44,7 @@ type request struct {
 
 // New returns the rating service implementation.
 func New(api app.Config) rating.Service {
-	return &service{auth.NewService(api, "rating")}
+	return &service{validator.NewService(api, "rating")}
 }
 
 // Find user's rating for a resource
@@ -53,7 +53,7 @@ func (s *service) Get(ctx context.Context, p *rating.GetPayload) (*rating.GetRes
 	req := request{
 		db:     s.DB(ctx),
 		log:    s.Logger(ctx),
-		userID: auth.UserID(ctx),
+		userID: validator.UserID(ctx),
 	}
 
 	return req.getRating(p.ID)
@@ -65,7 +65,7 @@ func (s *service) Update(ctx context.Context, p *rating.UpdatePayload) error {
 	req := request{
 		db:     s.DB(ctx),
 		log:    s.Logger(ctx),
-		userID: auth.UserID(ctx),
+		userID: validator.UserID(ctx),
 	}
 
 	return req.updateRating(p.ID, p.Rating)

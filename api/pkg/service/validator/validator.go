@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package auth
+package validator
 
 import (
 	"context"
 	"errors"
 	"fmt"
 
-	"github.com/tektoncd/hub/api/gen/auth"
+	"github.com/tektoncd/hub/api/gen/admin"
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
@@ -35,8 +35,9 @@ var (
 )
 
 var (
-	tokenError  = auth.MakeInvalidToken(fmt.Errorf("invalid or expired user token"))
-	scopesError = auth.MakeInvalidScopes(fmt.Errorf("user not authorized"))
+	tokenError    = admin.MakeInvalidToken(fmt.Errorf("invalid or expired user token"))
+	scopesError   = admin.MakeInvalidScopes(fmt.Errorf("user not authorized"))
+	internalError = admin.MakeInternalError(fmt.Errorf("failed to create agent"))
 )
 
 type Service struct {

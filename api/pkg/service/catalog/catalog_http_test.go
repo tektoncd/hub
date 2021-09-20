@@ -25,13 +25,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/catalog"
 	"github.com/tektoncd/hub/api/gen/http/catalog/server"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 	"gotest.tools/v3/golden"
 )
 
 func RefreshChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, "catalog")
+	service := validator.NewService(tc.APIConfig, "catalog")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewRefreshHandler,
 		server.MountRefreshHandler,
@@ -64,7 +64,7 @@ func TestRefresh_Http(t *testing.T) {
 }
 
 func RefreshAllChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, "catalog")
+	service := validator.NewService(tc.APIConfig, "catalog")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewRefreshAllHandler,
 		server.MountRefreshAllHandler,
@@ -73,7 +73,7 @@ func RefreshAllChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 }
 
 func CatalogErrorChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, "catalog")
+	service := validator.NewService(tc.APIConfig, "catalog")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewCatalogErrorHandler,
 		server.MountCatalogErrorHandler,

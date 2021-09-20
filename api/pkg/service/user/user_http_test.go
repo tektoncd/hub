@@ -25,14 +25,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/http/user/server"
 	"github.com/tektoncd/hub/api/gen/user"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 	"github.com/tektoncd/hub/api/pkg/token"
 	goa "goa.design/goa/v3/pkg"
 )
 
 func RefreshAccessTokenChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, "admin")
+	service := validator.NewService(tc.APIConfig, "admin")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewRefreshAccessTokenHandler,
 		server.MountRefreshAccessTokenHandler,
@@ -126,7 +126,7 @@ func TestRefreshAccessToken_Http_RefreshTokenChecksumIsDifferent(t *testing.T) {
 }
 
 func NewRefreshTokenChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, "admin")
+	service := validator.NewService(tc.APIConfig, "admin")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewNewRefreshTokenHandler,
 		server.MountNewRefreshTokenHandler,
@@ -198,7 +198,7 @@ func TestNewRefreshToken_Http_RefreshTokenChecksumIsDifferent(t *testing.T) {
 }
 
 func InfoChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, "admin")
+	service := validator.NewService(tc.APIConfig, "admin")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewInfoHandler,
 		server.MountInfoHandler,

@@ -28,14 +28,14 @@ import (
 	"github.com/tektoncd/hub/api/gen/admin"
 	"github.com/tektoncd/hub/api/gen/http/admin/server"
 	"github.com/tektoncd/hub/api/pkg/db/model"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 	"github.com/tektoncd/hub/api/pkg/token"
 	goa "goa.design/goa/v3/pkg"
 )
 
 func UpdateAgentChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, "admin")
+	service := validator.NewService(tc.APIConfig, "admin")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewUpdateAgentHandler,
 		server.MountUpdateAgentHandler,
