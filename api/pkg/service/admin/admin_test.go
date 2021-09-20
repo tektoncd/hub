@@ -20,7 +20,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/admin"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 	"github.com/tektoncd/hub/api/pkg/token"
 )
@@ -38,7 +38,7 @@ func TestUpdateAgent(t *testing.T) {
 	token.Now = testutils.Now
 
 	adminSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 	payload := &admin.UpdateAgentPayload{Name: "agent-007", Scopes: []string{"config:refresh"}}
 	res, err := adminSvc.UpdateAgent(ctx, payload)
 	assert.NoError(t, err)
@@ -61,7 +61,7 @@ func TestUpdateAgent_NormalUserExistsWithName(t *testing.T) {
 	assert.NoError(t, err)
 
 	adminSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 	payload := &admin.UpdateAgentPayload{Name: "foo", Scopes: []string{"config:refresh", "agent:create"}}
 	_, err = adminSvc.UpdateAgent(ctx, payload)
 	assert.Error(t, err)
@@ -78,7 +78,7 @@ func TestUpdateAgent_InvalidScopeInPayload(t *testing.T) {
 	assert.NoError(t, err)
 
 	adminSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 	payload := &admin.UpdateAgentPayload{Name: "agent:007", Scopes: []string{"abc:read"}}
 	_, err = adminSvc.UpdateAgent(ctx, payload)
 	assert.Error(t, err)
@@ -98,7 +98,7 @@ func TestUpdateAgent_UpdateScopesCase(t *testing.T) {
 	token.Now = testutils.Now
 
 	adminSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 	payload := &admin.UpdateAgentPayload{Name: "agent-001", Scopes: []string{"config:refresh", "agent:create"}}
 	res, err := adminSvc.UpdateAgent(ctx, payload)
 	assert.NoError(t, err)

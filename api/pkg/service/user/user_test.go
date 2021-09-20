@@ -20,7 +20,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/user"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 	"github.com/tektoncd/hub/api/pkg/token"
 )
@@ -38,7 +38,7 @@ func TestRefreshAccessToken(t *testing.T) {
 	token.Now = testutils.Now
 
 	userSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), testUser.ID)
+	ctx := validator.WithUserID(context.Background(), testUser.ID)
 	payload := &user.RefreshAccessTokenPayload{RefreshToken: refreshToken}
 	res, err := userSvc.RefreshAccessToken(ctx, payload)
 	assert.NoError(t, err)
@@ -65,7 +65,7 @@ func TestRefreshAccessToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 	assert.NoError(t, err)
 
 	userSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), testUser.ID)
+	ctx := validator.WithUserID(context.Background(), testUser.ID)
 	payload := &user.RefreshAccessTokenPayload{RefreshToken: refreshToken}
 	_, err = userSvc.RefreshAccessToken(ctx, payload)
 	assert.Error(t, err)
@@ -85,7 +85,7 @@ func TestNewRefreshToken(t *testing.T) {
 	token.Now = testutils.Now
 
 	userSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), testUser.ID)
+	ctx := validator.WithUserID(context.Background(), testUser.ID)
 	payload := &user.NewRefreshTokenPayload{RefreshToken: refreshToken}
 	res, err := userSvc.NewRefreshToken(ctx, payload)
 	assert.NoError(t, err)
@@ -112,7 +112,7 @@ func TestNewRefreshToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 	assert.NoError(t, err)
 
 	userSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), testUser.ID)
+	ctx := validator.WithUserID(context.Background(), testUser.ID)
 	payload := &user.NewRefreshTokenPayload{RefreshToken: refreshToken}
 	_, err = userSvc.NewRefreshToken(ctx, payload)
 	assert.Error(t, err)
@@ -129,7 +129,7 @@ func TestInfo(t *testing.T) {
 	assert.NoError(t, err)
 
 	userSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), testUser.ID)
+	ctx := validator.WithUserID(context.Background(), testUser.ID)
 	payload := &user.InfoPayload{AccessToken: accessToken}
 	res, err := userSvc.Info(ctx, payload)
 

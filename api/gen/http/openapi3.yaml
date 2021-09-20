@@ -28,81 +28,6 @@ paths:
                 - error: unable to reach db
                   name: api
                   status: ok
-  /auth/login:
-    post:
-      tags:
-      - auth
-      summary: Authenticate auth
-      description: Authenticates users against GitHub OAuth
-      operationId: auth#Authenticate
-      parameters:
-      - name: code
-        in: query
-        description: OAuth Authorization code of User
-        allowEmptyValue: true
-        required: true
-        schema:
-          type: string
-          description: OAuth Authorization code of User
-          example: 5628b69ec09c09512eef
-        example: 5628b69ec09c09512eef
-      responses:
-        "200":
-          description: OK response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthenticateResponseBody'
-              example:
-                data:
-                  access:
-                    expiresAt: 0
-                    refreshInterval: 1h30m
-                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
-                  refresh:
-                    expiresAt: 0
-                    refreshInterval: 1h30m
-                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
-        "400":
-          description: Bad Request response.
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
-        "401":
-          description: Unauthorized response.
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
-        "403":
-          description: Forbidden response.
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
-        "500":
-          description: Internal Server Error response.
-          content:
-            application/vnd.goa.error:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /catalog/{catalogName}/error:
     get:
       tags:
@@ -239,13 +164,7 @@ paths:
                 - catalogName: tekton
                   id: 1
                   status: queued
-                - catalogName: tekton
-                  id: 1
-                  status: queued
               example:
-              - catalogName: tekton
-                id: 1
-                status: queued
               - catalogName: tekton
                 id: 1
                 status: queued
@@ -332,7 +251,7 @@ paths:
           type: array
           items:
             type: string
-            example: Ipsam ad dicta sunt fugiat.
+            example: Sunt voluptas.
           description: Catalogs of resource to filter by
           example:
           - tekton
@@ -348,7 +267,7 @@ paths:
           type: array
           items:
             type: string
-            example: Eum in similique labore.
+            example: Non illo accusantium aut iste.
           description: Category associated with a resource to filter by
           example:
           - build
@@ -364,7 +283,7 @@ paths:
           type: array
           items:
             type: string
-            example: Laboriosam placeat eveniet perspiciatis.
+            example: Similique temporibus sequi est nihil facilis adipisci.
           description: Kinds of resource to filter by
           example:
           - task
@@ -380,7 +299,7 @@ paths:
           type: array
           items:
             type: string
-            example: Ut debitis quia sed ipsa velit dolorem.
+            example: Rem error consequuntur autem enim.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -396,7 +315,7 @@ paths:
           type: array
           items:
             type: string
-            example: Ut debitis iste sed voluptas et.
+            example: Voluptatem inventore.
           description: Platforms associated with a resource to filter by
           example:
           - linux/s390x
@@ -573,11 +492,11 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: task
+          example: pipeline
           enum:
           - task
           - pipeline
-        example: task
+        example: pipeline
       - name: name
         in: path
         description: Name of resource
@@ -680,7 +599,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: name of resource
@@ -854,8 +773,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 4748836856209207639
-        example: 17835074238948411605
+          example: 1300969189960465860
+        example: 4824738970219526651
       responses:
         "200":
           description: OK response.
@@ -927,8 +846,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 9285005120921241060
-        example: 11505831677112471131
+          example: 9941447640867000916
+        example: 2975478370849669386
       requestBody:
         required: true
         content:
@@ -1610,40 +1529,6 @@ components:
           expiresAt: 0
           refreshInterval: 1h30m
           token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
-    AuthTokens:
-      type: object
-      properties:
-        access:
-          $ref: '#/components/schemas/Token'
-        refresh:
-          $ref: '#/components/schemas/Token'
-      description: Auth tokens have access and refresh token for user
-      example:
-        access:
-          expiresAt: 0
-          refreshInterval: 1h30m
-          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
-        refresh:
-          expiresAt: 0
-          refreshInterval: 1h30m
-          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
-    AuthenticateResponseBody:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/AuthTokens'
-      example:
-        data:
-          access:
-            expiresAt: 0
-            refreshInterval: 1h30m
-            token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
-          refresh:
-            expiresAt: 0
-            refreshInterval: 1h30m
-            token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
-      required:
-      - data
     Catalog:
       type: object
       properties:
@@ -1697,10 +1582,6 @@ components:
             - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
             - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
             type: warning
-          - errors:
-            - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
-            - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
-            type: warning
       example:
         data:
         - errors:
@@ -1728,7 +1609,7 @@ components:
           type: array
           items:
             type: string
-            example: Est nihil facilis adipisci.
+            example: Beatae est.
           description: Catalog Error message
           example:
           - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
@@ -1787,7 +1668,7 @@ components:
         temporary:
           type: boolean
           description: Is the error temporary?
-          example: false
+          example: true
         timeout:
           type: boolean
           description: Is the error a timeout?
@@ -1889,10 +1770,10 @@ components:
             name: Image Builder
           - id: 1
             name: Image Builder
+          - id: 1
+            name: Image Builder
       example:
         data:
-        - id: 1
-          name: Image Builder
         - id: 1
           name: Image Builder
         - id: 1
@@ -2102,6 +1983,41 @@ components:
       items:
         $ref: '#/components/schemas/ResourceData'
       example:
+      - catalog:
+          id: 1
+          name: tekton
+          type: community
+        categories:
+        - id: 1
+          name: image-build
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+        versions:
+        - id: 1
+          version: "0.1"
+        - id: 2
+          version: "0.2"
       - catalog:
           id: 1
           name: tekton
@@ -2433,6 +2349,12 @@ components:
         - error: unable to reach db
           name: api
           status: ok
+        - error: unable to reach db
+          name: api
+          status: ok
+        - error: unable to reach db
+          name: api
+          status: ok
     Token:
       type: object
       properties:
@@ -2469,7 +2391,7 @@ components:
           type: array
           items:
             type: string
-            example: Voluptas eius non illo accusantium aut.
+            example: Dolor esse officia velit aliquid.
           description: Scopes required for Agent
           example:
           - catalog-refresh
@@ -2499,11 +2421,11 @@ components:
         rating:
           type: integer
           description: User rating for resource
-          example: 1
+          example: 3
           minimum: 0
           maximum: 5
       example:
-        rating: 1
+        rating: 4
       required:
       - rating
     UserData:

@@ -24,13 +24,13 @@ import (
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/initializer"
 	"github.com/tektoncd/hub/api/pkg/db/model"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"github.com/tektoncd/hub/api/pkg/token"
 	"gorm.io/gorm"
 )
 
 type service struct {
-	*auth.Service
+	*validator.Service
 	api app.Config
 }
 
@@ -54,7 +54,7 @@ var (
 // New returns the admin service implementation.
 func New(api app.Config) admin.Service {
 	return &service{
-		Service: auth.NewService(api, "admin"),
+		Service: validator.NewService(api, "admin"),
 		api:     api,
 	}
 }

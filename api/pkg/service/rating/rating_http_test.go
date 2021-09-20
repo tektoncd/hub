@@ -26,13 +26,13 @@ import (
 	"github.com/tektoncd/hub/api/gen/http/rating/server"
 	"github.com/tektoncd/hub/api/gen/rating"
 	"github.com/tektoncd/hub/api/pkg/db/model"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 	goa "goa.design/goa/v3/pkg"
 )
 
 func GetChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, "rating")
+	service := validator.NewService(tc.APIConfig, "rating")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewGetHandler,
 		server.MountGetHandler,
@@ -190,13 +190,12 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 		err := goa.ServiceError{}
 		marshallErr := json.Unmarshal([]byte(b), &err)
 		assert.NoError(t, marshallErr)
-
 		assert.Equal(t, "not-found", err.Name)
 	})
 }
 
 func UpdateChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := auth.NewService(tc.APIConfig, "rating")
+	service := validator.NewService(tc.APIConfig, "rating")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewUpdateHandler,
 		server.MountUpdateHandler,

@@ -20,7 +20,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/rating"
-	"github.com/tektoncd/hub/api/pkg/service/auth"
+	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 )
 
@@ -34,7 +34,7 @@ func TestGet(t *testing.T) {
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 	payload := &rating.GetPayload{ID: 1}
 	rat, err := ratingSvc.Get(ctx, payload)
 	assert.NoError(t, err)
@@ -51,7 +51,7 @@ func TestGet_RatingNotFound(t *testing.T) {
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 	payload := &rating.GetPayload{ID: 3}
 	rat, err := ratingSvc.Get(ctx, payload)
 	assert.NoError(t, err)
@@ -68,7 +68,7 @@ func TestGet_ResourceNotFound(t *testing.T) {
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 	payload := &rating.GetPayload{ID: 99}
 	_, err = ratingSvc.Get(ctx, payload)
 	assert.Error(t, err)
@@ -85,7 +85,7 @@ func TestUpdate(t *testing.T) {
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 	payload := &rating.UpdatePayload{ID: 1, Rating: 3}
 	err = ratingSvc.Update(ctx, payload)
 	assert.NoError(t, err)
@@ -101,7 +101,7 @@ func TestUpdate_ResourceNotFound(t *testing.T) {
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
-	ctx := auth.WithUserID(context.Background(), user.ID)
+	ctx := validator.WithUserID(context.Background(), user.ID)
 	payload := &rating.UpdatePayload{ID: 99, Rating: 3}
 	err = ratingSvc.Update(ctx, payload)
 	assert.Error(t, err)
