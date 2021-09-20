@@ -42,6 +42,7 @@ func Migrate(api *app.APIBase) error {
 			addDeprecatedColumnInResoureVersionTable(log),
 			addProviderColumnInCatalogsTable(log),
 			addOnDeleteConstraints(log),
+			addCodeColInUserTable(log),
 		},
 	)
 

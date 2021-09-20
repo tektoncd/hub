@@ -118,6 +118,7 @@ type (
 		Scopes               []*Scope `gorm:"many2many:user_scopes;"`
 		RefreshTokenChecksum string
 		AvatarURL            string
+		Code                 string
 	}
 
 	Scope struct {
