@@ -18,12 +18,15 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
 	"strings"
 	"sync"
 
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	admin "github.com/tektoncd/hub/api/gen/admin"
 	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	category "github.com/tektoncd/hub/api/gen/category"
@@ -33,6 +36,7 @@ import (
 	status "github.com/tektoncd/hub/api/gen/status"
 	user "github.com/tektoncd/hub/api/gen/user"
 	"github.com/tektoncd/hub/api/pkg/app"
+	auth "github.com/tektoncd/hub/api/pkg/auth"
 	"github.com/tektoncd/hub/api/pkg/db/initializer"
 	adminsvc "github.com/tektoncd/hub/api/pkg/service/admin"
 	catalogsvc "github.com/tektoncd/hub/api/pkg/service/catalog"
@@ -185,6 +189,21 @@ func main() {
 	default:
 		fmt.Fprintf(os.Stderr, "invalid host argument: %q (valid hosts: localhost)\n", *hostF)
 	}
+
+	r := mux.NewRouter()
+
+	authPort := "4200"
+
+	auth.AuthProvider(r, api)
+	go func() {
+		// start the web server on port and accept requests
+		logger.Infof("AUTH server listening on port %q", authPort)
+		logger.Fatal(http.ListenAndServe(":"+authPort,
+			handlers.CORS(handlers.AllowedHeaders(
+				[]string{"Content-Type", "Authorization"}),
+				handlers.AllowedMethods([]string{"GET", "POST"}),
+				handlers.AllowedOrigins([]string{"*"}))(r)))
+	}()
 
 	// Wait for signal.
 	logger.Infof("exiting (%v)", <-errc)

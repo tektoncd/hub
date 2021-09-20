@@ -20,6 +20,7 @@
   refresh_token_checksum: test-checksum
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
+  code: 'test-code'
 
 - id: 13
   github_name: abc
