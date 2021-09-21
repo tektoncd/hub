@@ -310,7 +310,8 @@ paths:
       tags:
       - resource
       summary: Query resource
-      description: Find resources by a combination of name, kind , catalog and tags
+      description: Find resources by a combination of name, kind, catalog, categories,
+        platforms, and tags
       operationId: resource#Query
       parameters:
       - name: name

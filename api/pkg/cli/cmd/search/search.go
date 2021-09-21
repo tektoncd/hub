@@ -91,7 +91,7 @@ func Command(cli app.CLI) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "search",
-		Short:   "Search resource by a combination of name, kind, categories and tags",
+		Short:   "Search resource by a combination of name, kind, categories, platforms, and tags",
 		Long:    ``,
 		Example: examples,
 		Annotations: map[string]string{

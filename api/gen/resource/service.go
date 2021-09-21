@@ -16,7 +16,8 @@ import (
 
 // The resource service provides details about all kind of resources
 type Service interface {
-	// Find resources by a combination of name, kind , catalog and tags
+	// Find resources by a combination of name, kind, catalog, categories,
+	// platforms, and tags
 	Query(context.Context, *QueryPayload) (res *Resources, err error)
 	// List all resources sorted by rating and name
 	List(context.Context, *ListPayload) (res *Resources, err error)

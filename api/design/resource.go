@@ -32,7 +32,7 @@ var _ = Service("resource", func() {
 
 	// Will be deprecated, moved to v1
 	Method("Query", func() {
-		Description("Find resources by a combination of name, kind , catalog and tags")
+		Description("Find resources by a combination of name, kind, catalog, categories, platforms, and tags")
 		Payload(func() {
 			Attribute("name", String, "Name of resource", func() {
 				Default("")
