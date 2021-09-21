@@ -6,6 +6,7 @@ import { ResourceStore } from './resource';
 import { Hub, Api } from '../api';
 import { AuthStore } from './auth';
 import { CatalogStore } from './catalog';
+import { ProviderStore } from './provider';
 
 export const Root = types.model('Root', {}).views((self) => ({
   get api(): Api {
@@ -22,6 +23,9 @@ export const Root = types.model('Root', {}).views((self) => ({
   },
   get catalogs() {
     return getEnv(self).catalogs;
+  },
+  get providers() {
+    return getEnv(self).providers;
   }
 }));
 
@@ -32,6 +36,7 @@ const initRootStore = (api: Api) => {
   const catalogs = CatalogStore.create({}, { api });
   const resources = ResourceStore.create({}, { api, categories, catalogs });
   const user = AuthStore.create({ accessTokenInfo: {}, refreshTokenInfo: {} }, { api });
+  const providers = ProviderStore.create({}, { api });
 
   // This peristently stores user auth details
   persist('authStore', user, {
@@ -41,7 +46,7 @@ const initRootStore = (api: Api) => {
     whitelist: ['accessTokenInfo', 'refreshTokenInfo', 'isAuthenticated', 'isLoading']
   });
 
-  return Root.create({}, { api, catalogs, categories, resources, user });
+  return Root.create({}, { api, catalogs, categories, resources, user, providers });
 };
 
 interface Props {

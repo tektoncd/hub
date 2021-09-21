@@ -43,4 +43,14 @@ describe('Icon Component', () => {
     expect(component.debug()).toMatchSnapshot();
     expect(component.find('GithubIcon[label="Github"]').length).toEqual(1);
   });
+  it('should render icon for Gitlab', () => {
+    const component = shallow(<Icon id={Icons.Gitlab} size="sm" label="Gitlab" />);
+    expect(component.debug()).toMatchSnapshot();
+    expect(component.find('GitlabIcon[label="Gitlab"]').length).toEqual(1);
+  });
+  it('should render icon for Bitbucket', () => {
+    const component = shallow(<Icon id={Icons.Bitbucket} size="sm" label="Bitbucket" />);
+    expect(component.debug()).toMatchSnapshot();
+    expect(component.find('BitbucketIcon[label="Bitbucket"]').length).toEqual(1);
+  });
 });

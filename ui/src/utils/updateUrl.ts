@@ -64,5 +64,11 @@ export const UpdateURL = (
     });
   }
 
+  // After redirection needs to delete Code & Status
+  if (searchParams.has(Params.Code)) {
+    searchParams.delete(Params.Code);
+    searchParams.delete(Params.Status);
+  }
+
   return searchParams.toString();
 };

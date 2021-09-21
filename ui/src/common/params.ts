@@ -5,5 +5,7 @@ export enum Params {
   Kind = 'kind',
   Catalog = 'catalog',
   Platform = 'platform',
-  Tag = 'tag'
+  Tag = 'tag',
+  Code = 'code',
+  Status = 'status'
 }

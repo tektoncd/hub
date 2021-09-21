@@ -2,9 +2,9 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { when } from 'mobx';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { Modal } from '@patternfly/react-core';
 import Header from '.';
 import Search from '../../containers/Search';
-import UserProfile from '../UserProfile';
 import { FakeHub } from '../../api/testutil';
 import { createProviderAndStore } from '../../store/root';
 import { ActualDate, FakeDate } from '../../common/testutils';
@@ -59,7 +59,7 @@ describe('Header', () => {
     expect(component.find(Icon).props().id).toBe(Icons.Help);
   });
 
-  it('should render user profile', (done) => {
+  it('should find the login Modal', () => {
     const component = mount(
       <Provider>
         <Router>
@@ -67,12 +67,16 @@ describe('Header', () => {
         </Router>
       </Provider>
     );
+
+    expect(component.find(Modal).slice(1).props().className).toBe('hub-header-login__modal');
+  });
+
+  it('should authenticate', (done) => {
     const { user } = root;
     const code = {
       code: 'foo'
     };
     user.authenticate(code);
-    user.updateRefreshToken();
     when(
       () => {
         return !user.isLoading;
@@ -80,11 +84,23 @@ describe('Header', () => {
       () => {
         setTimeout(() => {
           expect(user.isAuthenticated).toBe(true);
-          component.update();
-          expect(component.find(UserProfile).length).toEqual(1);
+
           done();
         }, 0);
       }
     );
+  });
+
+  it('should find Icon in header and it`s id', () => {
+    const component = mount(
+      <Provider>
+        <Router>
+          <Header />
+        </Router>
+      </Provider>
+    );
+
+    expect(component.find(Icon).length).toBe(1);
+    expect(component.find(Icon).props().id).toBe(Icons.Help);
   });
 });

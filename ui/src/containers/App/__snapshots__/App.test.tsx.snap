@@ -38,8 +38,8 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                                 </Memo(wrappedComponent)>
                               </div>
                             </GridItem>
-                            <GridItem span={1} onClick={[Function: onClick]} className=\\"header-search-hint\\">
-                              <div className=\\"pf-l-grid__item pf-m-1-col header-search-hint\\" onClick={[Function: onClick]}>
+                            <GridItem span={1} onClick={[Function: onClick]} className=\\"hub-header-search-hint\\">
+                              <div className=\\"pf-l-grid__item pf-m-1-col hub-header-search-hint\\" onClick={[Function: onClick]}>
                                 <Icon id=\\"help\\" size=\\"sm\\" label=\\"search-tips\\">
                                   <HelpIcon size=\\"sm\\" label=\\"search-tips\\" color=\\"currentColor\\" noVerticalAlign={false}>
                                     <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1024 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" label=\\"search-tips\\">
@@ -51,18 +51,14 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                             </GridItem>
                           </div>
                         </Grid>
-                        <Text component=\\"h3\\">
-                          <h3 data-pf-content={true} className=\\"\\">
-                            <Link to=\\"/login\\" style={{...}}>
-                              <LinkAnchor style={{...}} href=\\"/login\\" navigate={[Function: navigate]}>
-                                <a style={{...}} href=\\"/login\\" onClick={[Function: onClick]}>
-                                  <span className=\\"hub-header-login\\">
-                                    Login
-                                  </span>
-                                </a>
-                              </LinkAnchor>
-                            </Link>
-                          </h3>
+                        <Text style={{...}} component=\\"a\\" onClick={[Function: onClick]}>
+                          <a style={{...}} onClick={[Function: onClick]} data-pf-content={true} className=\\"\\">
+                            <span className=\\"hub-header-login\\">
+                              <b>
+                                Login
+                              </b>
+                            </span>
+                          </a>
                         </Text>
                       </div>
                     </PageHeaderTools>
@@ -71,6 +67,11 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                 <Modal variant=\\"small\\" title=\\"Search tips:\\" isOpen={false} onClose={[Function: onClose]} className=\\"\\" aria-label=\\"\\" showClose={true} aria-describedby=\\"\\" aria-labelledby=\\"\\" id={[undefined]} actions={{...}} hasNoBodyWrapper={false} appendTo={[Function: appendTo]} ouiaSafe={true}>
                   <Portal containerInfo={{...}}>
                     <ModalContent variant=\\"small\\" isOpen={false} onClose={[Function: onClose]} className=\\"\\" showClose={true} id={[undefined]} actions={{...}} hasNoBodyWrapper={false} boxId=\\"pf-modal-part-0\\" labelId=\\"pf-modal-part-1\\" descriptorId=\\"pf-modal-part-2\\" title=\\"Search tips:\\" aria-label=\\"\\" aria-describedby=\\"\\" aria-labelledby=\\"\\" ouiaId={[undefined]} ouiaSafe={true} />
+                  </Portal>
+                </Modal>
+                <Modal variant=\\"small\\" title=\\"Tekton Hub\\" isOpen={false} onClose={[Function: onClose]} className=\\"hub-header-login__modal\\" aria-label=\\"login\\" showClose={true} aria-describedby=\\"\\" aria-labelledby=\\"\\" id={[undefined]} actions={{...}} hasNoBodyWrapper={false} appendTo={[Function: appendTo]} ouiaSafe={true}>
+                  <Portal containerInfo={{...}}>
+                    <ModalContent variant=\\"small\\" isOpen={false} onClose={[Function: onClose]} className=\\"hub-header-login__modal\\" showClose={true} id={[undefined]} actions={{...}} hasNoBodyWrapper={false} boxId=\\"pf-modal-part-1\\" labelId=\\"pf-modal-part-2\\" descriptorId=\\"pf-modal-part-3\\" title=\\"Tekton Hub\\" aria-label=\\"login\\" aria-describedby=\\"\\" aria-labelledby=\\"\\" ouiaId={[undefined]} ouiaSafe={true} />
                   </Portal>
                 </Modal>
               </Memo(wrappedComponent)>
@@ -101,7 +102,6 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                       <div className=\\"pf-l-grid pf-m-gutter\\">
                         <GridItem span={12}>
                           <div className=\\"pf-l-grid__item pf-m-12-col\\">
-                            <Route exact={true} path=\\"/login\\" component={{...}} />
                             <Route exact={true} path=\\"/:catalog/:kind/:name/:version?\\" component={{...}} />
                           </div>
                         </GridItem>

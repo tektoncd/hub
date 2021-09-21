@@ -186,7 +186,7 @@ describe('Store functions', () => {
         expect(user.isAuthenticated).toBe(true);
         user.getProfile();
         setTimeout(() => {
-          expect(user.profile.githubId).toBe('abc123');
+          expect(user.profile.userName).toBe('abc123');
           expect(user.profile.avatarUrl).toBe('https://avatars.githubusercontent.com/u/abc');
           done();
         }, 1000);

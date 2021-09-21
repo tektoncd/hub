@@ -9,7 +9,7 @@ export const TokenInfo = types.model('TokenInfo', {
 });
 
 export const UserProfile = types.model('UserProfile', {
-  githubId: types.optional(types.string, ''),
+  userName: types.optional(types.string, ''),
   name: types.optional(types.string, ''),
   avatarUrl: types.optional(types.string, '')
 });
@@ -41,7 +41,8 @@ export const AuthStore = types
     isAuthenticated: false,
     userRating: types.optional(types.number, 0),
     authErr: types.optional(Error, {}),
-    ratingErr: types.optional(Error, {})
+    ratingErr: types.optional(Error, {}),
+    isAuthModalOpen: false
   })
   .actions((self) => ({
     addAccessTokenInfo(item: ITokenInfo) {
@@ -55,7 +56,7 @@ export const AuthStore = types
       self.refreshTokenInfo.refreshInterval = item.refreshInterval;
     },
     addUserProfile(item: IUserProfile) {
-      self.profile.githubId = item.githubId;
+      self.profile.userName = item.userName;
       self.profile.name = item.name;
       self.profile.avatarUrl = item.avatarUrl;
     },
@@ -67,6 +68,9 @@ export const AuthStore = types
     },
     setLoading(l: boolean) {
       self.isLoading = l;
+    },
+    setIsAuthModalOpen(l: boolean) {
+      self.isAuthModalOpen = l;
     },
     setErrorMessage(error: IError) {
       switch (error.status) {
@@ -85,11 +89,7 @@ export const AuthStore = types
         default:
           error.customMessage = '';
       }
-    },
-    onFailure(err: Error) {
-      self.authErr.serverMessage = err.toString();
-      self.authErr.status = 400;
-      self.authErr.customMessage = 'GitHub login failed';
+      self.authErr = error;
     },
     logout() {
       self.isAuthenticated = false;
@@ -120,13 +120,17 @@ export const AuthStore = types
           historyBack();
         }
       } catch (err) {
-        const error: IError = {
-          status: err.status,
-          serverMessage: titleCase(err.data.message),
-          customMessage: ''
-        };
-        self.setErrorMessage(error);
-        self.authErr = error;
+        if (err === undefined) {
+          self.isAuthenticated = false;
+        } else {
+          const error: IError = {
+            status: err.status,
+            serverMessage: titleCase(err.data),
+            customMessage: ''
+          };
+          self.setErrorMessage(error);
+          self.authErr = error;
+        }
       }
       self.setLoading(false);
     }),
@@ -141,13 +145,18 @@ export const AuthStore = types
           self.setUserRating(json.rating);
         }
       } catch (err) {
-        const error: IError = {
-          status: err.status,
-          serverMessage: titleCase(err.data.message),
-          customMessage: ''
-        };
-        self.setErrorMessage(error);
-        self.ratingErr = error;
+        if (err === undefined) {
+          self.isAuthenticated = false;
+        } else {
+          const error: IError = {
+            status: err.status,
+            serverMessage: titleCase(err.data.message),
+            customMessage: ''
+          };
+          self.isAuthenticated = false;
+          self.setErrorMessage(error);
+          self.ratingErr = error;
+        }
       }
       self.setLoading(false);
     }),
@@ -168,6 +177,7 @@ export const AuthStore = types
           serverMessage: titleCase(err.data.message),
           customMessage: ''
         };
+        self.isAuthenticated = false;
         self.setErrorMessage(error);
         self.ratingErr = error;
       }
@@ -182,12 +192,17 @@ export const AuthStore = types
         const newRefreshToken = refresh.data;
         self.addRefreshTokenInfo(newRefreshToken.refresh);
       } catch (err) {
-        const error: IError = {
-          status: err.status,
-          serverMessage: titleCase(err.data.message),
-          customMessage: 'Refresh token has been expired please login again !'
-        };
-        self.setErrorMessage(error);
+        if (err === undefined) {
+          self.isAuthenticated = false;
+        } else {
+          const error: IError = {
+            status: err.status,
+            serverMessage: titleCase(err.data),
+            customMessage: 'Refresh token has been expired please login again !'
+          };
+          self.setErrorMessage(error);
+          self.setIsAuthenticated(false);
+        }
       }
     }),
 
@@ -199,12 +214,20 @@ export const AuthStore = types
         const newAccessToken = access.data;
         self.addAccessTokenInfo(newAccessToken.access);
       } catch (err) {
-        const error: IError = {
-          status: err.status,
-          serverMessage: titleCase(err.data.message),
-          customMessage: 'Refresh token has been expired please login again !'
-        };
-        self.setErrorMessage(error);
+        if (err === undefined) {
+          self.isAuthenticated = false;
+        } else {
+          const error: IError = {
+            status: err.status,
+            serverMessage: titleCase(err.data),
+            customMessage: 'Refresh token has been expired please login again !'
+          };
+          self.setErrorMessage(error);
+          self.setIsAuthenticated(false);
+          setTimeout(() => {
+            localStorage.clear();
+          }, 1000);
+        }
       }
     }),
 
@@ -216,13 +239,19 @@ export const AuthStore = types
         const userdata = access.data;
         self.addUserProfile(userdata);
       } catch (err) {
-        const error: IError = {
-          status: err.status,
-          serverMessage: titleCase(err.data.message),
-          customMessage: 'Access token has been expired please login again !'
-        };
-        self.setErrorMessage(error);
+        if (err === undefined) {
+          self.isAuthenticated = false;
+        } else {
+          const error: IError = {
+            status: err.status,
+            serverMessage: titleCase(err.data),
+            customMessage: 'Access token has been expired please login again !'
+          };
+          self.setErrorMessage(error);
+          self.setIsAuthenticated(false);
+        }
       }
     })
   }));
+
 export type IAuthStore = Instance<typeof AuthStore>;
