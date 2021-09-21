@@ -9,5 +9,7 @@ export enum Icons {
   Github = 'github',
   WarningTriangle = 'Warningtriangle',
   Catalog = 'catalog',
-  Help = 'help'
+  Help = 'help',
+  Gitlab = 'gitlab',
+  Bitbucket = 'bitbucket'
 }

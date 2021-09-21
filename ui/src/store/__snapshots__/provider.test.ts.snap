@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Store functions can create a Provider store 1`] = `
+Object {
+  "err": "",
+  "isLoading": false,
+  "items": Object {
+    "bitbucket": Object {
+      "name": "bitbucket",
+    },
+    "github": Object {
+      "name": "github",
+    },
+    "gitlab": Object {
+      "name": "gitlab",
+    },
+  },
+}
+`;

@@ -3,8 +3,57 @@
   font-size: 1em;
 }
 
-.header-search-hint svg {
+.hub-header-search-hint svg {
   vertical-align: 0em !important;
   margin-left: 0.2em;
   cursor: pointer;
+}
+
+.hub-header-sigin-button {
+  margin-top: 2em;
+}
+
+.hub-header-sigin-button__icon {
+  float: left;
+}
+
+.hub-header-login__modal {
+  border-radius: 0.5em;
+  width: 21em;
+}
+
+.hub-header-login__modal svg {
+  margin-right: -1em;
+  vertical-align: 0em !important;
+}
+
+.hub-header-sigin-button a {
+  outline: none;
+}
+
+.hub-header-sigin-button:hover {
+  color: white;
+  background-color: #0066cc;
+}
+
+.hub-header-login__modal > header > h1 {
+  text-align: center;
+  margin-left: 1em;
+}
+
+.hub-header-sigin-button a:hover {
+  color: white;
+}
+
+.hub-header-sigin-button a:hover svg {
+  color: white;
+}
+
+.hub-header-login__modal h6 {
+  margin-bottom: -0.5em !important;
+  text-align: center;
+}
+
+.pf-c-backdrop {
+  backdrop-filter: blur(1px);
 }

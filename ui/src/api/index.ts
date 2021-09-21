@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { API_URL, API_VERSION } from '../config/constants';
+import { API_URL, AUTH_BASE_URL, API_VERSION } from '../config/constants';
 import { ICategory } from '../store/category';
 import { IResource, IVersion } from '../store/resource';
 import { ITokenInfo, IUserProfile } from '../store/auth';
 import { ICatalog } from '../store/catalog';
+import { IProvider } from '../store/provider';
 
 interface Token {
   token: string;
@@ -38,6 +39,7 @@ export interface Api {
   getRefreshToken(refreshToken: string): Promise<ITokenInfo>;
   getAccessToken(accessToken: string): Promise<ITokenInfo>;
   profile(token: string): Promise<IUserProfile>;
+  providers(): Promise<IProvider>;
 }
 
 export class Hub implements Api {
@@ -68,7 +70,7 @@ export class Hub implements Api {
   async authentication(authCode: string) {
     try {
       return axios
-        .post(`${API_URL}/auth/login?code=${authCode}`)
+        .post(`${AUTH_BASE_URL}/auth/login?code=${authCode}`)
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
     } catch (err) {
@@ -152,7 +154,7 @@ export class Hub implements Api {
     try {
       return axios({
         method: 'post',
-        url: `${API_URL}/user/refresh/refreshtoken`,
+        url: `${AUTH_BASE_URL}/user/refresh/refreshtoken`,
         headers: {
           Authorization: `Bearer ${refreshToken}`
         }
@@ -168,7 +170,7 @@ export class Hub implements Api {
     try {
       return axios({
         method: 'post',
-        url: `${API_URL}/user/refresh/accesstoken`,
+        url: `${AUTH_BASE_URL}/user/refresh/accesstoken`,
         headers: {
           Authorization: `Bearer ${refreshToken}`
         }
@@ -183,7 +185,7 @@ export class Hub implements Api {
   async profile(token: string) {
     try {
       return axios
-        .get(`${API_URL}/user/info`, {
+        .get(`${AUTH_BASE_URL}/user/info`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -192,6 +194,14 @@ export class Hub implements Api {
         .catch((err) => Promise.reject(err.response));
     } catch (err) {
       return err;
+    }
+  }
+
+  async providers() {
+    try {
+      return axios.get(`${AUTH_BASE_URL}/auth/providers`).then((response) => response.data);
+    } catch (err) {
+      return err.response;
     }
   }
 }

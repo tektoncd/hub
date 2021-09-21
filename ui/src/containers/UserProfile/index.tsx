@@ -21,7 +21,7 @@ const UserProfile: React.FC = observer(() => {
 
   useEffect(() => {
     user.getProfile();
-  }, [user.profile.githubId]);
+  }, [user.profile.userName]);
 
   const triggerInterval = useCallback(() => {
     const accessTokenInterval = user.accessTokenInfo.expiresAt * 1000 - new Date().getTime();
@@ -30,10 +30,13 @@ const UserProfile: React.FC = observer(() => {
     // The condition checks the maximum delay for setInterval
     if (refreshTokenInterval < Math.pow(2, 31) - 1) {
       // To get a new refresh token
-      // Update the refresh token before 10 seconds of current refresh token's expiry time
+      // Update the refresh token before 20 seconds of current refresh token's expiry time
       const tempRefreshId = window.setInterval(() => {
+        if (!user.isAuthenticated) {
+          clearInterval(tempRefreshId);
+        }
         user.updateRefreshToken();
-      }, refreshTokenInterval - 10000);
+      }, refreshTokenInterval - 20000);
       setRefreshId(tempRefreshId);
     }
 
@@ -42,6 +45,9 @@ const UserProfile: React.FC = observer(() => {
       // To get a new access token
       // Update the access token before 10 seconds of current access token's expiry time
       const tempAccessId = window.setInterval(() => {
+        if (!user.isAuthenticated) {
+          clearInterval(tempAccessId);
+        }
         user.updateAccessToken();
       }, accessTokenInterval - 10000);
       setAccessId(tempAccessId);
@@ -65,7 +71,7 @@ const UserProfile: React.FC = observer(() => {
   const onToggle = (isOpen: React.SetStateAction<boolean>) => set(isOpen);
 
   const dropdownItems = [
-    <DropdownItem key="githubId">Hi {user.profile.githubId}</DropdownItem>,
+    <DropdownItem key="githubId">Hi {user.profile.userName}</DropdownItem>,
     <DropdownSeparator key="separator" />,
     <DropdownItem key="copyToken" onClick={() => setIsModalOpen(!isModalOpen)}>
       Copy Hub Token

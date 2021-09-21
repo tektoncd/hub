@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { AlertVariant } from '@patternfly/react-core';
 import { IconSize } from '@patternfly/react-icons';
 import { useMst } from '../../store/root';
@@ -67,13 +67,12 @@ const Rating: React.FC = observer(() => {
   );
 
   const { user, resources } = useMst();
-  const history = useHistory();
   const rateResource = (event: React.MouseEvent<HTMLFormElement, MouseEvent>) => {
     const target = event.target as HTMLInputElement;
     const rating = target.value;
 
     if (!user.isAuthenticated) {
-      history.push('/login');
+      user.setIsAuthModalOpen(true);
     } else {
       if (rating) {
         const resource = resources.resources.get(resourceKey);
