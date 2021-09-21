@@ -270,7 +270,7 @@ Usage:
     %s [globalflags] resource COMMAND [flags]
 
 COMMAND:
-    query: Find resources by a combination of name, kind,catalog and tags
+    query: Find resources by a combination of name, kind, catalog, categories, platforms and tags
     list: List all resources sorted by rating and name
     versions-by-id: Find all versions of a resource by its id
     by-catalog-kind-name-version: Find resource using name of catalog & name, kind and version of resource
@@ -285,7 +285,7 @@ Additional help:
 func resourceQueryUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -catalogs JSON -categories JSON -kinds JSON -tags JSON -platforms JSON -limit UINT -match STRING
 
-Find resources by a combination of name, kind,catalog and tags
+Find resources by a combination of name, kind, catalog, categories, platforms and tags
     -name STRING: 
     -catalogs JSON: 
     -categories JSON: 
