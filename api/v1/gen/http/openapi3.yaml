@@ -24,18 +24,22 @@ paths:
                 data:
                 - id: 1
                   name: Tekton
+                  provider: github
                   type: community
                   url: https://github.com/tektoncd/hub
                 - id: 1
                   name: Tekton
+                  provider: github
                   type: community
                   url: https://github.com/tektoncd/hub
                 - id: 1
                   name: Tekton
+                  provider: github
                   type: community
                   url: https://github.com/tektoncd/hub
                 - id: 1
                   name: Tekton
+                  provider: github
                   type: community
                   url: https://github.com/tektoncd/hub
         "500":
@@ -848,6 +852,10 @@ components:
           type: string
           description: Name of catalog
           example: Tekton
+        provider:
+          type: string
+          description: Provider of catalog
+          example: github
         type:
           type: string
           description: Type of catalog
@@ -862,6 +870,7 @@ components:
       example:
         id: 1
         name: Tekton
+        provider: github
         type: community
         url: https://github.com/tektoncd/hub
       required:
@@ -869,6 +878,7 @@ components:
       - name
       - type
       - url
+      - provider
     Category:
       type: object
       properties:
@@ -937,32 +947,39 @@ components:
           example:
           - id: 1
             name: Tekton
+            provider: github
             type: community
             url: https://github.com/tektoncd/hub
           - id: 1
             name: Tekton
+            provider: github
             type: community
             url: https://github.com/tektoncd/hub
           - id: 1
             name: Tekton
+            provider: github
             type: community
             url: https://github.com/tektoncd/hub
       example:
         data:
         - id: 1
           name: Tekton
+          provider: github
           type: community
           url: https://github.com/tektoncd/hub
         - id: 1
           name: Tekton
+          provider: github
           type: community
           url: https://github.com/tektoncd/hub
         - id: 1
           name: Tekton
+          provider: github
           type: community
           url: https://github.com/tektoncd/hub
         - id: 1
           name: Tekton
+          provider: github
           type: community
           url: https://github.com/tektoncd/hub
     Resource:

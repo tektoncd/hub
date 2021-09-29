@@ -46,6 +46,8 @@ type CatalogResponseBody struct {
 	Type string `form:"type" json:"type" xml:"type"`
 	// URL of catalog
 	URL string `form:"url" json:"url" xml:"url"`
+	// Provider of catalog
+	Provider string `form:"provider" json:"provider" xml:"provider"`
 }
 
 // NewListResponseBody builds the HTTP response body from the result of the

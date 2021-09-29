@@ -804,10 +804,11 @@ func unmarshalResourceDataResponseBodyToResourceviewsResourceDataView(v *Resourc
 // type *resourceviews.CatalogView from a value of type *CatalogResponseBody.
 func unmarshalCatalogResponseBodyToResourceviewsCatalogView(v *CatalogResponseBody) *resourceviews.CatalogView {
 	res := &resourceviews.CatalogView{
-		ID:   v.ID,
-		Name: v.Name,
-		Type: v.Type,
-		URL:  v.URL,
+		ID:       v.ID,
+		Name:     v.Name,
+		Type:     v.Type,
+		URL:      v.URL,
+		Provider: v.Provider,
 	}
 
 	return res
