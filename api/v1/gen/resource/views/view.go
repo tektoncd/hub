@@ -86,6 +86,8 @@ type CatalogView struct {
 	Type *string
 	// URL of catalog
 	URL *string
+	// Provider of catalog
+	Provider *string
 }
 
 // CategoryView is a type that runs validations on a projected type.
@@ -277,6 +279,7 @@ var (
 			"name",
 			"type",
 			"url",
+			"provider",
 		},
 	}
 	// ResourceVersionDataMap is a map of attribute names in result type
@@ -635,6 +638,9 @@ func ValidateCatalogView(result *CatalogView) (err error) {
 	}
 	if result.URL == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("url", "result"))
+	}
+	if result.Provider == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("provider", "result"))
 	}
 	if result.Type != nil {
 		if !(*result.Type == "official" || *result.Type == "community") {

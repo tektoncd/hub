@@ -73,6 +73,9 @@ var Catalog = ResultType("application/vnd.hub.catalog", "Catalog", func() {
 	Attribute("url", String, "URL of catalog", func() {
 		Example("url", "https://github.com/tektoncd/hub")
 	})
+	Attribute("provider", String, "Provider of catalog", func() {
+		Example("provider", "github")
+	})
 
 	View("min", func() {
 		Attribute("id")
@@ -85,9 +88,10 @@ var Catalog = ResultType("application/vnd.hub.catalog", "Catalog", func() {
 		Attribute("name")
 		Attribute("type")
 		Attribute("url")
+		Attribute("provider")
 	})
 
-	Required("id", "name", "type", "url")
+	Required("id", "name", "type", "url", "provider")
 })
 
 var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data", "ResourceVersionData", func() {

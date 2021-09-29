@@ -347,6 +347,8 @@ type CatalogResponseBody struct {
 	Type *string `form:"type,omitempty" json:"type,omitempty" xml:"type,omitempty"`
 	// URL of catalog
 	URL *string `form:"url,omitempty" json:"url,omitempty" xml:"url,omitempty"`
+	// Provider of catalog
+	Provider *string `form:"provider,omitempty" json:"provider,omitempty" xml:"provider,omitempty"`
 }
 
 // CategoryResponseBody is used to define fields on response body types.
@@ -1122,6 +1124,9 @@ func ValidateCatalogResponseBody(body *CatalogResponseBody) (err error) {
 	}
 	if body.URL == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("url", "body"))
+	}
+	if body.Provider == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("provider", "body"))
 	}
 	if body.Type != nil {
 		if !(*body.Type == "official" || *body.Type == "community") {

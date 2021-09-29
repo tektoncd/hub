@@ -63,10 +63,11 @@ func marshalCatalogCatalogToCatalogResponseBody(v *catalog.Catalog) *CatalogResp
 		return nil
 	}
 	res := &CatalogResponseBody{
-		ID:   v.ID,
-		Name: v.Name,
-		Type: v.Type,
-		URL:  v.URL,
+		ID:       v.ID,
+		Name:     v.Name,
+		Type:     v.Type,
+		URL:      v.URL,
+		Provider: v.Provider,
 	}
 
 	return res

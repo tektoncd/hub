@@ -396,20 +396,24 @@ definitions:
         example:
         - id: 1
           name: Tekton
+          provider: github
           type: community
           url: https://github.com/tektoncd/hub
         - id: 1
           name: Tekton
+          provider: github
           type: community
           url: https://github.com/tektoncd/hub
     example:
       data:
       - id: 1
         name: Tekton
+        provider: github
         type: community
         url: https://github.com/tektoncd/hub
       - id: 1
         name: Tekton
+        provider: github
         type: community
         url: https://github.com/tektoncd/hub
   CatalogResponseBody:
@@ -425,6 +429,10 @@ definitions:
         type: string
         description: Name of catalog
         example: Tekton
+      provider:
+        type: string
+        description: Provider of catalog
+        example: github
       type:
         type: string
         description: Type of catalog
@@ -440,6 +448,7 @@ definitions:
     example:
       id: 1
       name: Tekton
+      provider: github
       type: community
       url: https://github.com/tektoncd/hub
     required:
@@ -447,6 +456,7 @@ definitions:
     - name
     - type
     - url
+    - provider
   CatalogResponseBodyMin:
     title: 'Mediatype identifier: application/vnd.hub.catalog; view=default'
     type: object
