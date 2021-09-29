@@ -2,13 +2,15 @@
 	"data": [
 			{
 					"id": 2,
-					"name": "openshift",
-					"type": "community"
+					"name": "tekton-hub",
+					"type": "official",
+					"provider": "gitlab"
 			},
 			{
 					"id": 1,
 					"name": "tekton",
-					"type": "community"
+					"type": "community",
+					"provider": "github"
 			}
 	]
 }

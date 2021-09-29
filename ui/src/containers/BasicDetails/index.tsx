@@ -26,21 +26,34 @@ import { IconSize } from '@patternfly/react-icons';
 import { useObserver } from 'mobx-react';
 import { useParams } from 'react-router-dom';
 import { useMst } from '../../store/root';
-import { IResource } from '../../store/resource';
+import { IResource, IResourceStore } from '../../store/resource';
 import { ITag } from '../../store/tag';
 import { Icons } from '../../common/icons';
 import Icon from '../../components/Icon';
 import TooltipDisplay from '../../components/TooltipDisplay';
 import Rating from '../Rating';
 import { titleCase } from '../../common/titlecase';
+import { assert } from '../../store/utils';
+import { ICatalogStore } from '../../store/catalog';
 import './BasicDetails.css';
 
 const BasicDetails: React.FC = () => {
-  const { resources } = useMst();
-  const { catalog, kind, name } = useParams();
+  const { resources, catalogs }: { resources: IResourceStore; catalogs: ICatalogStore } = useMst();
+  const { catalog, kind, name }: { catalog: string; kind: string; name: string } = useParams();
 
   const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
-  const resource: IResource = resources.resources.get(resourceKey);
+  const resource: IResource | undefined = resources.resources.get(resourceKey);
+  assert(resource);
+
+  const catalogId = resource.catalog.id;
+  let catalogProvider = 'Github';
+
+  for (let catalogItem = 0; catalogItem < catalogs.values.length; catalogItem++) {
+    if (catalogs.values[catalogItem].id === catalogId) {
+      catalogProvider = catalogs.values[catalogItem].provider;
+      break;
+    }
+  }
 
   const dropdownItems = resource.versions.map((value) => (
     <DropdownItem
@@ -110,7 +123,9 @@ const BasicDetails: React.FC = () => {
                       <Icon id={Icons.Github} size={IconSize.md} label="Github" />
                     </ListItem>
                     <ListItem>
-                      <Text className="hub-details-github">Open {resource.name} in Github</Text>
+                      <Text className="hub-details-github">
+                        Open {resource.name} in {titleCase(catalogProvider)}
+                      </Text>
                     </ListItem>
                   </List>
                 </a>

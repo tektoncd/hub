@@ -8,14 +8,16 @@ Object {
     "1": Object {
       "id": 1,
       "name": "tekton",
+      "provider": "github",
       "selected": false,
       "type": "community",
     },
     "2": Object {
       "id": 2,
-      "name": "openshift",
+      "name": "tekton-hub",
+      "provider": "gitlab",
       "selected": false,
-      "type": "community",
+      "type": "official",
     },
   },
 }

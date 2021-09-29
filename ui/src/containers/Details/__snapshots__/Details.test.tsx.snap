@@ -91,7 +91,8 @@ exports[`Details component should render the details component 1`] = `
                                       <p data-pf-content={true} className=\\"hub-details-github\\">
                                         Open 
                                         buildah
-                                         in Github
+                                         in 
+                                        Github
                                       </p>
                                     </Text>
                                   </li>
