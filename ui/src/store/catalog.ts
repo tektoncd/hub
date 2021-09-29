@@ -12,6 +12,7 @@ export const Catalog = types
     id: types.identifierNumber,
     name: types.optional(types.string, ''),
     type: types.optional(types.string, ''),
+    provider: types.optional(types.string, ''),
     selected: false
   })
   .actions((self) => ({
@@ -37,7 +38,7 @@ export const CatalogStore = types
 
   .actions((self) => ({
     add(item: ICatalog) {
-      self.items.put({ id: item.id, name: item.name, type: item.type });
+      self.items.put({ id: item.id, name: item.name, type: item.type, provider: item.provider });
     },
     clearSelected() {
       self.items.forEach((c) => {
@@ -96,7 +97,8 @@ export const CatalogStore = types
         const catalogs: ICatalog[] = json.data.map((c: ICatalog) => ({
           id: c.id,
           name: c.name,
-          type: c.type
+          type: c.type,
+          provider: c.provider
         }));
 
         catalogs.forEach((c: ICatalog) => self.add(c));

@@ -90,7 +90,8 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                                     <p data-pf-content={true} className=\\"hub-details-github\\">
                                       Open 
                                       buildah
-                                       in Github
+                                       in 
+                                      Github
                                     </p>
                                   </Text>
                                 </li>
@@ -373,7 +374,8 @@ exports[`should render the BasicDetails component 1`] = `
                                     <p data-pf-content={true} className=\\"hub-details-github\\">
                                       Open 
                                       buildah
-                                       in Github
+                                       in 
+                                      Github
                                     </p>
                                   </Text>
                                 </li>

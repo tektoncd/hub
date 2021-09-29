@@ -105,4 +105,19 @@ describe('Store Object', () => {
       }
     );
   });
+
+  it('can get a provider for catalog', (done) => {
+    const store = CatalogStore.create({}, { api });
+
+    when(
+      () => !store.isLoading,
+      () => {
+        const catalog = store.items.get('2');
+        assert(catalog);
+        expect(catalog.provider).toBe("gitlab");
+
+        done();
+      }
+    );
+  });
 });
