@@ -4,6 +4,7 @@ import { GridItem, Grid } from '@patternfly/react-core';
 import CatalogFilter from '../../containers/CatalogFilter';
 import KindFilter from '../../containers/KindFilter';
 import CategoryFilter from '../../containers/CategoryFilter';
+import PlatformFilter from '../../containers/PlatformFilter';
 import Sort from '../../containers/SortDropDown';
 import './LeftPane.css';
 
@@ -15,6 +16,9 @@ const LeftPane: React.FC = () => {
       </GridItem>
       <GridItem>
         <KindFilter />
+      </GridItem>
+      <GridItem>
+        <PlatformFilter />
       </GridItem>
       <GridItem>
         <CatalogFilter />

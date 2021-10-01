@@ -9,6 +9,7 @@ export const UpdateURL = (
   categories: string,
   kinds: string,
   catalogs: string,
+  platforms: string,
   tags: Array<string>
 ) => {
   // To get URLSearchParams object instance
@@ -32,6 +33,12 @@ export const UpdateURL = (
 
   // Sets category params
   if (categories) searchParams.set(Params.Category, categories);
+
+  // To delete platform params if doesn't selected any platform
+  if (!platforms && searchParams.has(Params.Platform)) searchParams.delete(Params.Platform);
+
+  // Sets platform params
+  if (platforms) searchParams.set(Params.Platform, platforms);
 
   // To delete kind params if doesn't selected any kind
   if (!kinds && searchParams.has(Params.Kind)) searchParams.delete(Params.Kind);

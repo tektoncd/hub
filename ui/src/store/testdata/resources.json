@@ -30,6 +30,24 @@
           "name": "image-build"
         }
       ],
+      "platforms": [
+        {
+          "id": 1,
+          "name": "linux/amd64"
+        },
+        {
+          "id": 4,
+          "name": "linux/arm64"
+        },
+        {
+          "id": 3,
+          "name": "linux/ppc64le"
+        },
+        {
+          "id": 2,
+          "name": "linux/s390x"
+        }
+      ],
       "rating": 4
     },
     {
@@ -64,6 +82,12 @@
           "name": "cli"
         }
       ],
+      "platforms": [
+        {
+          "id": 1,
+          "name": "linux/amd64"
+        }
+      ],
       "rating": 5
     },
     {
@@ -95,6 +119,12 @@
         {
           "id": 1,
           "name": "build-tool"
+        }
+      ],
+      "platforms": [
+        {
+          "id": 1,
+          "name": "linux/amd64"
         }
       ],
       "rating": 5
@@ -134,6 +164,12 @@
           "name": "jenkins"
         }
       ],
+      "platforms": [
+        {
+          "id": 1,
+          "name": "linux/amd64"
+        }
+      ],
       "rating": 5
     },
     {
@@ -165,6 +201,12 @@
         {
           "id": 8,
           "name": "image-build"
+        }
+      ],
+      "platforms": [
+        {
+          "id": 1,
+          "name": "linux/amd64"
         }
       ],
       "rating": 5
@@ -200,6 +242,12 @@
           "name": "cli"
         }
       ],
+      "platforms": [
+        {
+          "id": 1,
+          "name": "linux/amd64"
+        }
+      ],
       "rating": 4.5
     },
     {
@@ -233,6 +281,12 @@
           "name": "image-build"
         }
       ],
+      "platforms": [
+        {
+          "id": 1,
+          "name": "linux/amd64"
+        }
+      ],
       "rating": 5
     },
     {
@@ -264,6 +318,16 @@
         {
           "id": 10,
           "name": "resource"
+        }
+      ],
+      "platforms": [
+        {
+          "id": 1,
+          "name": "linux/amd64"
+        },
+        {
+          "id": 2,
+          "name": "linux/s390x"
         }
       ],
       "rating": 4.5

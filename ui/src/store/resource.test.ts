@@ -20,6 +20,7 @@ describe('Store Object', () => {
       latestVersion: 1,
       displayVersion: 1,
       tags: ['1'],
+      platforms: ['1'],
       rating: 5
     });
 
@@ -65,6 +66,27 @@ describe('Store functions', () => {
       () => {
         expect(store.resources.size).toBe(7);
         expect(getSnapshot(store.kinds)).toMatchSnapshot();
+        done();
+      }
+    );
+  });
+
+  it('creates a platform store', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.resources.size).toBe(7);
+        expect(getSnapshot(store.platforms)).toMatchSnapshot();
         done();
       }
     );
@@ -155,6 +177,36 @@ describe('Store functions', () => {
 
         expect(store.filteredResources.length).toBe(2);
         expect(store.filteredResources[0].name).toBe('golang-build');
+        done();
+      }
+    );
+  });
+
+  it('filter resources based on selected platforms', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        catalogs: CatalogStore.create({}, { api }),
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        const platformA = store.platforms.items.get('2');
+        const platformB = store.platforms.items.get('3');
+
+        assert(platformA);
+        assert(platformB);
+
+        platformA.toggle();
+        platformB.toggle();
+
+        expect(store.filteredResources.length).toBe(2);
+        expect(store.filteredResources[0].name).toBe('buildah');
         done();
       }
     );

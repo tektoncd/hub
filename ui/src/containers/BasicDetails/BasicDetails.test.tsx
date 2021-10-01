@@ -22,7 +22,8 @@ jest.mock('react-router-dom', () => {
       return {
         name: 'buildah',
         catalog: 'tekton',
-        kind: 'Task'
+        kind: 'Task',
+        platform: 'linux/amd64'
       };
     }
   };

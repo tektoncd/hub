@@ -15,6 +15,33 @@ Object {
 }
 `;
 
+exports[`Store functions creates a platform store 1`] = `
+Object {
+  "items": Object {
+    "1": Object {
+      "id": 1,
+      "name": "linux/amd64",
+      "selected": false,
+    },
+    "2": Object {
+      "id": 2,
+      "name": "linux/s390x",
+      "selected": false,
+    },
+    "3": Object {
+      "id": 3,
+      "name": "linux/ppc64le",
+      "selected": false,
+    },
+    "4": Object {
+      "id": 4,
+      "name": "linux/arm64",
+      "selected": false,
+    },
+  },
+}
+`;
+
 exports[`Store functions creates a resource store 1`] = `
 Object {
   "tekton-hub/Pipeline/hub": Object {
@@ -28,6 +55,10 @@ Object {
     "kind": "Pipeline",
     "latestVersion": 1,
     "name": "hub",
+    "platforms": Array [
+      1,
+      2,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
@@ -51,6 +82,9 @@ Object {
     "kind": "Task",
     "latestVersion": 1,
     "name": "ansible-runner",
+    "platforms": Array [
+      1,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
@@ -74,6 +108,9 @@ Object {
     "kind": "Task",
     "latestVersion": 4,
     "name": "aws-cli",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
@@ -97,6 +134,12 @@ Object {
     "kind": "Task",
     "latestVersion": 105,
     "name": "buildah",
+    "platforms": Array [
+      1,
+      4,
+      3,
+      2,
+    ],
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
@@ -120,6 +163,9 @@ Object {
     "kind": "Task",
     "latestVersion": 47,
     "name": "golang-build",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
@@ -143,6 +189,9 @@ Object {
     "kind": "Task",
     "latestVersion": 104,
     "name": "jenkins",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
@@ -167,6 +216,9 @@ Object {
     "kind": "Task",
     "latestVersion": 57,
     "name": "jib-maven",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
@@ -195,6 +247,10 @@ Object {
     "kind": "Pipeline",
     "latestVersion": 1,
     "name": "hub",
+    "platforms": Array [
+      1,
+      2,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
@@ -218,6 +274,9 @@ Object {
     "kind": "Task",
     "latestVersion": 1,
     "name": "ansible-runner",
+    "platforms": Array [
+      1,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
@@ -241,6 +300,9 @@ Object {
     "kind": "Task",
     "latestVersion": 4,
     "name": "aws-cli",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
@@ -264,6 +326,12 @@ Object {
     "kind": "Task",
     "latestVersion": 105,
     "name": "buildah",
+    "platforms": Array [
+      1,
+      4,
+      3,
+      2,
+    ],
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
@@ -287,6 +355,9 @@ Object {
     "kind": "Task",
     "latestVersion": 47,
     "name": "golang-build",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
@@ -310,6 +381,9 @@ Object {
     "kind": "Task",
     "latestVersion": 104,
     "name": "jenkins",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
@@ -334,6 +408,9 @@ Object {
     "kind": "Task",
     "latestVersion": 57,
     "name": "jib-maven",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
@@ -362,6 +439,10 @@ Object {
     "kind": "Pipeline",
     "latestVersion": 1,
     "name": "hub",
+    "platforms": Array [
+      1,
+      2,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
@@ -383,6 +464,7 @@ Object {
     "kind": "Task",
     "latestVersion": 47,
     "name": "golang-build",
+    "platforms": Array [],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton-hub/Task/golang-build",
@@ -406,6 +488,9 @@ Object {
     "kind": "Task",
     "latestVersion": 1,
     "name": "ansible-runner",
+    "platforms": Array [
+      1,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
@@ -429,6 +514,9 @@ Object {
     "kind": "Task",
     "latestVersion": 4,
     "name": "aws-cli",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
@@ -452,6 +540,12 @@ Object {
     "kind": "Task",
     "latestVersion": 105,
     "name": "buildah",
+    "platforms": Array [
+      1,
+      4,
+      3,
+      2,
+    ],
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
@@ -475,6 +569,9 @@ Object {
     "kind": "Task",
     "latestVersion": 47,
     "name": "golang-build",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
@@ -498,6 +595,9 @@ Object {
     "kind": "Task",
     "latestVersion": 104,
     "name": "jenkins",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
@@ -522,6 +622,9 @@ Object {
     "kind": "Task",
     "latestVersion": 57,
     "name": "jib-maven",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
@@ -550,6 +653,10 @@ Object {
     "kind": "Pipeline",
     "latestVersion": 1,
     "name": "hub",
+    "platforms": Array [
+      1,
+      2,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
@@ -573,6 +680,9 @@ Object {
     "kind": "Task",
     "latestVersion": 1,
     "name": "ansible-runner",
+    "platforms": Array [
+      1,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
@@ -596,6 +706,9 @@ Object {
     "kind": "Task",
     "latestVersion": 4,
     "name": "aws-cli",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
@@ -619,6 +732,12 @@ Object {
     "kind": "Task",
     "latestVersion": 105,
     "name": "buildah",
+    "platforms": Array [
+      1,
+      4,
+      3,
+      2,
+    ],
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
@@ -640,6 +759,7 @@ Object {
     "kind": "Task",
     "latestVersion": 47,
     "name": "golang-build",
+    "platforms": Array [],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
@@ -663,6 +783,9 @@ Object {
     "kind": "Task",
     "latestVersion": 104,
     "name": "jenkins",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
@@ -687,6 +810,9 @@ Object {
     "kind": "Task",
     "latestVersion": 57,
     "name": "jib-maven",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
@@ -715,6 +841,10 @@ Object {
     "kind": "Pipeline",
     "latestVersion": 1,
     "name": "hub",
+    "platforms": Array [
+      1,
+      2,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
@@ -738,6 +868,9 @@ Object {
     "kind": "Task",
     "latestVersion": 1,
     "name": "ansible-runner",
+    "platforms": Array [
+      1,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
@@ -761,6 +894,9 @@ Object {
     "kind": "Task",
     "latestVersion": 4,
     "name": "aws-cli",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
@@ -784,6 +920,12 @@ Object {
     "kind": "Task",
     "latestVersion": 105,
     "name": "buildah",
+    "platforms": Array [
+      1,
+      4,
+      3,
+      2,
+    ],
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
@@ -807,6 +949,9 @@ Object {
     "kind": "Task",
     "latestVersion": 47,
     "name": "golang-build",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
@@ -830,6 +975,9 @@ Object {
     "kind": "Task",
     "latestVersion": 104,
     "name": "jenkins",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
@@ -854,6 +1002,9 @@ Object {
     "kind": "Task",
     "latestVersion": 57,
     "name": "jib-maven",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
@@ -882,6 +1033,10 @@ Object {
     "kind": "Pipeline",
     "latestVersion": 1,
     "name": "hub",
+    "platforms": Array [
+      1,
+      2,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
@@ -905,6 +1060,9 @@ Object {
     "kind": "Task",
     "latestVersion": 1,
     "name": "ansible-runner",
+    "platforms": Array [
+      1,
+    ],
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
@@ -928,6 +1086,9 @@ Object {
     "kind": "Task",
     "latestVersion": 4,
     "name": "aws-cli",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
@@ -951,6 +1112,12 @@ Object {
     "kind": "Task",
     "latestVersion": 105,
     "name": "buildah",
+    "platforms": Array [
+      1,
+      4,
+      3,
+      2,
+    ],
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
@@ -974,6 +1141,9 @@ Object {
     "kind": "Task",
     "latestVersion": 47,
     "name": "golang-build",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
@@ -997,6 +1167,9 @@ Object {
     "kind": "Task",
     "latestVersion": 104,
     "name": "jenkins",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
@@ -1021,6 +1194,9 @@ Object {
     "kind": "Task",
     "latestVersion": 57,
     "name": "jib-maven",
+    "platforms": Array [
+      1,
+    ],
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",

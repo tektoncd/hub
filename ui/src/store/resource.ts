@@ -7,6 +7,7 @@ import { ICategoryStore, Category, ICategory } from './category';
 import { Api } from '../api';
 import { Catalog, ICatalogStore, ICatalog } from './catalog';
 import { Kind, KindStore } from './kind';
+import { Platform, PlatformStore, IPlatform } from './platform';
 import { assert } from './utils';
 import { Params } from '../common/params';
 import { Tag, TagStore, ITag } from './tag';
@@ -51,6 +52,7 @@ export const Resource = types
     catalog: types.reference(Catalog),
     kind: types.reference(Kind),
     categories: types.array(types.reference(Category)),
+    platforms: types.array(types.reference(Platform)),
     latestVersion: types.reference(Version),
     displayVersion: types.reference(Version),
     tags: types.array(types.reference(Tag)), // ["cli", "aws"]
@@ -118,6 +120,7 @@ export const ResourceStore = types
     tags: types.optional(TagStore, {}),
     sortBy: types.optional(types.enumeration(Object.values(SortByFields)), SortByFields.Unknown),
     category: types.optional(types.map(Category), {}),
+    platforms: types.optional(PlatformStore, {}),
     search: '',
     searchedTags: types.array(types.string),
     tagsString: '',
@@ -167,6 +170,7 @@ export const ResourceStore = types
       self.kinds.clearSelected();
       self.catalogs.clearSelected();
       self.categories.clearSelected();
+      self.platforms.clearSelected();
       self.setSearch('');
       self.setSearchedTags([]);
       self.setSortBy(SortByFields.Unknown);
@@ -185,6 +189,13 @@ export const ResourceStore = types
         const catalogsParams = searchParams.getAll(Params.Catalog)[0].split(',');
         catalogsParams.forEach((t: string) => {
           self.catalogs.toggleByName(t);
+        });
+      }
+
+      if (searchParams.has(Params.Platform)) {
+        const platformsParams = searchParams.getAll(Params.Platform)[0].split(',');
+        platformsParams.forEach((t: string) => {
+          self.platforms.toggleByName(t);
         });
       }
 
@@ -288,6 +299,9 @@ export const ResourceStore = types
           self.category.put(c);
         });
 
+        const allPlatforms: IPlatform[] = json.data.flatMap((item: IResource) => item.platforms);
+        allPlatforms.forEach((p) => self.platforms.add(p));
+
         const resources: IResource[] = json.data.map((r: IResource) => ({
           id: r.id,
           name: r.name,
@@ -298,6 +312,7 @@ export const ResourceStore = types
           displayVersion: r.latestVersion.id,
           tags: r.tags != null ? r.tags.map((tag: ITag) => tag.name) : [],
           categories: r.categories != null ? r.categories.map((c: ICategory) => c.id) : [],
+          platforms: r.platforms != null ? r.platforms.map((p: IPlatform) => p.id) : [],
           rating: r.rating,
           versions: [],
           displayName: r.latestVersion.displayName,
@@ -374,7 +389,16 @@ export const ResourceStore = types
 
   .views((self) => ({
     get filteredResources() {
-      const { resources, kinds, catalogs, search, sortBy, categories, searchedTags } = self;
+      const {
+        resources,
+        kinds,
+        catalogs,
+        platforms,
+        search,
+        sortBy,
+        categories,
+        searchedTags
+      } = self;
 
       const tags = new Set(searchedTags);
 
@@ -384,9 +408,17 @@ export const ResourceStore = types
         const matchesCatalogs = catalogs.selected.size === 0 || catalogs.selected.has(r.catalog.id);
         const matchesCategories =
           categories.selected.size === 0 || r.categories.some((c) => categories.selected.has(c.id));
+        const matchesPlatforms =
+          platforms.selected.size === 0 || r.platforms.some((p) => platforms.selected.has(p.id));
         const matchesTags = searchedTags.length === 0 || r.tags.some((t: ITag) => tags.has(t.name));
 
-        if (matchesKind && matchesCatalogs && matchesCategories && matchesTags) {
+        if (
+          matchesKind &&
+          matchesCatalogs &&
+          matchesCategories &&
+          matchesTags &&
+          matchesPlatforms
+        ) {
           filteredItems.push(r);
         }
       });
