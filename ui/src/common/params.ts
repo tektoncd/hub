@@ -4,5 +4,6 @@ export enum Params {
   Category = 'category',
   Kind = 'kind',
   Catalog = 'catalog',
+  Platform = 'platform',
   Tag = 'tag'
 }

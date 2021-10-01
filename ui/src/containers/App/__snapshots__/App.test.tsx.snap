@@ -180,6 +180,45 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                                     </GridItem>
                                     <GridItem>
                                       <div className=\\"pf-l-grid__item\\">
+                                        <PlatformFilter>
+                                          <Filter store={{...}} header=\\"Platform\\">
+                                            <div>
+                                              <Grid>
+                                                <div className=\\"pf-l-grid\\">
+                                                  <GridItem span={6}>
+                                                    <div className=\\"pf-l-grid__item pf-m-6-col\\">
+                                                      <Text component=\\"h1\\" className=\\"hub-filter-header\\">
+                                                        <h1 data-pf-content={true} className=\\"hub-filter-header\\">
+                                                          Platform
+                                                        </h1>
+                                                      </Text>
+                                                    </div>
+                                                  </GridItem>
+                                                  <GridItem span={3}>
+                                                    <div className=\\"pf-l-grid__item pf-m-3-col\\">
+                                                      <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
+                                                        <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={2}>
+                                                          <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                            <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                              <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" transform=\\"\\" />
+                                                            </svg>
+                                                          </TimesIcon>
+                                                        </button>
+                                                      </Button>
+                                                    </div>
+                                                  </GridItem>
+                                                  <GridItem span={12}>
+                                                    <div className=\\"pf-l-grid__item pf-m-12-col\\" />
+                                                  </GridItem>
+                                                </div>
+                                              </Grid>
+                                            </div>
+                                          </Filter>
+                                        </PlatformFilter>
+                                      </div>
+                                    </GridItem>
+                                    <GridItem>
+                                      <div className=\\"pf-l-grid__item\\">
                                         <CatalogFilter>
                                           <Filter store={{...}} header=\\"Catalog\\">
                                             <div>
@@ -197,7 +236,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                                                   <GridItem span={3}>
                                                     <div className=\\"pf-l-grid__item pf-m-3-col\\">
                                                       <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
-                                                        <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={2}>
+                                                        <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={3}>
                                                           <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
                                                             <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
                                                               <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" transform=\\"\\" />
@@ -236,7 +275,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                                                   <GridItem span={3}>
                                                     <div className=\\"pf-l-grid__item pf-m-3-col\\">
                                                       <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
-                                                        <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={3}>
+                                                        <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={4}>
                                                           <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
                                                             <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
                                                               <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" transform=\\"\\" />
@@ -283,7 +322,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                 </PageSection>
                 <Footer>
                   <Card className=\\"hub-footer-card\\">
-                    <article className=\\"pf-c-card hub-footer-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={4}>
+                    <article className=\\"pf-c-card hub-footer-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={5}>
                       <Grid>
                         <div className=\\"pf-l-grid\\">
                           <GridItem span={12} className=\\"hub-footer-info\\">

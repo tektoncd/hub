@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Store Object creates a platform store 1`] = `
+Object {
+  "1": Object {
+    "id": 1,
+    "name": "linux/amd64",
+    "selected": false,
+  },
+}
+`;

@@ -9,6 +9,9 @@ exports[`LeftPane should find the components and match the count 1`] = `
     <KindFilter />
   </GridItem>
   <GridItem>
+    <PlatformFilter />
+  </GridItem>
+  <GridItem>
     <CatalogFilter />
   </GridItem>
   <GridItem>
