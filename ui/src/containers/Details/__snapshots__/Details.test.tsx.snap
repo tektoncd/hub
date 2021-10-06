@@ -121,6 +121,9 @@ exports[`Details component should render the details component 1`] = `
                                   </Badge>
                                 </div>
                               </GridItem>
+                              <GridItem>
+                                <div className=\\"pf-l-grid__item\\" />
+                              </GridItem>
                             </div>
                           </Grid>
                         </div>

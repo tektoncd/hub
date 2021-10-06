@@ -114,7 +114,7 @@ describe('Store Object', () => {
       () => {
         const catalog = store.items.get('2');
         assert(catalog);
-        expect(catalog.provider).toBe("gitlab");
+        expect(catalog.provider).toBe('gitlab');
 
         done();
       }

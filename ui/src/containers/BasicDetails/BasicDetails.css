@@ -65,6 +65,12 @@
   margin-bottom: 0.2em;
 }
 
+.hub-platforms {
+  margin-right: 0.3em;
+  margin-bottom: 0.2em;
+  background-color: #484848;
+}
+
 .hub-details-button {
   width: 8.5em;
 }
