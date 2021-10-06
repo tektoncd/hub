@@ -582,6 +582,55 @@ describe('Store functions', () => {
     );
   });
 
+  it('fetch platforms version details for buildah resource', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+
+    expect(store.isLoading).toBe(true);
+
+    when(
+      () => !store.isLoading,
+      () => {
+        expect(store.resources.size).toBe(7);
+        expect(getSnapshot(store.resources)).toMatchSnapshot();
+        store.versionInfo('tekton/Task/buildah');
+        when(
+          () => !store.isLoading,
+          () => {
+            const resource = store.resources.get('tekton/Task/buildah');
+            assert(resource);
+            expect(resource.versions.length).toBe(2);
+            expect(resource.latestVersion.id).toBe(105);
+            store.versionUpdate(105);
+            when(
+              () => !store.isLoading,
+              () => {
+                expect(resource.versions[0].versionPlatforms.length).toBe(2);
+                expect(resource.versions[0].versionPlatforms[0].name).toBe('linux/amd64');
+                expect(resource.versions[0].versionPlatforms[1].name).toBe('linux/s390x');
+                expect(resource.versions[1].id).toBe(13);
+                store.versionUpdate(13);
+                when(
+                  () => !store.isLoading,
+                  () => {
+                    expect(resource.versions[1].versionPlatforms.length).toBe(1);
+                    expect(resource.versions[1].versionPlatforms[0].name).toBe('linux/amd64');
+                    done();
+                  }
+                );
+              }
+            );
+          }
+        );
+      }
+    );
+  });
+
   it('set 0.1 as display version for buildah', (done) => {
     const store = ResourceStore.create(
       {},

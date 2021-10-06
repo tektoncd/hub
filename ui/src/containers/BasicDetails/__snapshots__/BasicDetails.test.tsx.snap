@@ -5,7 +5,7 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
    
   <BasicDetails>
     <Card className=\\"hub-header-card\\">
-      <article className=\\"pf-c-card hub-header-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={3}>
+      <article className=\\"pf-c-card hub-header-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id={6}>
         <Grid className=\\"hub-header-card__margin\\">
           <div className=\\"pf-l-grid hub-header-card__margin\\">
             <GridItem span={1}>
@@ -120,6 +120,20 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                                 </Badge>
                               </div>
                             </GridItem>
+                            <GridItem>
+                              <div className=\\"pf-l-grid__item\\">
+                                <Badge className=\\"hub-platforms\\">
+                                  <span className=\\"pf-c-badge pf-m-unread hub-platforms\\">
+                                    linux/amd64
+                                  </span>
+                                </Badge>
+                                <Badge className=\\"hub-platforms\\">
+                                  <span className=\\"pf-c-badge pf-m-unread hub-platforms\\">
+                                    linux/s390x
+                                  </span>
+                                </Badge>
+                              </div>
+                            </GridItem>
                           </div>
                         </Grid>
                       </div>
@@ -138,7 +152,7 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                                           <Tooltip content={{...}}>
                                             <Popper trigger={{...}} reference={[undefined]} popper={{...}} popperMatchesTriggerWidth={false} appendTo={[Function: appendTo]} isVisible={false} positionModifiers={{...}} distance={15} placement=\\"top\\" onMouseEnter={[Function: show]} onMouseLeave={[Function: hide]} onFocus={[Function: show]} onBlur={[Function: hide]} onDocumentClick={false} onDocumentKeyDown={[Function: onDocumentKeyDown]} onTriggerEnter={[Function: onTriggerEnter]} enableFlip={true} zIndex={9999} flipBehavior={{...}}>
                                               <FindRefWrapper onFoundRef={[Function: onFoundRef]}>
-                                                <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average Rating\\" aria-describedby=\\"pf-tooltip-2\\">
+                                                <Icon id=\\"star\\" size=\\"sm\\" label=\\"Average Rating\\" aria-describedby=\\"pf-tooltip-3\\">
                                                   <StarIcon size=\\"sm\\" label=\\"Average Rating\\" color=\\"currentColor\\" noVerticalAlign={false}>
                                                     <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 576 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" label=\\"Average Rating\\">
                                                       <path d=\\"M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z\\" transform=\\"\\" />
@@ -230,7 +244,7 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                             <GridItem className=\\"hub-details-rating__margin\\">
                               <div className=\\"pf-l-grid__item hub-details-rating__margin\\">
                                 <Button variant=\\"primary\\" className=\\"hub-details-button\\" onClick={[Function: onModalToggle]}>
-                                  <button onClick={[Function: onModalToggle]} aria-disabled={false} aria-label={{...}} className=\\"pf-c-button pf-m-primary hub-details-button\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={4}>
+                                  <button onClick={[Function: onModalToggle]} aria-disabled={false} aria-label={{...}} className=\\"pf-c-button pf-m-primary hub-details-button\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={7}>
                                     Install
                                   </button>
                                 </Button>
@@ -240,10 +254,10 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                               <div className=\\"pf-l-grid__item hub-details-rating__margin\\">
                                 <Dropdown toggle={{...}} dropdownItems={{...}} onSelect={[Function: onSelect]} isOpen={false}>
                                   <DropdownWithContext toggle={{...}} dropdownItems={{...}} isOpen={false} className=\\"\\" isPlain={false} isGrouped={false} position=\\"left\\" direction=\\"down\\" onSelect={[Function: onSelect]} autoFocus={true} menuAppendTo=\\"inline\\">
-                                    <div className=\\"pf-c-dropdown\\" data-ouia-component-type=\\"PF4/Dropdown\\" data-ouia-safe={true} data-ouia-component-id={5}>
-                                      <DropdownToggle onToggle={[Function: onToggle]} className=\\"hub-details-dropdown-item\\" parentRef={{...}} getMenuRef={[Function (anonymous)]} isOpen={false} id=\\"pf-dropdown-toggle-id-1\\" isPlain={false} aria-haspopup={true} onEnter={[Function: onEnter]}>
-                                        <Toggle onEnter={[Function: onEnter]} id=\\"pf-dropdown-toggle-id-1\\" className=\\"hub-details-dropdown-item\\" isOpen={false} parentRef={{...}} getMenuRef={[Function (anonymous)]} isActive={false} isDisabled={false} isPlain={false} isPrimary={false} onToggle={[Function: onToggle]} aria-haspopup={true} isSplitButton={false} bubbleEvent={false}>
-                                          <button id=\\"pf-dropdown-toggle-id-1\\" className=\\"pf-c-dropdown__toggle hub-details-dropdown-item\\" type=\\"button\\" onClick={[Function: onClick]} aria-expanded={false} aria-haspopup={true} onKeyDown={[Function: onKeyDown]} disabled={false}>
+                                    <div className=\\"pf-c-dropdown\\" data-ouia-component-type=\\"PF4/Dropdown\\" data-ouia-safe={true} data-ouia-component-id={8}>
+                                      <DropdownToggle onToggle={[Function: onToggle]} className=\\"hub-details-dropdown-item\\" parentRef={{...}} getMenuRef={[Function (anonymous)]} isOpen={false} id=\\"pf-dropdown-toggle-id-2\\" isPlain={false} aria-haspopup={true} onEnter={[Function: onEnter]}>
+                                        <Toggle onEnter={[Function: onEnter]} id=\\"pf-dropdown-toggle-id-2\\" className=\\"hub-details-dropdown-item\\" isOpen={false} parentRef={{...}} getMenuRef={[Function (anonymous)]} isActive={false} isDisabled={false} isPlain={false} isPrimary={false} onToggle={[Function: onToggle]} aria-haspopup={true} isSplitButton={false} bubbleEvent={false}>
+                                          <button id=\\"pf-dropdown-toggle-id-2\\" className=\\"pf-c-dropdown__toggle hub-details-dropdown-item\\" type=\\"button\\" onClick={[Function: onClick]} aria-expanded={false} aria-haspopup={true} onKeyDown={[Function: onKeyDown]} disabled={false}>
                                             <span className=\\"pf-c-dropdown__toggle-text\\">
                                               0.2 (latest)
                                             </span>
@@ -403,6 +417,9 @@ exports[`should render the BasicDetails component 1`] = `
                                   </span>
                                 </Badge>
                               </div>
+                            </GridItem>
+                            <GridItem>
+                              <div className=\\"pf-l-grid__item\\" />
                             </GridItem>
                           </div>
                         </Grid>

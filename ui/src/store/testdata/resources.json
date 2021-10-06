@@ -22,7 +22,25 @@
         "minPipelinesVersion": "0.17.0",
         "rawURL": "https://raw.githubusercontent.com/tektoncd/catalog/master/task/buildah/0.2/buildah.yaml",
         "webURL": "https://github.com/tektoncd/catalog/tree/master/task/buildah/0.2/buildah.yaml",
-        "updatedAt": "2020-10-28 09:55:21 +0000 UTC"
+        "updatedAt": "2020-10-28 09:55:21 +0000 UTC",
+        "platforms": [
+          {
+            "id": 1,
+            "name": "linux/amd64"
+          },
+          {
+            "id": 4,
+            "name": "linux/arm64"
+          },
+          {
+            "id": 3,
+            "name": "linux/ppc64le"
+          },
+          {
+            "id": 2,
+            "name": "linux/s390x"
+          }
+        ]
       },
       "tags": [
         {
@@ -74,7 +92,13 @@
         "minPipelinesVersion": "0.12.1",
         "rawURL": "https://raw.githubusercontent.com/tektoncd/catalog/master/task/aws-cli/0.1/aws-cli.yaml",
         "webURL": "https://github.com/tektoncd/catalog/tree/master/task/aws-cli/0.1/aws-cli.yaml",
-        "updatedAt": "2020-10-26 09:03:20 +0000 UTC"
+        "updatedAt": "2020-10-26 09:03:20 +0000 UTC",
+        "platforms": [
+          {
+            "id": 1,
+            "name": "linux/amd64"
+          }
+        ]
       },
       "tags": [
         {
@@ -113,7 +137,13 @@
         "minPipelinesVersion": "0.12.1",
         "rawURL": "https://raw.githubusercontent.com/tektoncd/catalog/master/task/golang-build/0.1/golang-build.yaml",
         "webURL": "https://github.com/tektoncd/catalog/tree/master/task/golang-build/0.1/golang-build.yaml",
-        "updatedAt": "2020-10-26 09:03:20 +0000 UTC"
+        "updatedAt": "2020-10-26 09:03:20 +0000 UTC",
+        "platforms": [
+          {
+            "id": 1,
+            "name": "linux/amd64"
+          }
+        ]
       },
       "tags": [
         {
@@ -152,7 +182,13 @@
         "minPipelinesVersion": "0.12.1",
         "rawURL": "https://raw.githubusercontent.com/tektoncd/catalog/master/task/jenkins/0.1/jenkins.yaml",
         "webURL": "https://github.com/tektoncd/catalog/tree/master/task/jenkins/0.1/jenkins.yaml",
-        "updatedAt": "2020-10-26 10:20:20 +0000 UTC"
+        "updatedAt": "2020-10-26 10:20:20 +0000 UTC",
+        "platforms": [
+          {
+            "id": 1,
+            "name": "linux/amd64"
+          }
+        ]
       },
       "tags": [
         {
@@ -195,7 +231,13 @@
         "minPipelinesVersion": "0.12.1",
         "rawURL": "https://raw.githubusercontent.com/tektoncd/catalog/master/task/jib-maven/0.1/jib-maven.yaml",
         "webURL": "https://github.com/tektoncd/catalog/tree/master/task/jib-maven/0.1/jib-maven.yaml",
-        "updatedAt": "2020-10-26 09:03:20 +0000 UTC"
+        "updatedAt": "2020-10-26 09:03:20 +0000 UTC",
+        "platforms": [
+          {
+            "id": 1,
+            "name": "linux/amd64"
+          }
+        ]
       },
       "tags": [
         {
@@ -234,7 +276,13 @@
         "minPipelinesVersion": "0.12.1",
         "rawURL": "https://raw.githubusercontent.com/tektoncd/catalog/master/task/ansible-runner/0.1/ansible-runner.yaml",
         "webURL": "https://github.com/tektoncd/catalog/tree/master/task/ansible-runner/0.1/ansible-runner.yaml",
-        "updatedAt": "2020-10-26 09:03:20 +0000 UTC"
+        "updatedAt": "2020-10-26 09:03:20 +0000 UTC",
+        "platforms": [
+          {
+            "id": 1,
+            "name": "linux/amd64"
+          }
+        ]
       },
       "tags": [
         {
@@ -273,7 +321,13 @@
         "minPipelinesVersion": "0.12.1",
         "rawURL": "https://raw.githubusercontent.com/tektoncd/catalog/master/task/jib-maven/0.1/jib-maven.yaml",
         "webURL": "https://github.com/tektoncd/catalog/tree/master/task/jib-maven/0.1/jib-maven.yaml",
-        "updatedAt": "2020-10-26 09:03:20 +0000 UTC"
+        "updatedAt": "2020-10-26 09:03:20 +0000 UTC",
+        "platforms": [
+          {
+            "id": 1,
+            "name": "linux/amd64"
+          }
+        ]
       },
       "tags": [
         {
@@ -312,7 +366,13 @@
         "minPipelinesVersion": "0.12.1",
         "rawURL": "https://raw.githubusercontent.com/tektoncd/catalog/master/task/hub/0.1/hub.yaml",
         "webURL": "https://github.com/tektoncd/catalog/tree/master/task/hub/0.1/hub.yaml",
-        "updatedAt": "2020-10-26 09:03:20 +0000 UTC"
+        "updatedAt": "2020-10-26 09:03:20 +0000 UTC",
+        "platforms": [
+          {
+            "id": 1,
+            "name": "linux/amd64"
+          }
+        ]
       },
       "tags": [
         {

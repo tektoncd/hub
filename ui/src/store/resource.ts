@@ -36,6 +36,7 @@ const Version = types.model('Version', {
   id: types.identifierNumber,
   version: types.string,
   displayName: types.optional(types.string, ''),
+  versionPlatforms: types.array(types.reference(Platform)),
   deprecated: types.optional(types.boolean, false),
   description: types.optional(types.string, ''),
   minPipelinesVersion: types.optional(types.string, ''),
@@ -257,6 +258,8 @@ export const ResourceStore = types
           id: versionData.id,
           version: versionData.version,
           displayName: versionData.displayName,
+          versionPlatforms:
+            versionData.platforms != null ? versionData.platforms.map((p: IPlatform) => p.id) : [],
           deprecated: versionData.deprecated || false,
           description: versionData.description,
           minPipelinesVersion: versionData.minPipelinesVersion,

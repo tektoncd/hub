@@ -28,6 +28,7 @@ import { useParams } from 'react-router-dom';
 import { useMst } from '../../store/root';
 import { IResource, IResourceStore } from '../../store/resource';
 import { ITag } from '../../store/tag';
+import { IPlatform } from '../../store/platform';
 import { Icons } from '../../common/icons';
 import Icon from '../../components/Icon';
 import TooltipDisplay from '../../components/TooltipDisplay';
@@ -54,6 +55,12 @@ const BasicDetails: React.FC = () => {
       break;
     }
   }
+
+  React.useEffect(() => {
+    if (resource.latestVersion) {
+      resources.versionUpdate(resource.latestVersion.id);
+    }
+  }, [resource.latestVersion.id]);
 
   const dropdownItems = resource.versions.map((value) => (
     <DropdownItem
@@ -138,6 +145,13 @@ const BasicDetails: React.FC = () => {
                     {resource.tags.map((tag: ITag) => (
                       <Badge key={`badge-${tag.id}`} className="hub-tags">
                         {tag.name}
+                      </Badge>
+                    ))}
+                  </GridItem>
+                  <GridItem>
+                    {resource.displayVersion.versionPlatforms.map((p: IPlatform) => (
+                      <Badge key={`badge-${p.id}`} className="hub-platforms">
+                        {p.name}
                       </Badge>
                     ))}
                   </GridItem>
