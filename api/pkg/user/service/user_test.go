@@ -139,3 +139,79 @@ func TestRefreshAccessToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 
 	assert.Equal(t, res.Body.String(), "invalid refresh token\n")
 }
+
+func TestNewRefreshToken(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user refresh token
+	testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
+	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
+	req, err := http.NewRequest("POST", "/user/refresh/refreshtoken", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	res := httptest.NewRecorder()
+
+	userSvc := New(tc)
+	jwt := UserService{
+		JwtConfig: tc.JWTConfig(),
+	}
+
+	req.Header.Set("Authorization", refreshToken)
+	handler := http.HandlerFunc(jwt.JWTAuth(userSvc.NewRefreshToken))
+	assert.NoError(t, err)
+
+	handler.ServeHTTP(res, req)
+
+	// user refresh token
+	testUser, refreshToken, err = tc.RefreshTokenForUser("abc")
+	assert.Equal(t, testUser.GithubLogin, "abc")
+	assert.NoError(t, err)
+
+	var u *userApp.NewRefreshTokenResult
+	err = json.Unmarshal(res.Body.Bytes(), &u)
+	assert.NoError(t, err)
+
+	refreshExpiryTime := testutils.Now().Add(tc.JWTConfig().RefreshExpiresIn).Unix()
+
+	assert.Equal(t, refreshToken, u.Data.Refresh.Token)
+	assert.Equal(t, tc.JWTConfig().RefreshExpiresIn.String(), u.Data.Refresh.RefreshInterval)
+	assert.Equal(t, refreshExpiryTime, u.Data.Refresh.ExpiresAt)
+}
+
+func TestNewRefreshToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// user refresh token
+	testUser, refreshToken, err := tc.RefreshTokenForUser("foo")
+	assert.Equal(t, testUser.GithubLogin, "foo")
+	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
+	req, err := http.NewRequest("POST", "/user/refresh/refreshtoken", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res := httptest.NewRecorder()
+
+	userSvc := New(tc)
+	jwt := UserService{
+		JwtConfig: tc.JWTConfig(),
+	}
+
+	req.Header.Set("Authorization", refreshToken)
+	handler := http.HandlerFunc(jwt.JWTAuth(userSvc.NewRefreshToken))
+	handler.ServeHTTP(res, req)
+
+	assert.Equal(t, res.Body.String(), "invalid refresh token\n")
+}
