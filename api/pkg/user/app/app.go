@@ -36,6 +36,13 @@ type RefreshAccessTokenResult struct {
 	Data *AccessToken `json:"data"`
 }
 
+// NewRefreshTokenResult is the result type of the user service NewRefreshToken
+// method.
+type NewRefreshTokenResult struct {
+	// User Refresh JWT
+	Data *RefreshToken `json:"data"`
+}
+
 // Token includes the JWT, Expire Duration & Time
 type Token struct {
 	// JWT
@@ -50,4 +57,10 @@ type Token struct {
 type AccessToken struct {
 	// Access Token for user
 	Access *Token `json:"access"`
+}
+
+// Refresh Token for User
+type RefreshToken struct {
+	// Refresh Token for user
+	Refresh *Token `json:"refresh"`
 }

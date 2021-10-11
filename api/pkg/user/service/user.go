@@ -46,6 +46,7 @@ type UserService struct {
 type Service interface {
 	Info(res http.ResponseWriter, req *http.Request)
 	RefreshAccessToken(res http.ResponseWriter, req *http.Request)
+	NewRefreshToken(res http.ResponseWriter, req *http.Request)
 }
 
 var (
@@ -172,4 +173,73 @@ func (r *request) refreshAccessToken() (*userApp.RefreshAccessTokenResult, error
 	}
 
 	return &userApp.RefreshAccessTokenResult{Data: data}, nil
+}
+
+func (s *UserService) NewRefreshToken(res http.ResponseWriter, req *http.Request) {
+	id := req.Header.Get("UserID")
+
+	r := request{
+		db:            s.DB(context.Background()),
+		log:           s.Logger(context.Background()),
+		defaultScopes: s.api.Data().Default.Scopes,
+		jwtConfig:     s.api.JWTConfig(),
+	}
+
+	userId, err := strconv.Atoi(id)
+	if err != nil {
+		r.log.Error(err)
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	refreshToken := req.Header.Get("Authorization")
+	user, err := s.validateRefreshToken(userId, refreshToken)
+	if err != nil {
+		r.log.Error(err)
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	result, err := s.newRequest(user).newRefreshToken()
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(res).Encode(result); err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+}
+
+func (r *request) newRefreshToken() (*userApp.NewRefreshTokenResult, error) {
+
+	req := token.Request{
+		User:      r.user,
+		JWTConfig: r.jwtConfig,
+	}
+
+	refreshToken, refreshExpiresAt, err := req.RefreshJWT()
+	if err != nil {
+		r.log.Error(err)
+		return nil, refreshError
+	}
+
+	err = r.db.Model(r.user).UpdateColumn("refresh_token_checksum", createChecksum(refreshToken)).Error
+	if err != nil {
+		r.log.Error(err)
+		return nil, refreshError
+	}
+
+	data := &userApp.RefreshToken{
+		Refresh: &userApp.Token{
+			Token:           refreshToken,
+			RefreshInterval: r.jwtConfig.RefreshExpiresIn.String(),
+			ExpiresAt:       refreshExpiresAt,
+		},
+	}
+
+	return &userApp.NewRefreshTokenResult{Data: data}, nil
 }

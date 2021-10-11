@@ -62,7 +62,7 @@ func (s *UserService) JWTAuth(handler http.HandlerFunc) http.HandlerFunc {
 
 		if req.RequestURI == "/user/info" {
 			scheme.RequiredScopes = []string{"rating:read", "rating:write"}
-		} else if req.RequestURI == "/refresh/accesstoken" {
+		} else if req.RequestURI == "/refresh/accesstoken" || req.RequestURI == "/refresh/refreshtoken" {
 			scheme.RequiredScopes = []string{"rating:read", "rating:write", "refresh:token"}
 		}
 
