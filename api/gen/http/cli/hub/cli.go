@@ -19,7 +19,6 @@ import (
 	ratingc "github.com/tektoncd/hub/api/gen/http/rating/client"
 	resourcec "github.com/tektoncd/hub/api/gen/http/resource/client"
 	statusc "github.com/tektoncd/hub/api/gen/http/status/client"
-	userc "github.com/tektoncd/hub/api/gen/http/user/client"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -35,7 +34,6 @@ category list
 rating (get|update)
 resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
 status status
-user (refresh-access-token|new-refresh-token|info)
 `
 }
 
@@ -156,17 +154,6 @@ func ParseEndpoint(
 		statusFlags = flag.NewFlagSet("status", flag.ContinueOnError)
 
 		statusStatusFlags = flag.NewFlagSet("status", flag.ExitOnError)
-
-		userFlags = flag.NewFlagSet("user", flag.ContinueOnError)
-
-		userRefreshAccessTokenFlags            = flag.NewFlagSet("refresh-access-token", flag.ExitOnError)
-		userRefreshAccessTokenRefreshTokenFlag = userRefreshAccessTokenFlags.String("refresh-token", "REQUIRED", "")
-
-		userNewRefreshTokenFlags            = flag.NewFlagSet("new-refresh-token", flag.ExitOnError)
-		userNewRefreshTokenRefreshTokenFlag = userNewRefreshTokenFlags.String("refresh-token", "REQUIRED", "")
-
-		userInfoFlags           = flag.NewFlagSet("info", flag.ExitOnError)
-		userInfoAccessTokenFlag = userInfoFlags.String("access-token", "REQUIRED", "")
 	)
 	adminFlags.Usage = adminUsage
 	adminUpdateAgentFlags.Usage = adminUpdateAgentUsage
@@ -196,11 +183,6 @@ func ParseEndpoint(
 	statusFlags.Usage = statusUsage
 	statusStatusFlags.Usage = statusStatusUsage
 
-	userFlags.Usage = userUsage
-	userRefreshAccessTokenFlags.Usage = userRefreshAccessTokenUsage
-	userNewRefreshTokenFlags.Usage = userNewRefreshTokenUsage
-	userInfoFlags.Usage = userInfoUsage
-
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
 	}
@@ -228,8 +210,6 @@ func ParseEndpoint(
 			svcf = resourceFlags
 		case "status":
 			svcf = statusFlags
-		case "user":
-			svcf = userFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -314,19 +294,6 @@ func ParseEndpoint(
 			switch epn {
 			case "status":
 				epf = statusStatusFlags
-
-			}
-
-		case "user":
-			switch epn {
-			case "refresh-access-token":
-				epf = userRefreshAccessTokenFlags
-
-			case "new-refresh-token":
-				epf = userNewRefreshTokenFlags
-
-			case "info":
-				epf = userInfoFlags
 
 			}
 
@@ -421,19 +388,6 @@ func ParseEndpoint(
 			case "status":
 				endpoint = c.Status()
 				data = nil
-			}
-		case "user":
-			c := userc.NewClient(scheme, host, doer, enc, dec, restore)
-			switch epn {
-			case "refresh-access-token":
-				endpoint = c.RefreshAccessToken()
-				data, err = userc.BuildRefreshAccessTokenPayload(*userRefreshAccessTokenRefreshTokenFlag)
-			case "new-refresh-token":
-				endpoint = c.NewRefreshToken()
-				data, err = userc.BuildNewRefreshTokenPayload(*userNewRefreshTokenRefreshTokenFlag)
-			case "info":
-				endpoint = c.Info()
-				data, err = userc.BuildInfoPayload(*userInfoAccessTokenFlag)
 			}
 		}
 	}
@@ -745,53 +699,5 @@ Return status of the services
 
 Example:
     `+os.Args[0]+` status status
-`, os.Args[0])
-}
-
-// userUsage displays the usage of the user command and its subcommands.
-func userUsage() {
-	fmt.Fprintf(os.Stderr, `The user service exposes endpoint to get user specific specs
-Usage:
-    %s [globalflags] user COMMAND [flags]
-
-COMMAND:
-    refresh-access-token: Refresh the access token of User
-    new-refresh-token: Get a new refresh token of User
-    info: Get the user Info
-
-Additional help:
-    %s user COMMAND --help
-`, os.Args[0], os.Args[0])
-}
-func userRefreshAccessTokenUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] user refresh-access-token -refresh-token STRING
-
-Refresh the access token of User
-    -refresh-token STRING: 
-
-Example:
-    `+os.Args[0]+` user refresh-access-token --refresh-token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODM2MDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJlZnJlc2g6dG9rZW4iXSwidHlwZSI6InJlZnJlc2gtdG9rZW4ifQ.4RdUk5ttHdDiymurlZ_f7Uy5Pas3Lq9w04BjKQKRiCE"
-`, os.Args[0])
-}
-
-func userNewRefreshTokenUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] user new-refresh-token -refresh-token STRING
-
-Get a new refresh token of User
-    -refresh-token STRING: 
-
-Example:
-    `+os.Args[0]+` user new-refresh-token --refresh-token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODM2MDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJlZnJlc2g6dG9rZW4iXSwidHlwZSI6InJlZnJlc2gtdG9rZW4ifQ.4RdUk5ttHdDiymurlZ_f7Uy5Pas3Lq9w04BjKQKRiCE"
-`, os.Args[0])
-}
-
-func userInfoUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] user info -access-token STRING
-
-Get the user Info
-    -access-token STRING: 
-
-Example:
-    `+os.Args[0]+` user info --access-token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODM2MDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJlZnJlc2g6dG9rZW4iXSwidHlwZSI6InJlZnJlc2gtdG9rZW4ifQ.4RdUk5ttHdDiymurlZ_f7Uy5Pas3Lq9w04BjKQKRiCE"
 `, os.Args[0])
 }
