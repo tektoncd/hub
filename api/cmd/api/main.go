@@ -34,7 +34,6 @@ import (
 	rating "github.com/tektoncd/hub/api/gen/rating"
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	status "github.com/tektoncd/hub/api/gen/status"
-	user "github.com/tektoncd/hub/api/gen/user"
 	"github.com/tektoncd/hub/api/pkg/app"
 	auth "github.com/tektoncd/hub/api/pkg/auth"
 	"github.com/tektoncd/hub/api/pkg/db/initializer"
@@ -44,7 +43,6 @@ import (
 	ratingsvc "github.com/tektoncd/hub/api/pkg/service/rating"
 	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
 	statussvc "github.com/tektoncd/hub/api/pkg/service/status"
-	usersvc "github.com/tektoncd/hub/api/pkg/service/user"
 	v1catalog "github.com/tektoncd/hub/api/v1/gen/catalog"
 	v1resource "github.com/tektoncd/hub/api/v1/gen/resource"
 	v1catalogsvc "github.com/tektoncd/hub/api/v1/service/catalog"
@@ -95,7 +93,6 @@ func main() {
 		resourceSvc   resource.Service
 		v1resourceSvc v1resource.Service
 		statusSvc     status.Service
-		userSvc       user.Service
 	)
 	{
 		adminSvc = adminsvc.New(api)
@@ -106,7 +103,6 @@ func main() {
 		resourceSvc = resourcesvc.New(api)
 		v1resourceSvc = v1resourcesvc.New(api)
 		statusSvc = statussvc.New(api)
-		userSvc = usersvc.New(api)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
@@ -120,7 +116,6 @@ func main() {
 		resourceEndpoints   *resource.Endpoints
 		v1resourceEndpoints *v1resource.Endpoints
 		statusEndpoints     *status.Endpoints
-		userEndpoints       *user.Endpoints
 	)
 	{
 		adminEndpoints = admin.NewEndpoints(adminSvc)
@@ -131,7 +126,6 @@ func main() {
 		resourceEndpoints = resource.NewEndpoints(resourceSvc)
 		v1resourceEndpoints = v1resource.NewEndpoints(v1resourceSvc)
 		statusEndpoints = status.NewEndpoints(statusSvc)
-		userEndpoints = user.NewEndpoints(userSvc)
 	}
 
 	// Create channel used by both the signal handler and server goroutines
@@ -181,7 +175,6 @@ func main() {
 				resourceEndpoints,
 				v1resourceEndpoints,
 				statusEndpoints,
-				userEndpoints,
 				&wg, errc, api.Logger("http"), *dbgF,
 			)
 		}
