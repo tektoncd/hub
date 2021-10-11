@@ -30,4 +30,5 @@ func User(r *mux.Router, api app.Config) {
 	}
 
 	s.HandleFunc("/info", jwt.JWTAuth(userSvc.Info))
+	s.HandleFunc("/refresh/accesstoken", jwt.JWTAuth(userSvc.RefreshAccessToken))
 }

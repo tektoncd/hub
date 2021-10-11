@@ -28,3 +28,26 @@ type UserData struct {
 	// Github user's profile picture url
 	AvatarURL string `json:"avatarUrl"`
 }
+
+// RefreshAccessTokenResult is the result type of the user service
+// RefreshAccessToken method.
+type RefreshAccessTokenResult struct {
+	// User Access JWT
+	Data *AccessToken `json:"data"`
+}
+
+// Token includes the JWT, Expire Duration & Time
+type Token struct {
+	// JWT
+	Token string `json:"token"`
+	// Duration the token will Expire In
+	RefreshInterval string `json:"refreshInterval"`
+	// Time the token will expires at
+	ExpiresAt int64 `json:"expiresAt"`
+}
+
+// Access Token for user
+type AccessToken struct {
+	// Access Token for user
+	Access *Token `json:"access"`
+}
