@@ -17,12 +17,14 @@ package user
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
+	"github.com/tektoncd/hub/api/pkg/token"
 	userApp "github.com/tektoncd/hub/api/pkg/user/app"
 	"gorm.io/gorm"
 )
@@ -43,7 +45,13 @@ type UserService struct {
 
 type Service interface {
 	Info(res http.ResponseWriter, req *http.Request)
+	RefreshAccessToken(res http.ResponseWriter, req *http.Request)
 }
+
+var (
+	invalidRefreshToken = fmt.Errorf("invalid refresh token")
+	refreshError        = fmt.Errorf("failed to refresh token")
+)
 
 // New returns the auth service implementation.
 func New(api app.Config) Service {
@@ -93,4 +101,75 @@ func (s *UserService) Info(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
+}
+
+// Refreshes the access token of User
+func (s *UserService) RefreshAccessToken(res http.ResponseWriter, req *http.Request) {
+
+	id := req.Header.Get("UserID")
+
+	r := request{
+		db:            s.DB(context.Background()),
+		log:           s.Logger(context.Background()),
+		defaultScopes: s.api.Data().Default.Scopes,
+		jwtConfig:     s.api.JWTConfig(),
+	}
+
+	userId, err := strconv.Atoi(id)
+	if err != nil {
+		r.log.Error(err)
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	refreshToken := req.Header.Get("Authorization")
+	user, err := s.validateRefreshToken(userId, refreshToken)
+	if err != nil {
+		r.log.Error(err)
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	result, err := s.newRequest(user).refreshAccessToken()
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(res).Encode(result); err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+}
+
+func (r *request) refreshAccessToken() (*userApp.RefreshAccessTokenResult, error) {
+
+	scopes, err := r.userScopes()
+	if err != nil {
+		return nil, err
+	}
+
+	req := token.Request{
+		User:      r.user,
+		Scopes:    scopes,
+		JWTConfig: r.jwtConfig,
+	}
+
+	accessToken, accessExpiresAt, err := req.AccessJWT()
+	if err != nil {
+		r.log.Error(err)
+		return nil, refreshError
+	}
+
+	data := &userApp.AccessToken{
+		Access: &userApp.Token{
+			Token:           accessToken,
+			RefreshInterval: r.jwtConfig.AccessExpiresIn.String(),
+			ExpiresAt:       accessExpiresAt,
+		},
+	}
+
+	return &userApp.RefreshAccessTokenResult{Data: data}, nil
 }
