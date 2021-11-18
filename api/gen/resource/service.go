@@ -172,6 +172,8 @@ type Catalog struct {
 	Type string
 	// URL of catalog
 	URL string
+	// Provider of catalog
+	Provider string
 }
 
 type Category struct {
@@ -665,6 +667,9 @@ func newCatalog(vres *resourceviews.CatalogView) *Catalog {
 	if vres.URL != nil {
 		res.URL = *vres.URL
 	}
+	if vres.Provider != nil {
+		res.Provider = *vres.Provider
+	}
 	return res
 }
 
@@ -683,10 +688,11 @@ func newCatalogViewMin(res *Catalog) *resourceviews.CatalogView {
 // using the "default" view.
 func newCatalogView(res *Catalog) *resourceviews.CatalogView {
 	vres := &resourceviews.CatalogView{
-		ID:   &res.ID,
-		Name: &res.Name,
-		Type: &res.Type,
-		URL:  &res.URL,
+		ID:       &res.ID,
+		Name:     &res.Name,
+		Type:     &res.Type,
+		URL:      &res.URL,
+		Provider: &res.Provider,
 	}
 	return vres
 }
@@ -1206,10 +1212,11 @@ func transformResourceDataToResourceviewsResourceDataView(v *ResourceData) *reso
 // from a value of type *resourceviews.CatalogView.
 func transformResourceviewsCatalogViewToCatalog(v *resourceviews.CatalogView) *Catalog {
 	res := &Catalog{
-		ID:   *v.ID,
-		Name: *v.Name,
-		Type: *v.Type,
-		URL:  *v.URL,
+		ID:       *v.ID,
+		Name:     *v.Name,
+		Type:     *v.Type,
+		URL:      *v.URL,
+		Provider: *v.Provider,
 	}
 
 	return res
@@ -1219,10 +1226,11 @@ func transformResourceviewsCatalogViewToCatalog(v *resourceviews.CatalogView) *C
 // *resourceviews.CatalogView from a value of type *Catalog.
 func transformCatalogToResourceviewsCatalogView(v *Catalog) *resourceviews.CatalogView {
 	res := &resourceviews.CatalogView{
-		ID:   &v.ID,
-		Name: &v.Name,
-		Type: &v.Type,
-		URL:  &v.URL,
+		ID:       &v.ID,
+		Name:     &v.Name,
+		Type:     &v.Type,
+		URL:      &v.URL,
+		Provider: &v.Provider,
 	}
 
 	return res
