@@ -1540,6 +1540,10 @@ components:
           type: string
           description: Name of catalog
           example: Tekton
+        provider:
+          type: string
+          description: Provider of catalog
+          example: github
         type:
           type: string
           description: Type of catalog
@@ -1554,6 +1558,7 @@ components:
       example:
         id: 1
         name: Tekton
+        provider: github
         type: community
         url: https://github.com/tektoncd/hub
       required:
@@ -1561,6 +1566,7 @@ components:
       - name
       - type
       - url
+      - provider
     CatalogErrorResponseBody:
       type: object
       properties:

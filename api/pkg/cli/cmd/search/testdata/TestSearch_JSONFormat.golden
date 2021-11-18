@@ -7,7 +7,8 @@
 				"ID": 1,
 				"Name": "foo",
 				"Type": "community",
-				"URL": null
+				"URL": null,
+				"Provider": null
 			},
 			"Categories": [],
 			"Kind": "Pipeline",
