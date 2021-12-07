@@ -64,8 +64,8 @@ func TestGet_Http_ExpiredToken(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -92,8 +92,8 @@ func TestGet_Http_InvalidScopes(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// invalid user access token, does not have required scopes
-	user, accessToken, err := tc.UserWithScopes("abc", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "abc")
+	user, accessToken, err := tc.UserWithScopes("abc", "abc@bar.com", "catalog:refresh")
+	assert.Equal(t, user.Email, "abc@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -119,8 +119,8 @@ func TestGet_Http(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -146,8 +146,8 @@ func TestGet_Http_RatingNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -173,8 +173,8 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, accessToken, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -208,8 +208,8 @@ func TestUpdate_Http(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:write scope
-	user, accessToken, err := tc.UserWithScopes("foo", "rating:write")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:write")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -234,8 +234,8 @@ func TestUpdate_Http_Existing(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:write scope
-	user, accessToken, err := tc.UserWithScopes("foo", "rating:write")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:write")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -260,8 +260,8 @@ func TestUpdate_Http_ResourceNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:write scope
-	user, accessToken, err := tc.UserWithScopes("foo", "rating:write")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:write")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time

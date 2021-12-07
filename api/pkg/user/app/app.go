@@ -19,13 +19,13 @@ type InfoResult struct {
 	Data *UserData `json:"data"`
 }
 
-// Github user Information
+// Git user Information
 type UserData struct {
-	// Github id of User
-	GithubID string `json:"githubId"`
-	// Github user name
+	// Username of User
+	UserName string `json:"user_name"`
+	// Name of user
 	Name string `json:"name"`
-	// Github user's profile picture url
+	// User's profile picture url
 	AvatarURL string `json:"avatarUrl"`
 }
 

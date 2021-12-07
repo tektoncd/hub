@@ -25,31 +25,32 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *request) userScopes(user *model.User) ([]string, error) {
+func (r *request) userScopes(account *model.Account) ([]string, error) {
 
 	var userScopes []string = r.defaultScopes
 
-	q := r.db.Preload("Scopes").Where(&model.User{GithubLogin: user.GithubLogin})
+	scopes := []model.Scope{}
 
-	dbUser := model.User{}
-	if err := q.Find(&dbUser).Error; err != nil {
+	if err := r.db.Model(&model.Scope{}).Joins("JOIN user_scopes as u on scopes.id=u.scope_id").
+		Where("u.user_id = ?", account.UserID).Find(&scopes).Error; err != nil {
 		r.log.Error(err)
 		return nil, err
 	}
 
-	for _, s := range dbUser.Scopes {
+	for _, s := range scopes {
 		userScopes = append(userScopes, s.Name)
 	}
 
 	return userScopes, nil
 }
 
-func (r *request) createTokens(user *model.User, scopes []string) (*app.AuthenticateResult, error) {
+func (r *request) createTokens(user *model.User, scopes []string, provider string) (*app.AuthenticateResult, error) {
 
 	req := token.Request{
 		User:      user,
 		Scopes:    scopes,
 		JWTConfig: r.jwtConfig,
+		Provider:  provider,
 	}
 
 	accessToken, accessExpiresAt, err := req.AccessJWT()
@@ -92,58 +93,159 @@ func createChecksum(token string) string {
 	return hex.EncodeToString(hash[:])
 }
 
-func (r *request) insertData(ghUser goth.User, code string) error {
+/*
+(Keeping email as the primary key in users table)
+We perform search query in users table on the basis of email:
+If Email is not present(existing user or new user)
+	query the accounts table on the basis of username and provider
+		- If the above case matches -> update the email in users table and other details respectively in accounts table
+		- If the above case returns empty record(new user)
+			- create a new user in the database
+If Email is already present
+	fetch the user_id from users table and query the accounts table with `where` clause of `user_id` and `provider`
+		- if the record doesn't exists(user trying to login with new provider)
+			then create a new record in accounts table with new provider and the user_id already associated with the email
+		- if record exists then update the record if there are any changes
+*/
+func (r *request) insertData(gitUser goth.User, code, provider string) error {
+
+	var acc model.Account
+	var user model.User
+
+	userQuery := r.db.Model(&model.User{}).
+		Where("email = ?", gitUser.Email)
 
 	// Check if user exist
-	q := r.db.Model(&model.User{}).
-		Where("github_login = ?", ghUser.NickName)
+	err := userQuery.First(&user).Error
 
-	var user model.User
-	err := q.First(&user).Error
+	// If email doesn't exists in users table
 	if err != nil {
+		// Check whether username and provider are matching
+		accountQuery := r.db.Model(&model.Account{}).Where("user_name = ?", gitUser.NickName).Where("provider = ?", provider)
+		err = accountQuery.First(&acc).Error
+
 		// If user doesn't exist, create a new record
 		if err == gorm.ErrRecordNotFound {
+			if user, err = r.insertIntoUsersTable(gitUser, code); err != nil {
+				r.log.Error(err)
+			}
 
-			user.GithubName = ghUser.Name
-			user.GithubLogin = ghUser.NickName
-			user.Type = model.NormalUserType
-			user.AvatarURL = ghUser.AvatarURL
-			user.Code = code
+			if err = r.insertIntoAccountsTable(gitUser, provider, user.ID); err != nil {
+				r.log.Error(err)
+				return err
+			}
+		} else {
+			// Account exists
+			// Update the user table with the email
+			if err := r.db.Model(&model.User{}).Where("id = ?", acc.UserID).
+				Updates(model.User{Code: code, Email: gitUser.Email, Type: model.NormalUserType}).Error; err != nil {
+				r.log.Error(err)
+				return err
+			}
 
-			err = r.db.Create(&user).Error
-			if err != nil {
+			// Update the AvatarUrl and Name in Accounts table
+			if err := updateAccountDetails(accountQuery, acc,
+				model.Account{AvatarURL: gitUser.AvatarURL, Name: gitUser.Name}); err != nil {
 				r.log.Error(err)
 				return err
 			}
 		}
-	} else {
-		if err := r.db.Model(&model.User{}).Where("github_login = ?", ghUser.NickName).Update("code", code).Error; err != nil {
+	} else { // when the email of user already exists
+		// Update the users table with the auth code
+		if err := userQuery.Update("code", code).Error; err != nil {
 			r.log.Error(err)
+			return err
+		}
+
+		// Check for the account on the basis of user_id and provider
+		accountQuery := r.db.Model(&model.Account{}).Where("user_id = ?", user.ID).Where("provider = ?", provider)
+		err = accountQuery.First(&acc).Error
+
+		// If not found then create a new entry in accounts table
+		if err == gorm.ErrRecordNotFound {
+			if err = r.insertIntoAccountsTable(gitUser, provider, user.ID); err != nil {
+				r.log.Error(err)
+				return err
+			}
+			return nil
+		} else if err != nil {
+			r.log.Error(err)
+			return err
+		}
+
+		// If account found then update the details of the user
+		if err := updateAccountDetails(accountQuery, acc,
+			model.Account{AvatarURL: gitUser.AvatarURL, Name: gitUser.Name, UserName: gitUser.NickName}); err != nil {
+			r.log.Error(err)
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func updateAccountDetails(accountQuery *gorm.DB, existingAccountDetails model.Account, newAccountDetails model.Account) error {
+
+	detailsToUpdate := model.Account{}
+	if newAccountDetails.UserName != "" && newAccountDetails.UserName != existingAccountDetails.UserName {
+		detailsToUpdate.UserName = newAccountDetails.UserName
+	}
+
+	if newAccountDetails.Name != "" && newAccountDetails.Name != existingAccountDetails.Name {
+		detailsToUpdate.Name = newAccountDetails.Name
+	}
+
+	if newAccountDetails.AvatarURL != "" && newAccountDetails.AvatarURL != existingAccountDetails.AvatarURL {
+		detailsToUpdate.AvatarURL = newAccountDetails.AvatarURL
+	}
+
+	if detailsToUpdate.UserName != "" || detailsToUpdate.Name != "" || detailsToUpdate.AvatarURL != "" {
+		if err := accountQuery.Updates(detailsToUpdate).Error; err != nil {
 			return err
 		}
 	}
 
-	// If user already exists i.e if user is added through config
-	// and is missing git username and avatarUrl, then update the code
-	user.Code = code
+	return nil
+}
 
-	// User already exist, check if GitHub Name is empty
-	// If Name is empty, then user is inserted through config.yaml
-	// Update user with remaining details
-
-	if user.GithubName == "" {
-		user.GithubName = ghUser.Name
-		user.Type = model.NormalUserType
+// Creates a new record in Users table
+func (r *request) insertIntoUsersTable(gitUser goth.User, code string) (model.User, error) {
+	user := model.User{
+		Code:  code,
+		Email: gitUser.Email,
+		Type:  model.NormalUserType,
 	}
 
-	// For existing user, check if URL is not added
-	if user.AvatarURL == "" {
-		user.AvatarURL = ghUser.AvatarURL
-		if err = r.db.Save(&user).Error; err != nil {
-			r.log.Error(err)
-			return err
-		}
+	// User ID is by default set to zero so we need to update the value with (last inserted user_id+1)
+	lastUser := model.User{}
+	if err := r.db.Model(&model.User{}).Last(&lastUser).Error; err != nil {
+		r.log.Error(err)
+		return model.User{}, err
+	}
+	user.ID = lastUser.ID + 1
+
+	err := r.db.Create(&user).Error
+	if err != nil {
+		r.log.Error(err)
+		return model.User{}, err
+	}
+	return user, nil
+}
+
+// Creates a new record in Accounts table
+func (r *request) insertIntoAccountsTable(gitUser goth.User, provider string, userId uint) error {
+	acc := model.Account{
+		Name:      gitUser.Name,
+		UserName:  gitUser.NickName,
+		AvatarURL: gitUser.AvatarURL,
+		Provider:  provider,
+		UserID:    userId,
 	}
 
+	if err := r.db.Create(&acc).Error; err != nil {
+		r.log.Error(err)
+		return err
+	}
 	return nil
 }

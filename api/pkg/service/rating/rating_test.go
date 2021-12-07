@@ -29,8 +29,8 @@ func TestGet(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, _, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
@@ -46,8 +46,8 @@ func TestGet_RatingNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, _, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
@@ -63,8 +63,8 @@ func TestGet_ResourceNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, _, err := tc.UserWithScopes("foo", "rating:read")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
@@ -80,8 +80,8 @@ func TestUpdate(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:write scope
-	user, _, err := tc.UserWithScopes("foo", "rating:write")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:write")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)
@@ -96,8 +96,8 @@ func TestUpdate_ResourceNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:write scope
-	user, _, err := tc.UserWithScopes("foo", "rating:write")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:write")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	ratingSvc := New(tc)

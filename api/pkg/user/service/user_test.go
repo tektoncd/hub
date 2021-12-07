@@ -31,8 +31,8 @@ func TestInfo(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user Access Token
-	testUser, accessToken, err := tc.UserWithScopes("abc", "rating:read", "rating:write", "agent:create")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	testUser, accessToken, err := tc.UserWithScopes("abc", "abc@bar.com", "rating:read", "rating:write", "agent:create")
+	assert.Equal(t, testUser.Email, "abc@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -60,8 +60,8 @@ func TestInfo(t *testing.T) {
 	err = json.Unmarshal(res.Body.Bytes(), &u)
 	assert.NoError(t, err)
 
-	assert.Equal(t, "abc", u.Data.GithubID)
-	assert.Equal(t, "https://bar", u.Data.AvatarURL)
+	assert.Equal(t, "abc", u.Data.UserName)
+	assert.Equal(t, "https://abc", u.Data.AvatarURL)
 }
 
 func TestRefreshAccessToken(t *testing.T) {
@@ -69,8 +69,8 @@ func TestRefreshAccessToken(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user refresh token
-	testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	testUser, refreshToken, err := tc.RefreshTokenForUser("abc", "abc@bar.com")
+	assert.Equal(t, testUser.Email, "abc@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -95,8 +95,8 @@ func TestRefreshAccessToken(t *testing.T) {
 	handler.ServeHTTP(res, req)
 
 	// expected access jwt for user
-	user, accessToken, err := tc.UserWithScopes("abc", "rating:read", "rating:write")
-	assert.Equal(t, user.GithubLogin, "abc")
+	user, accessToken, err := tc.UserWithScopes("abc", "abc@bar.com", "rating:read", "rating:write")
+	assert.Equal(t, user.Email, "abc@bar.com")
 	assert.NoError(t, err)
 
 	var u *userApp.RefreshAccessTokenResult
@@ -115,8 +115,8 @@ func TestRefreshAccessToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user refresh token
-	testUser, refreshToken, err := tc.RefreshTokenForUser("foo")
-	assert.Equal(t, testUser.GithubLogin, "foo")
+	testUser, refreshToken, err := tc.RefreshTokenForUser("foo", "foo@bar.com")
+	assert.Equal(t, testUser.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -145,8 +145,8 @@ func TestNewRefreshToken(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user refresh token
-	testUser, refreshToken, err := tc.RefreshTokenForUser("abc")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	testUser, refreshToken, err := tc.RefreshTokenForUser("abc", "abc@bar.com")
+	assert.Equal(t, testUser.Email, "abc@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -171,8 +171,8 @@ func TestNewRefreshToken(t *testing.T) {
 	handler.ServeHTTP(res, req)
 
 	// user refresh token
-	testUser, refreshToken, err = tc.RefreshTokenForUser("abc")
-	assert.Equal(t, testUser.GithubLogin, "abc")
+	testUser, refreshToken, err = tc.RefreshTokenForUser("abc", "abc@bar.com")
+	assert.Equal(t, testUser.Email, "abc@bar.com")
 	assert.NoError(t, err)
 
 	var u *userApp.NewRefreshTokenResult
@@ -191,8 +191,8 @@ func TestNewRefreshToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user refresh token
-	testUser, refreshToken, err := tc.RefreshTokenForUser("foo")
-	assert.Equal(t, testUser.GithubLogin, "foo")
+	testUser, refreshToken, err := tc.RefreshTokenForUser("foo", "foo@bar.com")
+	assert.Equal(t, testUser.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time

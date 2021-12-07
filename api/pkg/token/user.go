@@ -33,6 +33,7 @@ type Request struct {
 	User      *model.User
 	Scopes    []string
 	JWTConfig *app.JWTConfig
+	Provider  string
 }
 
 // current time
@@ -42,12 +43,13 @@ func (r *Request) AccessJWT() (string, int64, error) {
 
 	expiresAt := Now().Add(r.JWTConfig.AccessExpiresIn).Unix()
 	claim := jwt.MapClaims{
-		"iss":    issuer,
-		"id":     r.User.ID,
-		"scopes": r.Scopes,
-		"type":   accessTokenType,
-		"iat":    Now().Unix(),
-		"exp":    expiresAt,
+		"iss":      issuer,
+		"id":       r.User.ID,
+		"provider": r.Provider,
+		"scopes":   r.Scopes,
+		"type":     accessTokenType,
+		"iat":      Now().Unix(),
+		"exp":      expiresAt,
 	}
 
 	token, err := Create(claim, r.JWTConfig.SigningKey)
@@ -62,12 +64,13 @@ func (r *Request) RefreshJWT() (string, int64, error) {
 
 	expiresAt := Now().Add(r.JWTConfig.RefreshExpiresIn).Unix()
 	claim := jwt.MapClaims{
-		"iss":    issuer,
-		"id":     r.User.ID,
-		"type":   refreshTokenType,
-		"scopes": []string{"refresh:token"},
-		"iat":    Now().Unix(),
-		"exp":    expiresAt,
+		"iss":      issuer,
+		"id":       r.User.ID,
+		"provider": r.Provider,
+		"type":     refreshTokenType,
+		"scopes":   []string{"refresh:token"},
+		"iat":      Now().Unix(),
+		"exp":      expiresAt,
 	}
 
 	token, err := Create(claim, r.JWTConfig.SigningKey)

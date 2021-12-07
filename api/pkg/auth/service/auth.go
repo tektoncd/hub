@@ -19,7 +19,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/gorilla/mux"
 	"github.com/markbates/goth/gothic"
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
@@ -38,6 +40,7 @@ type request struct {
 	log           *log.Logger
 	defaultScopes []string
 	jwtConfig     *app.JWTConfig
+	provider      string
 }
 
 type AuthService struct {
@@ -50,7 +53,8 @@ type Services struct {
 }
 
 var (
-	UI_URL string
+	UI_URL   string
+	provider string
 )
 
 type Service interface {
@@ -87,6 +91,8 @@ func Status(res http.ResponseWriter, req *http.Request) {
 // using goth and calls the AuthCallback function
 func Authenticate(res http.ResponseWriter, req *http.Request) {
 	UI_URL = req.FormValue("redirect_uri")
+	provider = mux.Vars(req)["provider"]
+
 	gothic.BeginAuthHandler(res, req)
 }
 
@@ -99,6 +105,7 @@ func (s *service) AuthCallBack(res http.ResponseWriter, req *http.Request) {
 		log:           s.Logger(context.Background()),
 		defaultScopes: s.api.Data().Default.Scopes,
 		jwtConfig:     s.api.JWTConfig(),
+		provider:      provider,
 	}
 
 	ghUser, err := gothic.CompleteUserAuth(res, req)
@@ -110,7 +117,7 @@ func (s *service) AuthCallBack(res http.ResponseWriter, req *http.Request) {
 
 	params := req.URL.Query()
 
-	if err = r.insertData(ghUser, params.Get("code")); err != nil {
+	if err = r.insertData(ghUser, params.Get("code"), provider); err != nil {
 		r.log.Error(err)
 		res.Header().Set("Location", fmt.Sprintf("%s?status=%d", UI_URL, http.StatusBadRequest))
 		res.WriteHeader(http.StatusTemporaryRedirect)
@@ -134,12 +141,12 @@ func (s *service) HubAuthenticate(res http.ResponseWriter, req *http.Request) {
 		jwtConfig:     s.api.JWTConfig(),
 	}
 
-	var user model.User
+	var gitUser model.User
 	// Check if user exist
 	q := r.db.Model(&model.User{}).
 		Where("code = ?", code)
 
-	err := q.First(&user).Error
+	err := q.First(&gitUser).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			r.log.Error(err)
@@ -152,21 +159,33 @@ func (s *service) HubAuthenticate(res http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	if err := r.db.Model(&model.User{}).Where("github_login = ?", user.GithubLogin).Update("code", "").Error; err != nil {
+	// Once the user is authenticated clear the code from DB and user struct so that it can't be reused once the user logs in
+	gitUser.Code = ""
+	if err := r.db.Model(&model.User{}).Where("email = ?", gitUser.Email).Update("code", gitUser.Code).Error; err != nil {
 		r.log.Error(err)
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	var acc model.Account
+	accountQuery := r.db.Model(&model.Account{}).Where(model.Account{UserID: gitUser.ID, Provider: provider})
+
+	err = accountQuery.First(&acc).Error
+	if err != nil {
+		r.log.Error(err)
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	// gets user scopes to add in jwt
-	scopes, err := r.userScopes(&user)
+	scopes, err := r.userScopes(&acc)
 	if err != nil {
 		r.log.Error(err)
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	userTokens, err := r.createTokens(&user, scopes)
+	userTokens, err := r.createTokens(&gitUser, scopes, provider)
 	if err != nil {
 		r.log.Error(err)
 		http.Error(res, err.Error(), http.StatusInternalServerError)
@@ -183,13 +202,23 @@ func (s *service) HubAuthenticate(res http.ResponseWriter, req *http.Request) {
 
 // Provides a list of git provider present in auth server
 func List(res http.ResponseWriter, req *http.Request) {
-	// TODO: The values of the provider can be configured dynamically
+
+	providerList := make([]authApp.Provider, 0)
+
+	if os.Getenv("GH_CLIENT_ID") != "" && os.Getenv("GH_CLIENT_SECRET") != "" {
+		providerList = append(providerList, authApp.Provider{Name: "github"})
+	}
+
+	if os.Getenv("BB_CLIENT_ID") != "" && os.Getenv("BB_CLIENT_SECRET") != "" {
+		providerList = append(providerList, authApp.Provider{Name: "bitbucket"})
+	}
+
+	if os.Getenv("GL_CLIENT_ID") != "" && os.Getenv("GL_CLIENT_SECRET") != "" {
+		providerList = append(providerList, authApp.Provider{Name: "gitlab"})
+	}
+
 	providers := authApp.ProviderList{
-		Data: []authApp.Provider{
-			{
-				Name: "github",
-			},
-		},
+		Data: providerList,
 	}
 
 	var log log.Logger

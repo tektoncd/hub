@@ -16,7 +16,6 @@ package initializer
 
 import (
 	"context"
-	"strings"
 
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
@@ -129,49 +128,56 @@ func addCatalogs(db *gorm.DB, log *log.Logger, data *app.Data) error {
 }
 
 func addUsers(db *gorm.DB, log *log.Logger, data *app.Data) error {
-
 	for _, s := range data.Scopes {
-
 		// Check if scopes exist or create it
-		q := db.Where(&model.Scope{Name: s.Name})
+		scopeQuery := db.Where(&model.Scope{Name: s.Name})
 
 		scope := model.Scope{}
-		if err := q.FirstOrCreate(&scope).Error; err != nil {
+		if err := scopeQuery.FirstOrCreate(&scope).Error; err != nil {
 			log.Error(err)
 			return err
 		}
 
-		for _, userID := range s.Users {
-
+		for _, username := range s.Users {
 			// Checks if user exists
-			q := db.Where("LOWER(github_login) = ?", strings.ToLower(userID))
+			accountQuery := db.Where("user_name = ?", username)
 
-			user := model.User{}
-			if err := q.First(&user).Error; err != nil {
+			account := model.Account{}
+			if err := accountQuery.First(&account).Error; err != nil {
 				// If user not found then create a new record
 				if err != gorm.ErrRecordNotFound {
 					log.Error(err)
 					return err
 				}
 
-				log.Infof("user %s not found, create a new user", userID)
-				user.GithubLogin = strings.ToLower(userID)
-				if err = db.Create(&user).Error; err != nil {
+				log.Infof("user %s not found, create a new user", username)
+
+				newUser := model.User{}
+				if err := db.Create(&newUser).Error; err != nil {
+					log.Error(err)
+					return err
+				}
+
+				account = model.Account{
+					UserID:   newUser.ID,
+					UserName: username,
+					Provider: "github", // TODO: Find a mechanism to configure this via config.yaml instead of hardcoding
+				}
+
+				if err := db.Create(&account).Error; err != nil {
 					log.Error(err)
 					return err
 				}
 			}
-
 			// Add scopes for user if not added already
-			us := model.UserScope{UserID: user.ID, ScopeID: scope.ID}
-			q = db.Model(&model.UserScope{}).Where(&us)
+			userScope := model.UserScope{UserID: account.UserID, ScopeID: scope.ID}
 
-			if err := q.FirstOrCreate(&us).Error; err != nil {
+			if err := db.Model(&model.UserScope{}).Where(&userScope).FirstOrCreate(&userScope).Error; err != nil {
 				log.Error(err)
 				return err
 			}
-		}
 
+		}
 	}
 	return nil
 }
