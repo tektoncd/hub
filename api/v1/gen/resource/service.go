@@ -151,6 +151,8 @@ type ResourceData struct {
 	Categories []*Category
 	// Kind of resource
 	Kind string
+	// Url path of the resource in hub
+	HubURLPath string
 	// Latest version of resource
 	LatestVersion *ResourceVersionData
 	// Tags related to resource
@@ -205,6 +207,8 @@ type ResourceVersionData struct {
 	UpdatedAt string
 	// Platforms related to resource version
 	Platforms []*Platform
+	// Url path of the resource in hub
+	HubURLPath string
 	// Resource to which the version belongs
 	Resource *ResourceData
 }
@@ -404,6 +408,9 @@ func newResourceDataInfo(vres *resourceviews.ResourceDataView) *ResourceData {
 	if vres.Kind != nil {
 		res.Kind = *vres.Kind
 	}
+	if vres.HubURLPath != nil {
+		res.HubURLPath = *vres.HubURLPath
+	}
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
 	}
@@ -446,6 +453,9 @@ func newResourceDataWithoutVersion(vres *resourceviews.ResourceDataView) *Resour
 	}
 	if vres.Kind != nil {
 		res.Kind = *vres.Kind
+	}
+	if vres.HubURLPath != nil {
+		res.HubURLPath = *vres.HubURLPath
 	}
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
@@ -490,6 +500,9 @@ func newResourceData(vres *resourceviews.ResourceDataView) *ResourceData {
 	if vres.Kind != nil {
 		res.Kind = *vres.Kind
 	}
+	if vres.HubURLPath != nil {
+		res.HubURLPath = *vres.HubURLPath
+	}
 	if vres.Rating != nil {
 		res.Rating = *vres.Rating
 	}
@@ -530,10 +543,11 @@ func newResourceData(vres *resourceviews.ResourceDataView) *ResourceData {
 // ResourceDataView using the "info" view.
 func newResourceDataViewInfo(res *ResourceData) *resourceviews.ResourceDataView {
 	vres := &resourceviews.ResourceDataView{
-		ID:     &res.ID,
-		Name:   &res.Name,
-		Kind:   &res.Kind,
-		Rating: &res.Rating,
+		ID:         &res.ID,
+		Name:       &res.Name,
+		Kind:       &res.Kind,
+		HubURLPath: &res.HubURLPath,
+		Rating:     &res.Rating,
 	}
 	if res.Categories != nil {
 		vres.Categories = make([]*resourceviews.CategoryView, len(res.Categories))
@@ -563,10 +577,11 @@ func newResourceDataViewInfo(res *ResourceData) *resourceviews.ResourceDataView 
 // projected type ResourceDataView using the "withoutVersion" view.
 func newResourceDataViewWithoutVersion(res *ResourceData) *resourceviews.ResourceDataView {
 	vres := &resourceviews.ResourceDataView{
-		ID:     &res.ID,
-		Name:   &res.Name,
-		Kind:   &res.Kind,
-		Rating: &res.Rating,
+		ID:         &res.ID,
+		Name:       &res.Name,
+		Kind:       &res.Kind,
+		HubURLPath: &res.HubURLPath,
+		Rating:     &res.Rating,
 	}
 	if res.Categories != nil {
 		vres.Categories = make([]*resourceviews.CategoryView, len(res.Categories))
@@ -599,10 +614,11 @@ func newResourceDataViewWithoutVersion(res *ResourceData) *resourceviews.Resourc
 // ResourceDataView using the "default" view.
 func newResourceDataView(res *ResourceData) *resourceviews.ResourceDataView {
 	vres := &resourceviews.ResourceDataView{
-		ID:     &res.ID,
-		Name:   &res.Name,
-		Kind:   &res.Kind,
-		Rating: &res.Rating,
+		ID:         &res.ID,
+		Name:       &res.Name,
+		Kind:       &res.Kind,
+		HubURLPath: &res.HubURLPath,
+		Rating:     &res.Rating,
 	}
 	if res.Categories != nil {
 		vres.Categories = make([]*resourceviews.CategoryView, len(res.Categories))
@@ -729,6 +745,9 @@ func newResourceVersionDataMin(vres *resourceviews.ResourceVersionDataView) *Res
 	if vres.WebURL != nil {
 		res.WebURL = *vres.WebURL
 	}
+	if vres.HubURLPath != nil {
+		res.HubURLPath = *vres.HubURLPath
+	}
 	if vres.Platforms != nil {
 		res.Platforms = make([]*Platform, len(vres.Platforms))
 		for i, val := range vres.Platforms {
@@ -767,6 +786,9 @@ func newResourceVersionDataWithoutResource(vres *resourceviews.ResourceVersionDa
 	}
 	if vres.WebURL != nil {
 		res.WebURL = *vres.WebURL
+	}
+	if vres.HubURLPath != nil {
+		res.HubURLPath = *vres.HubURLPath
 	}
 	if vres.UpdatedAt != nil {
 		res.UpdatedAt = *vres.UpdatedAt
@@ -810,6 +832,9 @@ func newResourceVersionData(vres *resourceviews.ResourceVersionDataView) *Resour
 	if vres.WebURL != nil {
 		res.WebURL = *vres.WebURL
 	}
+	if vres.HubURLPath != nil {
+		res.HubURLPath = *vres.HubURLPath
+	}
 	if vres.UpdatedAt != nil {
 		res.UpdatedAt = *vres.UpdatedAt
 	}
@@ -839,10 +864,11 @@ func newResourceVersionDataViewTiny(res *ResourceVersionData) *resourceviews.Res
 // projected type ResourceVersionDataView using the "min" view.
 func newResourceVersionDataViewMin(res *ResourceVersionData) *resourceviews.ResourceVersionDataView {
 	vres := &resourceviews.ResourceVersionDataView{
-		ID:      &res.ID,
-		Version: &res.Version,
-		RawURL:  &res.RawURL,
-		WebURL:  &res.WebURL,
+		ID:         &res.ID,
+		Version:    &res.Version,
+		RawURL:     &res.RawURL,
+		WebURL:     &res.WebURL,
+		HubURLPath: &res.HubURLPath,
 	}
 	if res.Platforms != nil {
 		vres.Platforms = make([]*resourceviews.PlatformView, len(res.Platforms))
@@ -867,6 +893,7 @@ func newResourceVersionDataViewWithoutResource(res *ResourceVersionData) *resour
 		RawURL:              &res.RawURL,
 		WebURL:              &res.WebURL,
 		UpdatedAt:           &res.UpdatedAt,
+		HubURLPath:          &res.HubURLPath,
 	}
 	if res.Platforms != nil {
 		vres.Platforms = make([]*resourceviews.PlatformView, len(res.Platforms))
@@ -890,6 +917,7 @@ func newResourceVersionDataView(res *ResourceVersionData) *resourceviews.Resourc
 		RawURL:              &res.RawURL,
 		WebURL:              &res.WebURL,
 		UpdatedAt:           &res.UpdatedAt,
+		HubURLPath:          &res.HubURLPath,
 	}
 	if res.Platforms != nil {
 		vres.Platforms = make([]*resourceviews.PlatformView, len(res.Platforms))
@@ -1052,6 +1080,7 @@ func transformResourceviewsResourceVersionDataViewToResourceVersionData(v *resou
 		RawURL:              *v.RawURL,
 		WebURL:              *v.WebURL,
 		UpdatedAt:           *v.UpdatedAt,
+		HubURLPath:          *v.HubURLPath,
 	}
 	if v.Platforms != nil {
 		res.Platforms = make([]*Platform, len(v.Platforms))
@@ -1078,6 +1107,9 @@ func transformResourceviewsResourceDataViewToResourceData(v *resourceviews.Resou
 	}
 	if v.Kind != nil {
 		res.Kind = *v.Kind
+	}
+	if v.HubURLPath != nil {
+		res.HubURLPath = *v.HubURLPath
 	}
 	if v.Rating != nil {
 		res.Rating = *v.Rating
@@ -1157,6 +1189,7 @@ func transformResourceVersionDataToResourceviewsResourceVersionDataView(v *Resou
 		RawURL:              &v.RawURL,
 		WebURL:              &v.WebURL,
 		UpdatedAt:           &v.UpdatedAt,
+		HubURLPath:          &v.HubURLPath,
 	}
 	if v.Platforms != nil {
 		res.Platforms = make([]*resourceviews.PlatformView, len(v.Platforms))
@@ -1175,10 +1208,11 @@ func transformResourceVersionDataToResourceviewsResourceVersionDataView(v *Resou
 // *resourceviews.ResourceDataView from a value of type *ResourceData.
 func transformResourceDataToResourceviewsResourceDataView(v *ResourceData) *resourceviews.ResourceDataView {
 	res := &resourceviews.ResourceDataView{
-		ID:     &v.ID,
-		Name:   &v.Name,
-		Kind:   &v.Kind,
-		Rating: &v.Rating,
+		ID:         &v.ID,
+		Name:       &v.Name,
+		Kind:       &v.Kind,
+		HubURLPath: &v.HubURLPath,
+		Rating:     &v.Rating,
 	}
 	if v.Categories != nil {
 		res.Categories = make([]*resourceviews.CategoryView, len(v.Categories))

@@ -7,6 +7,7 @@
 		"minPipelinesVersion": "0.12.1",
 		"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tkn/0.1/tkn.yaml",
 		"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tkn/0.1/tkn.yaml",
+		"hubURLPath": "catalog-official/task/tkn/0.1",
 		"updatedAt": "2013-01-01T00:00:01Z",
 		"resource": {
 			"id": 5,
@@ -23,6 +24,7 @@
 				}
 			],
 			"kind": "task",
+			"hubURLPath": "catalog-official/task/tkn/0.1",
 			"tags": [
 				{
 					"id": 2,

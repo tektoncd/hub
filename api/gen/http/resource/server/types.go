@@ -327,6 +327,8 @@ type ResourceDataResponseBodyWithoutVersion struct {
 	Categories []*CategoryResponseBody `form:"categories" json:"categories" xml:"categories"`
 	// Kind of resource
 	Kind string `form:"kind" json:"kind" xml:"kind"`
+	// Url path of the resource in hub
+	HubURLPath string `form:"hubURLPath" json:"hubURLPath" xml:"hubURLPath"`
 	// Latest version of resource
 	LatestVersion *ResourceVersionDataResponseBodyWithoutResource `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
 	// Tags related to resource
@@ -374,6 +376,8 @@ type ResourceVersionDataResponseBodyWithoutResource struct {
 	RawURL string `form:"rawURL" json:"rawURL" xml:"rawURL"`
 	// Web URL of resource's yaml file of the version
 	WebURL string `form:"webURL" json:"webURL" xml:"webURL"`
+	// Url path of the resource in hub
+	HubURLPath string `form:"hubURLPath" json:"hubURLPath" xml:"hubURLPath"`
 	// Timestamp when version was last updated
 	UpdatedAt string `form:"updatedAt" json:"updatedAt" xml:"updatedAt"`
 	// Platforms related to resource version
@@ -415,6 +419,8 @@ type ResourceVersionDataResponseBodyMin struct {
 	RawURL string `form:"rawURL" json:"rawURL" xml:"rawURL"`
 	// Web URL of resource's yaml file of the version
 	WebURL string `form:"webURL" json:"webURL" xml:"webURL"`
+	// Url path of the resource in hub
+	HubURLPath string `form:"hubURLPath" json:"hubURLPath" xml:"hubURLPath"`
 	// Platforms related to resource version
 	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
 }
@@ -438,6 +444,8 @@ type ResourceVersionDataResponseBody struct {
 	RawURL string `form:"rawURL" json:"rawURL" xml:"rawURL"`
 	// Web URL of resource's yaml file of the version
 	WebURL string `form:"webURL" json:"webURL" xml:"webURL"`
+	// Url path of the resource in hub
+	HubURLPath string `form:"hubURLPath" json:"hubURLPath" xml:"hubURLPath"`
 	// Timestamp when version was last updated
 	UpdatedAt string `form:"updatedAt" json:"updatedAt" xml:"updatedAt"`
 	// Resource to which the version belongs
@@ -458,6 +466,8 @@ type ResourceDataResponseBodyInfo struct {
 	Categories []*CategoryResponseBody `form:"categories" json:"categories" xml:"categories"`
 	// Kind of resource
 	Kind string `form:"kind" json:"kind" xml:"kind"`
+	// Url path of the resource in hub
+	HubURLPath string `form:"hubURLPath" json:"hubURLPath" xml:"hubURLPath"`
 	// Tags related to resource
 	Tags []*TagResponseBody `form:"tags" json:"tags" xml:"tags"`
 	// Platforms related to resource
@@ -478,6 +488,8 @@ type ResourceDataResponseBody struct {
 	Categories []*CategoryResponseBody `form:"categories" json:"categories" xml:"categories"`
 	// Kind of resource
 	Kind string `form:"kind" json:"kind" xml:"kind"`
+	// Url path of the resource in hub
+	HubURLPath string `form:"hubURLPath" json:"hubURLPath" xml:"hubURLPath"`
 	// Latest version of resource
 	LatestVersion *ResourceVersionDataResponseBodyWithoutResource `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
 	// Tags related to resource

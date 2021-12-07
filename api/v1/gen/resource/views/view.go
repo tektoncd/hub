@@ -64,6 +64,8 @@ type ResourceDataView struct {
 	Categories []*CategoryView
 	// Kind of resource
 	Kind *string
+	// Url path of the resource in hub
+	HubURLPath *string
 	// Latest version of resource
 	LatestVersion *ResourceVersionDataView
 	// Tags related to resource
@@ -120,6 +122,8 @@ type ResourceVersionDataView struct {
 	UpdatedAt *string
 	// Platforms related to resource version
 	Platforms []*PlatformView
+	// Url path of the resource in hub
+	HubURLPath *string
 	// Resource to which the version belongs
 	Resource *ResourceDataView
 }
@@ -201,6 +205,7 @@ var (
 			"catalog",
 			"categories",
 			"kind",
+			"hubURLPath",
 			"tags",
 			"platforms",
 			"rating",
@@ -211,6 +216,7 @@ var (
 			"catalog",
 			"categories",
 			"kind",
+			"hubURLPath",
 			"latestVersion",
 			"tags",
 			"platforms",
@@ -222,6 +228,7 @@ var (
 			"catalog",
 			"categories",
 			"kind",
+			"hubURLPath",
 			"latestVersion",
 			"tags",
 			"platforms",
@@ -238,6 +245,7 @@ var (
 			"catalog",
 			"categories",
 			"kind",
+			"hubURLPath",
 			"tags",
 			"platforms",
 			"rating",
@@ -248,6 +256,7 @@ var (
 			"catalog",
 			"categories",
 			"kind",
+			"hubURLPath",
 			"latestVersion",
 			"tags",
 			"platforms",
@@ -259,6 +268,7 @@ var (
 			"catalog",
 			"categories",
 			"kind",
+			"hubURLPath",
 			"latestVersion",
 			"tags",
 			"platforms",
@@ -294,6 +304,7 @@ var (
 			"version",
 			"rawURL",
 			"webURL",
+			"hubURLPath",
 			"platforms",
 		},
 		"withoutResource": []string{
@@ -305,6 +316,7 @@ var (
 			"minPipelinesVersion",
 			"rawURL",
 			"webURL",
+			"hubURLPath",
 			"updatedAt",
 			"platforms",
 		},
@@ -317,6 +329,7 @@ var (
 			"minPipelinesVersion",
 			"rawURL",
 			"webURL",
+			"hubURLPath",
 			"updatedAt",
 			"resource",
 			"platforms",
@@ -440,6 +453,9 @@ func ValidateResourceDataViewInfo(result *ResourceDataView) (err error) {
 	if result.Kind == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "result"))
 	}
+	if result.HubURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "result"))
+	}
 	if result.Tags == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "result"))
 	}
@@ -492,6 +508,9 @@ func ValidateResourceDataViewWithoutVersion(result *ResourceDataView) (err error
 	}
 	if result.Kind == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "result"))
+	}
+	if result.HubURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "result"))
 	}
 	if result.Tags == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "result"))
@@ -550,6 +569,9 @@ func ValidateResourceDataView(result *ResourceDataView) (err error) {
 	}
 	if result.Kind == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "result"))
+	}
+	if result.HubURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "result"))
 	}
 	if result.Tags == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("tags", "result"))
@@ -691,6 +713,9 @@ func ValidateResourceVersionDataViewMin(result *ResourceVersionDataView) (err er
 	if result.Platforms == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("platforms", "result"))
 	}
+	if result.HubURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "result"))
+	}
 	if result.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))
 	}
@@ -736,6 +761,9 @@ func ValidateResourceVersionDataViewWithoutResource(result *ResourceVersionDataV
 	}
 	if result.Platforms == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("platforms", "result"))
+	}
+	if result.HubURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "result"))
 	}
 	if result.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))
@@ -785,6 +813,9 @@ func ValidateResourceVersionDataView(result *ResourceVersionDataView) (err error
 	}
 	if result.Platforms == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("platforms", "result"))
+	}
+	if result.HubURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "result"))
 	}
 	if result.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))

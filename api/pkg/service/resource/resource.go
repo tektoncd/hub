@@ -286,6 +286,7 @@ func initResource(r model.Resource) *resource.ResourceData {
 	}
 	res.Kind = r.Kind
 	res.Rating = r.Rating
+	res.HubURLPath = fmt.Sprintf("%s/%s/%s", r.Catalog.Name, r.Kind, r.Name)
 
 	lv := (r.Versions)[len(r.Versions)-1]
 	platforms := []*resource.Platform{}
@@ -303,6 +304,7 @@ func initResource(r model.Resource) *resource.ResourceData {
 		MinPipelinesVersion: lv.MinPipelinesVersion,
 		WebURL:              lv.URL,
 		RawURL:              getStringReplacer(lv.URL, r.Catalog.Provider).Replace(lv.URL),
+		HubURLPath:          fmt.Sprintf("%s/%s/%s/%s", r.Catalog.Name, r.Kind, r.Name, lv.Version),
 		UpdatedAt:           lv.ModifiedAt.UTC().Format(time.RFC3339),
 		Platforms:           platforms,
 	}
@@ -350,6 +352,8 @@ func tinyVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 	return res
 }
 
+// This functions finds the minimum version information of
+// the resource such as rawURL, webURL, platforms and HubURL
 func minVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 
 	res := tinyVersionInfo(r)
@@ -363,6 +367,8 @@ func minVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 		})
 	}
 	res.Platforms = platforms
+
+	res.HubURLPath = fmt.Sprintf("%s/%s/%s/%s", r.Resource.Catalog.Name, r.Resource.Kind, r.Resource.Name, r.Version)
 
 	return res
 }
@@ -397,6 +403,7 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		ID:         r.ID,
 		Name:       r.Name,
 		Kind:       r.Kind,
+		HubURLPath: fmt.Sprintf("%s/%s/%s", r.Catalog.Name, r.Kind, r.Name),
 		Rating:     r.Rating,
 		Tags:       tags,
 		Platforms:  platforms,
@@ -424,6 +431,7 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		MinPipelinesVersion: v.MinPipelinesVersion,
 		WebURL:              v.URL,
 		RawURL:              getStringReplacer(v.URL, r.Catalog.Provider).Replace(v.URL),
+		HubURLPath:          fmt.Sprintf("%s/%s/%s/%s", r.Catalog.Name, r.Kind, r.Name, v.Version),
 		UpdatedAt:           v.ModifiedAt.UTC().Format(time.RFC3339),
 		Resource:            res,
 		Platforms:           verPlatforms,

@@ -368,6 +368,7 @@ paths:
                   categories:
                   - id: 1
                     name: image-build
+                  hubURLPath: tekton/task/buildah
                   id: 1
                   kind: task
                   latestVersion:
@@ -403,6 +404,7 @@ paths:
                   categories:
                   - id: 1
                     name: image-build
+                  hubURLPath: tekton/task/buildah
                   id: 1
                   kind: task
                   latestVersion:
@@ -528,6 +530,7 @@ paths:
                   categories:
                   - id: 1
                     name: image-build
+                  hubURLPath: tekton/task/buildah
                   id: 1
                   kind: task
                   latestVersion:
@@ -637,6 +640,7 @@ paths:
                   description: Buildah task builds source into a container image and
                     then pushes it to a container registry.
                   displayName: Buildah
+                  hubURLPath: tekton/task/buildah
                   id: 1
                   minPipelinesVersion: 0.12.1
                   platforms:
@@ -716,6 +720,7 @@ paths:
                   categories:
                   - id: 1
                     name: image-build
+                  hubURLPath: tekton/task/buildah
                   id: 1
                   kind: task
                   latestVersion:
@@ -1003,6 +1008,7 @@ paths:
                   description: Buildah task builds source into a container image and
                     then pushes it to a container registry.
                   displayName: Buildah
+                  hubURLPath: tekton/task/buildah
                   id: 1
                   minPipelinesVersion: 0.12.1
                   platforms:
@@ -1083,6 +1089,7 @@ paths:
                   categories:
                   - id: 1
                     name: image-build
+                  hubURLPath: tekton/task/buildah
                   id: 1
                   kind: task
                   latestVersion:
@@ -1118,6 +1125,7 @@ paths:
                   categories:
                   - id: 1
                     name: image-build
+                  hubURLPath: tekton/task/buildah
                   id: 1
                   kind: task
                   latestVersion:
@@ -1613,6 +1621,7 @@ components:
           categories:
           - id: 1
             name: image-build
+          hubURLPath: tekton/task/buildah
           id: 1
           kind: task
           latestVersion:
@@ -1656,6 +1665,10 @@ components:
           example:
           - id: 1
             name: image-build
+        hubURLPath:
+          type: string
+          description: Url path of the resource in hub
+          example: tekton/task/buildah
         id:
           type: integer
           description: ID is the unique id of the resource
@@ -1710,6 +1723,7 @@ components:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1744,6 +1758,7 @@ components:
       - catalog
       - categories
       - kind
+      - hubURLPath
       - latestVersion
       - tags
       - platforms
@@ -1761,6 +1776,7 @@ components:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1796,6 +1812,7 @@ components:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1831,6 +1848,7 @@ components:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1870,6 +1888,7 @@ components:
           description: Buildah task builds source into a container image and then
             pushes it to a container registry.
           displayName: Buildah
+          hubURLPath: tekton/task/buildah
           id: 1
           minPipelinesVersion: 0.12.1
           platforms:
@@ -1914,6 +1933,10 @@ components:
           type: string
           description: Display name of version
           example: Buildah
+        hubURLPath:
+          type: string
+          description: Url path of the resource in hub
+          example: tekton/task/buildah
         id:
           type: integer
           description: ID is the unique id of resource's version
@@ -1958,6 +1981,7 @@ components:
         description: Buildah task builds source into a container image and then pushes
           it to a container registry.
         displayName: Buildah
+        hubURLPath: tekton/task/buildah
         id: 1
         minPipelinesVersion: 0.12.1
         platforms:
@@ -1995,6 +2019,7 @@ components:
       - updatedAt
       - platforms
       - resource
+      - hubURLPath
     ResourceVersions:
       type: object
       properties:
@@ -2032,6 +2057,7 @@ components:
           categories:
           - id: 1
             name: image-build
+          hubURLPath: tekton/task/buildah
           id: 1
           kind: task
           latestVersion:
@@ -2067,6 +2093,7 @@ components:
           categories:
           - id: 1
             name: image-build
+          hubURLPath: tekton/task/buildah
           id: 1
           kind: task
           latestVersion:

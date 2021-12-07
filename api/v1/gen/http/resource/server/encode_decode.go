@@ -614,10 +614,11 @@ func EncodeByIDError(encoder func(context.Context, http.ResponseWriter) goahttp.
 // of type *resourceviews.ResourceDataView.
 func marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersion(v *resourceviews.ResourceDataView) *ResourceDataResponseBodyWithoutVersion {
 	res := &ResourceDataResponseBodyWithoutVersion{
-		ID:     *v.ID,
-		Name:   *v.Name,
-		Kind:   *v.Kind,
-		Rating: *v.Rating,
+		ID:         *v.ID,
+		Name:       *v.Name,
+		Kind:       *v.Kind,
+		HubURLPath: *v.HubURLPath,
+		Rating:     *v.Rating,
 	}
 	if v.Catalog != nil {
 		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v.Catalog)
@@ -684,6 +685,7 @@ func marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBod
 		RawURL:              *v.RawURL,
 		WebURL:              *v.WebURL,
 		UpdatedAt:           *v.UpdatedAt,
+		HubURLPath:          *v.HubURLPath,
 	}
 	if v.Platforms != nil {
 		res.Platforms = make([]*PlatformResponseBody, len(v.Platforms))
@@ -739,10 +741,11 @@ func marshalResourceviewsVersionsViewToVersionsResponseBody(v *resourceviews.Ver
 // type *resourceviews.ResourceVersionDataView.
 func marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBodyMin(v *resourceviews.ResourceVersionDataView) *ResourceVersionDataResponseBodyMin {
 	res := &ResourceVersionDataResponseBodyMin{
-		ID:      *v.ID,
-		Version: *v.Version,
-		RawURL:  *v.RawURL,
-		WebURL:  *v.WebURL,
+		ID:         *v.ID,
+		Version:    *v.Version,
+		RawURL:     *v.RawURL,
+		WebURL:     *v.WebURL,
+		HubURLPath: *v.HubURLPath,
 	}
 	if v.Platforms != nil {
 		res.Platforms = make([]*PlatformResponseBody, len(v.Platforms))
@@ -768,6 +771,7 @@ func marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBod
 		RawURL:              *v.RawURL,
 		WebURL:              *v.WebURL,
 		UpdatedAt:           *v.UpdatedAt,
+		HubURLPath:          *v.HubURLPath,
 	}
 	if v.Platforms != nil {
 		res.Platforms = make([]*PlatformResponseBody, len(v.Platforms))
@@ -787,10 +791,11 @@ func marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBod
 // *resourceviews.ResourceDataView.
 func marshalResourceviewsResourceDataViewToResourceDataResponseBodyInfo(v *resourceviews.ResourceDataView) *ResourceDataResponseBodyInfo {
 	res := &ResourceDataResponseBodyInfo{
-		ID:     *v.ID,
-		Name:   *v.Name,
-		Kind:   *v.Kind,
-		Rating: *v.Rating,
+		ID:         *v.ID,
+		Name:       *v.Name,
+		Kind:       *v.Kind,
+		HubURLPath: *v.HubURLPath,
+		Rating:     *v.Rating,
 	}
 	if v.Catalog != nil {
 		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v.Catalog)
@@ -822,10 +827,11 @@ func marshalResourceviewsResourceDataViewToResourceDataResponseBodyInfo(v *resou
 // *resourceviews.ResourceDataView.
 func marshalResourceviewsResourceDataViewToResourceDataResponseBody(v *resourceviews.ResourceDataView) *ResourceDataResponseBody {
 	res := &ResourceDataResponseBody{
-		ID:     *v.ID,
-		Name:   *v.Name,
-		Kind:   *v.Kind,
-		Rating: *v.Rating,
+		ID:         *v.ID,
+		Name:       *v.Name,
+		Kind:       *v.Kind,
+		HubURLPath: *v.HubURLPath,
+		Rating:     *v.Rating,
 	}
 	if v.Catalog != nil {
 		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v.Catalog)

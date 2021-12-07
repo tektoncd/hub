@@ -325,6 +325,8 @@ type ResourceDataResponseBody struct {
 	Categories []*CategoryResponseBody `form:"categories,omitempty" json:"categories,omitempty" xml:"categories,omitempty"`
 	// Kind of resource
 	Kind *string `form:"kind,omitempty" json:"kind,omitempty" xml:"kind,omitempty"`
+	// Url path of the resource in hub
+	HubURLPath *string `form:"hubURLPath,omitempty" json:"hubURLPath,omitempty" xml:"hubURLPath,omitempty"`
 	// Latest version of resource
 	LatestVersion *ResourceVersionDataResponseBody `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
 	// Tags related to resource
@@ -382,6 +384,8 @@ type ResourceVersionDataResponseBody struct {
 	UpdatedAt *string `form:"updatedAt,omitempty" json:"updatedAt,omitempty" xml:"updatedAt,omitempty"`
 	// Platforms related to resource version
 	Platforms []*PlatformResponseBody `form:"platforms,omitempty" json:"platforms,omitempty" xml:"platforms,omitempty"`
+	// Url path of the resource in hub
+	HubURLPath *string `form:"hubURLPath,omitempty" json:"hubURLPath,omitempty" xml:"hubURLPath,omitempty"`
 	// Resource to which the version belongs
 	Resource *ResourceDataResponseBody `form:"resource,omitempty" json:"resource,omitempty" xml:"resource,omitempty"`
 }
@@ -1054,6 +1058,9 @@ func ValidateResourceDataResponseBody(body *ResourceDataResponseBody) (err error
 	if body.Kind == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("kind", "body"))
 	}
+	if body.HubURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "body"))
+	}
 	if body.LatestVersion == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("latestVersion", "body"))
 	}
@@ -1180,6 +1187,9 @@ func ValidateResourceVersionDataResponseBody(body *ResourceVersionDataResponseBo
 	}
 	if body.Resource == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("resource", "body"))
+	}
+	if body.HubURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "body"))
 	}
 	if body.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.rawURL", *body.RawURL, goa.FormatURI))
