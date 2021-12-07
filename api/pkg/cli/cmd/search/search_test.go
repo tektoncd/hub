@@ -74,6 +74,7 @@ var res2 = &res.ResourceData{
 	},
 	Categories: []*res.Category{},
 	Rating:     4,
+	HubURLPath: "foo/Pipeline/foo-bar",
 	LatestVersion: &res.ResourceVersionData{
 		ID:                  12,
 		Version:             "0.2",
@@ -83,6 +84,7 @@ var res2 = &res.ResourceData{
 		MinPipelinesVersion: "0.12",
 		RawURL:              "http://raw.github.url/foo-bar/",
 		WebURL:              "http://web.github.com/foo-bar/",
+		HubURLPath:          "foo/Pipeline/foo-bar/0.2",
 		UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
 	},
 	Tags: []*res.Tag{},

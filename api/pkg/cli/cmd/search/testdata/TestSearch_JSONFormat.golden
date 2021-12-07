@@ -12,6 +12,7 @@
 			},
 			"Categories": [],
 			"Kind": "Pipeline",
+			"HubURLPath": "foo/Pipeline/foo-bar",
 			"LatestVersion": {
 				"ID": 12,
 				"Version": "0.2",
@@ -23,6 +24,7 @@
 				"WebURL": "http://web.github.com/foo-bar/",
 				"UpdatedAt": "2020-01-01 12:00:00 +0000 UTC",
 				"Platforms": null,
+				"HubURLPath": "foo/Pipeline/foo-bar/0.2",
 				"Resource": null
 			},
 			"Tags": [],

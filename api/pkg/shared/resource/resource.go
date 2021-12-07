@@ -92,7 +92,7 @@ func (r *Request) AllResources() ([]model.Resource, error) {
 // Fields: ID (Resource ID)
 func (r *Request) AllVersions() ([]model.ResourceVersion, error) {
 
-	q := r.Db.Scopes(orderByVersion, filterByResourceID(r.ID)).Preload("Platforms", orderByPlatforms)
+	q := r.Db.Scopes(orderByVersion, filterByResourceID(r.ID)).Preload("Platforms", orderByPlatforms).Preload("Resource").Preload("Resource.Catalog")
 
 	var all []model.ResourceVersion
 	if err := q.Find(&all).Error; err != nil {

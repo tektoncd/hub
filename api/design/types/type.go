@@ -134,6 +134,9 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 			})
 		})
 	})
+	Attribute("hubURLPath", String, "Url path of the resource in hub", func() {
+		Example("hubURLPath", "tekton/task/buildah")
+	})
 	Attribute("resource", ResourceData, "Resource to which the version belongs", func() {
 		View("info")
 		Example("resource", func() {
@@ -160,6 +163,7 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("version")
 		Attribute("rawURL")
 		Attribute("webURL")
+		Attribute("hubURLPath")
 		Attribute("platforms")
 	})
 
@@ -172,6 +176,7 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("minPipelinesVersion")
 		Attribute("rawURL")
 		Attribute("webURL")
+		Attribute("hubURLPath")
 		Attribute("updatedAt")
 		Attribute("platforms")
 	})
@@ -185,12 +190,13 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("minPipelinesVersion")
 		Attribute("rawURL")
 		Attribute("webURL")
+		Attribute("hubURLPath")
 		Attribute("updatedAt")
 		Attribute("resource")
 		Attribute("platforms")
 	})
 
-	Required("id", "version", "displayName", "description", "minPipelinesVersion", "rawURL", "webURL", "updatedAt", "platforms", "resource")
+	Required("id", "version", "displayName", "description", "minPipelinesVersion", "rawURL", "webURL", "updatedAt", "platforms", "resource", "hubURLPath")
 })
 
 var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData", func() {
@@ -217,6 +223,9 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 	})
 	Attribute("kind", String, "Kind of resource", func() {
 		Example("kind", "task")
+	})
+	Attribute("hubURLPath", String, "Url path of the resource in hub", func() {
+		Example("hubURLPath", "tekton/task/buildah")
 	})
 	Attribute("latestVersion", "ResourceVersionData", "Latest version of resource", func() {
 		View("withoutResource")
@@ -270,6 +279,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Attribute("catalog")
 		Attribute("categories")
 		Attribute("kind")
+		Attribute("hubURLPath")
 		Attribute("tags")
 		Attribute("platforms")
 		Attribute("rating")
@@ -283,6 +293,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		})
 		Attribute("categories")
 		Attribute("kind")
+		Attribute("hubURLPath")
 		Attribute("latestVersion")
 		Attribute("tags")
 		Attribute("platforms")
@@ -295,6 +306,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Attribute("catalog")
 		Attribute("categories")
 		Attribute("kind")
+		Attribute("hubURLPath")
 		Attribute("latestVersion")
 		Attribute("tags")
 		Attribute("platforms")
@@ -304,7 +316,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		})
 	})
 
-	Required("id", "name", "catalog", "categories", "kind", "latestVersion", "tags", "platforms", "rating", "versions")
+	Required("id", "name", "catalog", "categories", "kind", "hubURLPath", "latestVersion", "tags", "platforms", "rating", "versions")
 })
 
 var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {

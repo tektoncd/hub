@@ -166,13 +166,13 @@ func (s *service) ByCatalogKindNameVersion(ctx context.Context, p *resource.ByCa
 
 	switch count := len(r.Versions); {
 	case count == 1:
-		return versionInfoFromResource(r), nil
+		return versionInfoFromResource(r, p.Version), nil
 	case count == 0:
 		return nil, resource.MakeNotFound(fmt.Errorf("resource not found"))
 	default:
 		s.Logger(ctx).Warnf("expected to find one version but found %d", count)
 		r.Versions = []model.ResourceVersion{r.Versions[0]}
-		return versionInfoFromResource(r), nil
+		return versionInfoFromResource(r, p.Version), nil
 	}
 }
 
@@ -285,6 +285,7 @@ func initResource(r model.Resource) *resource.ResourceData {
 		Type: r.Catalog.Type,
 	}
 	res.Kind = r.Kind
+	res.HubURLPath = fmt.Sprintf("%s/%s/%s", r.Catalog.Name, r.Kind, r.Name)
 	res.Rating = r.Rating
 
 	lv := (r.Versions)[len(r.Versions)-1]
@@ -305,6 +306,7 @@ func initResource(r model.Resource) *resource.ResourceData {
 		MinPipelinesVersion: lv.MinPipelinesVersion,
 		WebURL:              lv.URL,
 		RawURL:              getStringReplacer(lv.URL).Replace(lv.URL),
+		HubURLPath:          fmt.Sprintf("%s/%s/%s/%s", r.Catalog.Name, r.Kind, r.Name, lv.Version),
 		UpdatedAt:           lv.ModifiedAt.UTC().Format(time.RFC3339),
 		Platforms:           platforms,
 	}
@@ -353,6 +355,8 @@ func tinyVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 	return res
 }
 
+// This functions finds the minimum version information of
+// the resource such as rawURL, webURL, platforms and HubURL
 func minVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 
 	res := tinyVersionInfo(r)
@@ -367,10 +371,12 @@ func minVersionInfo(r model.ResourceVersion) *resource.ResourceVersionData {
 	}
 	res.Platforms = platforms
 
+	res.HubURLPath = fmt.Sprintf("%s/%s/%s/%s", r.Resource.Catalog.Name, r.Resource.Kind, r.Resource.Name, r.Version)
+
 	return res
 }
 
-func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
+func versionInfoFromResource(r model.Resource, version string) *resource.ResourceVersion {
 
 	var tags []*resource.Tag
 	for _, tag := range r.Tags {
@@ -400,6 +406,7 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		ID:         r.ID,
 		Name:       r.Name,
 		Kind:       r.Kind,
+		HubURLPath: fmt.Sprintf("%s/%s/%s/%s", r.Catalog.Name, r.Kind, r.Name, version),
 		Rating:     r.Rating,
 		Tags:       tags,
 		Platforms:  platforms,
@@ -427,6 +434,7 @@ func versionInfoFromResource(r model.Resource) *resource.ResourceVersion {
 		MinPipelinesVersion: v.MinPipelinesVersion,
 		WebURL:              v.URL,
 		RawURL:              getStringReplacer(v.URL).Replace(v.URL),
+		HubURLPath:          fmt.Sprintf("%s/%s/%s/%s", r.Catalog.Name, r.Kind, r.Name, v.Version),
 		UpdatedAt:           v.ModifiedAt.UTC().Format(time.RFC3339),
 		Resource:            res,
 		Platforms:           verPlatforms,
@@ -447,5 +455,5 @@ func versionInfoFromVersion(v model.ResourceVersion) *resource.ResourceVersion {
 	// need to return version details of v, thus manually populating only
 	// the required info
 	v.Resource.Versions = []model.ResourceVersion{v}
-	return versionInfoFromResource(v.Resource)
+	return versionInfoFromResource(v.Resource, "")
 }

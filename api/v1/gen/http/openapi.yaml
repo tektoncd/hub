@@ -630,6 +630,7 @@ definitions:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -763,6 +764,7 @@ definitions:
         description: Buildah task builds source into a container image and then pushes
           it to a container registry.
         displayName: Buildah
+        hubURLPath: tekton/task/buildah
         id: 1
         minPipelinesVersion: 0.12.1
         platforms:
@@ -897,6 +899,7 @@ definitions:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1030,6 +1033,7 @@ definitions:
         description: Buildah task builds source into a container image and then pushes
           it to a container registry.
         displayName: Buildah
+        hubURLPath: tekton/task/buildah
         id: 1
         minPipelinesVersion: 0.12.1
         platforms:
@@ -1072,6 +1076,10 @@ definitions:
         example:
         - id: 1
           name: image-build
+      hubURLPath:
+        type: string
+        description: Url path of the resource in hub
+        example: tekton/task/buildah
       id:
         type: integer
         description: ID is the unique id of the resource
@@ -1127,6 +1135,7 @@ definitions:
       categories:
       - id: 1
         name: image-build
+      hubURLPath: tekton/task/buildah
       id: 1
       kind: task
       latestVersion:
@@ -1161,6 +1170,7 @@ definitions:
     - catalog
     - categories
     - kind
+    - hubURLPath
     - latestVersion
     - tags
     - platforms
@@ -1180,6 +1190,10 @@ definitions:
         example:
         - id: 1
           name: image-build
+      hubURLPath:
+        type: string
+        description: Url path of the resource in hub
+        example: tekton/task/buildah
       id:
         type: integer
         description: ID is the unique id of the resource
@@ -1223,6 +1237,7 @@ definitions:
       categories:
       - id: 1
         name: image-build
+      hubURLPath: tekton/task/buildah
       id: 1
       kind: task
       name: buildah
@@ -1239,6 +1254,7 @@ definitions:
     - catalog
     - categories
     - kind
+    - hubURLPath
     - tags
     - platforms
     - rating
@@ -1256,6 +1272,10 @@ definitions:
         example:
         - id: 1
           name: image-build
+      hubURLPath:
+        type: string
+        description: Url path of the resource in hub
+        example: tekton/task/buildah
       id:
         type: integer
         description: ID is the unique id of the resource
@@ -1302,6 +1322,7 @@ definitions:
       categories:
       - id: 1
         name: image-build
+      hubURLPath: tekton/task/buildah
       id: 1
       kind: task
       latestVersion:
@@ -1331,6 +1352,7 @@ definitions:
     - catalog
     - categories
     - kind
+    - hubURLPath
     - latestVersion
     - tags
     - platforms
@@ -1351,6 +1373,7 @@ definitions:
       categories:
       - id: 1
         name: image-build
+      hubURLPath: tekton/task/buildah
       id: 1
       kind: task
       latestVersion:
@@ -1386,6 +1409,7 @@ definitions:
       categories:
       - id: 1
         name: image-build
+      hubURLPath: tekton/task/buildah
       id: 1
       kind: task
       latestVersion:
@@ -1475,6 +1499,7 @@ definitions:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1505,6 +1530,7 @@ definitions:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1535,6 +1561,7 @@ definitions:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1565,6 +1592,7 @@ definitions:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1741,6 +1769,7 @@ definitions:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1771,6 +1800,7 @@ definitions:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1801,6 +1831,7 @@ definitions:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1831,6 +1862,7 @@ definitions:
         categories:
         - id: 1
           name: image-build
+        hubURLPath: tekton/task/buildah
         id: 1
         kind: task
         latestVersion:
@@ -1873,6 +1905,10 @@ definitions:
         type: string
         description: Display name of version
         example: Buildah
+      hubURLPath:
+        type: string
+        description: Url path of the resource in hub
+        example: tekton/task/buildah
       id:
         type: integer
         description: ID is the unique id of resource's version
@@ -1918,6 +1954,7 @@ definitions:
       description: Buildah task builds source into a container image and then pushes
         it to a container registry.
       displayName: Buildah
+      hubURLPath: tekton/task/buildah
       id: 1
       minPipelinesVersion: 0.12.1
       platforms:
@@ -1955,10 +1992,15 @@ definitions:
     - updatedAt
     - platforms
     - resource
+    - hubURLPath
   ResourceVersionDataResponseBodyMin:
     title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
     type: object
     properties:
+      hubURLPath:
+        type: string
+        description: Url path of the resource in hub
+        example: tekton/task/buildah
       id:
         type: integer
         description: ID is the unique id of resource's version
@@ -1989,6 +2031,7 @@ definitions:
     description: The Version result type describes resource's version information.
       (default view)
     example:
+      hubURLPath: tekton/task/buildah
       id: 1
       platforms:
       - id: 1
@@ -2002,6 +2045,7 @@ definitions:
     - rawURL
     - webURL
     - platforms
+    - hubURLPath
   ResourceVersionDataResponseBodyTiny:
     title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
     type: object
@@ -2040,6 +2084,10 @@ definitions:
         type: string
         description: Display name of version
         example: Buildah
+      hubURLPath:
+        type: string
+        description: Url path of the resource in hub
+        example: tekton/task/buildah
       id:
         type: integer
         description: ID is the unique id of resource's version
@@ -2084,6 +2132,7 @@ definitions:
       description: Buildah task builds source into a container image and then pushes
         it to a container registry.
       displayName: Buildah
+      hubURLPath: tekton/task/buildah
       id: 1
       minPipelinesVersion: 0.12.1
       platforms:
@@ -2103,6 +2152,7 @@ definitions:
     - webURL
     - updatedAt
     - platforms
+    - hubURLPath
   ResourceVersionsByIDInternalErrorResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object

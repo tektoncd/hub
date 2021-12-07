@@ -15,6 +15,7 @@
 				}
 			],
 			"kind": "pipeline",
+			"hubURLPath": "catalog-official/pipeline/build-pipeline",
 			"latestVersion": {
 				"id": 4,
 				"version": "0.2",
@@ -23,6 +24,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/build/0.2/build.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/build/0.2/build.yaml",
+				"hubURLPath": "catalog-official/pipeline/build-pipeline/0.2",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [
 					{
