@@ -42,8 +42,8 @@ func TestRefresh(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with catalog:refresh scope
-	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "catalog:refresh")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
@@ -61,8 +61,8 @@ func TestRefresh_CatalogNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with catalog:refresh scope
-	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "catalog:refresh")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
@@ -79,8 +79,8 @@ func TestRefreshAgain(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with catalog:refresh scopes
-	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "catalog:refresh")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
@@ -103,8 +103,8 @@ func TestRefresh_All(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with catalog:refresh scope
-	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "catalog:refresh")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
@@ -128,8 +128,8 @@ func TestCatalogError(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// User with catalog:refresh scope
-	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "catalog:refresh")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)
@@ -149,8 +149,8 @@ func TestCatalogErrorHavingNoError(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// User with catalog:refresh scope
-	user, _, err := tc.UserWithScopes("foo", "catalog:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "catalog:refresh")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	catalogSvc := NewServiceTest(tc)

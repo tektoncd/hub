@@ -48,8 +48,8 @@ func TestUpdateAgent_Http_NewAgent(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "agent:create")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -84,8 +84,8 @@ func TestUpdateAgent_Http_NormalUserExistWithName(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "agent:create")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -114,8 +114,8 @@ func TestUpdateAgent_Http_InvalidScopeCase(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "agent:create")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -139,13 +139,14 @@ func TestUpdateAgent_Http_InvalidScopeCase(t *testing.T) {
 	})
 }
 
+// yha se new testing fix start kr rha hu
 func TestUpdateAgent_Http_UpdateCase(t *testing.T) {
 	tc := testutils.Setup(t)
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, accessToken, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "agent:create")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -188,8 +189,8 @@ func TestRefreshConfig_Http(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with config:refresh scope
-	user, token, err := tc.UserWithScopes("foo", "config:refresh")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, token, err := tc.UserWithScopes("foo", "foo@bar.com", "config:refresh")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -222,7 +223,7 @@ func TestRefreshConfig_Http(t *testing.T) {
 		err = tc.DB().Where(&scope).First(&scope).Error
 		assert.NoError(t, err)
 
-		user := model.User{GithubLogin: "test-user"}
+		user := model.Account{UserName: "test-user"}
 		err = tc.DB().Where(&user).First(&user).Error
 		assert.NoError(t, err)
 	})

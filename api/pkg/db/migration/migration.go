@@ -43,6 +43,7 @@ func Migrate(api *app.APIBase) error {
 			addProviderColumnInCatalogsTable(log),
 			addOnDeleteConstraints(log),
 			addCodeColInUserTable(log),
+			addUsersDetailsInAccountTable(log),
 		},
 	)
 
@@ -59,6 +60,10 @@ func Migrate(api *app.APIBase) error {
 			&model.SyncJob{},
 			&model.Scope{},
 			&model.Config{},
+			&model.Platform{},
+			&model.VersionPlatform{},
+			&model.ResourcePlatform{},
+			&model.Account{},
 		); err != nil {
 			log.Error(err)
 			return err

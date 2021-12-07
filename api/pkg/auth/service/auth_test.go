@@ -20,8 +20,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/markbates/goth"
 	"github.com/stretchr/testify/assert"
 	authApp "github.com/tektoncd/hub/api/pkg/auth/app"
+	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 	"github.com/tektoncd/hub/api/pkg/token"
 )
@@ -35,6 +37,7 @@ func TestLogin(t *testing.T) {
 
 	authSvc := New(tc)
 
+	provider = "github"
 	req, err := http.NewRequest("POST", "/auth/login?code=test-code", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -54,13 +57,13 @@ func TestLogin(t *testing.T) {
 	assert.NoError(t, err)
 
 	// expected access jwt for user
-	user, accessToken, err := tc.UserWithScopes("foo", "rating:read", "rating:write", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read", "rating:write", "agent:create")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// expected refresh jwt for user
-	user, refreshToken, err := tc.RefreshTokenForUser("foo")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, refreshToken, err := tc.RefreshTokenForUser("foo", "foo@bar.com")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	accessExpiryTime := testutils.Now().Add(tc.JWTConfig().AccessExpiresIn).Unix()
@@ -84,6 +87,7 @@ func TestInvalidLogin(t *testing.T) {
 
 	authSvc := New(tc)
 
+	provider = "github"
 	req, err := http.NewRequest("POST", "/auth/login?code=fake-code", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -117,4 +121,133 @@ func TestProviderList(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, "github", provider.Data[0].Name)
+}
+
+func TestInsertData_AccountExistsButNotEmail(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// Mocks the time
+	token.Now = testutils.Now
+
+	req := request{
+		db:            tc.DB(),
+		log:           tc.Logger("svc"),
+		defaultScopes: []string{"rating:write", "rating:read"},
+		jwtConfig:     tc.JWTConfig(),
+		provider:      "bitbucket",
+	}
+
+	gitUser := goth.User{
+		Email:     "bbuser@bar.com",
+		NickName:  "bbuser",
+		Name:      "bitbucketuser",
+		AvatarURL: "http://bitbucketavatar",
+	}
+
+	err := req.insertData(gitUser, "code", req.provider)
+	assert.NoError(t, err)
+
+	userQuery := tc.DB().Model(&model.User{}).
+		Where("email = ?", gitUser.Email)
+	err = userQuery.First(&model.User{}).Error
+	assert.NoError(t, err)
+}
+
+func TestInsertData_AddNewEmailAndAccount(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// Mocks the time
+	token.Now = testutils.Now
+
+	req := request{
+		db:            tc.DB(),
+		log:           tc.Logger("svc"),
+		defaultScopes: []string{"rating:write", "rating:read"},
+		jwtConfig:     tc.JWTConfig(),
+		provider:      "bitbucket",
+	}
+
+	gitUser := goth.User{
+		Email:     "bbuser@bar.com",
+		NickName:  "bbnewuser",
+		Name:      "newbitbucketuser",
+		AvatarURL: "http://bitbucketavatar",
+	}
+
+	// check whether email already exists or not
+	// it should return an error
+	userQuery := tc.DB().Model(&model.User{}).
+		Where("email = ?", gitUser.Email)
+	err := userQuery.First(&model.User{}).Error
+	assert.Error(t, err)
+
+	// check whether username with that provider already exists or not
+	// it should return an error
+	accountQuery := tc.DB().Model(&model.Account{}).
+		Where(model.Account{Name: gitUser.NickName, Provider: req.provider})
+	err = accountQuery.First(&model.Account{}).Error
+	assert.Error(t, err)
+
+	err = req.insertData(gitUser, "code", req.provider)
+	assert.NoError(t, err)
+}
+
+func TestInsertData_EmailExistsAddNewAccount(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	// Mocks the time
+	token.Now = testutils.Now
+
+	req := request{
+		db:            tc.DB(),
+		log:           tc.Logger("svc"),
+		defaultScopes: []string{"rating:write", "rating:read"},
+		jwtConfig:     tc.JWTConfig(),
+		provider:      "gitlab",
+	}
+
+	gitUser := goth.User{
+		Email:     "foo@bar.com",
+		NickName:  "gitlabuser",
+		Name:      "gitlabuser",
+		AvatarURL: "http://gitlabavatar",
+	}
+
+	user := model.User{}
+
+	// Email should exist
+	// If it doesn't exists then test should fail
+	userQuery := tc.DB().Model(&model.User{}).
+		Where("email = ?", gitUser.Email)
+	err := userQuery.Last(&user).Error
+	assert.NoError(t, err)
+
+	// Check for no of accounts associated with particular email
+	// The count should be 2. If not 2 then test should fail
+	accounts := []model.Account{}
+	accountQuery := tc.DB().Model(&model.Account{}).Where("user_id = ?", user.ID)
+	err = accountQuery.Find(&accounts).Error
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(accounts))
+
+	// check whether username with that provider already exists or not
+	// Test should fail if account doesn't exists
+	accountQuery = tc.DB().Model(&model.Account{}).
+		Where(model.Account{Name: gitUser.NickName, Provider: req.provider})
+	err = accountQuery.First(&model.Account{}).Error
+	assert.Error(t, err)
+
+	// Insert new account data
+	err = req.insertData(gitUser, "code", req.provider)
+	assert.NoError(t, err)
+
+	// Check for no of accounts associated with particular email
+	// The count should be 3 as a new account is inserted. If not 3 then test should fail
+	accountQuery = tc.DB().Model(&model.Account{}).Where("user_id = ?", user.ID)
+	err = accountQuery.Find(&accounts).Error
+	assert.NoError(t, err)
+	assert.Equal(t, 3, len(accounts))
 }

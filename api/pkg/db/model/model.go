@@ -109,7 +109,7 @@ type (
 		CategoryID uint
 	}
 
-	User struct {
+	UserBackup struct {
 		gorm.Model
 		AgentName            string
 		GithubLogin          string
@@ -119,6 +119,17 @@ type (
 		RefreshTokenChecksum string
 		AvatarURL            string
 		Code                 string
+	}
+
+	User struct {
+		gorm.Model
+		Email                string
+		Type                 UserType
+		AgentName            string
+		RefreshTokenChecksum string
+		Code                 string
+		Scopes               []*Scope  `gorm:"many2many:user_scopes;"`
+		Accounts             []Account `gorm:"constraint:OnDelete:CASCADE;"`
 	}
 
 	Scope struct {
@@ -133,6 +144,15 @@ type (
 		Resource   Resource `gorm:"constraint:OnDelete:CASCADE;"`
 		ResourceID uint
 		Rating     uint `gorm:"not null;default:null"`
+	}
+
+	Account struct {
+		gorm.Model
+		UserID    uint
+		UserName  string
+		Name      string
+		AvatarURL string
+		Provider  string
 	}
 
 	UserScope struct {

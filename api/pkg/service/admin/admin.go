@@ -17,7 +17,6 @@ package admin
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/tektoncd/hub/api/gen/admin"
 	"github.com/tektoncd/hub/api/gen/log"
@@ -190,10 +189,10 @@ func (r *agentRequest) addScopesForAgent(agent *model.User, scopes []string) err
 
 func (r *agentRequest) userExistWithAgentName(name string) error {
 
-	user := model.User{}
-	q := r.db.Where("LOWER(github_name) = ?", strings.ToLower(name))
+	account := model.Account{}
+	q := r.db.Where("name = ?", name)
 
-	if err := q.First(&user).Error; err != nil {
+	if err := q.First(&account).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil
 		}

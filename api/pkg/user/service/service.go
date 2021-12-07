@@ -78,8 +78,15 @@ func (s *UserService) JWTAuth(handler http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		provider, ok := claims["provider"].(string)
+		if !ok {
+			http.Error(res, err.Error(), http.StatusBadRequest)
+			return
+		}
+
 		// Set the userId in the headers
 		req.Header.Set("UserId", fmt.Sprintf("%v", userID))
+		req.Header.Set("Provider", fmt.Sprintf("%v", provider))
 
 		handler.ServeHTTP(res, req)
 	}
@@ -152,13 +159,30 @@ func (r *request) User(id int) (*model.User, error) {
 	return &user, nil
 }
 
-func (s *UserService) newRequest(user *model.User) *request {
+func (r *request) GitUser(id int) (*model.Account, error) {
+
+	var account model.Account
+	if err := r.db.Where(model.Account{UserID: uint(id), Provider: r.provider}).First(&account).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			r.log.Warnf("user not found for token: %s", err.Error())
+			return nil, err
+		}
+
+		r.log.Errorf("error when looking up user. err: %s", err.Error())
+		return nil, err
+	}
+
+	return &account, nil
+}
+
+func (s *UserService) newRequest(user *model.User, provider string) *request {
 	return &request{
 		db:            s.DB(context.Background()),
 		log:           s.Logger(context.Background()),
 		user:          user,
 		defaultScopes: s.api.Data().Default.Scopes,
 		jwtConfig:     s.api.JWTConfig(),
+		provider:      provider,
 	}
 }
 
@@ -197,7 +221,7 @@ func (r *request) userScopes() ([]string, error) {
 
 	var userScopes []string = r.defaultScopes
 
-	q := r.db.Preload("Scopes").Where(&model.User{GithubLogin: r.user.GithubLogin})
+	q := r.db.Preload("Scopes").Where(&model.User{Email: r.user.Email})
 
 	dbUser := &model.User{}
 	if err := q.Find(dbUser).Error; err != nil {

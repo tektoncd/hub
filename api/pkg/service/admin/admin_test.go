@@ -30,8 +30,8 @@ func TestUpdateAgent(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, _, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "agent:create")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time
@@ -56,8 +56,8 @@ func TestUpdateAgent_NormalUserExistsWithName(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, _, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "agent:create")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	adminSvc := New(tc)
@@ -73,8 +73,8 @@ func TestUpdateAgent_InvalidScopeInPayload(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, _, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "agent:create")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	adminSvc := New(tc)
@@ -90,8 +90,8 @@ func TestUpdateAgent_UpdateScopesCase(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with agent:create scope
-	user, _, err := tc.UserWithScopes("foo", "agent:create")
-	assert.Equal(t, user.GithubLogin, "foo")
+	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "agent:create")
+	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
 	// Mocks the time

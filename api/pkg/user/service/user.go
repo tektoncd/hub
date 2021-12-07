@@ -35,6 +35,7 @@ type request struct {
 	user          *model.User
 	defaultScopes []string
 	jwtConfig     *app.JWTConfig
+	provider      string
 }
 
 type UserService struct {
@@ -67,12 +68,14 @@ func New(api app.Config) Service {
 func (s *UserService) Info(res http.ResponseWriter, req *http.Request) {
 
 	id := req.Header.Get("UserID")
+	provider := req.Header.Get("Provider")
 
 	r := request{
 		db:            s.DB(context.Background()),
 		log:           s.Logger(context.Background()),
 		defaultScopes: s.api.Data().Default.Scopes,
 		jwtConfig:     s.api.JWTConfig(),
+		provider:      provider,
 	}
 
 	userId, err := strconv.Atoi(id)
@@ -82,7 +85,7 @@ func (s *UserService) Info(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	user, err := r.User(userId)
+	gitUser, err := r.GitUser(userId)
 	if err != nil {
 		r.log.Error(err)
 		http.Error(res, err.Error(), http.StatusInternalServerError)
@@ -91,9 +94,9 @@ func (s *UserService) Info(res http.ResponseWriter, req *http.Request) {
 
 	result := userApp.InfoResult{
 		Data: &userApp.UserData{
-			GithubID:  user.GithubLogin,
-			Name:      user.GithubName,
-			AvatarURL: user.AvatarURL,
+			UserName:  gitUser.UserName,
+			Name:      gitUser.Name,
+			AvatarURL: gitUser.AvatarURL,
 		},
 	}
 
@@ -108,12 +111,14 @@ func (s *UserService) Info(res http.ResponseWriter, req *http.Request) {
 func (s *UserService) RefreshAccessToken(res http.ResponseWriter, req *http.Request) {
 
 	id := req.Header.Get("UserID")
+	provider := req.Header.Get("Provider")
 
 	r := request{
 		db:            s.DB(context.Background()),
 		log:           s.Logger(context.Background()),
 		defaultScopes: s.api.Data().Default.Scopes,
 		jwtConfig:     s.api.JWTConfig(),
+		provider:      provider,
 	}
 
 	userId, err := strconv.Atoi(id)
@@ -131,7 +136,7 @@ func (s *UserService) RefreshAccessToken(res http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	result, err := s.newRequest(user).refreshAccessToken()
+	result, err := s.newRequest(user, provider).refreshAccessToken()
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
@@ -156,6 +161,7 @@ func (r *request) refreshAccessToken() (*userApp.RefreshAccessTokenResult, error
 		User:      r.user,
 		Scopes:    scopes,
 		JWTConfig: r.jwtConfig,
+		Provider:  r.provider,
 	}
 
 	accessToken, accessExpiresAt, err := req.AccessJWT()
@@ -177,12 +183,14 @@ func (r *request) refreshAccessToken() (*userApp.RefreshAccessTokenResult, error
 
 func (s *UserService) NewRefreshToken(res http.ResponseWriter, req *http.Request) {
 	id := req.Header.Get("UserID")
+	provider := req.Header.Get("Provider")
 
 	r := request{
 		db:            s.DB(context.Background()),
 		log:           s.Logger(context.Background()),
 		defaultScopes: s.api.Data().Default.Scopes,
 		jwtConfig:     s.api.JWTConfig(),
+		provider:      provider,
 	}
 
 	userId, err := strconv.Atoi(id)
@@ -200,7 +208,7 @@ func (s *UserService) NewRefreshToken(res http.ResponseWriter, req *http.Request
 		return
 	}
 
-	result, err := s.newRequest(user).newRefreshToken()
+	result, err := s.newRequest(user, provider).newRefreshToken()
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
@@ -219,6 +227,7 @@ func (r *request) newRefreshToken() (*userApp.NewRefreshTokenResult, error) {
 	req := token.Request{
 		User:      r.user,
 		JWTConfig: r.jwtConfig,
+		Provider:  r.provider,
 	}
 
 	refreshToken, refreshExpiresAt, err := req.RefreshJWT()

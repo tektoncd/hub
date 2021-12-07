@@ -1,4 +1,4 @@
-# Copyright © 2020 The Tekton Authors.
+# Copyright © 2022 The Tekton Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,31 +12,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- id: 11
-  type: user
-  email: "foo@bar.com"
-  refresh_token_checksum: test-checksum
+- id: 1
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
-  code: "test-code"
+  user_id: 11
+  user_name: foo
+  name: foo
+  avatar_url: "https://foo"
+  provider: github
 
-- id: 13
-  type: user
-  email: "abc@bar.com"
-  refresh_token_checksum: 6182a29af392458b59ad2eaddb067b6807dc307b59c1ca035369758d1f34c990
+- id: 2
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
+  user_id: 13
+  user_name: abc
+  name: abc
+  avatar_url: "https://abc"
+  provider: github
 
-- id: 21
-  agent_name: agent-001
-  type: agent
-  email: ""
+- id: 3
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
+  user_id: 31
+  user_name: bbuser
+  name: bitbucketuser
+  avatar_url: "http://bitbucketavatar"
+  provider: bitbucket
 
-- id: 31
-  type: user
-  email: ""
-  refresh_token_checksum: 6182a29af392458b59ad2eaddb067b6807dc307b59c1ca035369758d1f34c990
+- id: 4
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
+  user_id: 11
+  user_name: foobb
+  name: foo
+  avatar_url: "http://bitbucketavatar"
+  provider: bitbucket

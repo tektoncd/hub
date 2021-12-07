@@ -47,11 +47,17 @@ func FormatJSON(b []byte) (string, error) {
 
 // UserWithScopes returns JWT for user with required scopes
 // User will have same github login and github name in db
-func (tc *TestConfig) UserWithScopes(name string, scopes ...string) (*model.User, string, error) {
+func (tc *TestConfig) UserWithScopes(name, email string, scopes ...string) (*model.User, string, error) {
 
-	user := &model.User{GithubLogin: name, GithubName: name, Type: model.NormalUserType}
-	if err := tc.DB().Where(&model.User{GithubLogin: name}).
+	user := &model.User{Type: model.NormalUserType, Email: email}
+	if err := tc.DB().Where(&model.User{Email: email}).
 		FirstOrCreate(user).Error; err != nil {
+		return nil, "", err
+	}
+
+	account := &model.Account{Name: name, UserName: name, UserID: user.ID, Provider: "github"}
+	if err := tc.DB().Where(&model.Account{UserID: user.ID, UserName: name}).
+		FirstOrCreate(account).Error; err != nil {
 		return nil, "", err
 	}
 
@@ -61,7 +67,7 @@ func (tc *TestConfig) UserWithScopes(name string, scopes ...string) (*model.User
 
 	token.Now = Now
 
-	req := token.Request{User: user, Scopes: scopes, JWTConfig: tc.JWTConfig()}
+	req := token.Request{User: user, Scopes: scopes, JWTConfig: tc.JWTConfig(), Provider: "github"}
 	accessToken, _, err := req.AccessJWT()
 	if err != nil {
 		return nil, "", err
@@ -72,17 +78,17 @@ func (tc *TestConfig) UserWithScopes(name string, scopes ...string) (*model.User
 
 // RefreshTokenForUser returns refresh JWT for user with refresh:token scope
 // User will have same github login and github name in db
-func (tc *TestConfig) RefreshTokenForUser(name string) (*model.User, string, error) {
+func (tc *TestConfig) RefreshTokenForUser(name, email string) (*model.User, string, error) {
 
-	user := &model.User{GithubLogin: name, GithubName: name, Type: model.NormalUserType}
-	if err := tc.DB().Where(&model.User{GithubLogin: name}).
+	user := &model.User{Type: model.NormalUserType, Email: email}
+	if err := tc.DB().Where(&model.User{Email: email}).
 		FirstOrCreate(user).Error; err != nil {
 		return nil, "", err
 	}
 
 	token.Now = Now
 
-	req := token.Request{User: user, JWTConfig: tc.JWTConfig()}
+	req := token.Request{User: user, JWTConfig: tc.JWTConfig(), Provider: "github"}
 	refreshToken, _, err := req.RefreshJWT()
 	if err != nil {
 		return nil, "", err
