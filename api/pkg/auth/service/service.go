@@ -123,6 +123,10 @@ func (r *request) insertData(ghUser goth.User, code string) error {
 		}
 	}
 
+	// If user already exists i.e if user is added through config
+	// and is missing git username and avatarUrl, then update the code
+	user.Code = code
+
 	// User already exist, check if GitHub Name is empty
 	// If Name is empty, then user is inserted through config.yaml
 	// Update user with remaining details
