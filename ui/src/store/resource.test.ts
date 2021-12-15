@@ -532,7 +532,7 @@ describe('Store functions', () => {
         expect(getSnapshot(store.resources)).toMatchSnapshot();
         store.versionInfo('tekton/Task/buildah');
         when(
-          () => !store.isLoading,
+          () => !store.isVersionLoading,
           () => {
             const resource = store.resources.get('tekton/Task/buildah');
             assert(resource);
@@ -562,7 +562,7 @@ describe('Store functions', () => {
         expect(getSnapshot(store.resources)).toMatchSnapshot();
         store.versionInfo('tekton/Task/buildah');
         when(
-          () => !store.isLoading,
+          () => !store.isVersionLoading,
           () => {
             const resource = store.resources.get('tekton/Task/buildah');
             assert(resource);
@@ -600,7 +600,7 @@ describe('Store functions', () => {
         expect(getSnapshot(store.resources)).toMatchSnapshot();
         store.versionInfo('tekton/Task/buildah');
         when(
-          () => !store.isLoading,
+          () => !store.isVersionLoading,
           () => {
             const resource = store.resources.get('tekton/Task/buildah');
             assert(resource);
@@ -649,7 +649,7 @@ describe('Store functions', () => {
         expect(getSnapshot(store.resources)).toMatchSnapshot();
         store.versionInfo('tekton/Task/buildah');
         when(
-          () => !store.isLoading,
+          () => !store.isVersionLoading,
           () => {
             const resource = store.resources.get('tekton/Task/buildah');
             assert(resource);

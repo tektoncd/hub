@@ -24,7 +24,8 @@ jest.mock('react-router-dom', () => {
       return {
         name: 'buildah',
         kind: 'task',
-        catalog: 'tekton'
+        catalog: 'tekton',
+        version: '0.1'
       };
     }
   };

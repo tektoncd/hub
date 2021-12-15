@@ -102,7 +102,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                         <GridItem span={12}>
                           <div className=\\"pf-l-grid__item pf-m-12-col\\">
                             <Route exact={true} path=\\"/login\\" component={{...}} />
-                            <Route exact={true} path=\\"/:catalog/:kind/:name\\" component={[Function: Details]} />
+                            <Route exact={true} path=\\"/:catalog/:kind/:name/:version?\\" component={{...}} />
                           </div>
                         </GridItem>
                         <GridItem span={2}>

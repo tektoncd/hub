@@ -1,5 +1,5 @@
 import React from 'react';
-import { useObserver } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { useParams } from 'react-router-dom';
 import { Spinner } from '@patternfly/react-core';
 import { useMst } from '../../store/root';
@@ -9,18 +9,37 @@ import { assert } from '../../store/utils';
 import { PageNotFound } from '../../components/PageNotFound';
 import { titleCase } from '../../common/titlecase';
 import { scrollToTop } from '../../common/scrollToTop';
+import { IVersion } from '../../store/resource';
 
-const Details: React.FC = () => {
+const Details: React.FC = observer(() => {
   const { resources, user } = useMst();
-  const { name, catalog, kind } = useParams();
+  const { name, catalog, kind, version } = useParams();
+
+  React.useEffect(() => {
+    if (resources.isResourceLoading === false) {
+      const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
+      resources.versionInfo(resourceKey);
+    }
+  }, [resources.isResourceLoading]);
 
   const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
+
   const validateUrl = () => {
-    return resources.resources.has(resourceKey);
+    const allVersions = resources.resources.get(resourceKey).versions;
+    let isValidVersion = false;
+    if (version !== undefined) {
+      allVersions.forEach((item: IVersion) => {
+        if (item.version === version) {
+          isValidVersion = true;
+        }
+      });
+    } else {
+      isValidVersion = true;
+    }
+    return resources.resources.has(resourceKey) && isValidVersion;
   };
 
   const resourceDetails = () => {
-    resources.versionInfo(resourceKey);
     resources.loadReadme(resourceKey);
     resources.loadYaml(resourceKey);
     const resource = resources.resources.get(resourceKey);
@@ -28,19 +47,17 @@ const Details: React.FC = () => {
     user.getRating(resource.id);
   };
 
-  return useObserver(() =>
-    resources.resources.size === 0 ? (
-      <Spinner className="hub-spinner" />
-    ) : !validateUrl() ? (
-      <PageNotFound />
-    ) : (
-      <React.Fragment>
-        {resourceDetails()}
-        {scrollToTop()}
-        <BasicDetails />
-        <Description name={name} catalog={catalog} kind={kind} />
-      </React.Fragment>
-    )
+  return resources.isVersionLoading === true ? (
+    <Spinner className="hub-spinner" />
+  ) : !validateUrl() ? (
+    <PageNotFound />
+  ) : (
+    <React.Fragment>
+      {resourceDetails()}
+      {scrollToTop()}
+      <BasicDetails />
+      <Description name={name} catalog={catalog} kind={kind} />
+    </React.Fragment>
   );
-};
+});
 export default Details;
