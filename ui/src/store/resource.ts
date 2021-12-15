@@ -127,7 +127,9 @@ export const ResourceStore = types
     tagsString: '',
     urlParams: '',
     err: '',
-    isLoading: true
+    isLoading: true,
+    isVersionLoading: true,
+    isResourceLoading: true
   })
   .views((self) => ({
     get items() {
@@ -147,6 +149,12 @@ export const ResourceStore = types
   .actions((self) => ({
     setLoading(l: boolean) {
       self.isLoading = l;
+    },
+    setVersionLoading(l: boolean) {
+      self.isVersionLoading = l;
+    },
+    setResourceLoading(l: boolean) {
+      self.isResourceLoading = l;
     },
     setSearch(text: string) {
       self.search = text;
@@ -214,8 +222,6 @@ export const ResourceStore = types
   .actions((self) => ({
     versionInfo: flow(function* (resourceKey: string) {
       try {
-        self.setLoading(true);
-
         const { api } = self;
         const resource = self.resources.get(resourceKey);
         assert(resource);
@@ -242,7 +248,7 @@ export const ResourceStore = types
       } catch (err) {
         self.err = err.toString();
       }
-      self.setLoading(false);
+      self.setVersionLoading(false);
     }),
 
     versionUpdate: flow(function* (versionId: number) {
@@ -333,6 +339,7 @@ export const ResourceStore = types
         self.err = err.toString();
       }
       self.setLoading(false);
+      self.setResourceLoading(false);
     }),
 
     loadReadme: flow(function* (name: string) {
@@ -376,10 +383,10 @@ export const ResourceStore = types
     afterCreate() {
       self.load();
     },
-    setDisplayVersion(resourceKey: string, versionId: string) {
+    setDisplayVersion(resourceKey: string, versionId: string | number) {
       const resource = self.resources.get(resourceKey);
       assert(resource);
-      const version = self.versions.get(versionId);
+      const version = self.versions.get(versionId as string);
       assert(version);
       if (version.id !== resource.displayVersion.id) {
         resource.displayVersion = version;

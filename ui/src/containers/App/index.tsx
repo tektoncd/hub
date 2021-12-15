@@ -27,7 +27,7 @@ const App: React.FC = observer(() => {
             <Grid hasGutter>
               <GridItem span={12}>
                 <Route exact path="/login" component={Authentication}></Route>
-                <Route exact path="/:catalog/:kind/:name" component={Details}></Route>
+                <Route exact path="/:catalog/:kind/:name/:version?" component={Details}></Route>
               </GridItem>
               <GridItem span={2}>
                 <Route exact path="/" component={LeftPane}></Route>
