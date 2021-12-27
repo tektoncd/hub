@@ -89,6 +89,36 @@ spec:
                 secretKeyRef:
                   name: api
                   key: GH_CLIENT_SECRET
+            - name: GHE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: GHE_URL
+            - name: GL_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: GL_CLIENT_ID
+            - name: GL_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: GH_CLIENT_SECRET
+            - name: GLE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: GHE_URL
+            - name: BB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: BB_CLIENT_ID
+            - name: BB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: BB_CLIENT_SECRET
             - name: JWT_SIGNING_KEY
               valueFrom:
                 secretKeyRef:
@@ -104,8 +134,8 @@ spec:
                 secretKeyRef:
                   name: api
                   key: REFRESH_JWT_EXPIRES_IN
-            - name: GHE_URL
+            - name: AUTH_BASE_URL
               valueFrom:
                 secretKeyRef:
                   name: api
-                  key: GHE_URL
+                  key: AUTH_BASE_URL

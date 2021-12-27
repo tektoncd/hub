@@ -19,26 +19,26 @@ spec:
         - name: ui
           image: quay.io/tekton-hub/ui
           env:
-            - name: GHE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: ui
-                  key: GHE_URL
             - name: API_URL
               valueFrom:
                 configMapKeyRef:
                   name: ui
                   key: API_URL
-            - name: GH_CLIENT_ID
-              valueFrom:
-                configMapKeyRef:
-                  name: ui
-                  key: GH_CLIENT_ID
             - name: API_VERSION
               valueFrom:
                 configMapKeyRef:
                   name: ui
                   key: API_VERSION
+            - name: AUTH_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ui
+                  key: AUTH_BASE_URL
+            - name: REDIRECT_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: ui
+                  key: REDIRECT_URI
           ports:
             - containerPort: 8080
               protocol: TCP
