@@ -65,7 +65,7 @@ exports[`should render the footer component 1`] = `
         data-pf-content={true}
       >
         © 
-        2021
+        2022
          The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
          
         <a
