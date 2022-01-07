@@ -20,7 +20,7 @@ import (
 
 var PipelinesVersionRegex = `^\d+(?:\.\d+){0,2}$`
 
-var Tag = Type("Tag", func() {
+var TagDef = Type("Tag", func() {
 	Attribute("id", UInt, "ID is the unique id of tag", func() {
 		Example("id", 1)
 	})
@@ -31,7 +31,7 @@ var Tag = Type("Tag", func() {
 	Required("id", "name")
 })
 
-var Tags = ArrayOf(Tag)
+var Tags = ArrayOf(TagDef)
 
 var Platform = Type("Platform", func() {
 	Attribute("id", UInt, "ID is the unique id of platform", func() {
@@ -424,53 +424,6 @@ var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 		View("default")
 	})
 	Required("data")
-})
-
-var Token = Type("Token", func() {
-	Description("Token includes the JWT, Expire Duration & Time")
-	Attribute("token", String, "JWT", func() {
-		Example("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."+
-			"eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ."+
-			"6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM")
-	})
-	Attribute("refreshInterval", String, "Duration the token will Expire In", func() {
-		Example("refreshInterval", "1h30m")
-	})
-	Attribute("expiresAt", Int64, "Time the token will expires at", func() {
-		Example("expiresAt", 0)
-	})
-
-	Required("token", "refreshInterval", "expiresAt")
-})
-
-var AuthTokens = Type("AuthTokens", func() {
-	Description("Auth tokens have access and refresh token for user")
-	Attribute("access", Token, "Access Token")
-	Attribute("refresh", Token, "Refresh Token")
-})
-
-var AccessToken = Type("AccessToken", func() {
-	Description("Access Token for User")
-	Attribute("access", Token, "Access Token for user")
-})
-
-var RefreshToken = Type("RefreshToken", func() {
-	Description("Refresh Token for User")
-	Attribute("refresh", Token, "Refresh Token for user")
-})
-
-var UserData = Type("UserData", func() {
-	Description("Github user Information")
-	Attribute("githubId", String, "Github id of User", func() {
-		Example("githubId", "abc123")
-	})
-	Attribute("name", String, "Github user name", func() {
-		Example("name", "abc")
-	})
-	Attribute("avatarUrl", String, "Github user's profile picture url", func() {
-		Example("avatarUrl", "https://avatars.githubusercontent.com")
-	})
-	Required("githubId", "name", "avatarUrl")
 })
 
 var CatalogErrors = Type("CatalogErrors", func() {
