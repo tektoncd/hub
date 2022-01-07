@@ -20,7 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	res "github.com/tektoncd/hub/api/gen/resource"
+	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
