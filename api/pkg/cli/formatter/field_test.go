@@ -18,7 +18,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tektoncd/hub/api/gen/http/resource/client"
+	"github.com/tektoncd/hub/api/v1/gen/http/resource/client"
 )
 
 func TestFormatName(t *testing.T) {
