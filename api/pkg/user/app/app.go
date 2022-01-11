@@ -22,7 +22,7 @@ type InfoResult struct {
 // Git user Information
 type UserData struct {
 	// Username of User
-	UserName string `json:"user_name"`
+	UserName string `json:"userName"`
 	// Name of user
 	Name string `json:"name"`
 	// User's profile picture url
