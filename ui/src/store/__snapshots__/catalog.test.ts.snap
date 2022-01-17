@@ -11,6 +11,7 @@ Object {
       "provider": "github",
       "selected": false,
       "type": "community",
+      "url": "https://github.com/tektoncd/catalogs",
     },
     "2": Object {
       "id": 2,
@@ -18,6 +19,7 @@ Object {
       "provider": "gitlab",
       "selected": false,
       "type": "official",
+      "url": "https://github.com/openshift/catalog",
     },
   },
 }

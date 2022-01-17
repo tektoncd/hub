@@ -86,7 +86,7 @@ const UserProfile: React.FC = observer(() => {
   );
 
   return (
-    <React.Fragment>
+    <div className="hub-userProfile__margin">
       <Dropdown
         className="hub-userProfile"
         position="right"
@@ -108,7 +108,7 @@ const UserProfile: React.FC = observer(() => {
           </ClipboardCopy>
         </div>
       </Modal>
-    </React.Fragment>
+    </div>
   );
 });
 export default UserProfile;

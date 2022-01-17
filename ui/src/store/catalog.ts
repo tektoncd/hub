@@ -13,6 +13,7 @@ export const Catalog = types
     name: types.optional(types.string, ''),
     type: types.optional(types.string, ''),
     provider: types.optional(types.string, ''),
+    url: types.optional(types.string, ''),
     selected: false
   })
   .actions((self) => ({
@@ -38,7 +39,13 @@ export const CatalogStore = types
 
   .actions((self) => ({
     add(item: ICatalog) {
-      self.items.put({ id: item.id, name: item.name, type: item.type, provider: item.provider });
+      self.items.put({
+        id: item.id,
+        name: item.name,
+        type: item.type,
+        provider: item.provider,
+        url: item.url
+      });
     },
     clearSelected() {
       self.items.forEach((c) => {
@@ -98,7 +105,8 @@ export const CatalogStore = types
           id: c.id,
           name: c.name,
           type: c.type,
-          provider: c.provider
+          provider: c.provider,
+          url: c.url
         }));
 
         catalogs.forEach((c: ICatalog) => self.add(c));

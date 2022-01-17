@@ -4,13 +4,15 @@
 					"id": 2,
 					"name": "tekton-hub",
 					"type": "official",
-					"provider": "gitlab"
+					"provider": "gitlab",
+					"url": "https://github.com/openshift/catalog"
 			},
 			{
 					"id": 1,
 					"name": "tekton",
 					"type": "community",
-					"provider": "github"
+					"provider": "github",
+					"url": "https://github.com/tektoncd/catalogs"
 			}
 	]
 }

@@ -4,8 +4,12 @@
 }
 
 .hub-userProfile {
-  margin-right: -1em;
+  margin-top: 0.6em;
   outline: none;
+}
+
+.hub-userProfile__margin {
+  margin-left: -1.3em;
 }
 
 .hub-userProfile svg {
@@ -19,4 +23,12 @@
 
 .hub-userProfile a {
   outline: none;
+}
+
+.header-contribute__margin {
+  margin-right: -1em;
+}
+
+.hub-userProfile img {
+  margin-bottom: -0.4em;
 }

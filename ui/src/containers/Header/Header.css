@@ -1,12 +1,35 @@
 .hub-header-login {
   color: white;
   font-size: 1em;
+  text-decoration: none;
+  vertical-align: 0em !important;
 }
 
 .hub-header-search-hint svg {
-  vertical-align: 0em !important;
-  margin-left: 0.2em;
+  vertical-align: 0.5em !important;
+  margin-left: -1em;
   cursor: pointer;
+}
+
+.hub-header-contribute {
+  cursor: pointer;
+  color: white;
+  font-size: 1em;
+  text-decoration: none;
+}
+
+.hub-header-dropdown > .pf-c-dropdown__toggle-icon {
+  margin-left: -0.1em;
+}
+
+.hub-header-contribute {
+  color: white;
+  font-size: 1em;
+  margin-left: 0.5em;
+}
+
+.hub-header-contribute__dropdown {
+  outline: none;
 }
 
 .hub-header-sigin-button {

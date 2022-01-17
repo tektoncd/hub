@@ -13,7 +13,8 @@ describe('Store Object', () => {
     const store = Catalog.create({
       id: 1,
       name: 'tekton',
-      type: 'community'
+      type: 'community',
+      url: 'https://github.com/tektoncd/catalog'
     });
 
     expect(store.name).toBe('tekton');
@@ -106,7 +107,7 @@ describe('Store Object', () => {
     );
   });
 
-  it('can get a provider for catalog', (done) => {
+  it('can get a provider and url for catalog', (done) => {
     const store = CatalogStore.create({}, { api });
 
     when(
@@ -115,6 +116,10 @@ describe('Store Object', () => {
         const catalog = store.items.get('2');
         assert(catalog);
         expect(catalog.provider).toBe('gitlab');
+
+        expect(catalog.provider).toBe('gitlab');
+        expect(catalog.url).toBe('https://github.com/openshift/catalog');
+        expect(catalog.type).toBe('official');
 
         done();
       }

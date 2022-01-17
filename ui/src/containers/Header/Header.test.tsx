@@ -43,10 +43,10 @@ describe('Header', () => {
         </Router>
       </Provider>
     );
-    expect(component.find('span').text()).toBe('Login');
+    expect(component.find('span').slice(3).text()).toBe('Login');
   });
 
-  it('should find Icon in header and it`s id', () => {
+  it('should find Icons in header and their id', () => {
     const component = mount(
       <Provider>
         <Router>
@@ -55,8 +55,10 @@ describe('Header', () => {
       </Provider>
     );
 
-    expect(component.find(Icon).length).toBe(1);
-    expect(component.find(Icon).props().id).toBe(Icons.Help);
+    const icons = component.find(Icon);
+    expect(icons.length).toBe(1);
+
+    expect(icons.slice(0).props().id).toBe(Icons.Help);
   });
 
   it('should find the login Modal', () => {
@@ -68,7 +70,7 @@ describe('Header', () => {
       </Provider>
     );
 
-    expect(component.find(Modal).slice(1).props().className).toBe('hub-header-login__modal');
+    expect(component.find(Modal).slice(3).props().className).toBe('hub-header-login__modal');
   });
 
   it('should authenticate', (done) => {
