@@ -1,7 +1,8 @@
 #!//bin/bash
 set -e -u -o pipefail
 
-CONFIG_JS=/usr/share/nginx/html/config.js
+BASE_PATH="${BASE_PATH:-/usr/share/nginx/html}"
+CONFIG_JS="${BASE_PATH}"/config.js
 echo "Current ENV"
 echo '----------------------------------------------'
 cat $CONFIG_JS
