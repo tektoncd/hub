@@ -19,10 +19,12 @@ const ParseUrl: React.FC = () => {
         code: code
       };
       user.authenticate(codeFinal);
-      history.goBack();
+      if (user.isAuthenticated) {
+        history.goBack();
+      }
     }
     // Display the alert message when status is not ok
-    if (status !== '200' || code === null) {
+    else if (status !== '200' || code === null) {
       // Wait to redirection of page and then update the store
       setTimeout(() => {
         const error: IError = {
