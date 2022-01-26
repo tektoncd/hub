@@ -65,7 +65,7 @@ func AuthProvider(r *mux.Router, api app.Config) {
 			githubAuth.TokenUrl,
 			githubAuth.ProfileUrl,
 			githubAuth.EmailUrl,
-			"user"),
+			"user:email"),
 
 		gitlab.NewCustomisedURL(
 			gitlabAuth.ClientId,
@@ -74,12 +74,14 @@ func AuthProvider(r *mux.Router, api app.Config) {
 			gitlabAuth.AuthUrl,
 			gitlabAuth.TokenUrl,
 			gitlabAuth.ProfileUrl,
+			"read_user",
 		),
 
 		bitbucket.New(
 			bitbucketAuth.ClientId,
 			bitbucketAuth.ClientSecret,
 			bitbucketAuth.CallbackUrl,
+			"email",
 		),
 	)
 

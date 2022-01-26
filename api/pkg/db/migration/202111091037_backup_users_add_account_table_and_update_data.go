@@ -74,6 +74,8 @@ func addUsersDetailsInAccountTable(log *log.Logger) *gormigrate.Migration {
 					UserID:   user.ID,
 					UserName: user.GithubLogin,
 					Name:     user.GithubName,
+					// Assumption taken over here is that all the existing users were from github
+					Provider: "github",
 				}
 				accounts = append(accounts, account)
 			}
