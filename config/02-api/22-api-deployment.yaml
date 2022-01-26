@@ -33,6 +33,7 @@ spec:
           image: quay.io/tekton-hub/api
           ports:
             - containerPort: 8000
+            - containerPort: 4200
           readinessProbe:
             failureThreshold: 3
             httpGet:
@@ -103,12 +104,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: api
-                  key: GH_CLIENT_SECRET
+                  key: GL_CLIENT_SECRET
             - name: GLE_URL
               valueFrom:
                 secretKeyRef:
                   name: api
-                  key: GHE_URL
+                  key: GLE_URL
             - name: BB_CLIENT_ID
               valueFrom:
                 secretKeyRef:
