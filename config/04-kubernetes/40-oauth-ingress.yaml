@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: 'true'
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: oauth
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: api
+          servicePort: 4200
+        path: /*
+  tls:
+  - hosts:
+    - oauth.hub.tekton.dev
+    secretName: oauth-hub-tekton-dev-tls

@@ -108,7 +108,7 @@ api-k8s(){
 api-openshift(){
 	info Creating API Release Yaml
 
-  ko resolve -f 02-api -f 04-openshift/40-api-route.yaml > "${RELEASE_DIR}"/api-openshift.yaml || {
+  ko resolve -f 02-api -f 04-openshift/40-api-route.yaml -f 04-openshift/40-oauth-route.yaml > "${RELEASE_DIR}"/api-openshift.yaml || {
     err 'api release build failed'
     return 1
   }

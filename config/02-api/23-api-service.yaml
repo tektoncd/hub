@@ -23,6 +23,10 @@ spec:
   selector:
     app: api
   ports:
-    - port: 8000
+    - name: api
+      port: 8000
       targetPort: 8000
+    - name: oauth
+      port: 4200
+      targetPort: 4200
   type: NodePort
