@@ -29,13 +29,13 @@ func TestGetResourceEndpoint(t *testing.T) {
 		Kind:    "task",
 	}
 	url := opt.Endpoint()
-	assert.Equal(t, "/resource/tekton/task/abc", url)
+	assert.Equal(t, "/v1/resource/tekton/task/abc", url)
 
 	opt.PipelineVersion = "0.17"
 	url = opt.Endpoint()
-	assert.Equal(t, "/resource/tekton/task/abc?pipelinesversion=0.17", url)
+	assert.Equal(t, "/v1/resource/tekton/task/abc?pipelinesversion=0.17", url)
 
 	opt.Version = "0.1.1"
 	url = opt.Endpoint()
-	assert.Equal(t, "/resource/tekton/task/abc/0.1.1", url)
+	assert.Equal(t, "/v1/resource/tekton/task/abc/0.1.1", url)
 }

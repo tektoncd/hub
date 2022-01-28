@@ -28,7 +28,7 @@ func TestEndpoint(t *testing.T) {
 	}
 
 	url := opt.Endpoint()
-	assert.Equal(t, "/query?limit=100&match=contains", url)
+	assert.Equal(t, "/v1/query?limit=100&match=contains", url)
 
 	opt = SearchOption{
 		Name:  "res",
@@ -37,5 +37,5 @@ func TestEndpoint(t *testing.T) {
 		Match: "contains",
 	}
 	url = opt.Endpoint()
-	assert.Equal(t, "/query?kinds=k1&kinds=k2&kinds=k3&match=contains&name=res&tags=t1&tags=t2", url)
+	assert.Equal(t, "/v1/query?kinds=k1&kinds=k2&kinds=k3&match=contains&name=res&tags=t1&tags=t2", url)
 }

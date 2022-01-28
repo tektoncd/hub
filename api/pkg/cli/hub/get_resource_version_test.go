@@ -22,5 +22,5 @@ import (
 
 func TestGetResourceVersionEndpoint(t *testing.T) {
 	url := resVersionsEndpoint(43)
-	assert.Equal(t, "/resource/43/versions", url)
+	assert.Equal(t, "/v1/resource/43/versions", url)
 }
