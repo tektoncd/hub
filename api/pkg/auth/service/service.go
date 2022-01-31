@@ -17,6 +17,7 @@ package auth
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"strings"
 
 	"github.com/markbates/goth"
 	"github.com/tektoncd/hub/api/pkg/auth/app"
@@ -121,7 +122,7 @@ func (r *request) insertData(gitUser goth.User, code, provider string) error {
 	// If email doesn't exists in users table
 	if err != nil {
 		// Check whether username and provider are matching
-		accountQuery := r.db.Model(&model.Account{}).Where("user_name = ?", gitUser.NickName).Where("provider = ?", provider)
+		accountQuery := r.db.Model(&model.Account{}).Where("LOWER(user_name) = ?", strings.ToLower(gitUser.NickName)).Where("provider = ?", provider)
 		err = accountQuery.First(&acc).Error
 
 		// If user doesn't exist, create a new record
@@ -145,7 +146,7 @@ func (r *request) insertData(gitUser goth.User, code, provider string) error {
 
 			// Update the AvatarUrl and Name in Accounts table
 			if err := updateAccountDetails(accountQuery, acc,
-				model.Account{AvatarURL: gitUser.AvatarURL, Name: gitUser.Name}); err != nil {
+				model.Account{AvatarURL: gitUser.AvatarURL, Name: gitUser.Name, UserName: gitUser.NickName}); err != nil {
 				r.log.Error(err)
 				return err
 			}
