@@ -79,7 +79,7 @@ Make sure all images are public before creating deployments.
 
 ---
 
-> ### NOTE: In case of using Github Enterprise make sure you deploy Hub in the same network where Github Enterprise server is running. Example if your Github Enterprise is running behind VPN then your Kubernetes Cluster should also be behind VPN.
+> ### NOTE: In case of using Github or Gitlab Enterprise make sure you deploy Hub in the same network where the Enterprise server is running. Example if your Github/Gitlab Enterprise is running behind VPN then your Kubernetes Cluster should also be behind VPN.
 
 ---
 
@@ -109,7 +109,7 @@ kubectl get pod -n tekton-hub -w
 
 Once the pod is in running state now we can run db migration. This will create all the tables required in the database.
 
-Edit the `01-db/10-db-migration.yaml` and add the replace the image you created previously and apply the yaml.
+Edit the `01-db/10-db-migration.yaml` and replace the image you created previously and apply the yaml.
 
 ```
 kubectl apply -f 01-db/10-db-migration.yaml -n tekton-hub
@@ -135,11 +135,37 @@ db-migration-8vhpd     0/1     Error       0          17s
 
 ## Deploy API Service
 
+### Setup Route or Ingress
+
+- If deploying on OpenShift:-
+
+  ```bash
+  kubectl apply -f 04-openshift/40-api-route.yaml -f 04-openshift/40-oauth-route.yaml -n tekton-hub
+  ```
+
+- If deploying on Kubernetes:-
+
+    - Create the secret containing tls cert and tls key both for API and Oauth server. Example as follows:
+
+      ```bash
+      kubectl create secret tls api-hub-tekton-dev-tls --cert=path/to/cert/file --key=path/to/key/file -n tekton-hub
+      ```
+
+    - Apply the Ingress
+
+      ```bash
+      kubectl apply -f 04-kubernetes/40-api-ingress.yaml -f 04-kubernetes/40-oauth-ingress.yaml -n tekton-hub
+      ```
+
+### Create Git Oauth Applications
+- **Github** - Create a GitHub OAuth with `Homepage URL` and `Authorization callback URL` as `<oauth-route>`. Follow the steps given [here][github-oauth-steps] to create a GitHub OAuth.
+- **Gitlab** - Create a Gitlab Oauth with `REDIRECT_URI` as `<oauth-route>/auth/gitlab/callback`. Follow the steps given [here][gitlab-oauth-steps] to create a Gitlab Oauth
+- **BitBucket** - Create a BitBucket Oauth with `Callback URL` as `<oauth-route>`. Follow the steps given [here][bitbucket-oauth-steps] to create a BitBucket Oauth
+
 ### Update API Secret
 
 Edit `02-api/20-api-secret.yaml` and update the configuration
 
-- Create a GitHub OAuth with `Homepage URL` and `Authorization callback URL` as `http://localhost:5000`. We will update this URL once we deploy the UI pod. Follow the steps given [here][oauth-steps] to create a GitHub OAuth.
 - After creating the OAuth add the Client ID and Client Secret in the yaml file.
 - For JWT_SIGNING_KEY, you can add any random string, this is used to sign the JWT created for users.
 - For `ACCESS_JWT_EXPIRES_IN` and `REFRESH_JWT_EXPIRES_IN` add time you want the jwt to be expired in. Refresh time should be greater than Access time.
@@ -153,21 +179,27 @@ metadata:
   namespace: tekton-hub
 type: Opaque
 stringData:
-  GH_CLIENT_ID: Oauth client id
-  GH_CLIENT_SECRET: Oauth secret
+  GH_CLIENT_ID: Github Oauth client id
+  GH_CLIENT_SECRET: Github Oauth secret
+  GL_CLIENT_ID: Gitlab Oauth client id
+  GL_CLIENT_SECRET: Gitlab Oauth secret
+  BB_CLIENT_ID: BitBucket Oauth client id
+  BB_CLIENT_SECRET: BitBucket Oauth secret
   JWT_SIGNING_KEY: a-long-signing-key
   ACCESS_JWT_EXPIRES_IN: time such as 15m
   REFRESH_JWT_EXPIRES_IN: time such as 15m
+  AUTH_BASE_URL: Oauth route  
   GHE_URL: Add Github Enterprise URL in case of authenticating through Github Enterprise (Example (https|http)://myghe.com) --> Do not provide the catalog URL
+  GLE_URL: Add Gitlab Enterprise URL in case of authenticating through Gitlab Enterprise (Example (https|http)://mygle.com) --> Do not provide the catalog URL
 ```
 
 ### Update API ConfigMap
 
 - Update the [config.yaml][config-yaml] to add at least one user with all scopes such as
 
-  - refresh a catalog,
-  - refresh config file
-  - create an agent token
+    - refresh a catalog,
+    - refresh config file
+    - create an agent token
 
 - For example
 
@@ -211,30 +243,6 @@ kubectl apply -f 02-api/ -n tekton-hub
 
 This will create the deployment, secret, configmap and a NodePort service to expose the API server.
 
-### Setup Route or Ingress
-
-After the deployment is done successfully, we need to expose the URL to access the API.
-
-- If deploying on OpenShift:-
-
-  ```bash
-  kubectl apply -f 04-openshift/40-api-route.yaml -n tekton-hub
-  ```
-
-- If deploying on Kubernetes:-
-
-  - Create the secret containing tls cert and tls key
-
-    ```bash
-    kubectl create secret tls api-hub-tekton-dev-tls --cert=path/to/cert/file --key=path/to/key/file -n tekton-hub
-    ```
-
-  - Apply the Ingress
-
-    ```bash
-    kubectl apply -f 04-kubernetes/40-api-ingress.yaml -n tekton-hub
-    ```
-
 #### Verify if api route is accessible
 
 For `OpenShift`:-
@@ -243,15 +251,39 @@ For `OpenShift`:-
 curl -k -X GET $(oc get -n tekton-hub routes api --template='https://{{ .spec.host }}/v1/categories')
 ```
 
-NOTE: At this moment, there are no resources in the db. Only the tags and categories from hub config are added in the db.
+NOTE: At this moment, there are no resources in the db. Only the categories from hub config are added in the db.
 
 Let's deploy the UI first and then we will add the resources in db.
 
 ## Deploy UI
 
+### Setup Route or Ingress
+
+After the deployment is done successfully, we need to expose the URL to access the UI.
+
+- If deploying on OpenShift:-
+
+  ```bash
+  kubectl apply -f 04-openshift/41-ui-route.yaml -n tekton-hub
+  ```
+
+- If deploying on Kubernetes:-
+
+    - Create the secret containing tls cert and tls key
+
+      ```bash
+      kubectl create secret tls ui-hub-tekton-dev-tls --cert=path/to/cert/file --key=path/to/key/file -n tekton-hub
+      ```
+
+    - Apply the Ingress
+
+      ```bash
+      kubectl apply -f 04-kubernetes/41-ui-ingress.yaml -n tekton-hub
+      ```
+
 ### Update UI ConfigMap
 
-Edit `config/10-config.yaml` and set your GitHub OAuth Client ID and the API URL.
+Edit `config/03-ui/30-ui-configmap.yaml` and by setting the API URL, Oauth URL and Redirect URL.
 
 You can get the API URL using below command (OpenShift)
 
@@ -268,14 +300,14 @@ metadata:
   namespace: tekton-hub
 data:
   API_URL: API URL   <<< Update this by API url
-  GH_CLIENT_ID: GH OAuth Client ID   <<< Update this OAuth client id
   API_VERSION: API VERSION  <<< Update this by API version (For e.g-"v1")
-  GHE_URL: Github Enterprise URL <<< Update this if you are getting logged in via Github Enterprise
+  AUTH_BASE_URL: OAUTH URL << Update this by oauth url
+  REDIRECT_URI: UI URL << Update this by ui url
 ```
 
 ### Update UI Image
 
-Edit the `03-ui/30-ui-configmap.yaml` and replace the image with the one created previously and executed below command
+Edit the `03-ui/31-ui-deployment.yaml` by replacing the image with the one created previously and executed below command
 
 ```bash
 kubectl apply -f 03-ui/ -n tekton-hub
@@ -298,30 +330,6 @@ db-9bd4cdf99-zsq89     1/1     Running     0          21m
 db-migration-26ngs     0/1     Completed   0          21m
 ui-55fc66cc6b-69dsp    1/1     Running     0          58s
 ```
-
-### Setup Route or Ingress
-
-After the deployment is done successfully, we need to expose the URL to access the UI.
-
-- If deploying on OpenShift:-
-
-  ```bash
-  kubectl apply -f 04-openshift/41-ui-route.yaml -n tekton-hub
-  ```
-
-- If deploying on Kubernetes:-
-
-  - Create the secret containing tls cert and tls key
-
-    ```bash
-    kubectl create secret tls ui-hub-tekton-dev-tls --cert=path/to/cert/file --key=path/to/key/file -n tekton-hub
-    ```
-
-  - Apply the Ingress
-
-    ```bash
-    kubectl apply -f 04-kubernetes/41-ui-ingress.yaml -n tekton-hub
-    ```
 
 #### Verify if ui route is accessible
 
@@ -498,7 +506,9 @@ Replace `<access-token>` with your JWT token. you must have `config-refresh` sco
 [docker]: https://docs.docker.com/engine/install/
 [podman]: https://podman.io/getting-started/installation
 [config-yaml]: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml
-[oauth-steps]: https://docs.github.com/en/developers/apps/creating-an-oauth-app
+[github-oauth-steps]: https://docs.github.com/en/developers/apps/creating-an-oauth-app
+[gitlab-oauth-steps]: https://docs.gitlab.com/ee/integration/oauth_provider.html#user-owned-applications
+[bitbucket-oauth-steps]: https://support.atlassian.com/bitbucket-cloud/docs/use-oauth-on-bitbucket-cloud
 [catalog]: https://github.com/tektoncd/catalog
 [catalog-tep]: https://github.com/tektoncd/community/blob/main/teps/0003-tekton-catalog-organization.md
 [hub-config]: https://github.com/tektoncd/hub/blob/main/config.yaml

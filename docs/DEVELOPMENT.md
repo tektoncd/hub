@@ -96,11 +96,17 @@ Wait until the migration completes and logs to show
 
 ### Adding GitHub OAuth Configuration
 
-Create a GitHub OAuth. You can find the steps to create it [here][gh-oauth].
+Create a GitHub OAuth. You can find the steps to create it [here][gh-oauth] with `Authorization callback URL` as `http://localhost:4200` \
+Create a Gitlab OAuth. You can find the steps to create it [here][gl-oauth] with `Authorization callback URL` as `http://localhost:4200/auth/gitlab/callback` \
+Create a BitBucket OAuth. You can find the steps to create it [here][bb-oauth] with `Authorization callback URL` as `http://localhost:4200`
 
-Use `http://localhost:8080` as the `Homepage URL` and `Authorization callback URL`.
 
-After creation, add the OAuth Client ID as `GH_CLIENT_ID` and Client Secret as `GH_CLIENT_SECRET` in [.env.dev][env-dev].
+
+After creation, add the OAuth Client ID as \
+OAuth Client ID `GH_CLIENT_ID` and Client Secret as `GH_CLIENT_SECRET` for Github \
+OAuth Client ID `GL_CLIENT_ID` and Client Secret as `GL_CLIENT_SECRET` for Gitlab \
+OAuth Client ID `BB_CLIENT_ID` and Client Secret as `BB_CLIENT_SECRET` for BitBucket \
+in [.env.dev][env-dev].
 
 For `JWT_SIGNING_KEY`, you can use any random word.
 
@@ -216,6 +222,8 @@ npm test
 [env-dev]: https://github.com/tektoncd/hub/blob/master/api/.env.dev
 [env-test-file]: https://github.com/tektoncd/hub/blob/master/api/test/config/env.test
 [gh-oauth]: https://docs.github.com/en/developers/apps/creating-an-oauth-app
+[gl-oauth]: https://docs.gitlab.com/ee/integration/oauth_provider.html#user-owned-applications
+[bb-oauth]: https://support.atlassian.com/bitbucket-cloud/docs/use-oauth-on-bitbucket-cloud
 [config-yaml]: https://github.com/tektoncd/hub/blob/master/config.yaml
 [swagger]: https://editor.swagger.io
 [swagger-doc]: https://github.com/tektoncd/hub/blob/master/api/gen/http/openapi.yaml
