@@ -1,0 +1,58 @@
+{
+	"data": {
+		"latest": {
+			"id": 5,
+			"version": "0.2",
+			"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.2/tekton.yaml",
+			"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml",
+			"hubURLPath": "catalog-official/task/tekton/0.2",
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
+				}
+			]
+		},
+		"versions": [
+			{
+				"id": 1,
+				"version": "0.1",
+				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.1/tekton.yaml",
+				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.1/tekton.yaml",
+				"hubURLPath": "catalog-official/task/tekton/0.1",
+				"platforms": [
+					{
+						"id": 2,
+						"name": "linux/s390x"
+					}
+				]
+			},
+			{
+				"id": 6,
+				"version": "0.1.1",
+				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.1.1/tekton.yaml",
+				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.1.1/tekton.yaml",
+				"hubURLPath": "catalog-official/task/tekton/0.1.1",
+				"platforms": [
+					{
+						"id": 2,
+						"name": "linux/s390x"
+					}
+				]
+			},
+			{
+				"id": 5,
+				"version": "0.2",
+				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.2/tekton.yaml",
+				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml",
+				"hubURLPath": "catalog-official/task/tekton/0.2",
+				"platforms": [
+					{
+						"id": 2,
+						"name": "linux/s390x"
+					}
+				]
+			}
+		]
+	}
+}
