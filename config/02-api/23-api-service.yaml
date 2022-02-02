@@ -26,7 +26,7 @@ spec:
     - name: api
       port: 8000
       targetPort: 8000
-    - name: oauth
+    - name: auth
       port: 4200
       targetPort: 4200
   type: NodePort
