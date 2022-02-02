@@ -24,7 +24,7 @@ const ParseUrl: React.FC = () => {
       }
     }
     // Display the alert message when status is not ok
-    else if (status !== '200' || code === null) {
+    else if (!user.isAuthenticated && status !== '200' && status !== null) {
       // Wait to redirection of page and then update the store
       setTimeout(() => {
         const error: IError = {
