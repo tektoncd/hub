@@ -1,0 +1,63 @@
+{
+	"data": {
+		"id": 1,
+		"name": "tekton",
+		"catalog": {
+			"id": 1,
+			"name": "catalog-official",
+			"type": "official"
+		},
+		"categories": [
+			{
+				"id": 1,
+				"name": "xyz"
+			}
+		],
+		"kind": "task",
+		"hubURLPath": "catalog-official/task/tekton",
+		"latestVersion": {
+			"id": 5,
+			"version": "0.2",
+			"displayName": "Tekton CLI",
+			"description": "Desc1",
+			"minPipelinesVersion": "0.15.0",
+			"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.2/tekton.yaml",
+			"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml",
+			"hubURLPath": "catalog-official/task/tekton/0.2",
+			"updatedAt": "2013-01-01T00:00:01Z",
+			"platforms": [
+				{
+					"id": 2,
+					"name": "linux/s390x"
+				}
+			]
+		},
+		"tags": [
+			{
+				"id": 2,
+				"name": "rtag"
+			}
+		],
+		"platforms": [
+			{
+				"id": 2,
+				"name": "linux/s390x"
+			}
+		],
+		"rating": 5,
+		"versions": [
+			{
+				"id": 1,
+				"version": "0.1"
+			},
+			{
+				"id": 6,
+				"version": "0.1.1"
+			},
+			{
+				"id": 5,
+				"version": "0.2"
+			}
+		]
+	}
+}

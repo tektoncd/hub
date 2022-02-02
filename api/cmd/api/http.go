@@ -26,18 +26,20 @@ import (
 	httpmdlwr "goa.design/goa/v3/http/middleware"
 	"goa.design/goa/v3/middleware"
 
-	"github.com/tektoncd/hub/api/gen/admin"
-	"github.com/tektoncd/hub/api/gen/catalog"
-	"github.com/tektoncd/hub/api/gen/category"
+	admin "github.com/tektoncd/hub/api/gen/admin"
+	catalog "github.com/tektoncd/hub/api/gen/catalog"
+	category "github.com/tektoncd/hub/api/gen/category"
 	adminsvr "github.com/tektoncd/hub/api/gen/http/admin/server"
 	catalogsvr "github.com/tektoncd/hub/api/gen/http/catalog/server"
 	categorysvr "github.com/tektoncd/hub/api/gen/http/category/server"
 	ratingsvr "github.com/tektoncd/hub/api/gen/http/rating/server"
+	resourcesvr "github.com/tektoncd/hub/api/gen/http/resource/server"
 	statussvr "github.com/tektoncd/hub/api/gen/http/status/server"
 	swaggersvr "github.com/tektoncd/hub/api/gen/http/swagger/server"
 	"github.com/tektoncd/hub/api/gen/log"
-	"github.com/tektoncd/hub/api/gen/rating"
-	"github.com/tektoncd/hub/api/gen/status"
+	rating "github.com/tektoncd/hub/api/gen/rating"
+	resource "github.com/tektoncd/hub/api/gen/resource"
+	status "github.com/tektoncd/hub/api/gen/status"
 	v1catalog "github.com/tektoncd/hub/api/v1/gen/catalog"
 	v1catalogsvr "github.com/tektoncd/hub/api/v1/gen/http/catalog/server"
 	v1resourcesvr "github.com/tektoncd/hub/api/v1/gen/http/resource/server"
@@ -54,6 +56,7 @@ func handleHTTPServer(
 	v1catalogEndpoints *v1catalog.Endpoints,
 	categoryEndpoints *category.Endpoints,
 	ratingEndpoints *rating.Endpoints,
+	resourceEndpoints *resource.Endpoints,
 	v1resourceEndpoints *v1resource.Endpoints,
 	statusEndpoints *status.Endpoints,
 	wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
@@ -92,6 +95,7 @@ func handleHTTPServer(
 		v1catalogServer  *v1catalogsvr.Server
 		categoryServer   *categorysvr.Server
 		ratingServer     *ratingsvr.Server
+		resourceServer   *resourcesvr.Server
 		v1resourceServer *v1resourcesvr.Server
 		statusServer     *statussvr.Server
 		swaggerServer    *swaggersvr.Server
@@ -104,6 +108,7 @@ func handleHTTPServer(
 		v1catalogServer = v1catalogsvr.New(v1catalogEndpoints, mux, dec, enc, eh, nil)
 		categoryServer = categorysvr.New(categoryEndpoints, mux, dec, enc, eh, nil)
 		ratingServer = ratingsvr.New(ratingEndpoints, mux, dec, enc, eh, nil)
+		resourceServer = resourcesvr.New(resourceEndpoints, mux, dec, enc, eh, nil)
 		v1resourceServer = v1resourcesvr.New(v1resourceEndpoints, mux, dec, enc, eh, nil)
 		statusServer = statussvr.New(statusEndpoints, mux, dec, enc, eh, nil)
 		swaggerServer = swaggersvr.New(nil, mux, dec, enc, eh, nil)
@@ -116,6 +121,7 @@ func handleHTTPServer(
 				v1catalogServer,
 				categoryServer,
 				ratingServer,
+				resourceServer,
 				v1resourceServer,
 				statusServer,
 				swaggerServer,
@@ -130,6 +136,7 @@ func handleHTTPServer(
 	v1catalogsvr.Mount(mux, v1catalogServer)
 	categorysvr.Mount(mux, categoryServer)
 	ratingsvr.Mount(mux, ratingServer)
+	resourcesvr.Mount(mux, resourceServer)
 	v1resourcesvr.Mount(mux, v1resourceServer)
 	statussvr.Mount(mux, statusServer)
 	swaggersvr.Mount(mux, swaggerServer)
@@ -159,6 +166,9 @@ func handleHTTPServer(
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range ratingServer.Mounts {
+		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range resourceServer.Mounts {
 		logger.Infof("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range v1resourceServer.Mounts {

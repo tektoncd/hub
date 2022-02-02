@@ -1,0 +1,50 @@
+{
+	"data": {
+		"id": 8,
+		"name": "tkn-enterprise",
+		"catalog": {
+			"id": 3,
+			"name": "catalog-enterprise",
+			"type": "enterprise"
+		},
+		"categories": [],
+		"kind": "task",
+		"hubURLPath": "catalog-enterprise/task/tkn-enterprise",
+		"latestVersion": {
+			"id": 11,
+			"version": "0.1",
+			"displayName": "Tkn EnterpriseTask",
+			"description": "Desc8",
+			"minPipelinesVersion": "0.12.1",
+			"rawURL": "https://raw.myghe.com/Pipelines-Marketplace/catalog-community/master/task/tkn-enterprise/0.1/tkn-enterprise.yaml",
+			"webURL": "https://myghe.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-enterprise/0.1/tkn-enterprise.yaml",
+			"hubURLPath": "catalog-enterprise/task/tkn-enterprise/0.1",
+			"updatedAt": "2013-01-01T00:00:01Z",
+			"platforms": [
+				{
+					"id": 3,
+					"name": "linux/arm64"
+				}
+			]
+		},
+		"tags": [
+			{
+				"id": 2,
+				"name": "rtag"
+			}
+		],
+		"platforms": [
+			{
+				"id": 1,
+				"name": "linux/amd64"
+			}
+		],
+		"rating": 5,
+		"versions": [
+			{
+				"id": 11,
+				"version": "0.1"
+			}
+		]
+	}
+}

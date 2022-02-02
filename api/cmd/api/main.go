@@ -27,19 +27,21 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/tektoncd/hub/api/gen/admin"
-	"github.com/tektoncd/hub/api/gen/catalog"
-	"github.com/tektoncd/hub/api/gen/category"
+	admin "github.com/tektoncd/hub/api/gen/admin"
+	catalog "github.com/tektoncd/hub/api/gen/catalog"
+	category "github.com/tektoncd/hub/api/gen/category"
 	"github.com/tektoncd/hub/api/gen/log"
-	"github.com/tektoncd/hub/api/gen/rating"
-	"github.com/tektoncd/hub/api/gen/status"
+	rating "github.com/tektoncd/hub/api/gen/rating"
+	resource "github.com/tektoncd/hub/api/gen/resource"
+	status "github.com/tektoncd/hub/api/gen/status"
 	"github.com/tektoncd/hub/api/pkg/app"
-	"github.com/tektoncd/hub/api/pkg/auth"
+	auth "github.com/tektoncd/hub/api/pkg/auth"
 	"github.com/tektoncd/hub/api/pkg/db/initializer"
 	adminsvc "github.com/tektoncd/hub/api/pkg/service/admin"
 	catalogsvc "github.com/tektoncd/hub/api/pkg/service/catalog"
 	categorysvc "github.com/tektoncd/hub/api/pkg/service/category"
 	ratingsvc "github.com/tektoncd/hub/api/pkg/service/rating"
+	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
 	statussvc "github.com/tektoncd/hub/api/pkg/service/status"
 	userSvc "github.com/tektoncd/hub/api/pkg/user"
 	v1catalog "github.com/tektoncd/hub/api/v1/gen/catalog"
@@ -89,6 +91,7 @@ func main() {
 		v1catalogSvc  v1catalog.Service
 		categorySvc   category.Service
 		ratingSvc     rating.Service
+		resourceSvc   resource.Service
 		v1resourceSvc v1resource.Service
 		statusSvc     status.Service
 	)
@@ -98,6 +101,7 @@ func main() {
 		v1catalogSvc = v1catalogsvc.New(api)
 		categorySvc = categorysvc.New(api)
 		ratingSvc = ratingsvc.New(api)
+		resourceSvc = resourcesvc.New(api)
 		v1resourceSvc = v1resourcesvc.New(api)
 		statusSvc = statussvc.New(api)
 	}
@@ -110,6 +114,7 @@ func main() {
 		v1catalogEndpoints  *v1catalog.Endpoints
 		categoryEndpoints   *category.Endpoints
 		ratingEndpoints     *rating.Endpoints
+		resourceEndpoints   *resource.Endpoints
 		v1resourceEndpoints *v1resource.Endpoints
 		statusEndpoints     *status.Endpoints
 	)
@@ -119,6 +124,7 @@ func main() {
 		v1catalogEndpoints = v1catalog.NewEndpoints(v1catalogSvc)
 		categoryEndpoints = category.NewEndpoints(categorySvc)
 		ratingEndpoints = rating.NewEndpoints(ratingSvc)
+		resourceEndpoints = resource.NewEndpoints(resourceSvc)
 		v1resourceEndpoints = v1resource.NewEndpoints(v1resourceSvc)
 		statusEndpoints = status.NewEndpoints(statusSvc)
 	}
@@ -167,6 +173,7 @@ func main() {
 				v1catalogEndpoints,
 				categoryEndpoints,
 				ratingEndpoints,
+				resourceEndpoints,
 				v1resourceEndpoints,
 				statusEndpoints,
 				&wg, errc, api.Logger("http"), *dbgF,
