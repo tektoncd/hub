@@ -140,7 +140,7 @@ db-migration-8vhpd     0/1     Error       0          17s
 - If deploying on OpenShift:-
 
   ```bash
-  kubectl apply -f 04-openshift/40-api-route.yaml -f 04-openshift/40-oauth-route.yaml -n tekton-hub
+  kubectl apply -f 04-openshift/40-api-route.yaml -f 04-openshift/40-auth-route.yaml -n tekton-hub
   ```
 
 - If deploying on Kubernetes:-
@@ -154,7 +154,7 @@ db-migration-8vhpd     0/1     Error       0          17s
     - Apply the Ingress
 
       ```bash
-      kubectl apply -f 04-kubernetes/40-api-ingress.yaml -f 04-kubernetes/40-oauth-ingress.yaml -n tekton-hub
+      kubectl apply -f 04-kubernetes/40-api-ingress.yaml -f 04-kubernetes/40-auth-ingress.yaml -n tekton-hub
       ```
 
 ### Create Git Oauth Applications

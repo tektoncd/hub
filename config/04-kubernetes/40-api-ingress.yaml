@@ -4,10 +4,13 @@ metadata:
   annotations:
     acme.cert-manager.io/http01-edit-in-place: 'true'
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    dns.gardener.cloud/dnsnames: 'api.hub.tekton.dev'
+    dns.gardener.cloud/ttl: "3600"
   name: api
 spec:
   rules:
-  - http:
+  - host: api.hub.tekton.dev
+    http:
       paths:
       - backend:
           serviceName: api

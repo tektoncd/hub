@@ -15,7 +15,7 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: oauth
+  name: auth
   labels:
     app: api
 spec:
