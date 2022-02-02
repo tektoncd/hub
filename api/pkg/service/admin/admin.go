@@ -121,6 +121,15 @@ func (r *agentRequest) addNewAgent(name string, scopes []string) (string, error)
 		AgentName: name,
 		Type:      model.AgentUserType,
 	}
+
+	// User ID is by default set to zero so we need to update the value with (last inserted user_id+1)
+	lastUser := model.User{}
+	if err := r.db.Model(&model.User{}).Last(&lastUser).Error; err != nil {
+		r.log.Error(err)
+		return "", err
+	}
+	agent.ID = lastUser.ID + 1
+
 	if err := r.db.Create(&agent).Error; err != nil {
 		r.log.Error(err)
 		return "", internalError
