@@ -2,12 +2,12 @@ FROM node:16-alpine3.14 as BUILD
 WORKDIR /app
 
 # install deps and the copy the src to speed up docker build
-COPY package-lock.json package.json /app/
+COPY ui/package-lock.json ui/package.json /app/
 RUN npm install
 
-COPY tsconfig.json /app/
-COPY public /app/public/
-COPY src /app/src/
+COPY ui/tsconfig.json /app/
+COPY ui/public /app/public/
+COPY ui/src /app/src/
 RUN npm run build
 
 # Stage 2 - the production environment
