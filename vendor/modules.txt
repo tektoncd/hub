@@ -506,10 +506,12 @@ go.uber.org/zap/zaptest
 goa.design/goa/v3/codegen
 goa.design/goa/v3/codegen/cli
 goa.design/goa/v3/codegen/example
+goa.design/goa/v3/codegen/generator
 goa.design/goa/v3/codegen/service
 goa.design/goa/v3/dsl
 goa.design/goa/v3/eval
 goa.design/goa/v3/expr
+goa.design/goa/v3/grpc/codegen
 goa.design/goa/v3/http
 goa.design/goa/v3/http/codegen
 goa.design/goa/v3/http/codegen/openapi
@@ -581,6 +583,10 @@ golang.org/x/text/width
 golang.org/x/time/rate
 # golang.org/x/tools v0.1.0
 golang.org/x/tools/go/ast/astutil
+golang.org/x/tools/go/gcexportdata
+golang.org/x/tools/go/internal/gcimporter
+golang.org/x/tools/go/internal/packagesdriver
+golang.org/x/tools/go/packages
 golang.org/x/tools/imports
 golang.org/x/tools/internal/event
 golang.org/x/tools/internal/event/core
@@ -590,6 +596,8 @@ golang.org/x/tools/internal/fastwalk
 golang.org/x/tools/internal/gocommand
 golang.org/x/tools/internal/gopathwalk
 golang.org/x/tools/internal/imports
+golang.org/x/tools/internal/packagesinternal
+golang.org/x/tools/internal/typesinternal
 # golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 golang.org/x/xerrors
 golang.org/x/xerrors/internal
