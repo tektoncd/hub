@@ -5,12 +5,15 @@ metadata:
   annotations:
     acme.cert-manager.io/http01-edit-in-place: 'true'
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    dns.gardener.cloud/dnsnames: 'swagger.hub.tekton.dev'
+    dns.gardener.cloud/ttl: "3600"
 spec:
   tls:
     - secretName: swagger-hub-tekton-dev-tls
       hosts: [swagger.hub.tekton.dev]
   rules:
-    - http:
+    - host: swagger.hub.tekton.dev
+      http:
         paths:
           - path: /*
             backend:
