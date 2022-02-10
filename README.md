@@ -38,10 +38,7 @@ contains the source code of this service.
 
 The public hub APIs are exposed for Integration outside hub. You can find the API Policy [here](docs/API_POLICY.md).
 
-For documentation of public APIs, you can use [swagger definition][swagger-def] in a swagger ui. 
-for eg. https://editor.swagger.io/
-
-There is work in progress to provide Swagger UI along with Tekton Hub.
+For documentation of public APIs, you can use [Hub Swagger](https://swagger.hub.tekton.dev)
 
 ## Deploy your own instance
 
