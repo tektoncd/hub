@@ -25,7 +25,7 @@ import (
 //
 func UsageCommands() string {
 	return `catalog list
-resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
+resource (query|list|versions-by-id|by-catalog-kind-name-version|by-catalog-kind-name-version-readme|by-catalog-kind-name-version-yaml|by-version-id|by-catalog-kind-name|by-id)
 `
 }
 
@@ -47,7 +47,7 @@ func UsageExamples() string {
    ]' --platforms '[
       "linux/s390x",
       "linux/amd64"
-   ]' --limit 100 --match "exact"` + "\n" +
+   ]' --limit 100 --match "contains"` + "\n" +
 		""
 }
 
@@ -89,6 +89,18 @@ func ParseEndpoint(
 		resourceByCatalogKindNameVersionNameFlag    = resourceByCatalogKindNameVersionFlags.String("name", "REQUIRED", "name of resource")
 		resourceByCatalogKindNameVersionVersionFlag = resourceByCatalogKindNameVersionFlags.String("version", "REQUIRED", "version of resource")
 
+		resourceByCatalogKindNameVersionReadmeFlags       = flag.NewFlagSet("by-catalog-kind-name-version-readme", flag.ExitOnError)
+		resourceByCatalogKindNameVersionReadmeCatalogFlag = resourceByCatalogKindNameVersionReadmeFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceByCatalogKindNameVersionReadmeKindFlag    = resourceByCatalogKindNameVersionReadmeFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByCatalogKindNameVersionReadmeNameFlag    = resourceByCatalogKindNameVersionReadmeFlags.String("name", "REQUIRED", "name of resource")
+		resourceByCatalogKindNameVersionReadmeVersionFlag = resourceByCatalogKindNameVersionReadmeFlags.String("version", "REQUIRED", "version of resource")
+
+		resourceByCatalogKindNameVersionYamlFlags       = flag.NewFlagSet("by-catalog-kind-name-version-yaml", flag.ExitOnError)
+		resourceByCatalogKindNameVersionYamlCatalogFlag = resourceByCatalogKindNameVersionYamlFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceByCatalogKindNameVersionYamlKindFlag    = resourceByCatalogKindNameVersionYamlFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByCatalogKindNameVersionYamlNameFlag    = resourceByCatalogKindNameVersionYamlFlags.String("name", "REQUIRED", "name of resource")
+		resourceByCatalogKindNameVersionYamlVersionFlag = resourceByCatalogKindNameVersionYamlFlags.String("version", "REQUIRED", "version of resource")
+
 		resourceByVersionIDFlags         = flag.NewFlagSet("by-version-id", flag.ExitOnError)
 		resourceByVersionIDVersionIDFlag = resourceByVersionIDFlags.String("version-id", "REQUIRED", "Version ID of a resource's version")
 
@@ -109,6 +121,8 @@ func ParseEndpoint(
 	resourceListFlags.Usage = resourceListUsage
 	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
 	resourceByCatalogKindNameVersionFlags.Usage = resourceByCatalogKindNameVersionUsage
+	resourceByCatalogKindNameVersionReadmeFlags.Usage = resourceByCatalogKindNameVersionReadmeUsage
+	resourceByCatalogKindNameVersionYamlFlags.Usage = resourceByCatalogKindNameVersionYamlUsage
 	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
 	resourceByCatalogKindNameFlags.Usage = resourceByCatalogKindNameUsage
 	resourceByIDFlags.Usage = resourceByIDUsage
@@ -168,6 +182,12 @@ func ParseEndpoint(
 			case "by-catalog-kind-name-version":
 				epf = resourceByCatalogKindNameVersionFlags
 
+			case "by-catalog-kind-name-version-readme":
+				epf = resourceByCatalogKindNameVersionReadmeFlags
+
+			case "by-catalog-kind-name-version-yaml":
+				epf = resourceByCatalogKindNameVersionYamlFlags
+
 			case "by-version-id":
 				epf = resourceByVersionIDFlags
 
@@ -221,6 +241,12 @@ func ParseEndpoint(
 			case "by-catalog-kind-name-version":
 				endpoint = c.ByCatalogKindNameVersion()
 				data, err = resourcec.BuildByCatalogKindNameVersionPayload(*resourceByCatalogKindNameVersionCatalogFlag, *resourceByCatalogKindNameVersionKindFlag, *resourceByCatalogKindNameVersionNameFlag, *resourceByCatalogKindNameVersionVersionFlag)
+			case "by-catalog-kind-name-version-readme":
+				endpoint = c.ByCatalogKindNameVersionReadme()
+				data, err = resourcec.BuildByCatalogKindNameVersionReadmePayload(*resourceByCatalogKindNameVersionReadmeCatalogFlag, *resourceByCatalogKindNameVersionReadmeKindFlag, *resourceByCatalogKindNameVersionReadmeNameFlag, *resourceByCatalogKindNameVersionReadmeVersionFlag)
+			case "by-catalog-kind-name-version-yaml":
+				endpoint = c.ByCatalogKindNameVersionYaml()
+				data, err = resourcec.BuildByCatalogKindNameVersionYamlPayload(*resourceByCatalogKindNameVersionYamlCatalogFlag, *resourceByCatalogKindNameVersionYamlKindFlag, *resourceByCatalogKindNameVersionYamlNameFlag, *resourceByCatalogKindNameVersionYamlVersionFlag)
 			case "by-version-id":
 				endpoint = c.ByVersionID()
 				data, err = resourcec.BuildByVersionIDPayload(*resourceByVersionIDVersionIDFlag)
@@ -274,6 +300,8 @@ COMMAND:
     list: List all resources sorted by rating and name
     versions-by-id: Find all versions of a resource by its id
     by-catalog-kind-name-version: Find resource using name of catalog & name, kind and version of resource
+    by-catalog-kind-name-version-readme: Find resource README using name of catalog & name, kind and version of resource
+    by-catalog-kind-name-version-yaml: Find resource YAML using name of catalog & name, kind and version of resource
     by-version-id: Find a resource using its version's id
     by-catalog-kind-name: Find resources using name of catalog, resource name and kind of resource
     by-id: Find a resource using it's id
@@ -311,7 +339,7 @@ Example:
    ]' --platforms '[
       "linux/s390x",
       "linux/amd64"
-   ]' --limit 100 --match "exact"
+   ]' --limit 100 --match "contains"
 `, os.Args[0])
 }
 
@@ -347,7 +375,35 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
+`, os.Args[0])
+}
+
+func resourceByCatalogKindNameVersionReadmeUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name-version-readme -catalog STRING -kind STRING -name STRING -version STRING
+
+Find resource README using name of catalog & name, kind and version of resource
+    -catalog STRING: name of catalog
+    -kind STRING: kind of resource
+    -name STRING: name of resource
+    -version STRING: version of resource
+
+Example:
+    `+os.Args[0]+` resource by-catalog-kind-name-version-readme --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
+`, os.Args[0])
+}
+
+func resourceByCatalogKindNameVersionYamlUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name-version-yaml -catalog STRING -kind STRING -name STRING -version STRING
+
+Find resource YAML using name of catalog & name, kind and version of resource
+    -catalog STRING: name of catalog
+    -kind STRING: kind of resource
+    -name STRING: name of resource
+    -version STRING: version of resource
+
+Example:
+    `+os.Args[0]+` resource by-catalog-kind-name-version-yaml --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -372,7 +428,7 @@ Find resources using name of catalog, resource name and kind of resource
     -pipelinesversion STRING: 
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah" --pipelinesversion "0.21.0"
+    `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah" --pipelinesversion "0.21.0"
 `, os.Args[0])
 }
 

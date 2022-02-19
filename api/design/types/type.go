@@ -94,6 +94,23 @@ var Catalog = ResultType("application/vnd.hub.catalog", "Catalog", func() {
 	Required("id", "name", "type", "url", "provider")
 })
 
+var ResourceContent = ResultType("application/vnd.hub.resourcecontent", "ResourceContent", func() {
+	Attribute("readme", String, "Readme", func() {
+		Example("readme", "#Readme\n Sample readme content")
+	})
+	Attribute("yaml", String, "Yaml", func() {
+		Example("yaml", "#YAML\n Sample yaml content")
+	})
+
+	View("readme", func() {
+		Attribute("readme")
+	})
+
+	View("yaml", func() {
+		Attribute("yaml")
+	})
+})
+
 var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data", "ResourceVersionData", func() {
 	Description("The Version result type describes resource's version information.")
 
@@ -422,6 +439,22 @@ var ResourceVersion = ResultType("application/vnd.hub.resource.version", "Resour
 var Resource = ResultType("application/vnd.hub.resource", "Resource", func() {
 	Attribute("data", ResourceData, func() {
 		View("default")
+	})
+	Required("data")
+})
+
+var ResourceVersionReadme = ResultType("application/vnd.hub.resource.version.readme", "ResourceVersionReadme", func() {
+	Description("README of a particular version of a Resource")
+	Attribute("data", ResourceContent, func() {
+		View("readme")
+	})
+	Required("data")
+})
+
+var ResourceVersionYaml = ResultType("application/vnd.hub.resource.version.yaml", "ResourceVersionYaml", func() {
+	Description("YAML of a particular version of a Resource")
+	Attribute("data", ResourceContent, func() {
+		View("yaml")
 	})
 	Required("data")
 })

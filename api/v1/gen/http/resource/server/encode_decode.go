@@ -364,6 +364,168 @@ func EncodeByCatalogKindNameVersionError(encoder func(context.Context, http.Resp
 	}
 }
 
+// EncodeByCatalogKindNameVersionReadmeResponse returns an encoder for
+// responses returned by the resource ByCatalogKindNameVersionReadme endpoint.
+func EncodeByCatalogKindNameVersionReadmeResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*resourceviews.ResourceVersionReadme)
+		enc := encoder(ctx, w)
+		body := NewByCatalogKindNameVersionReadmeResponseBody(res.Projected)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeByCatalogKindNameVersionReadmeRequest returns a decoder for requests
+// sent to the resource ByCatalogKindNameVersionReadme endpoint.
+func DecodeByCatalogKindNameVersionReadmeRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			catalog string
+			kind    string
+			name    string
+			version string
+			err     error
+
+			params = mux.Vars(r)
+		)
+		catalog = params["catalog"]
+		kind = params["kind"]
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		}
+		name = params["name"]
+		version = params["version"]
+		if err != nil {
+			return nil, err
+		}
+		payload := NewByCatalogKindNameVersionReadmePayload(catalog, kind, name, version)
+
+		return payload, nil
+	}
+}
+
+// EncodeByCatalogKindNameVersionReadmeError returns an encoder for errors
+// returned by the ByCatalogKindNameVersionReadme resource endpoint.
+func EncodeByCatalogKindNameVersionReadmeError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "internal-error":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByCatalogKindNameVersionReadmeInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "internal-error")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		case "not-found":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByCatalogKindNameVersionReadmeNotFoundResponseBody(res)
+			}
+			w.Header().Set("goa-error", "not-found")
+			w.WriteHeader(http.StatusNotFound)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
+// EncodeByCatalogKindNameVersionYamlResponse returns an encoder for responses
+// returned by the resource ByCatalogKindNameVersionYaml endpoint.
+func EncodeByCatalogKindNameVersionYamlResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*resourceviews.ResourceVersionYaml)
+		enc := encoder(ctx, w)
+		body := NewByCatalogKindNameVersionYamlResponseBody(res.Projected)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeByCatalogKindNameVersionYamlRequest returns a decoder for requests
+// sent to the resource ByCatalogKindNameVersionYaml endpoint.
+func DecodeByCatalogKindNameVersionYamlRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			catalog string
+			kind    string
+			name    string
+			version string
+			err     error
+
+			params = mux.Vars(r)
+		)
+		catalog = params["catalog"]
+		kind = params["kind"]
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		}
+		name = params["name"]
+		version = params["version"]
+		if err != nil {
+			return nil, err
+		}
+		payload := NewByCatalogKindNameVersionYamlPayload(catalog, kind, name, version)
+
+		return payload, nil
+	}
+}
+
+// EncodeByCatalogKindNameVersionYamlError returns an encoder for errors
+// returned by the ByCatalogKindNameVersionYaml resource endpoint.
+func EncodeByCatalogKindNameVersionYamlError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "internal-error":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByCatalogKindNameVersionYamlInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "internal-error")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		case "not-found":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewByCatalogKindNameVersionYamlNotFoundResponseBody(res)
+			}
+			w.Header().Set("goa-error", "not-found")
+			w.WriteHeader(http.StatusNotFound)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // EncodeByVersionIDResponse returns an encoder for responses returned by the
 // resource ByVersionId endpoint.
 func EncodeByVersionIDResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
@@ -817,6 +979,28 @@ func marshalResourceviewsResourceDataViewToResourceDataResponseBodyInfo(v *resou
 		for i, val := range v.Platforms {
 			res.Platforms[i] = marshalResourceviewsPlatformViewToPlatformResponseBody(val)
 		}
+	}
+
+	return res
+}
+
+// marshalResourceviewsResourceContentViewToResourceContentResponseBodyReadme
+// builds a value of type *ResourceContentResponseBodyReadme from a value of
+// type *resourceviews.ResourceContentView.
+func marshalResourceviewsResourceContentViewToResourceContentResponseBodyReadme(v *resourceviews.ResourceContentView) *ResourceContentResponseBodyReadme {
+	res := &ResourceContentResponseBodyReadme{
+		Readme: v.Readme,
+	}
+
+	return res
+}
+
+// marshalResourceviewsResourceContentViewToResourceContentResponseBodyYaml
+// builds a value of type *ResourceContentResponseBodyYaml from a value of type
+// *resourceviews.ResourceContentView.
+func marshalResourceviewsResourceContentViewToResourceContentResponseBodyYaml(v *resourceviews.ResourceContentView) *ResourceContentResponseBodyYaml {
+	res := &ResourceContentResponseBodyYaml{
+		Yaml: v.Yaml,
 	}
 
 	return res

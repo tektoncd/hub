@@ -27,15 +27,14 @@ import (
 	"gorm.io/gorm"
 )
 
-var clonePath = "/tmp/catalog"
-
 type syncer struct {
-	db      *gorm.DB
-	logger  *zap.SugaredLogger
-	running bool
-	limit   chan bool
-	stop    chan bool
-	git     git.Client
+	db        *gorm.DB
+	logger    *zap.SugaredLogger
+	running   bool
+	limit     chan bool
+	stop      chan bool
+	git       git.Client
+	clonePath string
 }
 
 var (
@@ -43,14 +42,15 @@ var (
 	running = &model.SyncJob{Status: model.JobRunning.String()}
 )
 
-func newSyncer(api app.BaseConfig) *syncer {
+func newSyncer(api app.BaseConfig, clonePath string) *syncer {
 	logger := api.Logger("syncer")
 	return &syncer{
-		db:     app.DBWithLogger(api.Environment(), api.DB(), logger),
-		logger: logger.SugaredLogger,
-		limit:  make(chan bool, 1),
-		stop:   make(chan bool),
-		git:    git.New(api.Logger("git").SugaredLogger),
+		db:        app.DBWithLogger(api.Environment(), api.DB(), logger),
+		logger:    logger.SugaredLogger,
+		limit:     make(chan bool, 1),
+		stop:      make(chan bool),
+		git:       git.New(api.Logger("git").SugaredLogger),
+		clonePath: clonePath,
 	}
 }
 
@@ -170,7 +170,9 @@ func (s *syncer) Process() error {
 		return err
 	}
 
-	fetchSpec := git.FetchSpec{URL: catalog.URL, Revision: catalog.Revision, Path: clonePath, SSHUrl: catalog.SSHURL}
+	fmt.Println("dddd", s.clonePath)
+
+	fetchSpec := git.FetchSpec{URL: catalog.URL, Revision: catalog.Revision, Path: s.clonePath, SSHUrl: catalog.SSHURL, CatalogName: catalog.Name}
 	repo, err := s.git.Fetch(fetchSpec)
 	if err != nil {
 		log.Error(err, "clone failed")

@@ -27,6 +27,7 @@ type Service interface {
 	Logger(ctx context.Context) *log.Logger
 	LoggerWith(ctx context.Context, args ...interface{}) *log.Logger
 	DB(ctx context.Context) *gorm.DB
+	CatalogClonePath() string
 }
 
 type environmenter interface {
@@ -36,9 +37,10 @@ type environmenter interface {
 // BaseService defines configuraition for creating logger and
 // db object with http request id
 type BaseService struct {
-	env    environmenter
-	logger *log.Logger
-	db     *gorm.DB
+	env      environmenter
+	logger   *log.Logger
+	db       *gorm.DB
+	basePath string
 }
 
 // Logger looks for http request id in passed context and append it to
@@ -55,6 +57,11 @@ func (s *BaseService) Logger(ctx context.Context) *log.Logger {
 // then appends args to it
 func (s *BaseService) LoggerWith(ctx context.Context, args ...interface{}) *log.Logger {
 	return &log.Logger{SugaredLogger: s.Logger(ctx).With(args...)}
+}
+
+// Returns the base path where catalog is to be cloned and stored
+func (s *BaseService) CatalogClonePath() string {
+	return s.basePath
 }
 
 // DB gets logger initialized with http request id and creates a gorm db

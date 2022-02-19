@@ -144,10 +144,20 @@ func (ab *APIBase) Service(name string) Service {
 		SugaredLogger: ab.logger.With(zap.String("service", name)),
 	}
 	return &BaseService{
-		logger: l,
-		db:     ab.DB(),
-		env:    ab,
+		logger:   l,
+		db:       ab.DB(),
+		env:      ab,
+		basePath: CatalogClonePath(),
 	}
+}
+
+// Returns the base path where catalog is to be cloned and stored
+func CatalogClonePath() string {
+	catalogCloneBasePath := os.Getenv("CLONE_BASE_PATH")
+	if catalogCloneBasePath != "" {
+		return catalogCloneBasePath
+	}
+	return "/tmp/catalog"
 }
 
 // Data returns Data object which consist app data from config file
