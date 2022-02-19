@@ -47,6 +47,7 @@ type (
 		Provider   string `gorm:"not null;default:github"`
 		Type       string `gorm:"not null;default:null"`
 		URL        string `gorm:"not null;default:null"`
+		SSHURL     string
 		Revision   string `gorm:"not null;default:null"`
 		ContextDir string
 		SHA        string

@@ -44,6 +44,7 @@ func Migrate(api *app.APIBase) error {
 			addOnDeleteConstraints(log),
 			addCodeColInUserTable(log),
 			addUsersDetailsInAccountTable(log),
+			addSSHURLColumnInCatalogsTable(log),
 		},
 	)
 

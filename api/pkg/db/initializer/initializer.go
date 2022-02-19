@@ -115,6 +115,7 @@ func addCatalogs(db *gorm.DB, log *log.Logger, data *app.Data) error {
 			Org:        c.Org,
 			Type:       c.Type,
 			URL:        c.URL,
+			SSHURL:     c.SshUrl,
 			Provider:   c.Provider,
 			Revision:   c.Revision,
 			ContextDir: c.ContextDir,

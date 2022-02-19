@@ -1,4 +1,4 @@
-// Copyright © 2021 The Tekton Authors.
+// Copyright © 2022 The Tekton Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,24 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package catalog
+package migration
 
 import (
-	"context"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/tektoncd/hub/api/pkg/testutils"
+	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/tektoncd/hub/api/gen/log"
+	"github.com/tektoncd/hub/api/pkg/db/model"
+	"gorm.io/gorm"
 )
 
-func TestCatalog_List(t *testing.T) {
-	tc := testutils.Setup(t)
-	testutils.LoadFixtures(t, tc.FixturePath())
+func addSSHURLColumnInCatalogsTable(log *log.Logger) *gormigrate.Migration {
 
-	catalog := New(tc)
-	all, err := catalog.List(context.Background())
-
-	assert.NoError(t, err)
-	assert.Equal(t, 4, len(all.Data))
-
+	return &gormigrate.Migration{
+		ID: "202202191725_add_ssh_url_column_in_catalogs_table",
+		Migrate: func(db *gorm.DB) error {
+			if err := db.Migrator().AddColumn(&model.Catalog{}, "ssh_url"); err != nil {
+				log.Error(err)
+				return err
+			}
+			return nil
+		},
+	}
 }

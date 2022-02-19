@@ -44,3 +44,15 @@
   revision: master
   created_at: 2016-01-01 12:30:12 UTC
   updated_at: 2016-01-01 12:30:12 UTC
+
+- id: 4
+  name: catalog-private
+  org: tektoncd
+  type: private
+  url: https:/github.com/tektoncd/catalog-private
+  ssh_url: git@github.com:tektoncd/catalog-private
+  context_dir: /task
+  provider: github
+  revision: main
+  created_at: 2016-01-01 12:30:12 UTC
+  updated_at: 2016-01-01 12:30:12 UTC

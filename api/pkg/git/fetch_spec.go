@@ -23,6 +23,7 @@ import (
 // FetchSpec describes how to initialize and fetch from a Git repository.
 type FetchSpec struct {
 	URL       string
+	SSHUrl    string
 	Revision  string
 	Path      string
 	Depth     uint
@@ -31,6 +32,7 @@ type FetchSpec struct {
 
 func (f *FetchSpec) sanitize() {
 	f.URL = strings.TrimSpace(f.URL)
+	f.SSHUrl = strings.TrimSpace(f.SSHUrl)
 	f.Path = strings.TrimSpace(f.Path)
 	f.Revision = strings.TrimSpace(f.Revision)
 }

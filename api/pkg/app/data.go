@@ -38,6 +38,7 @@ type Catalog struct {
 	Org        string
 	Type       string
 	URL        string
+	SshUrl     string
 	ContextDir string
 	Revision   string
 	Provider   string
