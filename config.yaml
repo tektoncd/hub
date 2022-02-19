@@ -60,6 +60,7 @@ default:
 #     org:  Organization of Catalog
 #     type: Type of Catalog [official, verified, community]
 #     url:  URL of repository
+#     sshUrl: SSH url in case repository to be cloned is private
 #     revision: Branch of repository
 #     contextDir(Optional): Path to resource dir
 #     provider: Name of git provider such as github, gitlab, bitbucket

@@ -101,7 +101,7 @@ func TestRefreshAll_Http(t *testing.T) {
 		marshallErr := json.Unmarshal([]byte(b), &res)
 		assert.NoError(t, marshallErr)
 
-		assert.Equal(t, 3, len(res))
+		assert.Equal(t, 4, len(res))
 	})
 }
 

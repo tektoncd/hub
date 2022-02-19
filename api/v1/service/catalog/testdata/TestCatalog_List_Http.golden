@@ -20,6 +20,13 @@
 			"type": "enterprise",
 			"url": "https:/myghe.com/tektoncd/catalog-enterprise",
 			"provider": "github"
+		},
+		{
+			"id": 4,
+			"name": "catalog-private",
+			"type": "private",
+			"url": "https:/github.com/tektoncd/catalog-private",
+			"provider": "github"
 		}
 	]
 }

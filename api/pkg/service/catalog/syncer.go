@@ -170,7 +170,7 @@ func (s *syncer) Process() error {
 		return err
 	}
 
-	fetchSpec := git.FetchSpec{URL: catalog.URL, Revision: catalog.Revision, Path: clonePath}
+	fetchSpec := git.FetchSpec{URL: catalog.URL, Revision: catalog.Revision, Path: clonePath, SSHUrl: catalog.SSHURL}
 	repo, err := s.git.Fetch(fetchSpec)
 	if err != nil {
 		log.Error(err, "clone failed")
