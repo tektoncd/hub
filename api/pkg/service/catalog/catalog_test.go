@@ -28,7 +28,7 @@ import (
 // NewServiceTest returns the catalog service implementation for test.
 func NewServiceTest(api app.Config) catalog.Service {
 	svc := validator.NewService(api, "catalog")
-	wq := newSyncer(api)
+	wq := newSyncer(api, "")
 
 	s := &service{
 		svc,

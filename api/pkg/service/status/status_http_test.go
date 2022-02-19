@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/ikawaha/goahttpcheck"
@@ -72,6 +73,10 @@ func (fs *fakeService) LoggerWith(ctx context.Context, args ...interface{}) *log
 
 func (fs *fakeService) DB(ctx context.Context) *gorm.DB {
 	return fs.db
+}
+
+func (fs *fakeService) CatalogClonePath() string {
+	return os.Getenv("CLONE_BASE_PATH")
 }
 
 func TestOk_http(t *testing.T) {

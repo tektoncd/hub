@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/ikawaha/goahttpcheck"
@@ -414,6 +415,100 @@ func TestByCatalogKindNameVersion_Http_ErrorCase(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	ByCatalogKindNameVersionChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/foo/0.1.1").Check().
+		HasStatus(404).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		err := goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
+		assert.NoError(t, marshallErr)
+
+		assert.Equal(t, "not-found", err.Name)
+	})
+}
+
+func ByCatalogKindNameVersionReadmeChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	checker := goahttpcheck.New()
+	checker.Mount(
+		server.NewByCatalogKindNameVersionReadmeHandler,
+		server.MountByCatalogKindNameVersionReadmeHandler,
+		resource.NewByCatalogKindNameVersionReadmeEndpoint(New(tc)))
+	return checker
+}
+
+func TestByCatalogKindNameVersionReadme_Http(t *testing.T) {
+	os.Setenv("CLONE_BASE_PATH", "testdata/catalog")
+	defer os.Unsetenv("CLONE_BASE_PATH")
+
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByCatalogKindNameVersionReadmeChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tkn/0.1/readme").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
+func TestByCatalogKindNameVersionReadme_Http_ErrorCase(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByCatalogKindNameVersionReadmeChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/foo/0.1.1/readme").Check().
+		HasStatus(404).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		err := goa.ServiceError{}
+		marshallErr := json.Unmarshal([]byte(b), &err)
+		assert.NoError(t, marshallErr)
+
+		assert.Equal(t, "not-found", err.Name)
+	})
+}
+
+func ByCatalogKindNameVersionYamlChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	checker := goahttpcheck.New()
+	checker.Mount(
+		server.NewByCatalogKindNameVersionYamlHandler,
+		server.MountByCatalogKindNameVersionYamlHandler,
+		resource.NewByCatalogKindNameVersionYamlEndpoint(New(tc)))
+	return checker
+}
+
+func TestByCatalogKindNameVersionYaml_Http(t *testing.T) {
+	os.Setenv("CLONE_BASE_PATH", "testdata/catalog")
+	defer os.Unsetenv("CLONE_BASE_PATH")
+
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByCatalogKindNameVersionYamlChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tkn/0.1/yaml").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		res, err := testutils.FormatJSON(b)
+		assert.NoError(t, err)
+
+		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
+	})
+}
+
+func TestByCatalogKindNameVersionYaml_Http_ErrorCase(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	ByCatalogKindNameVersionYamlChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/foo/0.1.1/yaml").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)

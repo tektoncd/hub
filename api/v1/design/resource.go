@@ -153,6 +153,64 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	Method("ByCatalogKindNameVersionReadme", func() {
+		Description("Find resource README using name of catalog & name, kind and version of resource")
+		Payload(func() {
+			Attribute("catalog", String, "name of catalog", func() {
+				Example("catalog", "tektoncd")
+			})
+			Attribute("kind", String, "kind of resource", func() {
+				Enum("task", "pipeline")
+			})
+			Attribute("name", String, "name of resource", func() {
+				Example("name", "buildah")
+			})
+			Attribute("version", String, "version of resource", func() {
+				Example("version", "0.1")
+			})
+
+			Required("catalog", "kind", "name", "version")
+		})
+		Result(types.ResourceVersionReadme)
+
+		HTTP(func() {
+			GET("/resource/{catalog}/{kind}/{name}/{version}/readme")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
+		})
+	})
+
+	Method("ByCatalogKindNameVersionYaml", func() {
+		Description("Find resource YAML using name of catalog & name, kind and version of resource")
+		Payload(func() {
+			Attribute("catalog", String, "name of catalog", func() {
+				Example("catalog", "tektoncd")
+			})
+			Attribute("kind", String, "kind of resource", func() {
+				Enum("task", "pipeline")
+			})
+			Attribute("name", String, "name of resource", func() {
+				Example("name", "buildah")
+			})
+			Attribute("version", String, "version of resource", func() {
+				Example("version", "0.1")
+			})
+
+			Required("catalog", "kind", "name", "version")
+		})
+		Result(types.ResourceVersionYaml)
+
+		HTTP(func() {
+			GET("/resource/{catalog}/{kind}/{name}/{version}/yaml")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
+		})
+	})
+
 	Method("ByVersionId", func() {
 		Description("Find a resource using its version's id")
 		Payload(func() {

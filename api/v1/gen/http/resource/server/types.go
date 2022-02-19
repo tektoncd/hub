@@ -37,6 +37,18 @@ type ByCatalogKindNameVersionResponseBody struct {
 	Data *ResourceVersionDataResponseBody `form:"data" json:"data" xml:"data"`
 }
 
+// ByCatalogKindNameVersionReadmeResponseBody is the type of the "resource"
+// service "ByCatalogKindNameVersionReadme" endpoint HTTP response body.
+type ByCatalogKindNameVersionReadmeResponseBody struct {
+	Data *ResourceContentResponseBodyReadme `form:"data" json:"data" xml:"data"`
+}
+
+// ByCatalogKindNameVersionYamlResponseBody is the type of the "resource"
+// service "ByCatalogKindNameVersionYaml" endpoint HTTP response body.
+type ByCatalogKindNameVersionYamlResponseBody struct {
+	Data *ResourceContentResponseBodyYaml `form:"data" json:"data" xml:"data"`
+}
+
 // ByVersionIDResponseBody is the type of the "resource" service "ByVersionId"
 // endpoint HTTP response body.
 type ByVersionIDResponseBody struct {
@@ -186,6 +198,82 @@ type ByCatalogKindNameVersionInternalErrorResponseBody struct {
 // service "ByCatalogKindNameVersion" endpoint HTTP response body for the
 // "not-found" error.
 type ByCatalogKindNameVersionNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// ByCatalogKindNameVersionReadmeInternalErrorResponseBody is the type of the
+// "resource" service "ByCatalogKindNameVersionReadme" endpoint HTTP response
+// body for the "internal-error" error.
+type ByCatalogKindNameVersionReadmeInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// ByCatalogKindNameVersionReadmeNotFoundResponseBody is the type of the
+// "resource" service "ByCatalogKindNameVersionReadme" endpoint HTTP response
+// body for the "not-found" error.
+type ByCatalogKindNameVersionReadmeNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// ByCatalogKindNameVersionYamlInternalErrorResponseBody is the type of the
+// "resource" service "ByCatalogKindNameVersionYaml" endpoint HTTP response
+// body for the "internal-error" error.
+type ByCatalogKindNameVersionYamlInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// ByCatalogKindNameVersionYamlNotFoundResponseBody is the type of the
+// "resource" service "ByCatalogKindNameVersionYaml" endpoint HTTP response
+// body for the "not-found" error.
+type ByCatalogKindNameVersionYamlNotFoundResponseBody struct {
 	// Name is the name of this class of errors.
 	Name string `form:"name" json:"name" xml:"name"`
 	// ID is a unique identifier for this particular occurrence of the problem.
@@ -476,6 +564,20 @@ type ResourceDataResponseBodyInfo struct {
 	Rating float64 `form:"rating" json:"rating" xml:"rating"`
 }
 
+// ResourceContentResponseBodyReadme is used to define fields on response body
+// types.
+type ResourceContentResponseBodyReadme struct {
+	// Readme
+	Readme *string `form:"readme,omitempty" json:"readme,omitempty" xml:"readme,omitempty"`
+}
+
+// ResourceContentResponseBodyYaml is used to define fields on response body
+// types.
+type ResourceContentResponseBodyYaml struct {
+	// Yaml
+	Yaml *string `form:"yaml,omitempty" json:"yaml,omitempty" xml:"yaml,omitempty"`
+}
+
 // ResourceDataResponseBody is used to define fields on response body types.
 type ResourceDataResponseBody struct {
 	// ID is the unique id of the resource
@@ -554,6 +656,28 @@ func NewByCatalogKindNameVersionResponseBody(res *resourceviews.ResourceVersionV
 	body := &ByCatalogKindNameVersionResponseBody{}
 	if res.Data != nil {
 		body.Data = marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBody(res.Data)
+	}
+	return body
+}
+
+// NewByCatalogKindNameVersionReadmeResponseBody builds the HTTP response body
+// from the result of the "ByCatalogKindNameVersionReadme" endpoint of the
+// "resource" service.
+func NewByCatalogKindNameVersionReadmeResponseBody(res *resourceviews.ResourceVersionReadmeView) *ByCatalogKindNameVersionReadmeResponseBody {
+	body := &ByCatalogKindNameVersionReadmeResponseBody{}
+	if res.Data != nil {
+		body.Data = marshalResourceviewsResourceContentViewToResourceContentResponseBodyReadme(res.Data)
+	}
+	return body
+}
+
+// NewByCatalogKindNameVersionYamlResponseBody builds the HTTP response body
+// from the result of the "ByCatalogKindNameVersionYaml" endpoint of the
+// "resource" service.
+func NewByCatalogKindNameVersionYamlResponseBody(res *resourceviews.ResourceVersionYamlView) *ByCatalogKindNameVersionYamlResponseBody {
+	body := &ByCatalogKindNameVersionYamlResponseBody{}
+	if res.Data != nil {
+		body.Data = marshalResourceviewsResourceContentViewToResourceContentResponseBodyYaml(res.Data)
 	}
 	return body
 }
@@ -702,6 +826,66 @@ func NewByCatalogKindNameVersionNotFoundResponseBody(res *goa.ServiceError) *ByC
 	return body
 }
 
+// NewByCatalogKindNameVersionReadmeInternalErrorResponseBody builds the HTTP
+// response body from the result of the "ByCatalogKindNameVersionReadme"
+// endpoint of the "resource" service.
+func NewByCatalogKindNameVersionReadmeInternalErrorResponseBody(res *goa.ServiceError) *ByCatalogKindNameVersionReadmeInternalErrorResponseBody {
+	body := &ByCatalogKindNameVersionReadmeInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewByCatalogKindNameVersionReadmeNotFoundResponseBody builds the HTTP
+// response body from the result of the "ByCatalogKindNameVersionReadme"
+// endpoint of the "resource" service.
+func NewByCatalogKindNameVersionReadmeNotFoundResponseBody(res *goa.ServiceError) *ByCatalogKindNameVersionReadmeNotFoundResponseBody {
+	body := &ByCatalogKindNameVersionReadmeNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewByCatalogKindNameVersionYamlInternalErrorResponseBody builds the HTTP
+// response body from the result of the "ByCatalogKindNameVersionYaml" endpoint
+// of the "resource" service.
+func NewByCatalogKindNameVersionYamlInternalErrorResponseBody(res *goa.ServiceError) *ByCatalogKindNameVersionYamlInternalErrorResponseBody {
+	body := &ByCatalogKindNameVersionYamlInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewByCatalogKindNameVersionYamlNotFoundResponseBody builds the HTTP response
+// body from the result of the "ByCatalogKindNameVersionYaml" endpoint of the
+// "resource" service.
+func NewByCatalogKindNameVersionYamlNotFoundResponseBody(res *goa.ServiceError) *ByCatalogKindNameVersionYamlNotFoundResponseBody {
+	body := &ByCatalogKindNameVersionYamlNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewByVersionIDInternalErrorResponseBody builds the HTTP response body from
 // the result of the "ByVersionId" endpoint of the "resource" service.
 func NewByVersionIDInternalErrorResponseBody(res *goa.ServiceError) *ByVersionIDInternalErrorResponseBody {
@@ -823,6 +1007,30 @@ func NewVersionsByIDPayload(id uint) *resource.VersionsByIDPayload {
 // ByCatalogKindNameVersion endpoint payload.
 func NewByCatalogKindNameVersionPayload(catalog string, kind string, name string, version string) *resource.ByCatalogKindNameVersionPayload {
 	v := &resource.ByCatalogKindNameVersionPayload{}
+	v.Catalog = catalog
+	v.Kind = kind
+	v.Name = name
+	v.Version = version
+
+	return v
+}
+
+// NewByCatalogKindNameVersionReadmePayload builds a resource service
+// ByCatalogKindNameVersionReadme endpoint payload.
+func NewByCatalogKindNameVersionReadmePayload(catalog string, kind string, name string, version string) *resource.ByCatalogKindNameVersionReadmePayload {
+	v := &resource.ByCatalogKindNameVersionReadmePayload{}
+	v.Catalog = catalog
+	v.Kind = kind
+	v.Name = name
+	v.Version = version
+
+	return v
+}
+
+// NewByCatalogKindNameVersionYamlPayload builds a resource service
+// ByCatalogKindNameVersionYaml endpoint payload.
+func NewByCatalogKindNameVersionYamlPayload(catalog string, kind string, name string, version string) *resource.ByCatalogKindNameVersionYamlPayload {
+	v := &resource.ByCatalogKindNameVersionYamlPayload{}
 	v.Catalog = catalog
 	v.Kind = kind
 	v.Name = name

@@ -79,7 +79,7 @@ paths:
           type: array
           items:
             type: string
-            example: Sed libero aut velit.
+            example: Rerum ipsa voluptas fuga.
           description: Catalogs of resource to filter by
           example:
           - tekton
@@ -95,7 +95,7 @@ paths:
           type: array
           items:
             type: string
-            example: Optio cumque autem ratione.
+            example: Distinctio non sint assumenda non.
           description: Category associated with a resource to filter by
           example:
           - build
@@ -111,7 +111,7 @@ paths:
           type: array
           items:
             type: string
-            example: Officiis similique commodi ratione et quo.
+            example: Ratione eos sunt.
           description: Kinds of resource to filter by
           example:
           - task
@@ -127,7 +127,7 @@ paths:
           type: array
           items:
             type: string
-            example: Natus et.
+            example: Sed dolorem qui ea.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -143,7 +143,7 @@ paths:
           type: array
           items:
             type: string
-            example: Accusantium assumenda at aliquam.
+            example: Et exercitationem molestias id eum illum rerum.
           description: Platforms associated with a resource to filter by
           example:
           - linux/s390x
@@ -169,7 +169,7 @@ paths:
           type: string
           description: Strategy used to find matching resources
           default: contains
-          example: contains
+          example: exact
           enum:
           - exact
           - contains
@@ -489,6 +489,172 @@ paths:
                   updatedAt: 2020-01-01 12:00:00 +0000 UTC
                   version: "0.1"
                   webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        "404":
+          description: Not Found response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+        "500":
+          description: Internal Server Error response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+  /v1/resource/{catalog}/{kind}/{name}/{version}/readme:
+    get:
+      tags:
+      - resource
+      summary: ByCatalogKindNameVersionReadme resource
+      description: Find resource README using name of catalog & name, kind and version
+        of resource
+      operationId: resource#ByCatalogKindNameVersionReadme
+      parameters:
+      - name: catalog
+        in: path
+        description: name of catalog
+        required: true
+        schema:
+          type: string
+          description: name of catalog
+          example: tektoncd
+        example: tektoncd
+      - name: kind
+        in: path
+        description: kind of resource
+        required: true
+        schema:
+          type: string
+          description: kind of resource
+          example: pipeline
+          enum:
+          - task
+          - pipeline
+        example: pipeline
+      - name: name
+        in: path
+        description: name of resource
+        required: true
+        schema:
+          type: string
+          description: name of resource
+          example: buildah
+        example: buildah
+      - name: version
+        in: path
+        description: version of resource
+        required: true
+        schema:
+          type: string
+          description: version of resource
+          example: "0.1"
+        example: "0.1"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceVersionReadme'
+              example:
+                data:
+                  readme: |-
+                    #Readme
+                     Sample readme content
+                  yaml: |-
+                    #YAML
+                     Sample yaml content
+        "404":
+          description: Not Found response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+        "500":
+          description: Internal Server Error response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+  /v1/resource/{catalog}/{kind}/{name}/{version}/yaml:
+    get:
+      tags:
+      - resource
+      summary: ByCatalogKindNameVersionYaml resource
+      description: Find resource YAML using name of catalog & name, kind and version
+        of resource
+      operationId: resource#ByCatalogKindNameVersionYaml
+      parameters:
+      - name: catalog
+        in: path
+        description: name of catalog
+        required: true
+        schema:
+          type: string
+          description: name of catalog
+          example: tektoncd
+        example: tektoncd
+      - name: kind
+        in: path
+        description: kind of resource
+        required: true
+        schema:
+          type: string
+          description: kind of resource
+          example: task
+          enum:
+          - task
+          - pipeline
+        example: task
+      - name: name
+        in: path
+        description: name of resource
+        required: true
+        schema:
+          type: string
+          description: name of resource
+          example: buildah
+        example: buildah
+      - name: version
+        in: path
+        description: version of resource
+        required: true
+        schema:
+          type: string
+          description: version of resource
+          example: "0.1"
+        example: "0.1"
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceVersionYaml'
+              example:
+                data:
+                  readme: |-
+                    #Readme
+                     Sample readme content
+                  yaml: |-
+                    #YAML
+                     Sample yaml content
         "404":
           description: Not Found response.
           content:
@@ -963,18 +1129,8 @@ components:
             provider: github
             type: community
             url: https://github.com/tektoncd/hub
-          - id: 1
-            name: Tekton
-            provider: github
-            type: community
-            url: https://github.com/tektoncd/hub
       example:
         data:
-        - id: 1
-          name: Tekton
-          provider: github
-          type: community
-          url: https://github.com/tektoncd/hub
         - id: 1
           name: Tekton
           provider: github
@@ -1035,6 +1191,28 @@ components:
             version: "0.2"
       required:
       - data
+    ResourceContent:
+      type: object
+      properties:
+        readme:
+          type: string
+          description: Readme
+          example: |-
+            #Readme
+             Sample readme content
+        yaml:
+          type: string
+          description: Yaml
+          example: |-
+            #YAML
+             Sample yaml content
+      example:
+        readme: |-
+          #Readme
+           Sample readme content
+        yaml: |-
+          #YAML
+           Sample yaml content
     ResourceData:
       type: object
       properties:
@@ -1152,6 +1330,42 @@ components:
       items:
         $ref: '#/components/schemas/ResourceData'
       example:
+      - catalog:
+          id: 1
+          name: tekton
+          type: community
+        categories:
+        - id: 1
+          name: image-build
+        hubURLPath: tekton/task/buildah
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+        versions:
+        - id: 1
+          version: "0.1"
+        - id: 2
+          version: "0.2"
       - catalog:
           id: 1
           name: tekton
@@ -1403,6 +1617,36 @@ components:
       - platforms
       - resource
       - hubURLPath
+    ResourceVersionReadme:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ResourceContent'
+      example:
+        data:
+          readme: |-
+            #Readme
+             Sample readme content
+          yaml: |-
+            #YAML
+             Sample yaml content
+      required:
+      - data
+    ResourceVersionYaml:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ResourceContent'
+      example:
+        data:
+          readme: |-
+            #Readme
+             Sample readme content
+          yaml: |-
+            #YAML
+             Sample yaml content
+      required:
+      - data
     ResourceVersions:
       type: object
       properties:

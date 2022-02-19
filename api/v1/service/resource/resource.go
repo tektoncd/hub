@@ -17,6 +17,7 @@ package resource
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"net/url"
 	"strings"
 	"time"
@@ -174,6 +175,49 @@ func (s *service) ByCatalogKindNameVersion(ctx context.Context, p *resource.ByCa
 		r.Versions = []model.ResourceVersion{r.Versions[0]}
 		return versionInfoFromResource(r, p.Version), nil
 	}
+}
+
+// Returns the README of the resource from the cloned catalog
+func (s *service) ByCatalogKindNameVersionReadme(ctx context.Context,
+	p *resource.ByCatalogKindNameVersionReadmePayload) (*resource.ResourceVersionReadme, error) {
+
+	readmePath := fmt.Sprintf("%s/%s/%s/%s/%s/README.md", s.CatalogClonePath(), strings.ToLower(p.Catalog), strings.ToLower(p.Kind), p.Name, p.Version)
+	s.Logger(ctx).Info(fmt.Sprintf("Fetching README for resource %s", p.Name))
+	content, err := ioutil.ReadFile(readmePath)
+	if err != nil {
+		return nil, resource.MakeNotFound(fmt.Errorf("resource not found"))
+	}
+
+	readmeContent := string(content)
+
+	res := resource.ResourceVersionReadme{
+		Data: &resource.ResourceContent{
+			Readme: &readmeContent,
+		},
+	}
+	return &res, nil
+}
+
+// Returns the YAML of the resource from the cloned catalog
+func (s *service) ByCatalogKindNameVersionYaml(ctx context.Context,
+	p *resource.ByCatalogKindNameVersionYamlPayload) (*resource.ResourceVersionYaml, error) {
+
+	yamlPath := fmt.Sprintf("%s/%s/%s/%s/%s", s.CatalogClonePath(), strings.ToLower(p.Catalog), strings.ToLower(p.Kind), p.Name, p.Version)
+	yamlPath = fmt.Sprintf("%s/%s.yaml", yamlPath, p.Name)
+	s.Logger(ctx).Info(fmt.Sprintf("Fetching YAML for resource %s", p.Name))
+	content, err := ioutil.ReadFile(yamlPath)
+	if err != nil {
+		return nil, resource.MakeNotFound(fmt.Errorf("resource not found"))
+	}
+
+	yamlContent := string(content)
+
+	res := resource.ResourceVersionYaml{
+		Data: &resource.ResourceContent{
+			Yaml: &yamlContent,
+		},
+	}
+	return &res, nil
 }
 
 // Find a resource using its version's id
