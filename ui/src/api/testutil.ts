@@ -66,9 +66,9 @@ export class FakeHub implements Api {
     });
   }
 
-  async readme(rawURL: string) {
-    const splitRawUrl = rawURL.split('/');
-    const resourceName = splitRawUrl[splitRawUrl.length - 3];
+  async readme(resourceKey: string, _: string) {
+    const splitRawUrl = resourceKey.split('/');
+    const resourceName = splitRawUrl[splitRawUrl.length - 1];
     const data = `${this.dataDir}/${resourceName}-Readme.md`;
 
     const ret = () => fs.readFileSync(data).toString();
@@ -77,9 +77,9 @@ export class FakeHub implements Api {
     });
   }
 
-  async yaml(rawURL: string) {
-    const splitRawUrl = rawURL.split('/');
-    const resourceName = splitRawUrl[splitRawUrl.length - 3];
+  async yaml(resourceKey: string, _: string) {
+    const splitRawUrl = resourceKey.split('/');
+    const resourceName = splitRawUrl[splitRawUrl.length - 1];
     const data = `${this.dataDir}/${resourceName}.yaml`;
 
     const ret = () => fs.readFileSync(data).toString();
