@@ -349,10 +349,10 @@ export const ResourceStore = types
         const { api, resources } = self;
         const resource = resources.get(name);
         assert(resource);
-        const url = resource.displayVersion.rawURL;
-        assert(url);
+        const version = resource.displayVersion.version;
+        assert(version);
 
-        const readme = yield api.readme(url);
+        const readme = yield api.readme(name, version);
         resource.readme = readme;
       } catch (err) {
         self.err = err.toString();
@@ -367,10 +367,10 @@ export const ResourceStore = types
         const { api, resources } = self;
         const resource = resources.get(name);
         assert(resource);
-        const url = resource.displayVersion.rawURL;
-        assert(url);
+        const version = resource.displayVersion.version;
+        assert(version);
 
-        const yaml = yield api.yaml(url);
+        const yaml = yield api.yaml(name, version);
         resource.yaml = yaml;
       } catch (err) {
         self.err = err.toString();

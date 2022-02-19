@@ -32,8 +32,8 @@ export interface Api {
   resourceVersion(resourceId: number): Promise<IVersion>;
   versionUpdate(versionId: number): Promise<IVersion>;
   authentication(authCode: string): Promise<AuthResponse>;
-  readme(rawURL: string): Promise<string>;
-  yaml(rawURL: string): Promise<string>;
+  readme(resourceKey: string, version: string): Promise<string>;
+  yaml(resourceKey: string, version: string): Promise<string>;
   getRating(resourceId: number, token: string): Promise<Rating>;
   setRating(resourceId: number, token: string, rating: number): Promise<void | null>;
   getRefreshToken(refreshToken: string): Promise<ITokenInfo>;
@@ -98,19 +98,22 @@ export class Hub implements Api {
     }
   }
 
-  async readme(rawURL: string) {
+  async readme(resourceKey: string, version: string) {
     try {
-      const URL = rawURL.substring(0, rawURL.lastIndexOf('/') + 1);
-      return axios.get(`${URL}/README.md`).then((response) => response.data);
+      const URL = `${API_URL}/${API_VERSION}/resource/${resourceKey}/${version}/readme`;
+      return axios.get(URL.toLowerCase()).then((response) => response.data.data.readme);
     } catch (err) {
       return err.response;
     }
   }
 
-  async yaml(rawURL: string) {
+  async yaml(resourceKey: string, version: string) {
     try {
       const newLine = '\n';
-      return axios.get(`${rawURL}`).then((response) => '```yaml' + newLine + response.data);
+      const URL = `${API_URL}/${API_VERSION}/resource/${resourceKey}/${version}/yaml`;
+      return axios
+        .get(URL.toLowerCase())
+        .then((response) => '```yaml' + newLine + response.data.data.yaml);
     } catch (err) {
       return err.response;
     }
