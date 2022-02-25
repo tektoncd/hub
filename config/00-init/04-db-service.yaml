@@ -15,13 +15,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: db
+  name: tekton-hub-db
   labels:
-    app: db
+    app: tekton-hub-db
 spec:
   type: ClusterIP
   selector:
-    app: db
+    app: tekton-hub-db
   ports:
     - name: postgresql
       port: 5432

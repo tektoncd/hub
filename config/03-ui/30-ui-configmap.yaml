@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ui
+  name: tekton-hub-ui
 data:
   API_URL: 'https://api.hub.tekton.dev'
   API_VERSION: ''

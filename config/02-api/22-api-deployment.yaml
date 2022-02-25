@@ -15,29 +15,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: tekton-hub-api
   labels:
-    app: api
+    app: tekton-hub-api
 spec:
   selector:
     matchLabels:
-      app: api
+      app: tekton-hub-api
   replicas: 1
   template:
     metadata:
       labels:
-        app: api
+        app: tekton-hub-api
     spec:
       volumes:
       - name: catalog-source
         persistentVolumeClaim:
-          claimName: api
+          claimName: tekton-hub-api
       - name: ssh-creds
         secret:
           secretName: tekton-hub-api-ssh-crds
           optional: true
       containers:
-        - name: api
+        - name: tekton-hub-api
           image: quay.io/tekton-hub/api
           volumeMounts:
           - name: catalog-source
@@ -69,89 +69,89 @@ spec:
             - name: HOME
               value: /home/hub
             - name: POSTGRES_HOST
-              value: db
+              value: tekton-hub-db
             - name: POSTGRES_PORT
               valueFrom:
                 secretKeyRef:
-                  name: db
+                  name: tekton-hub-db
                   key: POSTGRES_PORT
             - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:
-                  name: db
+                  name: tekton-hub-db
                   key: POSTGRES_DB
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: db
+                  name: tekton-hub-db
                   key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db
+                  name: tekton-hub-db
                   key: POSTGRES_PASSWORD
             - name: CONFIG_FILE_URL
               valueFrom:
                 configMapKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: CONFIG_FILE_URL
             - name: GH_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: GH_CLIENT_ID
             - name: GH_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: GH_CLIENT_SECRET
             - name: GHE_URL
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: GHE_URL
             - name: GL_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: GL_CLIENT_ID
             - name: GL_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: GL_CLIENT_SECRET
             - name: GLE_URL
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: GLE_URL
             - name: BB_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: BB_CLIENT_ID
             - name: BB_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: BB_CLIENT_SECRET
             - name: JWT_SIGNING_KEY
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: JWT_SIGNING_KEY
             - name: ACCESS_JWT_EXPIRES_IN
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: ACCESS_JWT_EXPIRES_IN
             - name: REFRESH_JWT_EXPIRES_IN
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: REFRESH_JWT_EXPIRES_IN
             - name: AUTH_BASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: tekton-hub-api
                   key: AUTH_BASE_URL

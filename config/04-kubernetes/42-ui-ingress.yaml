@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: ui
+  name: tekton-hub-ui
   annotations:
     acme.cert-manager.io/http01-edit-in-place: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -15,7 +15,7 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: ui
+          serviceName: tekton-hub-ui
           servicePort: 8080
         path: /*
         pathType: ImplementationSpecific

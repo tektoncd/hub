@@ -4,7 +4,7 @@ kind: CronJob
 metadata:
   name: catalog-refresh
   labels:
-    app: api
+    app: tekton-hub-api
 spec:
   schedule: "*/30 * * * *"
   jobTemplate:

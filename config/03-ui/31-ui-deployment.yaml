@@ -2,42 +2,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ui
+  name: tekton-hub-ui
   labels:
-    app: ui
+    app: tekton-hub-ui
 spec:
   selector:
     matchLabels:
-      app: ui
+      app: tekton-hub-ui
   template:
     metadata:
-      name: ui
+      name: tekton-hub-ui
       labels:
-        app: ui
+        app: tekton-hub-ui
     spec:
       containers:
-        - name: ui
+        - name: tekton-hub-ui
           image: quay.io/tekton-hub/ui
           env:
             - name: API_URL
               valueFrom:
                 configMapKeyRef:
-                  name: ui
+                  name: tekton-hub-ui
                   key: API_URL
             - name: API_VERSION
               valueFrom:
                 configMapKeyRef:
-                  name: ui
+                  name: tekton-hub-ui
                   key: API_VERSION
             - name: AUTH_BASE_URL
               valueFrom:
                 configMapKeyRef:
-                  name: ui
+                  name: tekton-hub-ui
                   key: AUTH_BASE_URL
             - name: REDIRECT_URI
               valueFrom:
                 configMapKeyRef:
-                  name: ui
+                  name: tekton-hub-ui
                   key: REDIRECT_URI
           ports:
             - containerPort: 8080
