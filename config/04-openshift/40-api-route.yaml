@@ -15,15 +15,15 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: api
+  name: tekton-hub-api
   labels:
-    app: api
+    app: tekton-hub-api
 spec:
   port:
     targetPort: 8000
   to:
     kind: Service
-    name: api
+    name: tekton-hub-api
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge

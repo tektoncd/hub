@@ -6,14 +6,14 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     dns.gardener.cloud/dnsnames: 'auth.hub.tekton.dev'
     dns.gardener.cloud/ttl: "3600"
-  name: auth
+  name: tekton-hub-auth
 spec:
   rules:
   - host: auth.hub.tekton.dev
     http:
       paths:
       - backend:
-          serviceName: api
+          serviceName: tekton-hub-api
           servicePort: 4200
         path: /*
   tls:

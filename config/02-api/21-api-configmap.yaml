@@ -15,8 +15,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: api
+  name: tekton-hub-api
   labels:
-    app: api
+    app: tekton-hub-api
 data:
   CONFIG_FILE_URL: https://raw.githubusercontent.com/tektoncd/hub/main/config.yaml

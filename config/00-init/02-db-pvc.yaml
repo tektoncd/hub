@@ -15,9 +15,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: db
+  name: tekton-hub-db
   labels:
-    app: db
+    app: tekton-hub-db
 spec:
   accessModes:
     - ReadWriteOnce

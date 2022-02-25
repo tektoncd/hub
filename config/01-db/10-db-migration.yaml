@@ -15,37 +15,37 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: db-migration
+  name: tekton-hub-db-migration
   labels:
-    app: db
+    app: tekton-hub-db
 spec:
   template:
     spec:
       containers:
-        - name: db-migration
+        - name: tekton-hub-db-migration
           image: quay.io/tekton-hub/db-migration
           env:
             - name: POSTGRES_HOST
-              value: db
+              value: tekton-hub-db
             - name: POSTGRES_PORT
               valueFrom:
                 secretKeyRef:
-                  name: db
+                  name: tekton-hub-db
                   key: POSTGRES_PORT
             - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:
-                  name: db
+                  name: tekton-hub-db
                   key: POSTGRES_DB
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: db
+                  name: tekton-hub-db
                   key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db
+                  name: tekton-hub-db
                   key: POSTGRES_PASSWORD
       restartPolicy: Never
   backoffLimit: 3
