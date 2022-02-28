@@ -28,9 +28,22 @@ spec:
       labels:
         app: api
     spec:
+      volumes:
+      - name: catalog-source
+        persistentVolumeClaim:
+          claimName: api
+      - name: ssh-creds
+        secret:
+          secretName: tekton-hub-api-ssh-crds
+          optional: true
       containers:
         - name: api
           image: quay.io/tekton-hub/api
+          volumeMounts:
+          - name: catalog-source
+            mountPath: "/tmp"
+          - name: ssh-creds
+            mountPath: "/home/hub/.ssh"
           ports:
             - containerPort: 8000
             - containerPort: 4200
@@ -53,6 +66,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 1
           env:
+            - name: HOME
+              value: /home/hub
             - name: POSTGRES_HOST
               value: db
             - name: POSTGRES_PORT
