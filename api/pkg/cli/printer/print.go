@@ -65,6 +65,16 @@ func (p *Printer) Raw(data []byte, err error) error {
 	return nil
 }
 
+// Raw prints the raw byte array to printer's output stream
+func (p *Printer) RawYaml(data string, err error) error {
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintln(p.out, data)
+	return nil
+}
+
 // String prints the string to printer's output stream
 func (p *Printer) String(str string) error {
 	fmt.Fprintln(p.out, string(str))

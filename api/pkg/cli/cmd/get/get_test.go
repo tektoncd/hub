@@ -20,148 +20,47 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
+	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	goa "goa.design/goa/v3/pkg"
 	"gopkg.in/h2non/gock.v1"
 	"gotest.tools/v3/golden"
 )
 
-type InfoOptions struct {
-	ResId      int
-	Name       string
-	Kind       string
-	Catalog    string
-	Version    string
-	Resource   *res.ResourceData
-	VersionArr *res.Versions
+var pipeline1 = `---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: mango
+  annotations:
+    tekton.dev/pipelines.minVersion: '0.18'
+    tekton.dev/tags: fruit
+    tekton.dev/displayName: 'Alphanso'
+spec:
+  description: >-
+    v0.3 of Pipeline mango
+`
+
+var pipelineWithLatestVersionYaml = &res.ResourceContent{
+	Yaml: &pipeline1,
 }
 
-var pipelineRes = &res.ResourceData{
-	ID:   7,
-	Name: "mango",
-	Kind: "Pipeline",
-	Catalog: &res.Catalog{
-		ID:   1,
-		Name: "fruit",
-		Type: "community",
-	},
-	Rating: 2.3,
-	LatestVersion: &res.ResourceVersionData{
-		ID:                  03,
-		Version:             "0.1",
-		Description:         "v0.1 of Pipeline mango",
-		DisplayName:         "Alphonso Mango",
-		MinPipelinesVersion: "0.17.1",
-		RawURL:              "http://raw.github.url/mango/0.1/mango.yaml",
-		WebURL:              "http://web.github.com/mango/0.1/mango.yaml",
-		UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
-	},
-	Tags: []*res.Tag{
-		{
-			ID:   3,
-			Name: "fruit",
-		},
-	},
-	Versions: []*res.ResourceVersionData{
-		{
-			ID:      7,
-			Version: "0.1",
-		},
-		{
-			ID:      10,
-			Version: "0.2",
-		},
-		{
-			ID:      11,
-			Version: "0.3",
-		},
-	},
-}
+var pipeline2 = `---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: mango
+  annotations:
+    tekton.dev/pipelines.minVersion: '0.18'
+    tekton.dev/tags: fruit
+    tekton.dev/displayName: 'Alphanso'
+spec:
+  description: >-
+    v0.2 of Pipeline mango
+`
 
-var pipelineResWithLatestVersion = &res.ResourceVersionData{
-	ID:                  11,
-	Version:             "0.3",
-	DisplayName:         "mango",
-	Description:         "v0.3 of Pipeline mango",
-	MinPipelinesVersion: "0.12",
-	RawURL:              "http://raw.github.url/mango/0.3/mango.yaml",
-	WebURL:              "http://web.github.com/mango/0.3/mango.yaml",
-	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
-	Resource: &res.ResourceData{
-		ID:   7,
-		Name: "mango",
-		Kind: "Pipeline",
-		Catalog: &res.Catalog{
-			ID:   1,
-			Name: "fruit",
-			Type: "community",
-		},
-		Rating: 4.3,
-		Tags: []*res.Tag{
-			{
-				ID:   3,
-				Name: "fruit",
-			},
-		},
-	},
-}
-
-var pipelineResWithOldVersion = &res.ResourceVersionData{
-	ID:                  10,
-	Version:             "0.2",
-	DisplayName:         "mango",
-	Description:         "v0.3 of Pipeline mango",
-	MinPipelinesVersion: "0.12",
-	RawURL:              "http://raw.github.url/mango/0.2/mango.yaml",
-	WebURL:              "http://web.github.com/mango/0.2/mango.yaml",
-	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
-	Resource: &res.ResourceData{
-		ID:   7,
-		Name: "mango",
-		Kind: "Pipeline",
-		Catalog: &res.Catalog{
-			ID:   1,
-			Name: "fruit",
-			Type: "community",
-		},
-		Rating: 4.3,
-		Tags: []*res.Tag{
-			{
-				ID:   3,
-				Name: "fruit",
-			},
-		},
-	},
-}
-
-var ver = &res.Versions{
-	Latest: &res.ResourceVersionData{
-		ID:      11,
-		Version: "0.3",
-		RawURL:  "http://raw.github.url/mango/0.3/mango.yaml",
-		WebURL:  "http://web.github.com/mango/0.3/mango.yaml",
-	},
-	Versions: []*res.ResourceVersionData{
-		{
-			ID:      11,
-			Version: "0.3",
-			RawURL:  "http://raw.github.url/mango/0.3/mango.yaml",
-			WebURL:  "http://web.github.com/mango/0.3/mango.yaml",
-		},
-		{
-			ID:      10,
-			Version: "0.2",
-			RawURL:  "http://raw.github.url/mango/0.2/mango.yaml",
-			WebURL:  "http://web.github.com/mango/0.2/mango.yaml",
-		},
-		{
-			ID:      7,
-			Version: "0.1",
-			RawURL:  "http://raw.github.url/mango/0.2/mango.yaml",
-			WebURL:  "http://web.github.com/mango/0.2/mango.yaml",
-		},
-	},
+var pipelineWithOldVersionYaml = &res.ResourceContent{
+	Yaml: &pipeline2,
 }
 
 var want string = `
@@ -175,20 +74,6 @@ Get a Abc of name 'foo' of version '0.3':
 
     tkn hub get abc foo --version 0.3
 `
-
-func mockApi(io InfoOptions, resourceWithVersion *res.ResourceVersionData) {
-
-	// Get ResourceId in order to get all versions of resource
-	rVer := &res.ResourceVersion{Data: resourceWithVersion}
-	resWithVersion := res.NewViewedResourceVersion(rVer, "default")
-
-	resInfo := fmt.Sprintf("%s/%s/%s", io.Catalog, io.Kind, io.Name)
-
-	gock.New(test.API).
-		Get("/resource/" + resInfo + "/" + io.Version).
-		Reply(200).
-		JSON(&resWithVersion.Projected)
-}
 
 func TestValidate(t *testing.T) {
 	opt := options{
@@ -217,21 +102,15 @@ func TestGetResource_WithNewVersion(t *testing.T) {
 
 	defer gock.Off()
 
-	mockApi(InfoOptions{
-		ResId:      7,
-		Name:       "mango",
-		Kind:       "pipeline",
-		Catalog:    "fruit",
-		Version:    "0.3",
-		Resource:   pipelineRes,
-		VersionArr: ver,
-	}, pipelineResWithLatestVersion)
+	rVer := &res.ResourceVersionYaml{Data: pipelineWithLatestVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
 
-	gock.New("http://raw.github.url").
-		Get("/mango/0.3/mango.yaml").
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "fruit", "pipeline", "mango", "0.3")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
 		Reply(200).
-		File("./testdata/pipeline-mango-v0.3.yaml")
-
+		JSON(&resWithVersion.Projected)
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
 
@@ -255,21 +134,15 @@ func TestGetResource_WithOldVersion(t *testing.T) {
 
 	defer gock.Off()
 
-	mockApi(InfoOptions{
-		ResId:      7,
-		Name:       "mango",
-		Kind:       "pipeline",
-		Catalog:    "fruit",
-		Version:    "0.2",
-		Resource:   pipelineRes,
-		VersionArr: ver,
-	}, pipelineResWithOldVersion)
+	rVer := &res.ResourceVersionYaml{Data: pipelineWithOldVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
 
-	gock.New("http://raw.github.url").
-		Get("/mango/0.2/mango.yaml").
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "fruit", "pipeline", "mango", "0.2")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
 		Reply(200).
-		File("./testdata/pipeline-mango-v0.2.yaml")
-
+		JSON(&resWithVersion.Projected)
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
 

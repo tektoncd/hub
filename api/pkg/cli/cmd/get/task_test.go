@@ -20,137 +20,46 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
+	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"gopkg.in/h2non/gock.v1"
 	"gotest.tools/v3/golden"
 )
 
-var task = &res.ResourceData{
-	ID:   1,
-	Name: "foo",
-	Kind: "Task",
-	Catalog: &res.Catalog{
-		ID:   1,
-		Name: "tekton",
-		Type: "community",
-	},
-	Rating: 4.8,
-	LatestVersion: &res.ResourceVersionData{
-		ID:                  11,
-		Version:             "0.1",
-		Description:         "v0.1 Task to run foo",
-		DisplayName:         "foo-bar",
-		MinPipelinesVersion: "0.11",
-		RawURL:              "http://raw.github.url/foo/0.1/foo.yaml",
-		WebURL:              "http://web.github.com/foo/0.1/foo.yaml",
-		UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
-	},
-	Tags: []*res.Tag{
-		{
-			ID:   3,
-			Name: "cli",
-		},
-	},
-	Versions: []*res.ResourceVersionData{
-		{
-			ID:      1,
-			Version: "0.1",
-		},
-		{
-			ID:      10,
-			Version: "0.2",
-		},
-		{
-			ID:      11,
-			Version: "0.3",
-		},
-	},
+var task1 = `---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: foo
+  annotations:
+    tekton.dev/pipelines.minVersion: '0.13.1'
+    tekton.dev/tags: cli
+    tekton.dev/displayName: 'foo-bar'
+spec:
+  description: >-
+    v0.3 Task to run foo
+`
+
+var taskWithNewVersionYaml = &res.ResourceContent{
+	Yaml: &task1,
 }
 
-var taskWithNewVersion = &res.ResourceVersionData{
-	ID:                  11,
-	Version:             "0.3",
-	DisplayName:         "foo-bar",
-	Description:         "v0.3 Task to run foo",
-	MinPipelinesVersion: "0.12",
-	RawURL:              "http://raw.github.url/foo/0.3/foo.yaml",
-	WebURL:              "http://web.github.com/foo/0.3/foo.yaml",
-	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
-	Resource: &res.ResourceData{
-		ID:   1,
-		Name: "foo",
-		Kind: "Task",
-		Catalog: &res.Catalog{
-			ID:   1,
-			Name: "tekton",
-			Type: "community",
-		},
-		Rating: 4.8,
-		Tags: []*res.Tag{
-			{
-				ID:   3,
-				Name: "cli",
-			},
-		},
-	},
-}
+var task2 = `---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: foo
+  annotations:
+    tekton.dev/pipelines.minVersion: '0.12.1'
+    tekton.dev/tags: cli
+    tekton.dev/displayName: 'foo-bar'
+spec:
+  description: >-
+    v0.1 Task to run foo
+`
 
-var taskWithOldVersion = &res.ResourceVersionData{
-	ID:                  1,
-	Version:             "0.1",
-	DisplayName:         "foo-bar",
-	Description:         "v0.1 Task to run foo",
-	MinPipelinesVersion: "0.12",
-	RawURL:              "http://raw.github.url/foo/0.1/foo.yaml",
-	WebURL:              "http://web.github.com/foo/0.1/foo.yaml",
-	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
-	Resource: &res.ResourceData{
-		ID:   1,
-		Name: "foo",
-		Kind: "Task",
-		Catalog: &res.Catalog{
-			ID:   1,
-			Name: "tekton",
-			Type: "community",
-		},
-		Rating: 4.8,
-		Tags: []*res.Tag{
-			{
-				ID:   3,
-				Name: "cli",
-			},
-		},
-	},
-}
-
-var verArr = &res.Versions{
-	Latest: &res.ResourceVersionData{
-		ID:      11,
-		Version: "0.3",
-		RawURL:  "http://raw.github.url/foo/0.3/foo.yaml",
-		WebURL:  "http://web.github.com/foo/0.3/foo.yaml",
-	},
-	Versions: []*res.ResourceVersionData{
-		{
-			ID:      11,
-			Version: "0.3",
-			RawURL:  "http://raw.github.url/foo/0.3/foo.yaml",
-			WebURL:  "http://web.github.com/foo/0.3/foo.yaml",
-		},
-		{
-			ID:      10,
-			Version: "0.2",
-			RawURL:  "http://raw.github.url/foo/0.2/foo.yaml",
-			WebURL:  "http://web.github.com/foo/0.2/foo.yaml",
-		},
-		{
-			ID:      1,
-			Version: "0.1",
-			RawURL:  "http://raw.github.url/foo/0.1/foo.yaml",
-			WebURL:  "http://web.github.com/foo/0.1/foo.yaml",
-		},
-	},
+var taskWithOldVersionYaml = &res.ResourceContent{
+	Yaml: &task2,
 }
 
 func TestGetTask_WithNewVersion(t *testing.T) {
@@ -158,21 +67,15 @@ func TestGetTask_WithNewVersion(t *testing.T) {
 
 	defer gock.Off()
 
-	mockApi(InfoOptions{
-		ResId:      12,
-		Name:       "foo",
-		Kind:       "task",
-		Catalog:    "tekton",
-		Version:    "0.3",
-		Resource:   task,
-		VersionArr: verArr,
-	}, taskWithNewVersion)
+	rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
 
-	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
 		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
-
+		JSON(&resWithVersion.Projected)
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
 
@@ -197,21 +100,15 @@ func TestGetTask_AsClusterTask(t *testing.T) {
 
 	defer gock.Off()
 
-	mockApi(InfoOptions{
-		ResId:      12,
-		Name:       "foo",
-		Kind:       "task",
-		Catalog:    "tekton",
-		Version:    "0.1",
-		Resource:   task,
-		VersionArr: verArr,
-	}, taskWithOldVersion)
+	rVer := &res.ResourceVersionYaml{Data: taskWithOldVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
 
-	gock.New("http://raw.github.url").
-		Get("/foo/0.1/foo.yaml").
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.1")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
 		Reply(200).
-		File("./testdata/foo-v0.1.yaml")
-
+		JSON(&resWithVersion.Projected)
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
 
