@@ -16,6 +16,7 @@ package initializer
 
 import (
 	"context"
+	"strings"
 
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
@@ -141,7 +142,7 @@ func addUsers(db *gorm.DB, log *log.Logger, data *app.Data) error {
 
 		for _, username := range s.Users {
 			// Checks if user exists
-			accountQuery := db.Where("user_name = ?", username)
+			accountQuery := db.Where("LOWER(user_name) = ?", strings.ToLower(username))
 
 			account := model.Account{}
 			if err := accountQuery.First(&account).Error; err != nil {
