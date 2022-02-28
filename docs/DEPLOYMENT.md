@@ -233,6 +233,19 @@ All users have default scopes `rating:read` and `rating:write`. Once user get lo
 
 **WARN** : Make sure you have updated Hub config before starting the api server
 
+### Create SSH secrets (Optional)
+
+In order to clone private repositories or repositories from private git instances,
+we need to mount the ssh credentials so that cloning can happen. To make this happen
+please follow the below steps:
+
+1. Create the ssh keys if not already present in `~/.ssh` dir.
+1. Create kubernetes secret which will contain the ssh keys using the following command
+    ```sh
+    kubectl create secret generic tekton-hub-api-ssh-crds --from-file=id_rsa="/path/to/id_rsa" --from-file=id_rsa.pub="/path/to/id_rsa.pub" --from-file=known_hosts="/path/to/known_hosts"
+    ```
+  Please make sure that secrets are created with the name `tekton-hub-api-ssh-crds`
+
 ### Update API Image
 
 Edit the `02-api/22-api-deployment.yaml` and replace the image with the one created previously and executed below command
