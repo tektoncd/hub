@@ -16,45 +16,33 @@
 package get
 
 import (
+	"log"
+	"net/http"
 	"testing"
 
-	"github.com/AlecAivazis/survey/v2/terminal"
-	"github.com/Netflix/go-expect"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/test/cli"
 	"gotest.tools/v3/icmd"
 )
 
-const expected = `---
+var expected = `---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: tkn
-  labels:
-    app.kubernetes.io/version: "0.1"
+  name: foo
   annotations:
-    tekton.dev/pipelines.minVersion: "0.12.1"
-    tekton.dev/categories: CLI
+    tekton.dev/pipelines.minVersion: '0.12.1'
     tekton.dev/tags: cli
-    tekton.dev/platforms: "linux/amd64,linux/s390x,linux/ppc64le"
+    tekton.dev/displayName: 'foo-bar'
 spec:
   description: >-
-    This task performs operations on Tekton resources using tkn
-
-  params:
-  - name: tkn-image
-    description: tkn CLI container image to run this task
-    default: gcr.io/tekton-releases/dogfooding/tkn@sha256:f79c0a56d561b1ae98afca545d0feaf2759f5c486ef891a79f23dc2451167dad #tag: latest
-  - name: ARGS
-    type: array
-    description: tkn CLI arguments to run
-  steps:
-    - name: tkn
-      image: "$(params.tkn-image)"
-      command: ["/usr/local/bin/tkn"]
-      args: ["$(params.ARGS)"]
-
+    v0.1 Task to run foo
 `
+var apiResponse = []byte(`{
+	"data": {
+"yaml": "---\napiVersion: tekton.dev/v1beta1\nkind: Task\nmetadata:\n  name: foo\n  annotations:\n    tekton.dev/pipelines.minVersion: '0.12.1'\n    tekton.dev/tags: cli\n    tekton.dev/displayName: 'foo-bar'\nspec:\n  description: >-\n    v0.1 Task to run foo"
+}
+}`)
 
 func TestGetIneractiveE2E(t *testing.T) {
 	tknhub, err := cli.NewTknHubRunner()
@@ -70,35 +58,18 @@ func TestGetIneractiveE2E(t *testing.T) {
 		})
 
 	})
-	t.Logf("Running Get Command for task")
-
-	t.Run("Interactive mode for get command", func(t *testing.T) {
-		tknhub.RunInteractiveTests(t, &cli.Prompt{
-			CmdArgs: []string{"get", "task"},
-			Procedure: func(c *expect.Console) error {
-				if _, err := c.ExpectString("Select task:"); err != nil {
-					return err
-				}
-				if _, err := c.SendLine("az"); err != nil {
-					return err
-				}
-				if _, err := c.ExpectString("Select version:"); err != nil {
-					return err
-				}
-				if _, err := c.SendLine(string(terminal.KeyEnter)); err != nil {
-					return err
-				}
-				if _, err := c.ExpectEOF(); err != nil {
-					return err
-				}
-
-				c.Close()
-				return nil
-			}})
-	})
 
 	t.Run("Result for get command when resource name and version is passed", func(t *testing.T) {
-		res := tknhub.MustSucceed(t, "get", "task", "tkn", "--version=0.1")
+
+		go func() {
+			http.HandleFunc("/v1/resource/tekton/task/foo/0.1/yaml", func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte(apiResponse))
+			})
+			log.Fatal(http.ListenAndServe(":8080", nil))
+		}()
+
+		res := tknhub.MustSucceed(t, "get", "task", "foo", "--version=0.1", "--from=tekton", "--api-server=http://localhost:8080")
 		assert.Equal(t, expected, res.Stdout())
 	})
 }
