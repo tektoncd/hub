@@ -13,7 +13,7 @@ RUN npm run build
 # Stage 2 - the production environment
 FROM nginxinc/nginx-unprivileged
 COPY --from=BUILD /app/build /usr/share/nginx/html
-COPY image/start.sh /usr/bin/
+COPY ui/image/start.sh /usr/bin/
 
 USER root
 RUN chmod ugo+rw /usr/share/nginx/html/config.js  && \
@@ -23,6 +23,6 @@ USER nginx
 
 EXPOSE 8080
 
-COPY image/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ui/image/nginx.conf /etc/nginx/conf.d/default.conf
 
 CMD /usr/bin/start.sh

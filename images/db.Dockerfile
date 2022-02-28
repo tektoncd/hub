@@ -11,7 +11,7 @@ RUN apk --no-cache add ca-certificates && addgroup -S hub && adduser -S hub -G h
 USER hub
 
 WORKDIR /app
-COPY --from=builder /go/src/github.com/tektoncd/hub/api/db-migration /app/db-migration
+COPY --from=builder /go/src/github.com/tektoncd/hub/db-migration /app/db-migration
 EXPOSE 8000
 
 CMD [ "/app/db-migration" ]
