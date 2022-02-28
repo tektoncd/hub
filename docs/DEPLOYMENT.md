@@ -170,6 +170,7 @@ Edit `02-api/20-api-secret.yaml` and update the configuration
 - For JWT_SIGNING_KEY, you can add any random string, this is used to sign the JWT created for users.
 - For `ACCESS_JWT_EXPIRES_IN` and `REFRESH_JWT_EXPIRES_IN` add time you want the jwt to be expired in. Refresh time should be greater than Access time.
   eg. 1m = 1 minute, 1h = 1 hour, 1d = 1 day
+  - **NOTE**: Supported formats for `ACCESS_JWT_EXPIRES_IN` and `REFRESH_JWT_EXPIRES_IN` are w(weeks), d(days), h(hours), m(min) and s(sec)
 
 ```yaml
 apiVersion: v1
