@@ -20,10 +20,11 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
-	"git.maze.io/go/duration"
+	"github.com/hako/durafmt"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 	"github.com/tektoncd/hub/api/gen/log"
@@ -401,9 +402,25 @@ func jwtConfig() (*JWTConfig, error) {
 }
 
 func computeDuration(dur string) (time.Duration, error) {
-	d, err := duration.ParseDuration(dur)
-	if err != nil {
-		return 0, err
+	switch true {
+	case strings.Contains(dur, "d"):
+		days, err := strconv.Atoi(dur[:len(dur)-1])
+		if err != nil {
+			return 0, err
+		}
+		dur = fmt.Sprintf("%dh", (days * 24))
+
+	case strings.Contains(dur, "w"):
+		weeks, err := strconv.Atoi(dur[:len(dur)-1])
+		if err != nil {
+			return 0, err
+		}
+		dur = fmt.Sprintf("%dh", (weeks * 7 * 24))
 	}
-	return time.Duration(d), nil
+
+	d, err := durafmt.ParseString(dur)
+	if err != nil {
+		return 0, fmt.Errorf("JWT doesn't support the duration specified %s. \nSupported formats are w(weeks), d(days), h(hours), m(min), s(sec)", dur)
+	}
+	return d.Duration(), nil
 }

@@ -3,7 +3,6 @@ module github.com/tektoncd/hub
 go 1.14
 
 require (
-	git.maze.io/go/duration v0.0.0-20160924141736-faac084b6075
 	github.com/AlecAivazis/survey/v2 v2.2.12
 	github.com/Netflix/go-expect v0.0.0-20200312175327-da48e75238e2
 	github.com/dimfeld/httptreemux/v5 v5.3.0 // indirect
@@ -15,6 +14,7 @@ require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/sessions v1.1.1
+	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
 	github.com/hinshun/vt10x v0.0.0-20180616224451-1954e6464174
 	github.com/ikawaha/goahttpcheck v1.3.1
 	github.com/joho/godotenv v1.3.0

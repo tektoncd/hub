@@ -14,7 +14,6 @@ contrib.go.opencensus.io/exporter/stackdriver/monitoredresource/aws
 contrib.go.opencensus.io/exporter/stackdriver/monitoredresource/gcp
 # git.maze.io/go/duration v0.0.0-20160924141736-faac084b6075
 ## explicit
-git.maze.io/go/duration
 # github.com/AlecAivazis/survey/v2 v2.2.12
 ## explicit
 github.com/AlecAivazis/survey/v2
@@ -232,6 +231,9 @@ github.com/grpc-ecosystem/grpc-gateway/runtime
 github.com/grpc-ecosystem/grpc-gateway/utilities
 # github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542
 github.com/h2non/parth
+# github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
+## explicit
+github.com/hako/durafmt
 # github.com/hashicorp/errwrap v1.0.0
 github.com/hashicorp/errwrap
 # github.com/hashicorp/go-multierror v1.1.0
