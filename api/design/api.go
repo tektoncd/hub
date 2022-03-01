@@ -37,7 +37,6 @@ var _ = API("hub", func() {
 			"catalog",
 			"category",
 			"rating",
-			"resource",
 			"status",
 			"swagger",
 		)
