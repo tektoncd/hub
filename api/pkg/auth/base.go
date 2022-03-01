@@ -17,6 +17,7 @@ package auth
 import (
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -50,7 +51,8 @@ func AuthProvider(r *mux.Router, api app.Config) {
 	gothic.Store = store
 
 	var AUTH_BASE_URL = os.Getenv("AUTH_BASE_URL")
-	var AUTH_URL = AUTH_BASE_URL + "/auth/%s/callback"
+
+	var AUTH_URL = strings.TrimSuffix(AUTH_BASE_URL, "/") + "/auth/%s/callback"
 
 	githubAuth := provider.GithubProvider(AUTH_URL)
 	gitlabAuth := provider.GitlabProvider(AUTH_URL)
