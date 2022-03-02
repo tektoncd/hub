@@ -16,6 +16,7 @@ package install
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -57,34 +58,45 @@ var resVersion = &res.ResourceVersionData{
 	},
 }
 
-var deprecated = true
-var resDeprecatedVersion = &res.ResourceVersionData{
-	ID:                  11,
-	Version:             "0.2",
-	DisplayName:         "foo-bar",
-	Description:         "v0.2 Task to run foo",
-	Deprecated:          &deprecated,
-	MinPipelinesVersion: "0.12",
-	RawURL:              "http://raw.github.url/foo/0.2/foo.yaml",
-	WebURL:              "http://web.github.com/foo/0.2/foo.yaml",
-	UpdatedAt:           "2020-01-01 12:00:00 +0000 UTC",
-	Resource: &res.ResourceData{
-		ID:   1,
-		Name: "foo",
-		Kind: "Task",
-		Catalog: &res.Catalog{
-			ID:   1,
-			Name: "tekton",
-			Type: "community",
-		},
-		Rating: 4.8,
-		Tags: []*res.Tag{
-			{
-				ID:   3,
-				Name: "cli",
-			},
-		},
-	},
+var task1 = `---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: foo
+  labels:
+    app.kubernetes.io/version: '0.3'
+  annotations:
+    tekton.dev/pipelines.minVersion: '0.13.1'
+    tekton.dev/tags: cli
+    tekton.dev/displayName: 'foo-bar'
+spec:
+  description: >-
+    v0.3 Task to run foo
+`
+
+var taskWithNewVersionYaml = &res.ResourceContent{
+	Yaml: &task1,
+}
+
+var task2 = `---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: foo
+  labels:
+    app.kubernetes.io/version: '0.2'
+  annotations:
+    tekton.dev/pipelines.minVersion: '0.13.1'
+    tekton.dev/tags: cli
+    tekton.dev/displayName: 'foo-bar'
+    tekton.dev/deprecated: 'true'
+spec:
+  description: >-
+    v0.2 Task to run foo
+`
+
+var taskWithOldVersionYaml = &res.ResourceContent{
+	Yaml: &task2,
 }
 
 func TestInstall_NewResource(t *testing.T) {
@@ -92,17 +104,22 @@ func TestInstall_NewResource(t *testing.T) {
 
 	defer gock.Off()
 
+	rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
+		Reply(200).
+		JSON(&resWithVersion.Projected)
+
 	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
+	resource := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(200).
-		JSON(&res.Projected)
-
-	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
-		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
+		JSON(&resource.Projected)
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
@@ -134,6 +151,15 @@ func TestInstall_ResourceNotFoundInHub(t *testing.T) {
 	defer gock.Off()
 
 	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.3/yaml").
+		Reply(404).
+		JSON(&goa.ServiceError{
+			ID:      "123456",
+			Name:    "not-found",
+			Message: "resource not found",
+		})
+
+	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(404).
 		JSON(&goa.ServiceError{
@@ -160,17 +186,22 @@ func TestInstall_ResourceAlreadyExistError(t *testing.T) {
 
 	defer gock.Off()
 
+	rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
+		Reply(200).
+		JSON(&resWithVersion.Projected)
+
 	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
+	resource := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(200).
-		JSON(&res.Projected)
-
-	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
-		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
+		JSON(&resource.Projected)
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
@@ -208,17 +239,22 @@ func TestInstall_UpgradeError(t *testing.T) {
 
 	defer gock.Off()
 
+	rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
+		Reply(200).
+		JSON(&resWithVersion.Projected)
+
 	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
+	resource := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(200).
-		JSON(&res.Projected)
-
-	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
-		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
+		JSON(&resource.Projected)
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
@@ -257,17 +293,22 @@ func TestInstall_SameVersionError(t *testing.T) {
 
 	defer gock.Off()
 
+	rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
+		Reply(200).
+		JSON(&resWithVersion.Projected)
+
 	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
+	resource := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(200).
-		JSON(&res.Projected)
-
-	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
-		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
+		JSON(&resource.Projected)
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
@@ -306,18 +347,22 @@ func TestInstall_LowerVersionError(t *testing.T) {
 
 	defer gock.Off()
 
+	rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
+		Reply(200).
+		JSON(&resWithVersion.Projected)
+
 	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
+	resource := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(200).
-		JSON(&res.Projected)
-
-	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
-		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
-
+		JSON(&resource.Projected)
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
 
@@ -355,17 +400,22 @@ func TestInstall_RespectingPipelinesVersion(t *testing.T) {
 
 	defer gock.Off()
 
+	rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
+		Reply(200).
+		JSON(&resWithVersion.Projected)
+
 	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
+	resource := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(200).
-		JSON(&res.Projected)
-
-	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
-		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
+		JSON(&resource.Projected)
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
@@ -401,17 +451,22 @@ func TestInstall_RespectingPipelinesVersionFailure(t *testing.T) {
 
 	defer gock.Off()
 
+	rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
+		Reply(200).
+		JSON(&resWithVersion.Projected)
+
 	resVersion := &res.ResourceVersion{Data: resVersion}
-	res := res.NewViewedResourceVersion(resVersion, "default")
+	resource := res.NewViewedResourceVersion(resVersion, "default")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.3").
 		Reply(200).
-		JSON(&res.Projected)
-
-	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
-		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
+		JSON(&resource.Projected)
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
@@ -447,17 +502,22 @@ func TestInstall_DeprecatedVersion(t *testing.T) {
 
 	defer gock.Off()
 
-	resVersion := &res.ResourceVersion{Data: resDeprecatedVersion}
-	res := res.NewViewedResourceVersion(resVersion, "0.2")
+	rVer := &res.ResourceVersionYaml{Data: taskWithOldVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.2")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
+		Reply(200).
+		JSON(&resWithVersion.Projected)
+
+	resVersion := &res.ResourceVersion{Data: resVersion}
+	resource := res.NewViewedResourceVersion(resVersion, "0.2")
 	gock.New(test.API).
 		Get("/resource/tekton/task/foo/0.2").
 		Reply(200).
-		JSON(&res.Projected)
-
-	gock.New("http://raw.github.url").
-		Get("/foo/0.2/foo.yaml").
-		Reply(200).
-		File("./testdata/foo-v0.2.yaml")
+		JSON(&resource.Projected)
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
