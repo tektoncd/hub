@@ -19,16 +19,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
+	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	pipelinev1beta1test "github.com/tektoncd/pipeline/test"
 	goa "goa.design/goa/v3/pkg"
 	"gopkg.in/h2non/gock.v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/dynamic/fake"
 )
 
 var resVersion = &res.ResourceVersionData{
@@ -110,7 +108,7 @@ func TestInstall_NewResource(t *testing.T) {
 	cli.SetStream(buf, buf)
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme())
+	dynamic := test.DynamicClient()
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -185,7 +183,7 @@ func TestInstall_ResourceAlreadyExistError(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -234,7 +232,7 @@ func TestInstall_UpgradeError(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -283,7 +281,7 @@ func TestInstall_SameVersionError(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -332,7 +330,7 @@ func TestInstall_LowerVersionError(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -373,7 +371,7 @@ func TestInstall_RespectingPipelinesVersion(t *testing.T) {
 	cli.SetStream(buf, buf)
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme())
+	dynamic := test.DynamicClient()
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -419,7 +417,7 @@ func TestInstall_RespectingPipelinesVersionFailure(t *testing.T) {
 	cli.SetStream(buf, buf)
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme())
+	dynamic := test.DynamicClient()
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -465,7 +463,7 @@ func TestInstall_DeprecatedVersion(t *testing.T) {
 	cli.SetStream(buf, buf)
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme())
+	dynamic := test.DynamicClient()
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})

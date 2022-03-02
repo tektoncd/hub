@@ -20,16 +20,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
+	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	pipelinev1beta1test "github.com/tektoncd/pipeline/test"
 	"gopkg.in/h2non/gock.v1"
 	"gotest.tools/v3/golden"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/dynamic/fake"
 )
 
 var resVersion = &res.ResourceData{
@@ -93,7 +91,7 @@ func TestUpdateAvailable(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -152,7 +150,7 @@ func TestUpdateAvailable_WithSkippedTasks(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTasks[0], version), cb.UnstructuredV1beta1T(existingTasks[1], version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTasks[0], version), cb.UnstructuredV1beta1T(existingTasks[1], version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: existingTasks})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -201,7 +199,7 @@ func TestNoUpdateAvailable(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -249,7 +247,7 @@ func TestNoUpdateAvailable_TaskNotInstalledViaHubCLI(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -297,7 +295,7 @@ func TestUpdateAvailable_PipelinesUnknown(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -350,7 +348,7 @@ func TestUpdateAvailable_WithSkippedTasks_PipelinesUnknown(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTasks[0], version), cb.UnstructuredV1beta1T(existingTasks[1], version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTasks[0], version), cb.UnstructuredV1beta1T(existingTasks[1], version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: existingTasks})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
