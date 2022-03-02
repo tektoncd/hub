@@ -16,6 +16,7 @@ package downgrade
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -67,6 +68,46 @@ var ver02 = &res.ResourceVersionData{
 	Version: "0.2",
 	RawURL:  "http://raw.github.url/foo/0.2/foo.yaml",
 	WebURL:  "http://web.github.com/foo/0.2/foo.yaml",
+}
+
+var task1 = `---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: foo
+  labels:
+    app.kubernetes.io/version: '0.3'
+  annotations:
+    tekton.dev/pipelines.minVersion: '0.13.1'
+    tekton.dev/tags: cli
+    tekton.dev/displayName: 'foo-bar'
+spec:
+  description: >-
+    v0.3 Task to run foo
+`
+
+var taskWithNewVersionYaml = &res.ResourceContent{
+	Yaml: &task1,
+}
+
+var task2 = `---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: foo
+  labels:
+    app.kubernetes.io/version: '0.2'
+  annotations:
+    tekton.dev/pipelines.minVersion: '0.13.1'
+    tekton.dev/tags: cli
+    tekton.dev/displayName: 'foo-bar'
+spec:
+  description: >-
+    v0.2 Task to run foo
+`
+
+var taskWitholdVersionYaml = &res.ResourceContent{
+	Yaml: &task2,
 }
 
 func TestDowngrade_ResourceNotExist(t *testing.T) {
@@ -167,10 +208,20 @@ func TestDowngrade(t *testing.T) {
 		Reply(200).
 		JSON(&ver.Projected)
 
-	gock.New("http://raw.github.url").
-		Get("/foo/0.2/foo.yaml").
+	rVer := &res.ResourceVersionYaml{Data: taskWitholdVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.2")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
 		Reply(200).
-		File("./testdata/foo-v0.2.yaml")
+		JSON(&resWithVersion.Projected)
+
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.2").
+		Reply(200).
+		JSON(&resource.Projected)
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
@@ -224,10 +275,20 @@ func TestDowngrade_ToSpecificVersion(t *testing.T) {
 		Reply(200).
 		JSON(&ver.Projected)
 
-	gock.New("http://raw.github.url").
-		Get("/foo/0.2/foo.yaml").
+	rVer := &res.ResourceVersionYaml{Data: taskWitholdVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.2")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
 		Reply(200).
-		File("./testdata/foo-v0.2.yaml")
+		JSON(&resWithVersion.Projected)
+
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.2").
+		Reply(200).
+		JSON(&resource.Projected)
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
@@ -282,10 +343,20 @@ func TestDowngrade_SameVersionError(t *testing.T) {
 		Reply(200).
 		JSON(&ver.Projected)
 
-	gock.New("http://raw.github.url").
-		Get("/foo/0.3/foo.yaml").
+	rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
 		Reply(200).
-		File("./testdata/foo-v0.3.yaml")
+		JSON(&resWithVersion.Projected)
+
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.3").
+		Reply(200).
+		JSON(&resource.Projected)
 
 	existingTask := &v1beta1.Task{
 		ObjectMeta: metav1.ObjectMeta{
@@ -387,11 +458,20 @@ func TestDowngrade_ToSpecificVersionRespectingPipelinesVersionSuccess(t *testing
 		Reply(200).
 		JSON(&ver.Projected)
 
-	gock.New("http://raw.github.url").
-		Get("/foo/0.2/foo.yaml").
-		Reply(200).
-		File("./testdata/foo-v0.2.yaml")
+	rVer := &res.ResourceVersionYaml{Data: taskWitholdVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
 
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.2")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
+		Reply(200).
+		JSON(&resWithVersion.Projected)
+
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.2").
+		Reply(200).
+		JSON(&resource.Projected)
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
 
@@ -449,11 +529,20 @@ func TestDowngrade_ToSpecificVersionRespectingPipelinesVersionFailure(t *testing
 		Get("/resource/1/versions").
 		Reply(200).
 		JSON(&ver.Projected)
+	rVer := &res.ResourceVersionYaml{Data: taskWitholdVersionYaml}
+	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
 
-	gock.New("http://raw.github.url").
-		Get("/foo/0.2/foo.yaml").
+	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.2")
+
+	gock.New(test.API).
+		Get("/resource/" + resInfo + "/yaml").
 		Reply(200).
-		File("./testdata/foo-v0.2.yaml")
+		JSON(&resWithVersion.Projected)
+
+	gock.New(test.API).
+		Get("/resource/tekton/task/foo/0.2").
+		Reply(200).
+		JSON(&resource.Projected)
 
 	buf := new(bytes.Buffer)
 	cli.SetStream(buf, buf)
