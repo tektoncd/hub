@@ -39,6 +39,8 @@ type ResourceResult struct {
 	data                    []byte
 	yaml                    []byte
 	status                  int
+	yamlStatus              int
+	yamlErr                 error
 	err                     error
 	version                 string
 	set                     bool
@@ -86,14 +88,18 @@ func (c *client) GetResource(opt ResourceOption) ResourceResult {
 // GetResource queries the data using Hub Endpoint
 func (c *client) GetResourceYaml(opt ResourceOption) ResourceResult {
 
-	yaml, status, err := c.Get(fmt.Sprintf("/v1/resource/%s/%s/%s/%s/yaml", opt.Catalog, opt.Kind, opt.Name, opt.Version))
+	yaml, yamlStatus, yamlErr := c.Get(fmt.Sprintf("/v1/resource/%s/%s/%s/%s/yaml", opt.Catalog, opt.Kind, opt.Name, opt.Version))
+	data, status, err := c.Get(opt.Endpoint())
 
 	return ResourceResult{
-		yaml:    yaml,
-		version: opt.Version,
-		status:  status,
-		err:     err,
-		set:     false,
+		data:       data,
+		yaml:       yaml,
+		version:    opt.Version,
+		status:     status,
+		err:        err,
+		yamlStatus: yamlStatus,
+		yamlErr:    yamlErr,
+		set:        false,
 	}
 }
 
@@ -192,6 +198,17 @@ func (rr *ResourceResult) Resource() (interface{}, error) {
 
 // Resource returns the resource found
 func (rr *ResourceResult) ResourceYaml() (string, error) {
+
+	if rr.yamlErr != nil {
+		return "", rr.err
+	}
+	if rr.set {
+		return "", nil
+	}
+
+	if rr.yamlStatus == http.StatusNotFound {
+		return "", fmt.Errorf("No Resource Found")
+	}
 
 	res := resourceYaml{}
 	if err := json.Unmarshal(rr.yaml, &res); err != nil {
