@@ -41,6 +41,7 @@ For example, you can poll a TaskRun object to wait for it to have a Status.Condi
 	}, "TaskRunHasCondition")
 
 */
+
 package test
 
 import (
@@ -88,6 +89,26 @@ func WaitForTaskRunState(ctx context.Context, c *clients, name string, inState C
 
 	return pollImmediateWithContext(ctx, func() (bool, error) {
 		r, err := c.TaskRunClient.Get(ctx, name, metav1.GetOptions{})
+		if err != nil {
+			return true, err
+		}
+		return inState(&r.Status)
+	})
+}
+
+// WaitForRunState polls the status of the Run called name from client every
+// interval until inState returns `true` indicating it is done, returns an
+// error or timeout. desc will be used to name the metric that is emitted to
+// track how long it took for name to get into the state checked by inState.
+func WaitForRunState(ctx context.Context, c *clients, name string, polltimeout time.Duration, inState ConditionAccessorFn, desc string) error {
+	metricName := fmt.Sprintf("WaitForRunState/%s/%s", name, desc)
+	_, span := trace.StartSpan(context.Background(), metricName)
+	defer span.End()
+
+	ctx, cancel := context.WithTimeout(ctx, polltimeout)
+	defer cancel()
+	return pollImmediateWithContext(ctx, func() (bool, error) {
+		r, err := c.RunClient.Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			return true, err
 		}

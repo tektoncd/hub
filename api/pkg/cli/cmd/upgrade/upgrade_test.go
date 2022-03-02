@@ -19,15 +19,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
+	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	pipelinev1beta1test "github.com/tektoncd/pipeline/test"
 	"gopkg.in/h2non/gock.v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/dynamic/fake"
 )
 
 var resVersion = &res.ResourceVersionData{
@@ -62,7 +60,7 @@ func TestUpgrade_ResourceNotExist(t *testing.T) {
 	cli := test.NewCLI()
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme())
+	dynamic := test.DynamicClient()
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -90,7 +88,7 @@ func TestUpgrade_VersionCatalogMissing(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -119,7 +117,7 @@ func TestUpgrade_VersionMissing(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -167,7 +165,7 @@ func TestUpgrade_ToSpecificVersion(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -214,7 +212,7 @@ func TestUpgrade_SameVersionError(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -261,7 +259,7 @@ func TestUpgrade_LowerVersionError(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -311,7 +309,7 @@ func TestUpgrade_ToSpecificVersion_RespectingPipelineSuccess(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
@@ -366,7 +364,7 @@ func TestUpgrade_ToSpecificVersion_RespectingPipelineFailure(t *testing.T) {
 	}
 
 	version := "v1beta1"
-	dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme(), cb.UnstructuredV1beta1T(existingTask, version))
+	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
 	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})

@@ -22,9 +22,7 @@ import (
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic/fake"
 )
 
 func TestGetPipelineVersion(t *testing.T) {
@@ -48,7 +46,7 @@ func TestGetPipelineVersion(t *testing.T) {
 	}}
 	for _, tp := range testParams {
 		t.Run(tp.name, func(t *testing.T) {
-			dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme())
+			dynamic := test.DynamicClient()
 			deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
 			_, err := dynamic.Resource(deploymentRes).Namespace(tp.namespace).Create(context.TODO(), tp.deployment, metav1.CreateOptions{})
 			if err != nil {
@@ -81,7 +79,7 @@ func TestGetPipelineVersionViaConfigMap(t *testing.T) {
 	}}
 	for _, tp := range testParams {
 		t.Run(tp.name, func(t *testing.T) {
-			dynamic := fake.NewSimpleDynamicClient(runtime.NewScheme())
+			dynamic := test.DynamicClient()
 			deploymentRes := schema.GroupVersionResource{Group: "", Version: "v1", Resource: "configmaps"}
 			_, err := dynamic.Resource(deploymentRes).Namespace(tp.namespace).Create(context.TODO(), tp.configMap, metav1.CreateOptions{})
 			if err != nil {
