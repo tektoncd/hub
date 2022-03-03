@@ -44,10 +44,10 @@ Lets build and push all images to a registry and then create deployments.
 
 ### UI Image
 
-Ensure you are in `ui` directory and logged in you image registry.
+Ensure you are in the root of project and logged in you image registry.
 
 ```
-docker build -t <image> . && docker push <image>
+docker build -f images/ui.Dockerfile -t <image> . && docker push <image>
 ```
 
 Replace `<image>` with the registry and image name.
@@ -55,12 +55,12 @@ eg. `quay.io/<username>/ui`
 
 ### API & DB Migration Image
 
-Ensure you are in `api` directory and logged in you image registry.
+Ensure you are in the root of project and logged in you image registry.
 
 Build the API image using below command
 
 ```
-docker build -t <image> . && docker push <image>
+docker build -f images/api.Dockerfile -t <image> . && docker push <image>
 ```
 
 Replace `<image>` with the registry and image name.
@@ -69,13 +69,19 @@ eg. `quay.io/<username>/api`
 Now, Build the Db migration image using below command
 
 ```
-docker build -f db.Dockerfile -t <image> . && docker push <image>
+docker build -f images/db.Dockerfile -t <image> . && docker push <image>
 ```
 
 Replace `<image>` with the registry and image name.
 eg. `quay.io/<username>/db-migration`
 
 Make sure all images are public before creating deployments.
+
+---
+
+> ### NOTE: If You have deployed Hub v1.6.0 and want to upgrade to Hub v1.7.0 then please follow [this][upgrade-v1.6.0-to-v1.7.0] doc for next steps. As we have renamed config metadata name and labels in the configs of db, api and ui.
+
+---
 
 ---
 
@@ -105,7 +111,7 @@ Wait till the pod comes in a running state
 kubectl get pod -n tekton-hub -w
 ```
 
-## Run Db migration
+## Run DB migration
 
 Once the pod is in running state now we can run db migration. This will create all the tables required in the database.
 
@@ -120,17 +126,17 @@ This will create a job which will read the db credentials from the secret create
 ```bash
 $ kubectl get pods -n tekton-hub
 NAME                   READY   STATUS      RESTARTS   AGE
-db-589d44fdd5-ksf8v    1/1     Running     0          50s
-db-migration-8vhpd     0/1     Completed   0          17s
+tekton-hub-db-589d44fdd5-ksf8v    1/1     Running     0          50s
+tekton-hub-db-migration-8vhpd     0/1     Completed   0          17s
 ```
 
-The `Pod` will go into `Completed` state if the job succeeds. You can also check the logs using `kubectl logs -n tekton-hub db-migration-8vhpd`. In case of any failure the `Pod` will go into `Error` state.
+The `Pod` will go into `Completed` state if the job succeeds. You can also check the logs using `kubectl logs -n tekton-hub tekton-hub-db-migration-8vhpd`. In case of any failure the `Pod` will go into `Error` state.
 
 ```bash
 $ kubectl get pods -n tekton-hub
 NAME                   READY   STATUS      RESTARTS   AGE
-db-589d44fdd5-ksf8v    1/1     Running     0          50s
-db-migration-8vhpd     0/1     Error       0          17s
+tekton-hub-db-589d44fdd5-ksf8v    1/1     Running     0          50s
+tekton-hub-db-migration-8vhpd     0/1     Error       0          17s
 ```
 
 ## Deploy API Service
@@ -145,22 +151,23 @@ db-migration-8vhpd     0/1     Error       0          17s
 
 - If deploying on Kubernetes:-
 
-    - Create the secret containing tls cert and tls key both for API and Oauth server. Example as follows:
+  - Create the secret containing tls cert and tls key both for API and Oauth server. Example as follows:
 
-      ```bash
-      kubectl create secret tls api-hub-tekton-dev-tls --cert=path/to/cert/file --key=path/to/key/file -n tekton-hub
-      ```
+    ```bash
+    kubectl create secret tls api-hub-tekton-dev-tls --cert=path/to/cert/file --key=path/to/key/file -n tekton-hub
+    ```
 
-    - Apply the Ingress
+  - Apply the Ingress
 
-      ```bash
-      kubectl apply -f 04-kubernetes/40-api-ingress.yaml -f 04-kubernetes/40-auth-ingress.yaml -n tekton-hub
-      ```
+    ```bash
+    kubectl apply -f 04-kubernetes/40-api-ingress.yaml -f 04-kubernetes/40-auth-ingress.yaml -n tekton-hub
+    ```
 
 ### Create Git Oauth Applications
-- **Github** - Create a GitHub OAuth with `Homepage URL` and `Authorization callback URL` as `<oauth-route>`. Follow the steps given [here][github-oauth-steps] to create a GitHub OAuth.
-- **Gitlab** - Create a Gitlab Oauth with `REDIRECT_URI` as `<oauth-route>/auth/gitlab/callback`. Follow the steps given [here][gitlab-oauth-steps] to create a Gitlab Oauth
-- **BitBucket** - Create a BitBucket Oauth with `Callback URL` as `<oauth-route>`. Follow the steps given [here][bitbucket-oauth-steps] to create a BitBucket Oauth
+
+- **Github** - Create a GitHub OAuth with `Homepage URL` and `Authorization callback URL` as `<auth-route>`. Follow the steps given [here][github-oauth-steps] to create a GitHub OAuth.
+- **Gitlab** - Create a Gitlab Oauth with `REDIRECT_URI` as `<auth-route>/auth/gitlab/callback`. Follow the steps given [here][gitlab-oauth-steps] to create a Gitlab Oauth
+- **BitBucket** - Create a BitBucket Oauth with `Callback URL` as `<auth-route>`. Follow the steps given [here][bitbucket-oauth-steps] to create a BitBucket Oauth
 
 ### Update API Secret
 
@@ -176,7 +183,7 @@ Edit `02-api/20-api-secret.yaml` and update the configuration
 apiVersion: v1
 kind: Secret
 metadata:
-  name: api
+  name: tekton-hub-api
   namespace: tekton-hub
 type: Opaque
 stringData:
@@ -189,7 +196,7 @@ stringData:
   JWT_SIGNING_KEY: a-long-signing-key
   ACCESS_JWT_EXPIRES_IN: time such as 15m
   REFRESH_JWT_EXPIRES_IN: time such as 15m
-  AUTH_BASE_URL: Oauth route  
+  AUTH_BASE_URL: auth route
   GHE_URL: Add Github Enterprise URL in case of authenticating through Github Enterprise (Example (https|http)://myghe.com) --> Do not provide the catalog URL
   GLE_URL: Add Gitlab Enterprise URL in case of authenticating through Gitlab Enterprise (Example (https|http)://mygle.com) --> Do not provide the catalog URL
 ```
@@ -198,9 +205,9 @@ stringData:
 
 - Update the [config.yaml][config-yaml] to add at least one user with all scopes such as
 
-    - refresh a catalog,
-    - refresh config file
-    - create an agent token
+  - refresh a catalog,
+  - refresh config file
+  - create an agent token
 
 - For example
 
@@ -222,10 +229,9 @@ scopes:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: api
-  namespace: tekton-hub
+  name: tekton-hub-api
   labels:
-    app: api
+    app: tekton-hub-api
 data:
   CONFIG_FILE_URL: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml ## Change the file URL here
 ```
@@ -242,10 +248,10 @@ please follow the below steps:
 
 1. Create the ssh keys if not already present in `~/.ssh` dir.
 1. Create kubernetes secret which will contain the ssh keys using the following command
-    ```sh
-    kubectl create secret generic tekton-hub-api-ssh-crds --from-file=id_rsa="/path/to/id_rsa" --from-file=id_rsa.pub="/path/to/id_rsa.pub" --from-file=known_hosts="/path/to/known_hosts"
-    ```
-  Please make sure that secrets are created with the name `tekton-hub-api-ssh-crds`
+   ```sh
+   kubectl create secret generic tekton-hub-api-ssh-crds --from-file=id_rsa="/path/to/id_rsa" --from-file=id_rsa.pub="/path/to/id_rsa.pub" --from-file=known_hosts="/path/to/known_hosts"
+   ```
+   Please make sure that secrets are created with the name `tekton-hub-api-ssh-crds`
 
 ### Update API Image
 
@@ -255,7 +261,7 @@ Edit the `02-api/22-api-deployment.yaml` and replace the image with the one crea
 kubectl apply -f 02-api/ -n tekton-hub
 ```
 
-This will create the deployment, secret, configmap and a NodePort service to expose the API server.
+This will create the pvc, deployment, secret, configmap and a NodePort service to expose the API server.
 
 #### Verify if api route is accessible
 
@@ -283,26 +289,26 @@ After the deployment is done successfully, we need to expose the URL to access t
 
 - If deploying on Kubernetes:-
 
-    - Create the secret containing tls cert and tls key
+  - Create the secret containing tls cert and tls key
 
-      ```bash
-      kubectl create secret tls ui-hub-tekton-dev-tls --cert=path/to/cert/file --key=path/to/key/file -n tekton-hub
-      ```
+    ```bash
+    kubectl create secret tls ui-hub-tekton-dev-tls --cert=path/to/cert/file --key=path/to/key/file -n tekton-hub
+    ```
 
-    - Apply the Ingress
+  - Apply the Ingress
 
-      ```bash
-      kubectl apply -f 04-kubernetes/41-ui-ingress.yaml -n tekton-hub
-      ```
+    ```bash
+    kubectl apply -f 04-kubernetes/41-ui-ingress.yaml -n tekton-hub
+    ```
 
 ### Update UI ConfigMap
 
-Edit `config/03-ui/30-ui-configmap.yaml` and by setting the API URL, Oauth URL and Redirect URL.
+Edit `config/03-ui/30-ui-configmap.yaml` and by setting the API URL, auth URL and Redirect URL.
 
 You can get the API URL using below command (OpenShift)
 
 ```
-  kubectl get -n tekton-hub routes api --template='https://{{ .spec.host }}'
+  kubectl get -n tekton-hub routes tekton-hub-api --template='https://{{ .spec.host }}'
 ```
 
 ```yaml
@@ -310,12 +316,11 @@ You can get the API URL using below command (OpenShift)
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ui
-  namespace: tekton-hub
+  name: tekton-hub-ui
 data:
   API_URL: API URL   <<< Update this by API url
   API_VERSION: API VERSION  <<< Update this by API version (For e.g-"v1")
-  AUTH_BASE_URL: OAUTH URL << Update this by oauth url
+  AUTH_BASE_URL: AUTH URL << Update this by auth url
   REDIRECT_URI: UI URL << Update this by ui url
 ```
 
@@ -339,10 +344,10 @@ eg. wait till status of UI pod is running
 
 ```
 NAME                   READY   STATUS      RESTARTS   AGE
-api-6dfc6f97d9-vk66r   1/1     Running     3          21m
-db-9bd4cdf99-zsq89     1/1     Running     0          21m
-db-migration-26ngs     0/1     Completed   0          21m
-ui-55fc66cc6b-69dsp    1/1     Running     0          58s
+tekton-hub-api-6dfc6f97d9-vk66r   1/1     Running     3          21m
+tekton-hub-db-9bd4cdf99-zsq89     1/1     Running     0          21m
+tekton-hub-db-migration-26ngs     0/1     Completed   0          21m
+tekton-hub-ui-55fc66cc6b-69dsp    1/1     Running     0          58s
 ```
 
 #### Verify if ui route is accessible
@@ -350,7 +355,7 @@ ui-55fc66cc6b-69dsp    1/1     Running     0          58s
 For `OpenShift`:-
 
 ```
-    kubectl get routes -n tekton-hub ui --template='https://{{ .spec.host }} '
+    kubectl get routes -n tekton-hub tekton-hub-ui --template='https://{{ .spec.host }} '
 ```
 
 Open the URL in a browser.
@@ -435,7 +440,6 @@ NOTE: The catalog refresh will add new resources or update existing resource if 
    kind: Secret
    metadata:
      name: catalog-refresh
-     namespace: tekton-hub
    type: Opaque
    stringData:
      HUB_TOKEN: hub token
@@ -526,3 +530,4 @@ Replace `<access-token>` with your JWT token. you must have `config-refresh` sco
 [catalog]: https://github.com/tektoncd/catalog
 [catalog-tep]: https://github.com/tektoncd/community/blob/main/teps/0003-tekton-catalog-organization.md
 [hub-config]: https://github.com/tektoncd/hub/blob/main/config.yaml
+[upgrade-v1.6.0-to-v1.7.0]: https://github.com/tektoncd/hub/blob/main/docs/UPGRADE_V1.6.0_TO_V1.7.0.md

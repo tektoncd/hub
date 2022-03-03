@@ -112,6 +112,8 @@ For `JWT_SIGNING_KEY`, you can use any random word.
 
 For `ACCESS_JWT_EXPIRES_IN` and `REFRESH_JWT_EXPIRES_IN` you can set the time as per your convenience. Example `15m`, `10y`.
 
+For `AUTH_BASE_URL`, use the `http://localhost:4200`
+
 ### Running API Service
 
 Once the database is setup and the migration has been run, you can run api service by
