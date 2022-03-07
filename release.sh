@@ -140,12 +140,12 @@ replaceImageName() {
   sed -i "s@image: quay.io/tekton-hub/db-migration@image: ${REGISTRY_BASE_URL}/db-migration:$RELEASE_VERSION@g" ${RELEASE_DIR}/db-migration.yaml
 
   # Replace the api image
-  sed -i "s@image: quay.io/tekton-hub/api@image: ${REGISTRY_BASE_URL}/api:$RELEASE_VERSION@g" ${RELEASE_DIR}/api-k8s.yaml
+  sed -i "s@image: quay.io/tekton-hub/api@image: ${REGISTRY_BASE_URL}/api:$RELEASE_VERSION@g" ${RELEASE_DIR}/api-kubernetes.yaml
 
   sed -i "s@image: quay.io/tekton-hub/api@image: ${REGISTRY_BASE_URL}/api:$RELEASE_VERSION@g" ${RELEASE_DIR}/api-openshift.yaml
 
   #Replace the ui image
-  sed -i "s@image: quay.io/tekton-hub/ui@image: ${REGISTRY_BASE_URL}/ui:$RELEASE_VERSION@g" ${RELEASE_DIR}/ui-k8s.yaml
+  sed -i "s@image: quay.io/tekton-hub/ui@image: ${REGISTRY_BASE_URL}/ui:$RELEASE_VERSION@g" ${RELEASE_DIR}/ui-kubernetes.yaml
 
   sed -i "s@image: quay.io/tekton-hub/ui@image: ${REGISTRY_BASE_URL}/ui:$RELEASE_VERSION@g" ${RELEASE_DIR}/ui-openshift.yaml
 }
