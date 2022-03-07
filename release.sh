@@ -155,9 +155,9 @@ createGitTag() {
 
   hub release create --draft --prerelease -a db.yaml \
    -a db-migration.yaml \
-   -a  api-k8s.yaml \
+   -a  api-kubernetes.yaml \
    -a api-openshift.yaml \
-   -a  ui-k8s.yaml \
+   -a  ui-kubernetes.yaml \
    -a ui-openshift.yaml \
    -m "${RELEASE_VERSION}" "${RELEASE_VERSION}"
 }
