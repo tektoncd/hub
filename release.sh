@@ -51,7 +51,7 @@ getReleaseVersion() {
 buildDbMigrationImage() {
   info Building DB Migration Image
   echo -----------------------------------
-  ${DOCKER_CMD} build -f $SCRIPT_DIR/images/db.Dockerfile -t ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION}
+  ${DOCKER_CMD} build -f images/db.Dockerfile -t ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION}
   info DB Migration Image Build Successfully
   echo -----------------------------------
 }
@@ -59,7 +59,7 @@ buildDbMigrationImage() {
 buildApiImage() {
   info Building API Image
   echo -----------------------------------
-  ${DOCKER_CMD} build -f $SCRIPT_DIR/images/api.Dockerfile -t ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION}
+  ${DOCKER_CMD} build -f images/api.Dockerfile -t ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION}
   info API Image Build Successfully
   echo -----------------------------------
 }
@@ -67,7 +67,7 @@ buildApiImage() {
 buildUiImage() {
   info Building UI Image
   echo -----------------------------------
-  ${DOCKER_CMD} build -f $SCRIPT_DIR/images/ui.Dockerfile -t ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION}
+  ${DOCKER_CMD} build -f images/ui.Dockerfile -t ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION}
   info UI Image Build Successfully
   echo -----------------------------------
 }
@@ -75,7 +75,7 @@ buildUiImage() {
 db(){
 	info Creating DB Release Yaml
 
-  ko resolve -f 00-init  > "${RELEASE_DIR}"/db.yaml || {
+  ko resolve -f config/00-init  > "${RELEASE_DIR}"/db.yaml || {
     err 'db release build failed'
     return 1
   }
@@ -85,7 +85,7 @@ db(){
 db-migration(){
 	info Creating Db-Migration Release Yaml
 
-  ko resolve -f 01-db  > "${RELEASE_DIR}"/db-migration.yaml || {
+  ko resolve -f config/01-db  > "${RELEASE_DIR}"/db-migration.yaml || {
     err 'db-migration release build failed'
     return 1
   }
@@ -95,7 +95,7 @@ db-migration(){
 api-k8s(){
 	info Creating API Release Yaml
 
-  ko resolve -f 02-api  > "${RELEASE_DIR}"/api-k8s.yaml || {
+  ko resolve -f config/02-api  > "${RELEASE_DIR}"/api-kubernetes.yaml || {
     err 'api release build failed'
     return 1
   }
@@ -105,7 +105,7 @@ api-k8s(){
 api-openshift(){
 	info Creating API Release Yaml
 
-  ko resolve -f 02-api -f 04-openshift/40-api-route.yaml -f 04-openshift/40-auth-route.yaml > "${RELEASE_DIR}"/api-openshift.yaml || {
+  ko resolve -f config/02-api -f config/04-openshift/40-api-route.yaml -f config/04-openshift/40-auth-route.yaml > "${RELEASE_DIR}"/api-openshift.yaml || {
     err 'api release build failed'
     return 1
   }
@@ -115,7 +115,7 @@ api-openshift(){
 ui-k8s(){
 	info Creating UI Release Yaml
 
-  ko resolve -f 03-ui > "${RELEASE_DIR}"/ui-k8s.yaml || {
+  ko resolve -f config/03-ui > "${RELEASE_DIR}"/ui-kubernetes.yaml || {
     err 'ui release build failed'
     return 1
   }
@@ -125,7 +125,7 @@ ui-k8s(){
 ui-openshift(){
 	info Creating UI Release Yaml
 
-  ko resolve -f 03-ui -f 04-openshift/41-ui-route.yaml > "${RELEASE_DIR}"/ui-openshift.yaml || {
+  ko resolve -f config/03-ui -f config/04-openshift/41-ui-route.yaml > "${RELEASE_DIR}"/ui-openshift.yaml || {
     err 'ui release build failed'
     return 1
   }
@@ -172,18 +172,6 @@ main() {
   # Ask the release version to build images
   getReleaseVersion
 
-  # Generate the release yamls for db, db-migration, api and ui
-  echo "********************************************"
-  info     Generate the Release Yamls for Hub
-  echo "********************************************"
-  cd config
-  db
-  db-migration
-  api-k8s
-  api-openshift
-  ui-k8s
-  ui-openshift
-
   # Build images for db-migration, api and ui
   echo "********************************************"
   info        Build the Images for Hub
@@ -191,6 +179,17 @@ main() {
   buildDbMigrationImage
   buildApiImage
   buildUiImage
+
+  # Generate the release yamls for db, db-migration, api and ui
+  echo "********************************************"
+  info     Generate the Release Yamls for Hub
+  echo "********************************************"
+  db
+  db-migration
+  api-k8s
+  api-openshift
+  ui-k8s
+  ui-openshift
 
   # Change the image name with the release version specified
   echo "********************************************"
