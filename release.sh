@@ -51,7 +51,7 @@ getReleaseVersion() {
 buildDbMigrationImage() {
   info Building DB Migration Image
   echo -----------------------------------
-  ${DOCKER_CMD} build -f images/db.Dockerfile -t ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION}
+  ${DOCKER_CMD} build -f $SCRIPT_DIR/images/db.Dockerfile -t ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION}
   info DB Migration Image Build Successfully
   echo -----------------------------------
 }
@@ -59,7 +59,7 @@ buildDbMigrationImage() {
 buildApiImage() {
   info Building API Image
   echo -----------------------------------
-  ${DOCKER_CMD} build -f images/api.Dockerfile -t ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION}
+  ${DOCKER_CMD} build -f $SCRIPT_DIR/images/api.Dockerfile -t ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION}
   info API Image Build Successfully
   echo -----------------------------------
 }
@@ -67,7 +67,7 @@ buildApiImage() {
 buildUiImage() {
   info Building UI Image
   echo -----------------------------------
-  ${DOCKER_CMD} build -f images/ui.Dockerfile -t ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION}
+  ${DOCKER_CMD} build -f $SCRIPT_DIR/images/ui.Dockerfile -t ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION}
   info UI Image Build Successfully
   echo -----------------------------------
 }
