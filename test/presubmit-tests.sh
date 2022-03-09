@@ -109,6 +109,28 @@ yaml-lint() {
   }
 }
 
+goa-gen() {
+  go version
+
+  go get goa.design/goa/v3/cmd/goa@v3
+
+  goa version
+
+  make goa-gen  || {
+      err 'goa gen failed'
+      return 1
+  }
+
+  files=$(git diff api | wc -l)
+	if [[ ${files} == 0 ]];then
+    echo "    Git repo is clean."
+  else
+    echo "---------------------------------------"
+    echo "  🔴 Files are changed!! Please run 'goa gen' command."
+    return 1
+  fi
+}
+
 api-build(){
   make api-build || {
     err 'Api build failed'
@@ -161,6 +183,12 @@ build_tests() {
 unit_tests() {
   # run in a subshell so that path and shell options -eu -o pipefail will
   # will remain the same when it exits
+  (
+      set -eu -o pipefail
+
+      goa-gen || return 1
+  ) || exit 1
+
   (
     set -eu -o pipefail
 
