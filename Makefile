@@ -15,12 +15,12 @@ goa-gen: ## generate API Design
 	@echo "----------------------------"
 	@echo "-- Generating API Design... "
 	@echo "----------------------------"
-	cd api && goa gen github.com/tektoncd/hub/api/design
+	cd api && go mod vendor && goa gen github.com/tektoncd/hub/api/design
 
 	@echo "----------------------------"
 	@echo "- Generating v1 API Design... "
 	@echo "----------------------------"
-	cd api/v1 && goa gen github.com/tektoncd/hub/api/v1/design
+	cd api/v1 && go mod vendor && goa gen github.com/tektoncd/hub/api/v1/design
 
 .PHONY: generated
 generated: ## update the golden files
