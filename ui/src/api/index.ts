@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_URL, AUTH_BASE_URL, API_VERSION } from '../config/constants';
+import { API_URL, API_VERSION } from '../config/constants';
 import { ICategory } from '../store/category';
 import { IResource, IVersion } from '../store/resource';
 import { ITokenInfo, IUserProfile } from '../store/auth';
@@ -7,7 +7,6 @@ import { ICatalog } from '../store/catalog';
 import { IProvider } from '../store/provider';
 
 interface Token {
-  token: string;
   refreshInterval: string;
   expiresAt: number;
 }
@@ -19,6 +18,14 @@ interface TokenData {
 
 export interface AuthResponse {
   data: TokenData;
+}
+
+export interface AccessTokenResponse {
+  data: string;
+}
+
+export interface LogoutResponse {
+  data: boolean;
 }
 
 export interface Rating {
@@ -34,12 +41,14 @@ export interface Api {
   authentication(authCode: string): Promise<AuthResponse>;
   readme(resourceKey: string, version: string): Promise<string>;
   yaml(resourceKey: string, version: string): Promise<string>;
-  getRating(resourceId: number, token: string): Promise<Rating>;
-  setRating(resourceId: number, token: string, rating: number): Promise<void | null>;
-  getRefreshToken(refreshToken: string): Promise<ITokenInfo>;
-  getAccessToken(accessToken: string): Promise<ITokenInfo>;
-  profile(token: string): Promise<IUserProfile>;
+  getRating(resourceId: number): Promise<Rating>;
+  setRating(resourceId: number, rating: number): Promise<void | null>;
+  getRefreshToken(): Promise<ITokenInfo>;
+  getAccessToken(): Promise<ITokenInfo>;
+  profile(): Promise<IUserProfile>;
   providers(): Promise<IProvider>;
+  logout(): Promise<LogoutResponse>;
+  accessToken(): Promise<AccessTokenResponse>;
 }
 
 export class Hub implements Api {
@@ -70,7 +79,7 @@ export class Hub implements Api {
   async authentication(authCode: string) {
     try {
       return axios
-        .post(`${AUTH_BASE_URL}/auth/login?code=${authCode}`)
+        .post(`/auth/login?code=${authCode}`)
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
     } catch (err) {
@@ -119,14 +128,10 @@ export class Hub implements Api {
     }
   }
 
-  async getRating(resourceId: number, token: string) {
+  async getRating(resourceId: number) {
     try {
       return axios
-        .get(`${API_URL}/resource/${resourceId}/rating`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
+        .get(`/resource/${resourceId}/rating`)
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
     } catch (err) {
@@ -134,18 +139,10 @@ export class Hub implements Api {
     }
   }
 
-  async setRating(resourceId: number, token: string, rating: number) {
+  async setRating(resourceId: number, rating: number) {
     try {
       return axios
-        .put(
-          `${API_URL}/resource/${resourceId}/rating`,
-          { rating: rating },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        )
+        .put(`/resource/${resourceId}/rating`, { rating: rating })
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
     } catch (err) {
@@ -153,14 +150,11 @@ export class Hub implements Api {
     }
   }
 
-  async getRefreshToken(refreshToken: string) {
+  async getRefreshToken() {
     try {
       return axios({
         method: 'post',
-        url: `${AUTH_BASE_URL}/user/refresh/refreshtoken`,
-        headers: {
-          Authorization: `Bearer ${refreshToken}`
-        }
+        url: `/user/refresh/refreshtoken`
       })
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
@@ -169,14 +163,11 @@ export class Hub implements Api {
     }
   }
 
-  async getAccessToken(refreshToken: string) {
+  async getAccessToken() {
     try {
       return axios({
         method: 'post',
-        url: `${AUTH_BASE_URL}/user/refresh/accesstoken`,
-        headers: {
-          Authorization: `Bearer ${refreshToken}`
-        }
+        url: `/user/refresh/accesstoken`
       })
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
@@ -185,14 +176,10 @@ export class Hub implements Api {
     }
   }
 
-  async profile(token: string) {
+  async profile() {
     try {
       return axios
-        .get(`${AUTH_BASE_URL}/user/info`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
+        .get(`/user/info`)
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
     } catch (err) {
@@ -202,9 +189,31 @@ export class Hub implements Api {
 
   async providers() {
     try {
-      return axios.get(`${AUTH_BASE_URL}/auth/providers`).then((response) => response.data);
+      return axios.get(`/auth/providers`).then((response) => response.data);
     } catch (err) {
       return err.response;
+    }
+  }
+
+  async logout() {
+    try {
+      return axios
+        .post(`/user/logout `)
+        .then((response) => response.data)
+        .catch((err) => Promise.reject(err.response));
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async accessToken() {
+    try {
+      return axios
+        .post(`/user/accesstoken`)
+        .then((response) => response.data)
+        .catch((err) => Promise.reject(err.response));
+    } catch (err) {
+      return err;
     }
   }
 }

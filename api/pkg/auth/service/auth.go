@@ -207,7 +207,6 @@ func (s *service) HubAuthenticate(res http.ResponseWriter, req *http.Request) {
 	}
 
 	//Add cookie and response and send it to in header
-
 	refreshToken := cookie{
 		Name:     RefreshToken,
 		Value:    userTokens.Data.Refresh.Token,

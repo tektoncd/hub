@@ -31,7 +31,6 @@ import (
 )
 
 func GetChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	// service := validator.NewService(tc.APIConfig, "rating")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewGetHandler,
 		server.MountGetHandler,
@@ -194,7 +193,6 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 }
 
 func UpdateChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	// service := validator.NewService(tc.APIConfig, "rating")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewUpdateHandler,
 		server.MountUpdateHandler,

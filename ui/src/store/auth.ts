@@ -8,6 +8,10 @@ export const TokenInfo = types.model('TokenInfo', {
   refreshInterval: types.optional(types.string, '')
 });
 
+export const ExistingToken = types.model('ExistingToken', {
+  token: types.optional(types.string, '')
+});
+
 export const UserProfile = types.model('UserProfile', {
   userName: types.optional(types.string, ''),
   name: types.optional(types.string, ''),
@@ -23,6 +27,7 @@ export const Error = types.model('Error', {
 export type IUserProfile = Instance<typeof UserProfile>;
 export type ITokenInfo = Instance<typeof TokenInfo>;
 export type IError = Instance<typeof Error>;
+export type IExistingToken = Instance<typeof ExistingToken>;
 
 export interface AuthCodeProps {
   code: string;
@@ -37,6 +42,7 @@ export const AuthStore = types
     accessTokenInfo: types.optional(TokenInfo, {}),
     refreshTokenInfo: types.optional(TokenInfo, {}),
     profile: types.optional(UserProfile, {}),
+    existingToken: types.optional(ExistingToken, {}),
     isLoading: true,
     isAuthenticated: false,
     userRating: types.optional(types.number, 0),
@@ -46,12 +52,10 @@ export const AuthStore = types
   })
   .actions((self) => ({
     addAccessTokenInfo(item: ITokenInfo) {
-      self.accessTokenInfo.token = item.token;
       self.accessTokenInfo.expiresAt = item.expiresAt;
       self.accessTokenInfo.refreshInterval = item.refreshInterval;
     },
     addRefreshTokenInfo(item: ITokenInfo) {
-      self.refreshTokenInfo.token = item.token;
       self.refreshTokenInfo.expiresAt = item.expiresAt;
       self.refreshTokenInfo.refreshInterval = item.refreshInterval;
     },
@@ -59,6 +63,9 @@ export const AuthStore = types
       self.profile.userName = item.userName;
       self.profile.name = item.name;
       self.profile.avatarUrl = item.avatarUrl;
+    },
+    addaccessToken(item: ITokenInfo) {
+      self.existingToken.token = item.token;
     },
     setIsAuthenticated(l: boolean) {
       self.isAuthenticated = l;
@@ -90,11 +97,6 @@ export const AuthStore = types
           error.customMessage = '';
       }
       self.authErr = error;
-    },
-    logout() {
-      self.isAuthenticated = false;
-      self.isLoading = false;
-      self.userRating = 0;
     }
   }))
   .views((self) => ({
@@ -115,24 +117,42 @@ export const AuthStore = types
         self.addAccessTokenInfo(userDetails.access);
         self.addRefreshTokenInfo(userDetails.refresh);
 
+        localStorage.setItem('isLoggedIn', 'true');
+
         self.setIsAuthenticated(true);
         if (historyBack) {
           historyBack();
         }
       } catch (err) {
-        if (err === undefined) {
-          self.isAuthenticated = false;
-        } else {
-          const error: IError = {
-            status: err.status,
-            serverMessage: titleCase(err.data),
-            customMessage: ''
-          };
-          self.setErrorMessage(error);
-          self.authErr = error;
-        }
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data),
+          customMessage: ''
+        };
+        self.setErrorMessage(error);
+        self.authErr = error;
       }
       self.setLoading(false);
+    }),
+
+    logout: flow(function* () {
+      try {
+        const { api } = self;
+        const json = yield api.logout();
+        if (json.Data === true) {
+          self.isAuthenticated = false;
+          self.isLoading = false;
+          self.userRating = 0;
+        }
+      } catch (err) {
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data),
+          customMessage: ''
+        };
+        self.setErrorMessage(error);
+        self.authErr = error;
+      }
     }),
 
     getRating: flow(function* (resourceId: number) {
@@ -141,22 +161,18 @@ export const AuthStore = types
         const { api } = self;
 
         if (self.isAuthenticated) {
-          const json = yield api.getRating(resourceId, self.accessTokenInfo.token);
+          const json = yield api.getRating(resourceId);
           self.setUserRating(json.rating);
         }
       } catch (err) {
-        if (err === undefined) {
-          self.isAuthenticated = false;
-        } else {
-          const error: IError = {
-            status: err.status,
-            serverMessage: titleCase(err.data.message),
-            customMessage: ''
-          };
-          self.isAuthenticated = false;
-          self.setErrorMessage(error);
-          self.ratingErr = error;
-        }
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data.message),
+          customMessage: ''
+        };
+        self.isAuthenticated = false;
+        self.setErrorMessage(error);
+        self.ratingErr = error;
       }
       self.setLoading(false);
     }),
@@ -168,7 +184,7 @@ export const AuthStore = types
         const { api } = self;
 
         if (self.isAuthenticated) {
-          yield api.setRating(resourceId, self.accessTokenInfo.token, rating);
+          yield api.setRating(resourceId, rating);
           self.setUserRating(rating);
         }
       } catch (err) {
@@ -188,21 +204,19 @@ export const AuthStore = types
       try {
         const { api } = self;
 
-        const refresh = yield api.getRefreshToken(self.refreshTokenInfo.token);
+        const refresh = yield api.getRefreshToken();
         const newRefreshToken = refresh.data;
+
         self.addRefreshTokenInfo(newRefreshToken.refresh);
+        localStorage.refreshTokenExpiryTime = newRefreshToken.refresh.expiresAt;
       } catch (err) {
-        if (err === undefined) {
-          self.isAuthenticated = false;
-        } else {
-          const error: IError = {
-            status: err.status,
-            serverMessage: titleCase(err.data),
-            customMessage: 'Refresh token has been expired please login again !'
-          };
-          self.setErrorMessage(error);
-          self.setIsAuthenticated(false);
-        }
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data),
+          customMessage: 'Refresh token has been expired please login again !'
+        };
+        self.setErrorMessage(error);
+        self.setIsAuthenticated(false);
       }
     }),
 
@@ -210,24 +224,23 @@ export const AuthStore = types
       try {
         const { api } = self;
 
-        const access = yield api.getAccessToken(self.refreshTokenInfo.token);
+        const access = yield api.getAccessToken();
         const newAccessToken = access.data;
+
         self.addAccessTokenInfo(newAccessToken.access);
+
+        localStorage.accessTokenExpiryTime = newAccessToken.access.expiresAt;
       } catch (err) {
-        if (err === undefined) {
-          self.isAuthenticated = false;
-        } else {
-          const error: IError = {
-            status: err.status,
-            serverMessage: titleCase(err.data),
-            customMessage: 'Refresh token has been expired please login again !'
-          };
-          self.setErrorMessage(error);
-          self.setIsAuthenticated(false);
-          setTimeout(() => {
-            localStorage.clear();
-          }, 1000);
-        }
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data),
+          customMessage: 'Refresh token has been expired please login again !'
+        };
+        self.setErrorMessage(error);
+        self.setIsAuthenticated(false);
+        setTimeout(() => {
+          localStorage.clear();
+        }, 1000);
       }
     }),
 
@@ -235,21 +248,34 @@ export const AuthStore = types
       try {
         const { api } = self;
 
-        const access = yield api.profile(self.accessTokenInfo.token);
+        const access = yield api.profile();
         const userdata = access.data;
         self.addUserProfile(userdata);
       } catch (err) {
-        if (err === undefined) {
-          self.isAuthenticated = false;
-        } else {
-          const error: IError = {
-            status: err.status,
-            serverMessage: titleCase(err.data),
-            customMessage: 'Access token has been expired please login again !'
-          };
-          self.setErrorMessage(error);
-          self.setIsAuthenticated(false);
-        }
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data),
+          customMessage: 'Access token has been expired please login again !'
+        };
+        self.setErrorMessage(error);
+        self.setIsAuthenticated(false);
+      }
+    }),
+
+    accessToken: flow(function* () {
+      try {
+        const { api } = self;
+
+        const access = yield api.accessToken();
+
+        self.addaccessToken(access);
+      } catch (err) {
+        const error: IError = {
+          status: err.status,
+          serverMessage: titleCase(err.data),
+          customMessage: 'Access token has been expired please login again !'
+        };
+        self.setErrorMessage(error);
       }
     })
   }));

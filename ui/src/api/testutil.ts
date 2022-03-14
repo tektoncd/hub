@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { ICategory } from '../store/category';
 import { IResource, IVersion } from '../store/resource';
 import { ITokenInfo, IUserProfile } from '../store/auth';
-import { Api, AuthResponse } from './';
+import { Api, AuthResponse, AccessTokenResponse, LogoutResponse } from './';
 import { ICatalog } from '../store/catalog';
 import { IProvider } from '../store/provider';
 
@@ -127,6 +127,21 @@ export class FakeHub implements Api {
     const data = `${this.dataDir}/provider.json`;
     const ret = () => JSON.parse(fs.readFileSync(data).toString());
     return new Promise<IProvider>((resolve) => {
+      setTimeout(() => resolve(ret()), 1000);
+    });
+  }
+
+  async logout() {
+    const data = `${this.dataDir}/provider.json`;
+    const ret = () => JSON.parse(fs.readFileSync(data).toString());
+    return new Promise<LogoutResponse>((resolve) => {
+      setTimeout(() => resolve(ret()), 1000);
+    });
+  }
+  async accessToken() {
+    const data = `${this.dataDir}/existing_token.json`;
+    const ret = () => JSON.parse(fs.readFileSync(data).toString());
+    return new Promise<AccessTokenResponse>((resolve) => {
       setTimeout(() => resolve(ret()), 1000);
     });
   }
