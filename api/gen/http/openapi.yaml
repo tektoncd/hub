@@ -347,11 +347,7 @@ paths:
       tags:
       - rating
       summary: Get rating
-      description: |-
-        Find user's rating for a resource
-
-        **Required security scopes for jwt**:
-          * `rating:read`
+      description: Find user's rating for a resource
       operationId: rating#Get
       parameters:
       - name: id
@@ -359,11 +355,6 @@ paths:
         description: ID of a resource
         required: true
         type: integer
-      - name: Authorization
-        in: header
-        description: JWT
-        required: true
-        type: string
       responses:
         "200":
           description: OK response.
@@ -389,17 +380,11 @@ paths:
             $ref: '#/definitions/RatingGetInternalErrorResponseBody'
       schemes:
       - https
-      security:
-      - jwt_header_Authorization: []
     put:
       tags:
       - rating
       summary: Update rating
-      description: |-
-        Update user's rating for a resource
-
-        **Required security scopes for jwt**:
-          * `rating:write`
+      description: Update user's rating for a resource
       operationId: rating#Update
       parameters:
       - name: id
@@ -407,11 +392,6 @@ paths:
         description: ID of a resource
         required: true
         type: integer
-      - name: Authorization
-        in: header
-        description: JWT
-        required: true
-        type: string
       - name: UpdateRequestBody
         in: body
         required: true
@@ -440,8 +420,6 @@ paths:
             $ref: '#/definitions/RatingUpdateInternalErrorResponseBody'
       schemes:
       - https
-      security:
-      - jwt_header_Authorization: []
   /resource/{id}/versions:
     get:
       tags:

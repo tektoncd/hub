@@ -11,7 +11,6 @@ import (
 	"context"
 
 	goa "goa.design/goa/v3/pkg"
-	"goa.design/goa/v3/security"
 )
 
 // The rating service exposes endpoints to read and write user's rating for
@@ -21,12 +20,6 @@ type Service interface {
 	Get(context.Context, *GetPayload) (res *GetResult, err error)
 	// Update user's rating for a resource
 	Update(context.Context, *UpdatePayload) (err error)
-}
-
-// Auther defines the authorization functions to be implemented by the service.
-type Auther interface {
-	// JWTAuth implements the authorization logic for the JWT security scheme.
-	JWTAuth(ctx context.Context, token string, schema *security.JWTScheme) (context.Context, error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -43,8 +36,8 @@ var MethodNames = [2]string{"Get", "Update"}
 type GetPayload struct {
 	// ID of a resource
 	ID uint
-	// JWT
-	Token string
+	// Session ID
+	Session string
 }
 
 // GetResult is the result type of the rating service Get method.
@@ -59,8 +52,8 @@ type UpdatePayload struct {
 	ID uint
 	// User rating for resource
 	Rating uint
-	// JWT
-	Token string
+	// Session ID
+	Session string
 }
 
 // MakeNotFound builds a goa.ServiceError from an error.

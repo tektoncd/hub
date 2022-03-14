@@ -292,21 +292,21 @@ func NewUpdateInvalidScopesResponseBody(res *goa.ServiceError) *UpdateInvalidSco
 }
 
 // NewGetPayload builds a rating service Get endpoint payload.
-func NewGetPayload(id uint, token string) *rating.GetPayload {
+func NewGetPayload(id uint, session string) *rating.GetPayload {
 	v := &rating.GetPayload{}
 	v.ID = id
-	v.Token = token
+	v.Session = session
 
 	return v
 }
 
 // NewUpdatePayload builds a rating service Update endpoint payload.
-func NewUpdatePayload(body *UpdateRequestBody, id uint, token string) *rating.UpdatePayload {
+func NewUpdatePayload(body *UpdateRequestBody, id uint, session string) *rating.UpdatePayload {
 	v := &rating.UpdatePayload{
 		Rating: *body.Rating,
 	}
 	v.ID = id
-	v.Token = token
+	v.Session = session
 
 	return v
 }

@@ -13,7 +13,6 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"strings"
 
 	rating "github.com/tektoncd/hub/api/gen/rating"
 	goahttp "goa.design/goa/v3/http"
@@ -37,9 +36,10 @@ func EncodeGetResponse(encoder func(context.Context, http.ResponseWriter) goahtt
 func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			id    uint
-			token string
-			err   error
+			id      uint
+			session string
+			err     error
+			c       *http.Cookie
 
 			params = mux.Vars(r)
 		)
@@ -51,19 +51,16 @@ func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 			}
 			id = uint(v)
 		}
-		token = r.Header.Get("Authorization")
-		if token == "" {
-			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
+		c, err = r.Cookie("accessToken")
+		if err == http.ErrNoCookie {
+			err = goa.MergeErrors(err, goa.MissingFieldError("accessToken", "cookie"))
+		} else {
+			session = c.Value
 		}
 		if err != nil {
 			return nil, err
 		}
-		payload := NewGetPayload(id, token)
-		if strings.Contains(payload.Token, " ") {
-			// Remove authorization scheme prefix (e.g. "Bearer")
-			cred := strings.SplitN(payload.Token, " ", 2)[1]
-			payload.Token = cred
-		}
+		payload := NewGetPayload(id, session)
 
 		return payload, nil
 	}
@@ -167,8 +164,9 @@ func DecodeUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 		}
 
 		var (
-			id    uint
-			token string
+			id      uint
+			session string
+			c       *http.Cookie
 
 			params = mux.Vars(r)
 		)
@@ -180,19 +178,16 @@ func DecodeUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 			}
 			id = uint(v)
 		}
-		token = r.Header.Get("Authorization")
-		if token == "" {
-			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
+		c, err = r.Cookie("accessToken")
+		if err == http.ErrNoCookie {
+			err = goa.MergeErrors(err, goa.MissingFieldError("accessToken", "cookie"))
+		} else {
+			session = c.Value
 		}
 		if err != nil {
 			return nil, err
 		}
-		payload := NewUpdatePayload(&body, id, token)
-		if strings.Contains(payload.Token, " ") {
-			// Remove authorization scheme prefix (e.g. "Bearer")
-			cred := strings.SplitN(payload.Token, " ", 2)[1]
-			payload.Token = cred
-		}
+		payload := NewUpdatePayload(&body, id, session)
 
 		return payload, nil
 	}

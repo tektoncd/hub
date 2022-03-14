@@ -234,7 +234,7 @@ paths:
           type: array
           items:
             type: string
-            example: Unde quia quia blanditiis nam dolorem.
+            example: Omnis quaerat.
           description: Catalogs of resource to filter by
           example:
           - tekton
@@ -250,7 +250,7 @@ paths:
           type: array
           items:
             type: string
-            example: Eos laborum et nesciunt et temporibus.
+            example: Nulla fugiat.
           description: Category associated with a resource to filter by
           example:
           - build
@@ -266,7 +266,7 @@ paths:
           type: array
           items:
             type: string
-            example: Officia quis aliquid rerum perspiciatis voluptatem.
+            example: Animi neque est voluptatem id rerum reprehenderit.
           description: Kinds of resource to filter by
           example:
           - task
@@ -282,7 +282,7 @@ paths:
           type: array
           items:
             type: string
-            example: Quae vel et.
+            example: Tempora et ut quas mollitia nesciunt delectus.
           description: Tags associated with a resource to filter by
           example:
           - image
@@ -298,7 +298,7 @@ paths:
           type: array
           items:
             type: string
-            example: Omnis quaerat.
+            example: Quidem asperiores quis.
           description: Platforms associated with a resource to filter by
           example:
           - linux/s390x
@@ -324,11 +324,11 @@ paths:
           type: string
           description: Strategy used to find matching resources
           default: contains
-          example: exact
+          example: contains
           enum:
           - exact
           - contains
-        example: contains
+        example: exact
       responses:
         "302":
           description: Found response.
@@ -339,9 +339,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://douglasebert.info/jessie
+                example: http://goyette.com/christelle_conroy
                 format: uri
-              example: http://predovichahn.info/isidro
+              example: http://champlin.com/zion
   /resource/{catalog}/{kind}/{name}:
     get:
       tags:
@@ -383,7 +383,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: Name of resource
@@ -403,9 +403,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://smitham.biz/isac
+                example: http://blockhowe.name/meta.mcclure
                 format: uri
-              example: http://wizafranecki.biz/orie.funk
+              example: http://watsicanitzsche.com/henri.schulist
   /resource/{catalog}/{kind}/{name}/{version}:
     get:
       tags:
@@ -464,9 +464,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://parkergusikowski.info/zack_hartmann
+                example: http://klein.org/ruby
                 format: uri
-              example: http://schmeler.biz/payton
+              example: http://kutch.name/garnet.johnston
   /resource/{id}:
     get:
       tags:
@@ -494,9 +494,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://botsford.net/theron
+                example: http://lemke.org/eliseo
                 format: uri
-              example: http://connellyschaefer.biz/elody_schumm
+              example: http://raucummings.org/brant
   /resource/{id}/rating:
     get:
       tags:
@@ -514,6 +514,16 @@ paths:
           description: ID of a resource
           example: 1487680364023662723
         example: 15108684595389472227
+      - name: accessToken
+        in: cookie
+        description: Session ID
+        allowEmptyValue: true
+        required: true
+        schema:
+          type: string
+          description: Session ID
+          example: Et est unde quia quia blanditiis nam.
+        example: Eos eos laborum et.
       responses:
         "200":
           description: OK response.
@@ -547,14 +557,6 @@ paths:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-      security:
-      - jwt_header_Authorization:
-        - rating:read
-        - rating:write
-        - agent:create
-        - catalog:refresh
-        - config:refresh
-        - refresh:token
     put:
       tags:
       - rating
@@ -569,8 +571,18 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 11575953008413914708
-        example: 17027828275307537165
+          example: 17672047292764765802
+        example: 9442720562234952332
+      - name: accessToken
+        in: cookie
+        description: Session ID
+        allowEmptyValue: true
+        required: true
+        schema:
+          type: string
+          description: Session ID
+          example: Ut officia quis aliquid rerum perspiciatis.
+        example: Asperiores quae vel et.
       requestBody:
         required: true
         content:
@@ -606,14 +618,6 @@ paths:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-      security:
-      - jwt_header_Authorization:
-        - rating:read
-        - rating:write
-        - agent:create
-        - catalog:refresh
-        - config:refresh
-        - refresh:token
   /resource/{id}/versions:
     get:
       tags:
@@ -641,9 +645,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://volkman.net/abdiel
+                example: http://spinka.net/amely
                 format: uri
-              example: http://fahey.org/elta
+              example: http://breitenberg.biz/estefania.stoltenberg
   /resource/version/{versionID}:
     get:
       tags:
@@ -671,9 +675,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://mantehegmann.com/ward_towne
+                example: http://bergnaum.org/sarina
                 format: uri
-              example: http://kozeyschaefer.info/randal
+              example: http://bogisich.com/marian
   /resources:
     get:
       tags:

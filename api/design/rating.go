@@ -15,7 +15,6 @@
 package design
 
 import (
-	"github.com/tektoncd/hub/api/design/types"
 	. "goa.design/goa/v3/dsl"
 )
 
@@ -29,13 +28,10 @@ var _ = Service("rating", func() {
 
 	Method("Get", func() {
 		Description("Find user's rating for a resource")
-		Security(types.JWTAuth, func() {
-			Scope("rating:read")
-		})
 		Payload(func() {
 			Attribute("id", UInt, "ID of a resource")
-			Token("token", String, "JWT")
-			Required("id", "token")
+			Attribute("session", String, "Session ID")
+			Required("id", "session")
 		})
 		Result(func() {
 			Attribute("rating", Int, "User rating for resource", func() {
@@ -46,7 +42,7 @@ var _ = Service("rating", func() {
 
 		HTTP(func() {
 			GET("/resource/{id}/rating")
-			Header("token:Authorization")
+			Cookie("session:accessToken")
 
 			Response(StatusOK)
 			Response("not-found", StatusNotFound)
@@ -58,22 +54,19 @@ var _ = Service("rating", func() {
 
 	Method("Update", func() {
 		Description("Update user's rating for a resource")
-		Security(types.JWTAuth, func() {
-			Scope("rating:write")
-		})
 		Payload(func() {
 			Attribute("id", UInt, "ID of a resource")
 			Attribute("rating", UInt, "User rating for resource", func() {
 				Minimum(0)
 				Maximum(5)
 			})
-			Token("token", String, "JWT")
-			Required("id", "token", "rating")
+			Attribute("session", String, "Session ID")
+			Required("id", "rating", "session")
 		})
 
 		HTTP(func() {
 			PUT("/resource/{id}/rating")
-			Header("token:Authorization")
+			Cookie("session:accessToken")
 
 			Response(StatusOK)
 			Response("not-found", StatusNotFound)

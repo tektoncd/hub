@@ -18,7 +18,7 @@ import (
 
 // BuildGetPayload builds the payload for the rating Get endpoint from CLI
 // flags.
-func BuildGetPayload(ratingGetID string, ratingGetToken string) (*rating.GetPayload, error) {
+func BuildGetPayload(ratingGetID string, ratingGetSession string) (*rating.GetPayload, error) {
 	var err error
 	var id uint
 	{
@@ -29,20 +29,20 @@ func BuildGetPayload(ratingGetID string, ratingGetToken string) (*rating.GetPayl
 			return nil, fmt.Errorf("invalid value for id, must be UINT")
 		}
 	}
-	var token string
+	var session string
 	{
-		token = ratingGetToken
+		session = ratingGetSession
 	}
 	v := &rating.GetPayload{}
 	v.ID = id
-	v.Token = token
+	v.Session = session
 
 	return v, nil
 }
 
 // BuildUpdatePayload builds the payload for the rating Update endpoint from
 // CLI flags.
-func BuildUpdatePayload(ratingUpdateBody string, ratingUpdateID string, ratingUpdateToken string) (*rating.UpdatePayload, error) {
+func BuildUpdatePayload(ratingUpdateBody string, ratingUpdateID string, ratingUpdateSession string) (*rating.UpdatePayload, error) {
 	var err error
 	var body UpdateRequestBody
 	{
@@ -69,15 +69,15 @@ func BuildUpdatePayload(ratingUpdateBody string, ratingUpdateID string, ratingUp
 			return nil, fmt.Errorf("invalid value for id, must be UINT")
 		}
 	}
-	var token string
+	var session string
 	{
-		token = ratingUpdateToken
+		session = ratingUpdateSession
 	}
 	v := &rating.UpdatePayload{
 		Rating: body.Rating,
 	}
 	v.ID = id
-	v.Token = token
+	v.Session = session
 
 	return v, nil
 }

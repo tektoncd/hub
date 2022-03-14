@@ -13,7 +13,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
 
 	rating "github.com/tektoncd/hub/api/gen/rating"
 	goahttp "goa.design/goa/v3/http"
@@ -53,12 +52,11 @@ func EncodeGetRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Re
 			return goahttp.ErrInvalidType("rating", "Get", "*rating.GetPayload", v)
 		}
 		{
-			head := p.Token
-			if !strings.Contains(head, " ") {
-				req.Header.Set("Authorization", "Bearer "+head)
-			} else {
-				req.Header.Set("Authorization", head)
-			}
+			v := p.Session
+			req.AddCookie(&http.Cookie{
+				Name:  "accessToken",
+				Value: v,
+			})
 		}
 		return nil
 	}
@@ -200,12 +198,11 @@ func EncodeUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http
 			return goahttp.ErrInvalidType("rating", "Update", "*rating.UpdatePayload", v)
 		}
 		{
-			head := p.Token
-			if !strings.Contains(head, " ") {
-				req.Header.Set("Authorization", "Bearer "+head)
-			} else {
-				req.Header.Set("Authorization", head)
-			}
+			v := p.Session
+			req.AddCookie(&http.Cookie{
+				Name:  "accessToken",
+				Value: v,
+			})
 		}
 		body := NewUpdateRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {
