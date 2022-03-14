@@ -42,6 +42,8 @@ func TestInfo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// add cookie in the request with accessToken name
+	req.AddCookie(tc.CreateCookie("accessToken", accessToken))
 
 	res := httptest.NewRecorder()
 
@@ -50,13 +52,14 @@ func TestInfo(t *testing.T) {
 		JwtConfig: tc.JWTConfig(),
 	}
 
-	req.Header.Set("Authorization", accessToken)
 	handler := http.HandlerFunc(jwt.JWTAuth(userSvc.Info))
+
 	assert.NoError(t, err)
 
 	handler.ServeHTTP(res, req)
 
 	var u *userApp.InfoResult
+
 	err = json.Unmarshal(res.Body.Bytes(), &u)
 	assert.NoError(t, err)
 
@@ -81,6 +84,9 @@ func TestRefreshAccessToken(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// add cookie in the request with refreshToken name
+	req.AddCookie(tc.CreateCookie("refreshToken", refreshToken))
+
 	res := httptest.NewRecorder()
 
 	userSvc := New(tc)
@@ -88,7 +94,6 @@ func TestRefreshAccessToken(t *testing.T) {
 		JwtConfig: tc.JWTConfig(),
 	}
 
-	req.Header.Set("Authorization", refreshToken)
 	handler := http.HandlerFunc(jwt.JWTAuth(userSvc.RefreshAccessToken))
 	assert.NoError(t, err)
 
@@ -126,6 +131,10 @@ func TestRefreshAccessToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	// add cookie in the request with refreshToken name
+	req.AddCookie(tc.CreateCookie("refreshToken", refreshToken))
+
 	res := httptest.NewRecorder()
 
 	userSvc := New(tc)
@@ -133,7 +142,7 @@ func TestRefreshAccessToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 		JwtConfig: tc.JWTConfig(),
 	}
 
-	req.Header.Set("Authorization", refreshToken)
+	// req.Header.Set("Authorization", refreshToken)
 	handler := http.HandlerFunc(jwt.JWTAuth(userSvc.RefreshAccessToken))
 	handler.ServeHTTP(res, req)
 
@@ -157,6 +166,9 @@ func TestNewRefreshToken(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// add cookie in the request with accessToken name
+	req.AddCookie(tc.CreateCookie("refreshToken", refreshToken))
+
 	res := httptest.NewRecorder()
 
 	userSvc := New(tc)
@@ -164,7 +176,6 @@ func TestNewRefreshToken(t *testing.T) {
 		JwtConfig: tc.JWTConfig(),
 	}
 
-	req.Header.Set("Authorization", refreshToken)
 	handler := http.HandlerFunc(jwt.JWTAuth(userSvc.NewRefreshToken))
 	assert.NoError(t, err)
 
@@ -192,6 +203,7 @@ func TestNewRefreshToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 
 	// user refresh token
 	testUser, refreshToken, err := tc.RefreshTokenForUser("foo", "foo@bar.com")
+
 	assert.Equal(t, testUser.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
@@ -202,6 +214,10 @@ func TestNewRefreshToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	// add cookie in the request with accessToken name
+	req.AddCookie(tc.CreateCookie("refreshToken", refreshToken))
+
 	res := httptest.NewRecorder()
 
 	userSvc := New(tc)
@@ -209,9 +225,88 @@ func TestNewRefreshToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 		JwtConfig: tc.JWTConfig(),
 	}
 
-	req.Header.Set("Authorization", refreshToken)
 	handler := http.HandlerFunc(jwt.JWTAuth(userSvc.NewRefreshToken))
 	handler.ServeHTTP(res, req)
 
 	assert.Equal(t, res.Body.String(), "invalid refresh token\n")
+}
+
+func TestLogout(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	testUser, accessToken, err := tc.UserWithScopes("abc", "abc@bar.com", "rating:read", "rating:write")
+	assert.Equal(t, testUser.Email, "abc@bar.com")
+	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
+	req, err := http.NewRequest("GET", "/user/logout", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// add cookie in the request with accessToken name
+	req.AddCookie(tc.CreateCookie("accessToken", accessToken))
+
+	res := httptest.NewRecorder()
+
+	userSvc := New(tc)
+	jwt := UserService{
+		JwtConfig: tc.JWTConfig(),
+	}
+
+	handler := http.HandlerFunc(jwt.JWTAuth(userSvc.Logout))
+
+	assert.NoError(t, err)
+
+	handler.ServeHTTP(res, req)
+
+	var u *userApp.ClearCookies
+
+	err = json.Unmarshal(res.Body.Bytes(), &u)
+	assert.NoError(t, err)
+
+	assert.Equal(t, true, u.Data)
+}
+
+func TestGetAccessToken(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	testUser, accessToken, err := tc.UserWithScopes("abc", "abc@bar.com", "rating:read", "rating:write")
+	assert.Equal(t, testUser.Email, "abc@bar.com")
+	assert.NoError(t, err)
+
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
+	req, err := http.NewRequest("GET", "/user/accesstoken", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// add cookie in the request with accessToken name
+	req.AddCookie(tc.CreateCookie("accessToken", accessToken))
+
+	res := httptest.NewRecorder()
+
+	userSvc := New(tc)
+	jwt := UserService{
+		JwtConfig: tc.JWTConfig(),
+	}
+
+	handler := http.HandlerFunc(jwt.JWTAuth(userSvc.GetAccessToken))
+
+	assert.NoError(t, err)
+
+	handler.ServeHTTP(res, req)
+
+	var u *userApp.ExitingAccessToken
+
+	err = json.Unmarshal(res.Body.Bytes(), &u)
+	assert.NoError(t, err)
+
+	assert.Equal(t, accessToken, u.Data)
 }

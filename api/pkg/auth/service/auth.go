@@ -62,6 +62,20 @@ type Service interface {
 	HubAuthenticate(res http.ResponseWriter, req *http.Request)
 }
 
+type cookie struct {
+	Name     string
+	Value    string
+	MaxAge   int
+	Path     string
+	HttpOnly bool
+}
+
+const (
+	RefreshToken = "refreshToken"
+	AccessToken  = "accessToken"
+	Path         = "/"
+)
+
 // New returns the auth service implementation.
 func New(api app.Config) Service {
 	return &service{
@@ -192,6 +206,27 @@ func (s *service) HubAuthenticate(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	//Add cookie and response and send it to in header
+
+	refreshToken := cookie{
+		Name:     RefreshToken,
+		Value:    userTokens.Data.Refresh.Token,
+		MaxAge:   int(r.jwtConfig.RefreshExpiresIn.Seconds()),
+		Path:     Path,
+		HttpOnly: true,
+	}
+
+	accessToken := cookie{
+		Name:     AccessToken,
+		Value:    userTokens.Data.Access.Token,
+		MaxAge:   int(r.jwtConfig.AccessExpiresIn.Seconds()),
+		Path:     Path,
+		HttpOnly: true,
+	}
+
+	refreshToken.createCookie(res)
+	accessToken.createCookie(res)
+
 	res.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(res).Encode(userTokens); err != nil {
 		r.log.Error(err)
@@ -228,4 +263,16 @@ func List(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (c cookie) createCookie(res http.ResponseWriter) {
+
+	cookie := &http.Cookie{
+		Name:     c.Name,
+		Value:    c.Value,
+		MaxAge:   c.MaxAge,
+		Path:     c.Path,
+		HttpOnly: c.HttpOnly,
+	}
+	http.SetCookie(res, cookie)
 }

@@ -23,6 +23,7 @@ import (
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/service/validator"
+	"goa.design/goa/v3/security"
 	"gorm.io/gorm"
 )
 
@@ -50,10 +51,21 @@ func New(api app.Config) rating.Service {
 // Find user's rating for a resource
 func (s *service) Get(ctx context.Context, p *rating.GetPayload) (*rating.GetResult, error) {
 
+	// Required scope to get the user rating for a resource
+	requiredScope := &security.JWTScheme{
+		RequiredScopes: []string{"rating:read"},
+	}
+
+	//Verify and validate the required scopes
+	newctx, err := s.JWTAuth(ctx, p.Session, requiredScope)
+	if err != nil {
+		return &rating.GetResult{Rating: 0}, err
+	}
+
 	req := request{
-		db:     s.DB(ctx),
-		log:    s.Logger(ctx),
-		userID: validator.UserID(ctx),
+		db:     s.DB(newctx),
+		log:    s.Logger(newctx),
+		userID: validator.UserID(newctx),
 	}
 
 	return req.getRating(p.ID)
@@ -62,10 +74,22 @@ func (s *service) Get(ctx context.Context, p *rating.GetPayload) (*rating.GetRes
 // Update user's rating for a resource
 func (s *service) Update(ctx context.Context, p *rating.UpdatePayload) error {
 
+	// Required scope to get the user rating for a resource
+	requiredScope := &security.JWTScheme{
+		RequiredScopes: []string{"rating:write"},
+	}
+
+	//Verify and validate the required scopes
+	newctx, err := s.JWTAuth(ctx, p.Session, requiredScope)
+
+	if err != nil {
+		return err
+	}
+
 	req := request{
-		db:     s.DB(ctx),
-		log:    s.Logger(ctx),
-		userID: validator.UserID(ctx),
+		db:     s.DB(newctx),
+		log:    s.Logger(newctx),
+		userID: validator.UserID(newctx),
 	}
 
 	return req.updateRating(p.ID, p.Rating)

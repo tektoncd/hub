@@ -18,6 +18,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/rating"
 	"github.com/tektoncd/hub/api/pkg/service/validator"
@@ -29,13 +30,18 @@ func TestGet(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+
 	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
 	ratingSvc := New(tc)
+
 	ctx := validator.WithUserID(context.Background(), user.ID)
-	payload := &rating.GetPayload{ID: 1}
+	payload := &rating.GetPayload{ID: 1, Session: accessToken}
 	rat, err := ratingSvc.Get(ctx, payload)
 	assert.NoError(t, err)
 	assert.Equal(t, 5, rat.Rating)
@@ -46,13 +52,16 @@ func TestGet_RatingNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
 	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
 	ratingSvc := New(tc)
 	ctx := validator.WithUserID(context.Background(), user.ID)
-	payload := &rating.GetPayload{ID: 3}
+	payload := &rating.GetPayload{ID: 3, Session: accessToken}
 	rat, err := ratingSvc.Get(ctx, payload)
 	assert.NoError(t, err)
 	assert.Equal(t, -1, rat.Rating)
@@ -63,13 +72,16 @@ func TestGet_ResourceNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:read scope
-	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:read")
 	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
 	ratingSvc := New(tc)
 	ctx := validator.WithUserID(context.Background(), user.ID)
-	payload := &rating.GetPayload{ID: 99}
+	payload := &rating.GetPayload{ID: 99, Session: accessToken}
 	_, err = ratingSvc.Get(ctx, payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "resource not found")
@@ -80,13 +92,16 @@ func TestUpdate(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:write scope
-	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:write")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:write")
 	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
 	ratingSvc := New(tc)
 	ctx := validator.WithUserID(context.Background(), user.ID)
-	payload := &rating.UpdatePayload{ID: 1, Rating: 3}
+	payload := &rating.UpdatePayload{ID: 1, Rating: 3, Session: accessToken}
 	err = ratingSvc.Update(ctx, payload)
 	assert.NoError(t, err)
 }
@@ -96,13 +111,16 @@ func TestUpdate_ResourceNotFound(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	// user with rating:write scope
-	user, _, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:write")
+	user, accessToken, err := tc.UserWithScopes("foo", "foo@bar.com", "rating:write")
 	assert.Equal(t, user.Email, "foo@bar.com")
 	assert.NoError(t, err)
 
+	// Mocks the time
+	jwt.TimeFunc = testutils.Now
+
 	ratingSvc := New(tc)
 	ctx := validator.WithUserID(context.Background(), user.ID)
-	payload := &rating.UpdatePayload{ID: 99, Rating: 3}
+	payload := &rating.UpdatePayload{ID: 99, Rating: 3, Session: accessToken}
 	err = ratingSvc.Update(ctx, payload)
 	assert.Error(t, err)
 	assert.EqualError(t, err, "resource not found")

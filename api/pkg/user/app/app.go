@@ -64,3 +64,11 @@ type RefreshToken struct {
 	// Refresh Token for user
 	Refresh *Token `json:"refresh"`
 }
+
+type ClearCookies struct {
+	Data bool
+}
+
+type ExitingAccessToken struct {
+	Data string `json:"token"`
+}

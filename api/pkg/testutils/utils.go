@@ -17,6 +17,7 @@ package testutils
 import (
 	"bytes"
 	"encoding/json"
+	"net/http"
 	"time"
 
 	"github.com/tektoncd/hub/api/pkg/db/model"
@@ -74,6 +75,16 @@ func (tc *TestConfig) UserWithScopes(name, email string, scopes ...string) (*mod
 	}
 
 	return user, accessToken, nil
+}
+
+// It returns a cookie object
+func (tc *TestConfig) CreateCookie(name, value string) *http.Cookie {
+	return &http.Cookie{
+		Name:   name,
+		Value:  value,
+		MaxAge: 300,
+		Path:   "/",
+	}
 }
 
 // RefreshTokenForUser returns refresh JWT for user with refresh:token scope
@@ -142,4 +153,26 @@ func (tc *TestConfig) AddScopesForUser(userID uint, scopes []string) error {
 		}
 	}
 	return nil
+}
+
+// AccessTokenForUser returns access JWT for user with access:token scope
+// User will have same github login and github name in db
+func (tc *TestConfig) AccessTokenForUser(name, email string) (*model.User, string, error) {
+
+	user := &model.User{Type: model.NormalUserType, Email: email}
+	if err := tc.DB().Where(&model.User{Email: email}).
+		FirstOrCreate(user).Error; err != nil {
+		return nil, "", err
+	}
+
+	token.Now = Now
+
+	req := token.Request{User: user, JWTConfig: tc.JWTConfig(), Provider: "github"}
+	accessToken, _, err := req.AccessJWT()
+
+	if err != nil {
+		return nil, "", err
+	}
+
+	return user, accessToken, nil
 }

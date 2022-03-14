@@ -43,10 +43,33 @@ type JWTScheme struct {
 func (s *UserService) JWTAuth(handler http.HandlerFunc) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 
-		jwt := req.Header.Get("Authorization")
+		accessCookie, err1 := req.Cookie("accessToken")
+		refreshCookie, err2 := req.Cookie("refreshToken")
 
-		if len(jwt) > 6 && strings.ToUpper(jwt[0:7]) == "BEARER " {
-			jwt = jwt[7:]
+		if err1 == http.ErrNoCookie && err2 == http.ErrNoCookie {
+			http.Error(res, err1.Error(), http.StatusUnauthorized)
+			return
+		}
+
+		var defalutJWT string
+		if accessCookie == nil {
+			defalutJWT = refreshCookie.Value
+		} else {
+			defalutJWT = accessCookie.Value
+		}
+
+		var jwt string
+		switch req.RequestURI {
+		case "/user/info":
+			jwt = accessCookie.Value
+		case "/user/refresh/accesstoken":
+			jwt = refreshCookie.Value
+		case "/user/refresh/refreshtoken":
+			jwt = refreshCookie.Value
+		case "/user/accesstoken", "/user/logout":
+			jwt = accessCookie.Value
+		default:
+			jwt = defalutJWT
 		}
 
 		claims, err := token.Verify(jwt, s.JwtConfig.SigningKey)
@@ -62,7 +85,7 @@ func (s *UserService) JWTAuth(handler http.HandlerFunc) http.HandlerFunc {
 
 		if req.RequestURI == "/user/info" {
 			scheme.RequiredScopes = []string{"rating:read", "rating:write"}
-		} else if req.RequestURI == "/refresh/accesstoken" || req.RequestURI == "/refresh/refreshtoken" {
+		} else if req.RequestURI == "/refresh/accesstoken" || req.RequestURI == "/user/logout" || req.RequestURI == "/refresh/refreshtoken" {
 			scheme.RequiredScopes = []string{"rating:read", "rating:write", "refresh:token"}
 		}
 
@@ -199,10 +222,6 @@ func (s *UserService) validateRefreshToken(id int, token string) (*model.User, e
 	if err != nil {
 		r.log.Error(err)
 		return nil, err
-	}
-
-	if len(token) > 6 && strings.ToUpper(token[0:7]) == "BEARER " {
-		token = token[7:]
 	}
 
 	if user.RefreshTokenChecksum != createChecksum(token) {

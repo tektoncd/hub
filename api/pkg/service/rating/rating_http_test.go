@@ -26,17 +26,16 @@ import (
 	"github.com/tektoncd/hub/api/gen/http/rating/server"
 	"github.com/tektoncd/hub/api/gen/rating"
 	"github.com/tektoncd/hub/api/pkg/db/model"
-	"github.com/tektoncd/hub/api/pkg/service/validator"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 	goa "goa.design/goa/v3/pkg"
 )
 
 func GetChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := validator.NewService(tc.APIConfig, "rating")
+	// service := validator.NewService(tc.APIConfig, "rating")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewGetHandler,
 		server.MountGetHandler,
-		rating.NewGetEndpoint(New(tc), service.JWTAuth))
+		rating.NewGetEndpoint(New(tc)))
 	return checker
 }
 
@@ -45,7 +44,7 @@ func TestGet_Http_InvalidToken(t *testing.T) {
 	testutils.LoadFixtures(t, tc.FixturePath())
 
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
-		WithHeader("Authorization", "invalidToken").Check().
+		WithCookie("accessToken", "invalidToken").Check().
 		HasStatus(401).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -73,7 +72,7 @@ func TestGet_Http_ExpiredToken(t *testing.T) {
 	jwt.TimeFunc = testutils.NowAfterDuration(tc.JWTConfig().AccessExpiresIn)
 
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
-		WithHeader("Authorization", accessToken).Check().
+		WithCookie("accessToken", accessToken).Check().
 		HasStatus(401).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -100,7 +99,7 @@ func TestGet_Http_InvalidScopes(t *testing.T) {
 	jwt.TimeFunc = testutils.Now
 
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
-		WithHeader("Authorization", accessToken).Check().
+		WithCookie("accessToken", accessToken).Check().
 		HasStatus(403).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -127,7 +126,7 @@ func TestGet_Http(t *testing.T) {
 	jwt.TimeFunc = testutils.Now
 
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
-		WithHeader("Authorization", accessToken).Check().
+		WithCookie("accessToken", accessToken).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -154,7 +153,7 @@ func TestGet_Http_RatingNotFound(t *testing.T) {
 	jwt.TimeFunc = testutils.Now
 
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/3/rating").
-		WithHeader("Authorization", accessToken).Check().
+		WithCookie("accessToken", accessToken).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -181,7 +180,7 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 	jwt.TimeFunc = testutils.Now
 
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/99/rating").
-		WithHeader("Authorization", accessToken).Check().
+		WithCookie("accessToken", accessToken).Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
 		assert.NoError(t, readErr)
@@ -195,11 +194,11 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 }
 
 func UpdateChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
-	service := validator.NewService(tc.APIConfig, "rating")
+	// service := validator.NewService(tc.APIConfig, "rating")
 	checker := goahttpcheck.New()
 	checker.Mount(server.NewUpdateHandler,
 		server.MountUpdateHandler,
-		rating.NewUpdateEndpoint(New(tc), service.JWTAuth))
+		rating.NewUpdateEndpoint(New(tc)))
 	return checker
 }
 
@@ -218,7 +217,7 @@ func TestUpdate_Http(t *testing.T) {
 	data := []byte(`{"rating": 5}`)
 
 	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/3/rating").
-		WithHeader("Authorization", accessToken).
+		WithCookie("accessToken", accessToken).
 		WithBody(data).Check().
 		HasStatus(200)
 
@@ -244,7 +243,7 @@ func TestUpdate_Http_Existing(t *testing.T) {
 	data := []byte(`{"rating": 2}`)
 
 	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/1/rating").
-		WithHeader("Authorization", accessToken).
+		WithCookie("accessToken", accessToken).
 		WithBody(data).Check().
 		HasStatus(200)
 
@@ -270,7 +269,7 @@ func TestUpdate_Http_ResourceNotFound(t *testing.T) {
 	data := []byte(`{"rating": 2}`)
 
 	UpdateChecker(tc).Test(t, http.MethodPut, "/resource/99/rating").
-		WithHeader("Authorization", accessToken).
+		WithCookie("accessToken", accessToken).
 		WithBody(data).Check().
 		HasStatus(404).Cb(func(r *http.Response) {
 		b, readErr := ioutil.ReadAll(r.Body)
