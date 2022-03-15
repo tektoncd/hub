@@ -253,6 +253,27 @@ please follow the below steps:
    ```
    Please make sure that secrets are created with the name `tekton-hub-api-ssh-crds`
 
+### Update API deployment (Optional)
+
+By default the catalog is cloned in `$HOME/catalog`. If in case you want to change the clone path, edit the `02-api/22-api-deployment.yaml`
+with the following
+
+```yaml
+spec:
+  ...
+    spec:
+      ...
+      containers:
+        - ...
+          volumeMounts:
+          - name: catalog-source
+            mountPath: "/home/hub/catalog" <---- change here with path/where/catalog/to/be/cloned eg /tmp/catalog
+          ...
+          env:
+          - name: CLONE_BASE_PATH
+            value: <path/where/catalog/to/be/cloned> eg /tmp/catalog
+```
+
 ### Update API Image
 
 Edit the `02-api/22-api-deployment.yaml` and replace the image with the one created previously and executed below command

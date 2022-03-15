@@ -36,12 +36,14 @@ spec:
         secret:
           secretName: tekton-hub-api-ssh-crds
           optional: true
+      securityContext:
+        fsGroup: 101
       containers:
         - name: tekton-hub-api
           image: quay.io/tekton-hub/api
           volumeMounts:
           - name: catalog-source
-            mountPath: "/tmp"
+            mountPath: "/tmp/catalog"
           - name: ssh-creds
             mountPath: "/home/hub/.ssh"
           ports:
