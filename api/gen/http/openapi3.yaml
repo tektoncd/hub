@@ -166,9 +166,6 @@ paths:
                 - catalogName: tekton
                   id: 1
                   status: queued
-                - catalogName: tekton
-                  id: 1
-                  status: queued
               example:
               - catalogName: tekton
                 id: 1
@@ -247,8 +244,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 11641146429081913029
-        example: 5020310314104480935
+          example: 2407240489749525346
+        example: 8741701717887354389
       responses:
         "200":
           description: OK response.
@@ -320,8 +317,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 58321475046400437
-        example: 14996331923821697327
+          example: 12793890618565952106
+        example: 1076469856259025285
       requestBody:
         required: true
         content:
@@ -381,6 +378,66 @@ paths:
         - catalog:refresh
         - config:refresh
         - refresh:token
+  /resource/{id}/versions:
+    get:
+      tags:
+      - resource
+      summary: VersionsByID resource
+      description: Find all versions of a resource by its id
+      operationId: resource#VersionsByID
+      parameters:
+      - name: id
+        in: path
+        description: ID of a resource
+        required: true
+        schema:
+          type: integer
+          description: ID of a resource
+          example: 1
+        example: 1
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceVersions'
+              example:
+                data:
+                  latest:
+                    id: 2
+                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
+                    version: "0.2"
+                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
+                  versions:
+                  - id: 1
+                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                    version: "0.1"
+                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                  - id: 2
+                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
+                    version: "0.2"
+                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
+        "404":
+          description: Not Found response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
+        "500":
+          description: Internal Server Error response.
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
   /resources:
     get:
       tags:
@@ -805,6 +862,14 @@ components:
           - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
           - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
           type: warning
+        - errors:
+          - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+          - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+          type: warning
+        - errors:
+          - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+          - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+          type: warning
       required:
       - data
     CatalogErrors:
@@ -814,7 +879,7 @@ components:
           type: array
           items:
             type: string
-            example: Quidem magni.
+            example: Nesciunt sint cupiditate.
           description: Catalog Error message
           example:
           - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
@@ -855,7 +920,7 @@ components:
         fault:
           type: boolean
           description: Is the error a server-side fault?
-          example: true
+          example: false
         id:
           type: string
           description: ID is a unique identifier for this particular occurrence of
@@ -967,6 +1032,10 @@ components:
             name: Image Builder
       example:
         data:
+        - id: 1
+          name: Image Builder
+        - id: 1
+          name: Image Builder
         - id: 1
           name: Image Builder
         - id: 1
@@ -1274,6 +1343,29 @@ components:
       - platforms
       - resource
       - hubURLPath
+    ResourceVersions:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Versions'
+      example:
+        data:
+          latest:
+            id: 2
+            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
+            version: "0.2"
+            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
+          versions:
+          - id: 1
+            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+            version: "0.1"
+            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+          - id: 2
+            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
+            version: "0.2"
+            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
+      required:
+      - data
     Resources:
       type: object
       properties:
@@ -1442,11 +1534,14 @@ components:
           - error: unable to reach db
             name: api
             status: ok
+          - error: unable to reach db
+            name: api
+            status: ok
+          - error: unable to reach db
+            name: api
+            status: ok
       example:
         services:
-        - error: unable to reach db
-          name: api
-          status: ok
         - error: unable to reach db
           name: api
           status: ok
@@ -1464,7 +1559,7 @@ components:
           type: array
           items:
             type: string
-            example: Beatae id qui quia consequatur possimus tempora.
+            example: Quidem magni.
           description: Scopes required for Agent
           example:
           - catalog-refresh
@@ -1494,13 +1589,52 @@ components:
         rating:
           type: integer
           description: User rating for resource
-          example: 4
+          example: 2
           minimum: 0
           maximum: 5
       example:
-        rating: 3
+        rating: 2
       required:
       - rating
+    Versions:
+      type: object
+      properties:
+        latest:
+          $ref: '#/components/schemas/ResourceVersionData'
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceVersionData'
+          description: List of all versions of resource
+          example:
+          - id: 1
+            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+            version: "0.1"
+            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+          - id: 2
+            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
+            version: "0.2"
+            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
+      description: The Versions type describes response for versions by resource id
+        API.
+      example:
+        latest:
+          id: 2
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
+          version: "0.2"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
+        versions:
+        - id: 1
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        - id: 2
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
+          version: "0.2"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
+      required:
+      - latest
+      - versions
   securitySchemes:
     jwt_header_Authorization:
       type: http

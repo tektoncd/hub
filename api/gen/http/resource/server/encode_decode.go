@@ -8,8 +8,93 @@
 package server
 
 import (
+	"context"
+	"net/http"
+	"strconv"
+
 	resourceviews "github.com/tektoncd/hub/api/gen/resource/views"
+	goahttp "goa.design/goa/v3/http"
+	goa "goa.design/goa/v3/pkg"
 )
+
+// EncodeVersionsByIDResponse returns an encoder for responses returned by the
+// resource VersionsByID endpoint.
+func EncodeVersionsByIDResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*resourceviews.ResourceVersions)
+		enc := encoder(ctx, w)
+		body := NewVersionsByIDResponseBody(res.Projected)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeVersionsByIDRequest returns a decoder for requests sent to the
+// resource VersionsByID endpoint.
+func DecodeVersionsByIDRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			id  uint
+			err error
+
+			params = mux.Vars(r)
+		)
+		{
+			idRaw := params["id"]
+			v, err2 := strconv.ParseUint(idRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("id", idRaw, "unsigned integer"))
+			}
+			id = uint(v)
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewVersionsByIDPayload(id)
+
+		return payload, nil
+	}
+}
+
+// EncodeVersionsByIDError returns an encoder for errors returned by the
+// VersionsByID resource endpoint.
+func EncodeVersionsByIDError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "internal-error":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewVersionsByIDInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", "internal-error")
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		case "not-found":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewVersionsByIDNotFoundResponseBody(res)
+			}
+			w.Header().Set("goa-error", "not-found")
+			w.WriteHeader(http.StatusNotFound)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
 
 // marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersion
 // builds a value of type *ResourceDataResponseBodyWithoutVersion from a value
@@ -116,6 +201,44 @@ func marshalResourceviewsTagViewToTagResponseBody(v *resourceviews.TagView) *Tag
 	res := &TagResponseBody{
 		ID:   *v.ID,
 		Name: *v.Name,
+	}
+
+	return res
+}
+
+// marshalResourceviewsVersionsViewToVersionsResponseBody builds a value of
+// type *VersionsResponseBody from a value of type *resourceviews.VersionsView.
+func marshalResourceviewsVersionsViewToVersionsResponseBody(v *resourceviews.VersionsView) *VersionsResponseBody {
+	res := &VersionsResponseBody{}
+	if v.Latest != nil {
+		res.Latest = marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBodyMin(v.Latest)
+	}
+	if v.Versions != nil {
+		res.Versions = make([]*ResourceVersionDataResponseBodyMin, len(v.Versions))
+		for i, val := range v.Versions {
+			res.Versions[i] = marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBodyMin(val)
+		}
+	}
+
+	return res
+}
+
+// marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBodyMin
+// builds a value of type *ResourceVersionDataResponseBodyMin from a value of
+// type *resourceviews.ResourceVersionDataView.
+func marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBodyMin(v *resourceviews.ResourceVersionDataView) *ResourceVersionDataResponseBodyMin {
+	res := &ResourceVersionDataResponseBodyMin{
+		ID:         *v.ID,
+		Version:    *v.Version,
+		RawURL:     *v.RawURL,
+		WebURL:     *v.WebURL,
+		HubURLPath: *v.HubURLPath,
+	}
+	if v.Platforms != nil {
+		res.Platforms = make([]*PlatformResponseBody, len(v.Platforms))
+		for i, val := range v.Platforms {
+			res.Platforms[i] = marshalResourceviewsPlatformViewToPlatformResponseBody(val)
+		}
 	}
 
 	return res

@@ -11,12 +11,15 @@ import (
 	"context"
 
 	resourceviews "github.com/tektoncd/hub/api/gen/resource/views"
+	goa "goa.design/goa/v3/pkg"
 )
 
 // The resource service provides details about all kind of resources
 type Service interface {
 	// List all resources sorted by rating and name
 	List(context.Context) (res *Resources, err error)
+	// Find all versions of a resource by its id
+	VersionsByID(context.Context, *VersionsByIDPayload) (res *ResourceVersions, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -27,11 +30,24 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [1]string{"List"}
+var MethodNames = [2]string{"List", "VersionsByID"}
 
 // Resources is the result type of the resource service List method.
 type Resources struct {
 	Data ResourceDataCollection
+}
+
+// VersionsByIDPayload is the payload type of the resource service VersionsByID
+// method.
+type VersionsByIDPayload struct {
+	// ID of a resource
+	ID uint
+}
+
+// ResourceVersions is the result type of the resource service VersionsByID
+// method.
+type ResourceVersions struct {
+	Data *Versions
 }
 
 type ResourceDataCollection []*ResourceData
@@ -124,6 +140,32 @@ type Tag struct {
 	Name string
 }
 
+// The Versions type describes response for versions by resource id API.
+type Versions struct {
+	// Latest Version of resource
+	Latest *ResourceVersionData
+	// List of all versions of resource
+	Versions []*ResourceVersionData
+}
+
+// MakeInternalError builds a goa.ServiceError from an error.
+func MakeInternalError(err error) *goa.ServiceError {
+	return &goa.ServiceError{
+		Name:    "internal-error",
+		ID:      goa.NewErrorID(),
+		Message: err.Error(),
+	}
+}
+
+// MakeNotFound builds a goa.ServiceError from an error.
+func MakeNotFound(err error) *goa.ServiceError {
+	return &goa.ServiceError{
+		Name:    "not-found",
+		ID:      goa.NewErrorID(),
+		Message: err.Error(),
+	}
+}
+
 // NewResources initializes result type Resources from viewed result type
 // Resources.
 func NewResources(vres *resourceviews.Resources) *Resources {
@@ -135,6 +177,19 @@ func NewResources(vres *resourceviews.Resources) *Resources {
 func NewViewedResources(res *Resources, view string) *resourceviews.Resources {
 	p := newResourcesView(res)
 	return &resourceviews.Resources{Projected: p, View: "default"}
+}
+
+// NewResourceVersions initializes result type ResourceVersions from viewed
+// result type ResourceVersions.
+func NewResourceVersions(vres *resourceviews.ResourceVersions) *ResourceVersions {
+	return newResourceVersions(vres.Projected)
+}
+
+// NewViewedResourceVersions initializes viewed result type ResourceVersions
+// from result type ResourceVersions using the given view.
+func NewViewedResourceVersions(res *ResourceVersions, view string) *resourceviews.ResourceVersions {
+	p := newResourceVersionsView(res)
+	return &resourceviews.ResourceVersions{Projected: p, View: "default"}
 }
 
 // newResources converts projected type Resources to service type Resources.
@@ -754,6 +809,57 @@ func newResourceVersionDataView(res *ResourceVersionData) *resourceviews.Resourc
 	return vres
 }
 
+// newResourceVersions converts projected type ResourceVersions to service type
+// ResourceVersions.
+func newResourceVersions(vres *resourceviews.ResourceVersionsView) *ResourceVersions {
+	res := &ResourceVersions{}
+	if vres.Data != nil {
+		res.Data = newVersions(vres.Data)
+	}
+	return res
+}
+
+// newResourceVersionsView projects result type ResourceVersions to projected
+// type ResourceVersionsView using the "default" view.
+func newResourceVersionsView(res *ResourceVersions) *resourceviews.ResourceVersionsView {
+	vres := &resourceviews.ResourceVersionsView{}
+	if res.Data != nil {
+		vres.Data = newVersionsView(res.Data)
+	}
+	return vres
+}
+
+// newVersions converts projected type Versions to service type Versions.
+func newVersions(vres *resourceviews.VersionsView) *Versions {
+	res := &Versions{}
+	if vres.Versions != nil {
+		res.Versions = make([]*ResourceVersionData, len(vres.Versions))
+		for i, val := range vres.Versions {
+			res.Versions[i] = transformResourceviewsResourceVersionDataViewToResourceVersionData(val)
+		}
+	}
+	if vres.Latest != nil {
+		res.Latest = newResourceVersionDataMin(vres.Latest)
+	}
+	return res
+}
+
+// newVersionsView projects result type Versions to projected type VersionsView
+// using the "default" view.
+func newVersionsView(res *Versions) *resourceviews.VersionsView {
+	vres := &resourceviews.VersionsView{}
+	if res.Versions != nil {
+		vres.Versions = make([]*resourceviews.ResourceVersionDataView, len(res.Versions))
+		for i, val := range res.Versions {
+			vres.Versions[i] = transformResourceVersionDataToResourceviewsResourceVersionDataView(val)
+		}
+	}
+	if res.Latest != nil {
+		vres.Latest = newResourceVersionDataViewMin(res.Latest)
+	}
+	return vres
+}
+
 // transformResourceviewsCategoryViewToCategory builds a value of type
 // *Category from a value of type *resourceviews.CategoryView.
 func transformResourceviewsCategoryViewToCategory(v *resourceviews.CategoryView) *Category {
@@ -970,6 +1076,34 @@ func transformResourceDataToResourceviewsResourceDataView(v *ResourceData) *reso
 		for i, val := range v.Versions {
 			res.Versions[i] = transformResourceVersionDataToResourceviewsResourceVersionDataView(val)
 		}
+	}
+
+	return res
+}
+
+// transformResourceviewsCatalogViewToCatalog builds a value of type *Catalog
+// from a value of type *resourceviews.CatalogView.
+func transformResourceviewsCatalogViewToCatalog(v *resourceviews.CatalogView) *Catalog {
+	res := &Catalog{
+		ID:       *v.ID,
+		Name:     *v.Name,
+		Type:     *v.Type,
+		URL:      *v.URL,
+		Provider: *v.Provider,
+	}
+
+	return res
+}
+
+// transformCatalogToResourceviewsCatalogView builds a value of type
+// *resourceviews.CatalogView from a value of type *Catalog.
+func transformCatalogToResourceviewsCatalogView(v *Catalog) *resourceviews.CatalogView {
+	res := &resourceviews.CatalogView{
+		ID:       &v.ID,
+		Name:     &v.Name,
+		Type:     &v.Type,
+		URL:      &v.URL,
+		Provider: &v.Provider,
 	}
 
 	return res

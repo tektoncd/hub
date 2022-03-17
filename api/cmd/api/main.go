@@ -41,6 +41,7 @@ import (
 	catalogsvc "github.com/tektoncd/hub/api/pkg/service/catalog"
 	categorysvc "github.com/tektoncd/hub/api/pkg/service/category"
 	ratingsvc "github.com/tektoncd/hub/api/pkg/service/rating"
+	resourcesvc "github.com/tektoncd/hub/api/pkg/service/resource"
 	statussvc "github.com/tektoncd/hub/api/pkg/service/status"
 	userSvc "github.com/tektoncd/hub/api/pkg/user"
 	v1catalog "github.com/tektoncd/hub/api/v1/gen/catalog"
@@ -100,6 +101,7 @@ func main() {
 		v1catalogSvc = v1catalogsvc.New(api)
 		categorySvc = categorysvc.New(api)
 		ratingSvc = ratingsvc.New(api)
+		resourceSvc = resourcesvc.New(api)
 		v1resourceSvc = v1resourcesvc.New(api)
 		statusSvc = statussvc.New(api)
 	}
