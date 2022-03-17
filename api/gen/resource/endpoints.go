@@ -15,19 +15,22 @@ import (
 
 // Endpoints wraps the "resource" service endpoints.
 type Endpoints struct {
-	List goa.Endpoint
+	List         goa.Endpoint
+	VersionsByID goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "resource" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		List: NewListEndpoint(s),
+		List:         NewListEndpoint(s),
+		VersionsByID: NewVersionsByIDEndpoint(s),
 	}
 }
 
 // Use applies the given middleware to all the "resource" service endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.List = m(e.List)
+	e.VersionsByID = m(e.VersionsByID)
 }
 
 // NewListEndpoint returns an endpoint function that calls the method "List" of
@@ -39,6 +42,20 @@ func NewListEndpoint(s Service) goa.Endpoint {
 			return nil, err
 		}
 		vres := NewViewedResources(res, "default")
+		return vres, nil
+	}
+}
+
+// NewVersionsByIDEndpoint returns an endpoint function that calls the method
+// "VersionsByID" of service "resource".
+func NewVersionsByIDEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*VersionsByIDPayload)
+		res, err := s.VersionsByID(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedResourceVersions(res, "default")
 		return vres, nil
 	}
 }

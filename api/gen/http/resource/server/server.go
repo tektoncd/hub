@@ -19,9 +19,10 @@ import (
 
 // Server lists the resource service endpoint HTTP handlers.
 type Server struct {
-	Mounts []*MountPoint
-	List   http.Handler
-	CORS   http.Handler
+	Mounts       []*MountPoint
+	List         http.Handler
+	VersionsByID http.Handler
+	CORS         http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -58,10 +59,13 @@ func New(
 	return &Server{
 		Mounts: []*MountPoint{
 			{"List", "GET", "/resources"},
+			{"VersionsByID", "GET", "/resource/{id}/versions"},
 			{"CORS", "OPTIONS", "/resources"},
+			{"CORS", "OPTIONS", "/resource/{id}/versions"},
 		},
-		List: NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
-		CORS: NewCORSHandler(),
+		List:         NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
+		VersionsByID: NewVersionsByIDHandler(e.VersionsByID, mux, decoder, encoder, errhandler, formatter),
+		CORS:         NewCORSHandler(),
 	}
 }
 
@@ -71,12 +75,14 @@ func (s *Server) Service() string { return "resource" }
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.List = m(s.List)
+	s.VersionsByID = m(s.VersionsByID)
 	s.CORS = m(s.CORS)
 }
 
 // Mount configures the mux to serve the resource endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountListHandler(mux, h.List)
+	MountVersionsByIDHandler(mux, h.VersionsByID)
 	MountCORSHandler(mux, h.CORS)
 }
 
@@ -110,6 +116,57 @@ func NewListHandler(
 	})
 }
 
+// MountVersionsByIDHandler configures the mux to serve the "resource" service
+// "VersionsByID" endpoint.
+func MountVersionsByIDHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := handleResourceOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/resource/{id}/versions", f)
+}
+
+// NewVersionsByIDHandler creates a HTTP handler which loads the HTTP request
+// and calls the "resource" service "VersionsByID" endpoint.
+func NewVersionsByIDHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeVersionsByIDRequest(mux, decoder)
+		encodeResponse = EncodeVersionsByIDResponse(encoder)
+		encodeError    = EncodeVersionsByIDError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "VersionsByID")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "resource")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
 // MountCORSHandler configures the mux to serve the CORS endpoints for the
 // service resource.
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
@@ -121,6 +178,7 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 		}
 	}
 	mux.Handle("OPTIONS", "/resources", f)
+	mux.Handle("OPTIONS", "/resource/{id}/versions", f)
 }
 
 // NewCORSHandler creates a HTTP handler which returns a simple 200 response.

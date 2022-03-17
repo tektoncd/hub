@@ -24,6 +24,9 @@ import (
 var _ = Service("resource", func() {
 	Description("The resource service provides details about all kind of resources")
 
+	Error("internal-error", ErrorResult, "Internal Server Error")
+	Error("not-found", ErrorResult, "Resource Not Found Error")
+
 	Method("List", func() {
 		Description("List all resources sorted by rating and name")
 		Result(types.Resources)
@@ -31,6 +34,25 @@ var _ = Service("resource", func() {
 		HTTP(func() {
 			GET("/resources")
 			Redirect("/v1/resources", StatusMovedPermanently)
+		})
+	})
+
+	Method("VersionsByID", func() {
+		Description("Find all versions of a resource by its id")
+		Payload(func() {
+			Attribute("id", UInt, "ID of a resource", func() {
+				Example("id", 1)
+			})
+			Required("id")
+		})
+		Result(types.ResourceVersions)
+
+		HTTP(func() {
+			GET("/resource/{id}/versions")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
 		})
 	})
 
