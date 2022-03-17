@@ -455,7 +455,7 @@ go.uber.org/zap/internal/exit
 go.uber.org/zap/internal/ztest
 go.uber.org/zap/zapcore
 go.uber.org/zap/zaptest
-# goa.design/goa/v3 v3.3.1
+# goa.design/goa/v3 v3.4.0
 ## explicit
 goa.design/goa/v3/codegen
 goa.design/goa/v3/codegen/cli

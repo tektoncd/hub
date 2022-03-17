@@ -32,6 +32,7 @@ import (
 	category "github.com/tektoncd/hub/api/gen/category"
 	"github.com/tektoncd/hub/api/gen/log"
 	rating "github.com/tektoncd/hub/api/gen/rating"
+	resource "github.com/tektoncd/hub/api/gen/resource"
 	status "github.com/tektoncd/hub/api/gen/status"
 	"github.com/tektoncd/hub/api/pkg/app"
 	auth "github.com/tektoncd/hub/api/pkg/auth"
@@ -89,6 +90,7 @@ func main() {
 		v1catalogSvc  v1catalog.Service
 		categorySvc   category.Service
 		ratingSvc     rating.Service
+		resourceSvc   resource.Service
 		v1resourceSvc v1resource.Service
 		statusSvc     status.Service
 	)
@@ -110,6 +112,7 @@ func main() {
 		v1catalogEndpoints  *v1catalog.Endpoints
 		categoryEndpoints   *category.Endpoints
 		ratingEndpoints     *rating.Endpoints
+		resourceEndpoints   *resource.Endpoints
 		v1resourceEndpoints *v1resource.Endpoints
 		statusEndpoints     *status.Endpoints
 	)
@@ -119,6 +122,7 @@ func main() {
 		v1catalogEndpoints = v1catalog.NewEndpoints(v1catalogSvc)
 		categoryEndpoints = category.NewEndpoints(categorySvc)
 		ratingEndpoints = rating.NewEndpoints(ratingSvc)
+		resourceEndpoints = resource.NewEndpoints(resourceSvc)
 		v1resourceEndpoints = v1resource.NewEndpoints(v1resourceSvc)
 		statusEndpoints = status.NewEndpoints(statusSvc)
 	}
@@ -167,6 +171,7 @@ func main() {
 				v1catalogEndpoints,
 				categoryEndpoints,
 				ratingEndpoints,
+				resourceEndpoints,
 				v1resourceEndpoints,
 				statusEndpoints,
 				&wg, errc, api.Logger("http"), *dbgF,
