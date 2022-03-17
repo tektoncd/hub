@@ -253,6 +253,20 @@ paths:
       - https
       security:
       - jwt_header_Authorization: []
+  /resources:
+    get:
+      tags:
+      - resource
+      summary: List resource
+      description: List all resources sorted by rating and name
+      operationId: resource#List
+      responses:
+        "301":
+          description: Moved Permanently response.
+          schema:
+            $ref: '#/definitions/ResourceListResponseBody'
+      schemes:
+      - https
   /schema/swagger.json:
     get:
       tags:
@@ -417,7 +431,7 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
@@ -428,8 +442,8 @@ definitions:
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
-      timeout: true
+      temporary: false
+      timeout: false
     required:
     - name
     - id
@@ -444,7 +458,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the
@@ -466,14 +480,14 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: Invalid Token scopes  (default view)
     example:
       fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: false
     required:
     - name
@@ -511,7 +525,7 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: Invalid User token (default view)
     example:
       fault: true
@@ -564,18 +578,18 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: Internal server error (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: true
     required:
     - name
@@ -591,7 +605,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the
@@ -609,11 +623,11 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: Invalid request body (default view)
     example:
       fault: false
@@ -621,7 +635,7 @@ definitions:
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: true
-      timeout: true
+      timeout: false
     required:
     - name
     - id
@@ -661,12 +675,12 @@ definitions:
         example: false
     description: Invalid Token scopes  (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: false
+      timeout: true
     required:
     - name
     - id
@@ -703,14 +717,14 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: Invalid User token (default view)
     example:
       fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
+      temporary: false
       timeout: false
     required:
     - name
@@ -731,7 +745,7 @@ definitions:
         type: array
         items:
           type: string
-          example: Nihil officia itaque non.
+          example: Officia itaque non aut qui.
         description: Scopes required for Agent
         example:
         - catalog-refresh
@@ -855,7 +869,7 @@ definitions:
         type: array
         items:
           type: string
-          example: Ut aut quos distinctio ipsam eos.
+          example: Quos distinctio ipsam eos.
         description: Catalog Error message
         example:
         - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
@@ -902,15 +916,15 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: Internal Server Error (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: true
-      timeout: true
+      timeout: false
     required:
     - name
     - id
@@ -943,18 +957,18 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: Internal Server Error (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: true
     required:
     - name
@@ -970,7 +984,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the
@@ -988,18 +1002,18 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: Resource Not Found Error (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
+      temporary: false
       timeout: false
     required:
     - name
@@ -1034,6 +1048,35 @@ definitions:
     - id
     - catalogName
     - status
+  CatalogResponseBodyMin:
+    title: 'Mediatype identifier: application/vnd.hub.catalog; view=default'
+    type: object
+    properties:
+      id:
+        type: integer
+        description: ID is the unique id of the catalog
+        example: 1
+        format: int64
+      name:
+        type: string
+        description: Name of catalog
+        example: Tekton
+      type:
+        type: string
+        description: Type of catalog
+        example: community
+        enum:
+        - official
+        - community
+    description: CatalogResponseBodyMin result type (default view)
+    example:
+      id: 1
+      name: Tekton
+      type: community
+    required:
+    - id
+    - name
+    - type
   CategoryListInternalErrorResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -1175,6 +1218,25 @@ definitions:
     - id
     - catalogName
     - status
+  PlatformResponseBody:
+    title: PlatformResponseBody
+    type: object
+    properties:
+      id:
+        type: integer
+        description: ID is the unique id of platform
+        example: 1
+        format: int64
+      name:
+        type: string
+        description: Name of platform
+        example: linux/amd64
+    example:
+      id: 1
+      name: linux/amd64
+    required:
+    - id
+    - name
   RatingGetInternalErrorResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -1562,6 +1624,459 @@ definitions:
       rating: 1
     required:
     - rating
+  ResourceDataResponseBodyWithoutVersion:
+    title: 'Mediatype identifier: application/vnd.hub.resource.data; view=default'
+    type: object
+    properties:
+      catalog:
+        $ref: '#/definitions/CatalogResponseBodyMin'
+      categories:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryResponseBody'
+        description: Categories related to resource
+        example:
+        - id: 1
+          name: image-build
+      hubURLPath:
+        type: string
+        description: Url path of the resource in hub
+        example: tekton/task/buildah
+      id:
+        type: integer
+        description: ID is the unique id of the resource
+        example: 1
+        format: int64
+      kind:
+        type: string
+        description: Kind of resource
+        example: task
+      latestVersion:
+        $ref: '#/definitions/ResourceVersionDataResponseBodyWithoutResource'
+      name:
+        type: string
+        description: Name of resource
+        example: buildah
+      platforms:
+        type: array
+        items:
+          $ref: '#/definitions/PlatformResponseBody'
+        description: Platforms related to resource
+        example:
+        - id: 1
+          name: linux/amd64
+      rating:
+        type: number
+        description: Rating of resource
+        example: 4.3
+        format: double
+      tags:
+        type: array
+        items:
+          $ref: '#/definitions/TagResponseBody'
+        description: Tags related to resource
+        example:
+        - id: 1
+          name: image-build
+    description: The resource type describes resource information. (withoutVersion
+      view) (default view)
+    example:
+      catalog:
+        id: 1
+        name: tekton
+        type: community
+      categories:
+      - id: 1
+        name: image-build
+      hubURLPath: tekton/task/buildah
+      id: 1
+      kind: task
+      latestVersion:
+        description: Buildah task builds source into a container image and then pushes
+          it to a container registry.
+        displayName: Buildah
+        id: 1
+        minPipelinesVersion: 0.12.1
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+        updatedAt: 2020-01-01 12:00:00 +0000 UTC
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+      name: buildah
+      platforms:
+      - id: 1
+        name: linux/amd64
+      rating: 4.3
+      tags:
+      - id: 1
+        name: image-build
+    required:
+    - id
+    - name
+    - catalog
+    - categories
+    - kind
+    - hubURLPath
+    - latestVersion
+    - tags
+    - platforms
+    - rating
+  ResourceDataResponseBodyWithoutVersionCollection:
+    title: 'Mediatype identifier: application/vnd.hub.resource.data; type=collection;
+      view=default'
+    type: array
+    items:
+      $ref: '#/definitions/ResourceDataResponseBodyWithoutVersion'
+    description: ResourceDataResponseBodyWithoutVersionCollection is the result type
+      for an array of ResourceDataResponseBodyWithoutVersion (default view)
+    example:
+    - catalog:
+        id: 1
+        name: tekton
+        type: community
+      categories:
+      - id: 1
+        name: image-build
+      hubURLPath: tekton/task/buildah
+      id: 1
+      kind: task
+      latestVersion:
+        description: Buildah task builds source into a container image and then pushes
+          it to a container registry.
+        displayName: Buildah
+        id: 1
+        minPipelinesVersion: 0.12.1
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+        updatedAt: 2020-01-01 12:00:00 +0000 UTC
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+      name: buildah
+      platforms:
+      - id: 1
+        name: linux/amd64
+      rating: 4.3
+      tags:
+      - id: 1
+        name: image-build
+    - catalog:
+        id: 1
+        name: tekton
+        type: community
+      categories:
+      - id: 1
+        name: image-build
+      hubURLPath: tekton/task/buildah
+      id: 1
+      kind: task
+      latestVersion:
+        description: Buildah task builds source into a container image and then pushes
+          it to a container registry.
+        displayName: Buildah
+        id: 1
+        minPipelinesVersion: 0.12.1
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+        updatedAt: 2020-01-01 12:00:00 +0000 UTC
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+      name: buildah
+      platforms:
+      - id: 1
+        name: linux/amd64
+      rating: 4.3
+      tags:
+      - id: 1
+        name: image-build
+    - catalog:
+        id: 1
+        name: tekton
+        type: community
+      categories:
+      - id: 1
+        name: image-build
+      hubURLPath: tekton/task/buildah
+      id: 1
+      kind: task
+      latestVersion:
+        description: Buildah task builds source into a container image and then pushes
+          it to a container registry.
+        displayName: Buildah
+        id: 1
+        minPipelinesVersion: 0.12.1
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+        updatedAt: 2020-01-01 12:00:00 +0000 UTC
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+      name: buildah
+      platforms:
+      - id: 1
+        name: linux/amd64
+      rating: 4.3
+      tags:
+      - id: 1
+        name: image-build
+    - catalog:
+        id: 1
+        name: tekton
+        type: community
+      categories:
+      - id: 1
+        name: image-build
+      hubURLPath: tekton/task/buildah
+      id: 1
+      kind: task
+      latestVersion:
+        description: Buildah task builds source into a container image and then pushes
+          it to a container registry.
+        displayName: Buildah
+        id: 1
+        minPipelinesVersion: 0.12.1
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+        updatedAt: 2020-01-01 12:00:00 +0000 UTC
+        version: "0.1"
+        webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+      name: buildah
+      platforms:
+      - id: 1
+        name: linux/amd64
+      rating: 4.3
+      tags:
+      - id: 1
+        name: image-build
+  ResourceListResponseBody:
+    title: 'Mediatype identifier: application/vnd.hub.resources; view=default'
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/ResourceDataResponseBodyWithoutVersionCollection'
+    description: ListResponseBody result type (default view)
+    example:
+      data:
+      - catalog:
+          id: 1
+          name: tekton
+          type: community
+        categories:
+        - id: 1
+          name: image-build
+        hubURLPath: tekton/task/buildah
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+      - catalog:
+          id: 1
+          name: tekton
+          type: community
+        categories:
+        - id: 1
+          name: image-build
+        hubURLPath: tekton/task/buildah
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+      - catalog:
+          id: 1
+          name: tekton
+          type: community
+        categories:
+        - id: 1
+          name: image-build
+        hubURLPath: tekton/task/buildah
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+      - catalog:
+          id: 1
+          name: tekton
+          type: community
+        categories:
+        - id: 1
+          name: image-build
+        hubURLPath: tekton/task/buildah
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+    required:
+    - data
+  ResourceVersionDataResponseBodyWithoutResource:
+    title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
+    type: object
+    properties:
+      deprecated:
+        type: boolean
+        description: Deprecation status of a version
+        example: true
+      description:
+        type: string
+        description: Description of version
+        example: Buildah task builds source into a container image and then pushes
+          it to a container registry.
+      displayName:
+        type: string
+        description: Display name of version
+        example: Buildah
+      hubURLPath:
+        type: string
+        description: Url path of the resource in hub
+        example: tekton/task/buildah
+      id:
+        type: integer
+        description: ID is the unique id of resource's version
+        example: 1
+        format: int64
+      minPipelinesVersion:
+        type: string
+        description: Minimum pipelines version the resource's version is compatible
+          with
+        example: 0.12.1
+      platforms:
+        type: array
+        items:
+          $ref: '#/definitions/PlatformResponseBody'
+        description: Platforms related to resource version
+        example:
+        - id: 1
+          name: linux/s390x
+      rawURL:
+        type: string
+        description: Raw URL of resource's yaml file of the version
+        example: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+        format: uri
+      updatedAt:
+        type: string
+        description: Timestamp when version was last updated
+        example: 2020-01-01 12:00:00 +0000 UTC
+        format: date-time
+      version:
+        type: string
+        description: Version of resource
+        example: "0.1"
+      webURL:
+        type: string
+        description: Web URL of resource's yaml file of the version
+        example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        format: uri
+    description: The Version result type describes resource's version information.
+      (default view)
+    example:
+      deprecated: true
+      description: Buildah task builds source into a container image and then pushes
+        it to a container registry.
+      displayName: Buildah
+      hubURLPath: tekton/task/buildah
+      id: 1
+      minPipelinesVersion: 0.12.1
+      platforms:
+      - id: 1
+        name: linux/s390x
+      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+      updatedAt: 2020-01-01 12:00:00 +0000 UTC
+      version: "0.1"
+      webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+    required:
+    - id
+    - version
+    - displayName
+    - description
+    - minPipelinesVersion
+    - rawURL
+    - webURL
+    - updatedAt
+    - platforms
+    - hubURLPath
   StatusStatusResponseBody:
     title: StatusStatusResponseBody
     type: object
@@ -1572,9 +2087,6 @@ definitions:
           $ref: '#/definitions/HubServiceResponseBody'
         description: List of services and their status
         example:
-        - error: unable to reach db
-          name: api
-          status: ok
         - error: unable to reach db
           name: api
           status: ok
@@ -1595,6 +2107,28 @@ definitions:
       - error: unable to reach db
         name: api
         status: ok
+      - error: unable to reach db
+        name: api
+        status: ok
+  TagResponseBody:
+    title: TagResponseBody
+    type: object
+    properties:
+      id:
+        type: integer
+        description: ID is the unique id of tag
+        example: 1
+        format: int64
+      name:
+        type: string
+        description: Name of tag
+        example: image-build
+    example:
+      id: 1
+      name: image-build
+    required:
+    - id
+    - name
 securityDefinitions:
   jwt_header_Authorization:
     type: apiKey
