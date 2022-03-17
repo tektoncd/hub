@@ -6,3 +6,29 @@
 // $ goa gen github.com/tektoncd/hub/api/design
 
 package client
+
+import (
+	"fmt"
+	"strconv"
+
+	resource "github.com/tektoncd/hub/api/gen/resource"
+)
+
+// BuildVersionsByIDPayload builds the payload for the resource VersionsByID
+// endpoint from CLI flags.
+func BuildVersionsByIDPayload(resourceVersionsByIDID string) (*resource.VersionsByIDPayload, error) {
+	var err error
+	var id uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(resourceVersionsByIDID, 10, 64)
+		id = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for id, must be UINT")
+		}
+	}
+	v := &resource.VersionsByIDPayload{}
+	v.ID = id
+
+	return v, nil
+}

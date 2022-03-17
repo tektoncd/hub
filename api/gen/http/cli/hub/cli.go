@@ -32,7 +32,7 @@ func UsageCommands() string {
 catalog (refresh|refresh-all|catalog-error)
 category list
 rating (get|update)
-resource list
+resource (list|versions-by-id)
 status status
 `
 }
@@ -104,6 +104,9 @@ func ParseEndpoint(
 
 		resourceListFlags = flag.NewFlagSet("list", flag.ExitOnError)
 
+		resourceVersionsByIDFlags  = flag.NewFlagSet("versions-by-id", flag.ExitOnError)
+		resourceVersionsByIDIDFlag = resourceVersionsByIDFlags.String("id", "REQUIRED", "ID of a resource")
+
 		statusFlags = flag.NewFlagSet("status", flag.ContinueOnError)
 
 		statusStatusFlags = flag.NewFlagSet("status", flag.ExitOnError)
@@ -126,6 +129,7 @@ func ParseEndpoint(
 
 	resourceFlags.Usage = resourceUsage
 	resourceListFlags.Usage = resourceListUsage
+	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
 
 	statusFlags.Usage = statusUsage
 	statusStatusFlags.Usage = statusStatusUsage
@@ -217,6 +221,9 @@ func ParseEndpoint(
 			case "list":
 				epf = resourceListFlags
 
+			case "versions-by-id":
+				epf = resourceVersionsByIDFlags
+
 			}
 
 		case "status":
@@ -292,6 +299,9 @@ func ParseEndpoint(
 			case "list":
 				endpoint = c.List()
 				data = nil
+			case "versions-by-id":
+				endpoint = c.VersionsByID()
+				data, err = resourcec.BuildVersionsByIDPayload(*resourceVersionsByIDIDFlag)
 			}
 		case "status":
 			c := statusc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -474,6 +484,7 @@ Usage:
 
 COMMAND:
     list: List all resources sorted by rating and name
+    versions-by-id: Find all versions of a resource by its id
 
 Additional help:
     %s resource COMMAND --help
@@ -486,6 +497,17 @@ List all resources sorted by rating and name
 
 Example:
     `+os.Args[0]+` resource list
+`, os.Args[0])
+}
+
+func resourceVersionsByIDUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource versions-by-id -id UINT
+
+Find all versions of a resource by its id
+    -id UINT: ID of a resource
+
+Example:
+    `+os.Args[0]+` resource versions-by-id --id 1
 `, os.Args[0])
 }
 
