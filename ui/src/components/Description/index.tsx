@@ -8,6 +8,7 @@ import Readme from '../Readme';
 import Yaml from '../Yaml';
 import { titleCase } from '../../common/titlecase';
 import './Description.css';
+import { assert } from '../../store/utils';
 
 interface Props {
   name: string;
@@ -25,6 +26,7 @@ const Description: React.FC<Props> = (props) => {
 
   const { catalog, kind, name } = props;
   const resource = resources.resources.get(`${catalog}/${titleCase(kind)}/${name}`);
+  assert(resource);
 
   const { webURL, version } = resource.displayVersion;
 

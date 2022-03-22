@@ -12,7 +12,7 @@ import { titleCase } from '../../common/titlecase';
 import './Rating.css';
 
 const Rating: React.FC = observer(() => {
-  const { name, kind, catalog } = useParams();
+  const { name, kind, catalog }: { name: string; kind: string; catalog: string } = useParams();
   const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
 
   const [star, setStar] = useState([false, false, false, false, false]);
@@ -78,7 +78,7 @@ const Rating: React.FC = observer(() => {
         const resource = resources.resources.get(resourceKey);
         assert(resource);
         user.setRating(resource.id, Number(rating));
-        if (user.ratingErr === '') {
+        if (user.ratingErr.serverMessage === '') {
           highlightStar(Number(rating));
         } else {
           setRatingError(user.ratingErr.serverMessage);

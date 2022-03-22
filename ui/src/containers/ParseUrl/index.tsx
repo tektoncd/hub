@@ -9,7 +9,7 @@ const ParseUrl: React.FC = () => {
   const history = useHistory();
 
   if (window.location.search) {
-    const searchParams = new URLSearchParams(window.location.search);
+    const searchParams: URLSearchParams = new URLSearchParams(window.location.search);
     const status = searchParams.get('status');
     const code = searchParams.get('code');
 
@@ -36,7 +36,7 @@ const ParseUrl: React.FC = () => {
       }, 1000);
     }
     if (searchParams.has(Params.Query)) {
-      resources.setSearch(searchParams.get(Params.Query));
+      resources.setSearch(searchParams.get(Params.Query) || '');
     }
     if (searchParams.has(Params.Tag)) {
       const tags = searchParams.getAll(Params.Tag);
@@ -44,7 +44,7 @@ const ParseUrl: React.FC = () => {
       resources.setSearchedTags(searchParams.getAll(Params.Tag));
     }
     if (searchParams.has(Params.SortBy)) {
-      resources.setSortBy(searchParams.get(Params.SortBy));
+      resources.setSortBy(searchParams.get(Params.SortBy) || '');
     }
     // Storing url params to store inorder to parse the url only after successfully resource load
     resources.setURLParams(window.location.search);

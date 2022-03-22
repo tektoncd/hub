@@ -45,8 +45,8 @@ export const CategoryStore = types
     },
 
     // This returns set of selected category
-    get selected() {
-      const list = new Set();
+    get selected(): Set<number> {
+      const list: Set<number> = new Set();
       self.items.forEach((c: ICategory) => {
         if (c.selected) {
           list.add(c.id);

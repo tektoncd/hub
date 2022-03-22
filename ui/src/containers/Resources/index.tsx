@@ -25,7 +25,7 @@ const Resources: React.FC = observer(() => {
 
   React.useEffect(() => {
     const selectedcategories = categories.selectedByName.join(',');
-    const selectedKinds = [...kinds.selected].join(',');
+    const selectedKinds = Array.from(kinds.selected).join(',');
     const selectedCatalogs = catalogs.selectedByName.join(',');
     const selectedPlatforms = platforms.selectedByName.join(',');
 

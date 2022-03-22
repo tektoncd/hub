@@ -58,7 +58,7 @@ export const CatalogStore = types
   }))
 
   .views((self) => ({
-    get values() {
+    get values(): Array<ICatalog> {
       return Array.from(self.items.values());
     },
 
@@ -66,8 +66,8 @@ export const CatalogStore = types
       return getEnv(self).api;
     },
 
-    get selected() {
-      const list = new Set();
+    get selected(): Set<number> {
+      const list: Set<number> = new Set();
       self.items.forEach((c: ICatalog) => {
         if (c.selected) {
           list.add(c.id);
@@ -79,7 +79,7 @@ export const CatalogStore = types
 
     /* This view returns list of the selected catalos's name instead of id
     to avoid loop on it inorder to get catalogs name */
-    get selectedByName() {
+    get selectedByName(): string[] {
       return Array.from(self.items.values())
         .filter((c: ICatalog) => c.selected)
         .reduce((acc: string[], c: ICatalog) => [...acc, c.name], []);

@@ -13,7 +13,12 @@ import { IVersion } from '../../store/resource';
 
 const Details: React.FC = observer(() => {
   const { resources, user } = useMst();
-  const { name, catalog, kind, version } = useParams();
+  const {
+    name,
+    catalog,
+    kind,
+    version
+  }: { name: string; catalog: string; kind: string; version: string } = useParams();
 
   React.useEffect(() => {
     if (resources.isResourceLoading === false) {
@@ -25,7 +30,9 @@ const Details: React.FC = observer(() => {
   const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
 
   const validateUrl = () => {
-    const allVersions = resources.resources.get(resourceKey).versions;
+    const resource = resources.resources.get(resourceKey);
+    assert(resource);
+    const allVersions = resource.versions;
     let isValidVersion = false;
     if (version !== undefined) {
       allVersions.forEach((item: IVersion) => {

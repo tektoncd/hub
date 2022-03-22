@@ -1,35 +1,35 @@
 import React, { ReactChild, ReactChildren } from 'react';
 import { types, getEnv, Instance } from 'mobx-state-tree';
 import { persist } from 'mst-persist';
-import { CategoryStore } from './category';
-import { ResourceStore } from './resource';
+import { CategoryStore, ICategoryStore } from './category';
+import { ResourceStore, IResourceStore } from './resource';
 import { Hub, Api } from '../api';
-import { AuthStore } from './auth';
-import { CatalogStore } from './catalog';
-import { ProviderStore } from './provider';
+import { AuthStore, IAuthStore } from './auth';
+import { CatalogStore, ICatalogStore } from './catalog';
+import { ProviderStore, IProviderStore } from './provider';
 
 export const Root = types.model('Root', {}).views((self) => ({
   get api(): Api {
     return getEnv(self).api;
   },
-  get categories() {
+  get categories(): ICategoryStore {
     return getEnv(self).categories;
   },
-  get resources() {
+  get resources(): IResourceStore {
     return getEnv(self).resources;
   },
-  get user() {
+  get user(): IAuthStore {
     return getEnv(self).user;
   },
-  get catalogs() {
+  get catalogs(): ICatalogStore {
     return getEnv(self).catalogs;
   },
-  get providers() {
+  get providers(): IProviderStore {
     return getEnv(self).providers;
   }
 }));
 
-type IRoot = Instance<typeof Root>;
+export type IRoot = Instance<typeof Root>;
 
 const initRootStore = (api: Api) => {
   const categories = CategoryStore.create({}, { api });
