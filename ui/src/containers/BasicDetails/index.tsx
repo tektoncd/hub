@@ -26,7 +26,7 @@ import { IconSize } from '@patternfly/react-icons';
 import { useObserver } from 'mobx-react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useMst } from '../../store/root';
-import { IResource, IResourceStore, IVersion } from '../../store/resource';
+import { IResource, IVersion } from '../../store/resource';
 import { ITag } from '../../store/tag';
 import { IPlatform } from '../../store/platform';
 import { Icons } from '../../common/icons';
@@ -35,11 +35,10 @@ import TooltipDisplay from '../../components/TooltipDisplay';
 import Rating from '../Rating';
 import { titleCase } from '../../common/titlecase';
 import { assert } from '../../store/utils';
-import { ICatalogStore } from '../../store/catalog';
 import './BasicDetails.css';
 
 const BasicDetails: React.FC = () => {
-  const { resources, catalogs }: { resources: IResourceStore; catalogs: ICatalogStore } = useMst();
+  const { resources, catalogs } = useMst();
   const {
     catalog,
     kind,

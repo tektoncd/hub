@@ -52,8 +52,8 @@ export const PlatformStore = types
         .reduce((acc: string[], p: IPlatform) => [...acc, p.name], []);
     },
 
-    get selected() {
-      const list = new Set();
+    get selected(): Set<number> {
+      const list: Set<number> = new Set();
       self.items.forEach((p: IPlatform) => {
         if (p.selected) {
           list.add(p.id);

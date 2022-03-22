@@ -47,8 +47,8 @@ export const KindStore = types
       return Array.from(self.items.values());
     },
 
-    get selected() {
-      const list = new Set();
+    get selected(): Set<string> {
+      const list: Set<string> = new Set();
       self.items.forEach((c: IKind) => {
         if (c.selected) {
           list.add(c.name);
