@@ -36,9 +36,12 @@ func DeleteBeforeAssociations(db *gorm.DB) {
 							modelValue := reflect.New(rel.FieldSchema.ModelType).Interface()
 							tx := db.Session(&gorm.Session{NewDB: true}).Model(modelValue)
 							withoutConditions := false
+							if db.Statement.Unscoped {
+								tx = tx.Unscoped()
+							}
 
 							if len(db.Statement.Selects) > 0 {
-								var selects []string
+								selects := make([]string, 0, len(db.Statement.Selects))
 								for _, s := range db.Statement.Selects {
 									if s == clause.Associations {
 										selects = append(selects, s)
@@ -66,9 +69,9 @@ func DeleteBeforeAssociations(db *gorm.DB) {
 							}
 						case schema.Many2Many:
 							var (
-								queryConds     []clause.Expression
-								foreignFields  []*schema.Field
-								relForeignKeys []string
+								queryConds     = make([]clause.Expression, 0, len(rel.References))
+								foreignFields  = make([]*schema.Field, 0, len(rel.References))
+								relForeignKeys = make([]string, 0, len(rel.References))
 								modelValue     = reflect.New(rel.JoinTable.ModelType).Interface()
 								table          = rel.JoinTable.Table
 								tx             = db.Session(&gorm.Session{NewDB: true}).Model(modelValue).Table(table)
@@ -132,7 +135,7 @@ func Delete(db *gorm.DB) {
 			}
 
 			db.Statement.AddClauseIfNotExists(clause.From{})
-			db.Statement.Build("DELETE", "FROM", "WHERE")
+			db.Statement.Build(db.Statement.BuildClauses...)
 		}
 
 		if _, ok := db.Statement.Clauses["WHERE"]; !db.AllowGlobalUpdate && !ok && db.Error == nil {

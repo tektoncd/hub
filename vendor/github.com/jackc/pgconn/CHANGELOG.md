@@ -1,3 +1,35 @@
+# 1.10.0 (July 24, 2021)
+
+* net.Timeout errors are no longer returned when a query is canceled via context. A wrapped context error is returned.
+
+# 1.9.0 (July 10, 2021)
+
+* pgconn.Timeout only is true for errors originating in pgconn (Michael Darr)
+* Add defaults for sslcert, sslkey, and sslrootcert (Joshua Brindle)
+* Solve issue with 'sslmode=verify-full' when there are multiple hosts (mgoddard)
+* Fix default host when parsing URL without host but with port
+* Allow dbname query parameter in URL conn string
+* Update underlying dependencies
+
+# 1.8.1 (March 25, 2021)
+
+* Better connection string sanitization (ip.novikov)
+* Use proper pgpass location on Windows (Moshe Katz)
+* Use errors instead of golang.org/x/xerrors
+* Resume fallback on server error in Connect (Andrey Borodin)
+
+# 1.8.0 (December 3, 2020)
+
+* Add StatementErrored method to stmtcache.Cache. This allows the cache to purge invalidated prepared statements. (Ethan Pailes)
+
+# 1.7.2 (November 3, 2020)
+
+* Fix data value slices into work buffer with capacities larger than length.
+
+# 1.7.1 (October 31, 2020)
+
+* Do not asyncClose after receiving FATAL error from PostgreSQL server
+
 # 1.7.0 (September 26, 2020)
 
 * Exec(Params|Prepared) return ResultReader with FieldDescriptions loaded

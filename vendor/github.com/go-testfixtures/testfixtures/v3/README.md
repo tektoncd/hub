@@ -1,6 +1,6 @@
 # testfixtures
 
-[![GoDoc](https://godoc.org/github.com/go-testfixtures/testfixtures?status.svg)][doc]
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/go-testfixtures/testfixtures/v3?tab=doc)](https://pkg.go.dev/github.com/go-testfixtures/testfixtures/v3?tab=doc)
 
 > ***Warning***: this package will wipe the database data before loading the
 fixtures! It is supposed to be used on a test database. Please, double check
@@ -74,7 +74,7 @@ The file would look like this (it can have as many record you want):
 ```
 
 An YAML object or array will be converted to JSON. It will be stored on a native
-JSON type like JSONB on PostgreSQL or as a TEXT or VARCHAR column on other
+JSON type like JSONB on PostgreSQL & CockroachDB or as a TEXT or VARCHAR column on other
 databases.
 
 ```yml
@@ -88,6 +88,13 @@ databases.
       - go
       - testing
     post: "..."
+```
+
+Binary columns can be represented as hexadecimal strings (should start with `0x`):
+
+```yaml
+- id: 1
+  binary_column: 0x1234567890abcdef
 ```
 
 If you need to write raw SQL, probably to call a function, prefix the value
@@ -129,7 +136,7 @@ func TestMain(m *testing.M) {
                 ...
         }
 
-        fixtures, err := testfixtures.New(
+        fixtures, err = testfixtures.New(
                 testfixtures.Database(db), // You database connection
                 testfixtures.Dialect("postgres"), // Available: "postgresql", "timescaledb", "mysql", "mariadb", "sqlite" and "sqlserver"
                 testfixtures.Directory("testdata/fixtures"), // the directory containing the YAML files
@@ -249,9 +256,9 @@ testfixtures.New(
 
 ## Compatible databases
 
-### PostgreSQL / TimescaleDB
+### PostgreSQL / TimescaleDB / CockroachDB
 
-This package has two approaches to disable foreign keys while importing fixtures
+This package has three approaches to disable foreign keys while importing fixtures
 for PostgreSQL databases:
 
 #### With `DISABLE TRIGGER`
@@ -288,7 +295,21 @@ testfixtures.New(
 )
 ```
 
-Tested using the [github.com/lib/pq](https://github.com/lib/pq) driver.
+#### With `DROP CONSTRAINT`
+
+This approach is implemented to support databases that do not support above
+methods (namely CockroachDB).
+
+```go
+testfixtures.New(
+        ...
+        testfixtures.Dialect("postgres"),
+        testfixtures.UseDropConstraint(),
+)
+```
+
+Tested using the [github.com/lib/pq](https://github.com/lib/pq) and
+[github.com/jackc/pgx](https://github.com/jackc/pgx) drivers.
 
 ### MySQL / MariaDB
 
@@ -385,11 +406,11 @@ dumper, err := testfixtures.NewDumper(
         testfixtures.DumpDatabase(db),
         testfixtures.DumpDialect("postgres"), // or your database of choice
         testfixtures.DumpDirectory("tmp/fixtures"),
-        textfixtures.DumpTables( // optional, will dump all table if not given
+        testfixtures.DumpTables( // optional, will dump all table if not given
           "posts",
           "comments",
           "tags",
-        )
+        ),
 )
 if err != nil {
         ...
@@ -422,16 +443,29 @@ each test run in a transaction.
 ## CLI
 
 We also have a CLI to load fixtures in a given database.
+
 Grab it from the [releases page](https://github.com/go-testfixtures/testfixtures/releases)
-and use it like:
+or install with Homebrew:
 
 ```bash
+brew install go-testfixtures/tap/testfixtures
+```
+
+Usage is like this:
+
+```bash
+# load
 testfixtures -d postgres -c "postgres://user:password@localhost/database" -D testdata/fixtures
+```
+
+```bash
+# dump
+testfixtures --dump -d postgres -c "postgres://user:password@localhost/database" -D testdata/fixtures
 ```
 
 The connection string changes for each database driver.
 
-Use `--help` for all flags.
+Use `testfixtures --help` for all flags.
 
 ## Contributing
 
@@ -453,6 +487,7 @@ for the database you want to run tests against:
 
 ```bash
 task test:pg # PostgreSQL
+task test:crdb # CockroachDB
 task test:mysql # MySQL
 task test:sqlite # SQLite
 task test:sqlserver # Microsoft SQL Server

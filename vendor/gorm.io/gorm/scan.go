@@ -84,7 +84,12 @@ func Scan(rows *sql.Rows, db *DB, initialized bool) {
 			scanIntoMap(mapValue, values, columns)
 			*dest = append(*dest, mapValue)
 		}
-	case *int, *int64, *uint, *uint64, *float32, *float64, *string, *time.Time:
+	case *int, *int8, *int16, *int32, *int64,
+		*uint, *uint8, *uint16, *uint32, *uint64, *uintptr,
+		*float32, *float64,
+		*bool, *string, *time.Time,
+		*sql.NullInt32, *sql.NullInt64, *sql.NullFloat64,
+		*sql.NullBool, *sql.NullString, *sql.NullTime:
 		for initialized || rows.Next() {
 			initialized = false
 			db.RowsAffected++
@@ -186,7 +191,7 @@ func Scan(rows *sql.Rows, db *DB, initialized bool) {
 					db.Statement.ReflectValue.Set(reflect.Append(db.Statement.ReflectValue, elem.Elem()))
 				}
 			}
-		case reflect.Struct:
+		case reflect.Struct, reflect.Ptr:
 			if db.Statement.ReflectValue.Type() != Schema.ModelType {
 				Schema, _ = schema.Parse(db.Statement.Dest, db.cacheStore, db.NamingStrategy)
 			}
@@ -203,6 +208,8 @@ func Scan(rows *sql.Rows, db *DB, initialized bool) {
 							}
 						}
 						values[idx] = &sql.RawBytes{}
+					} else if len(columns) == 1 {
+						values[idx] = dest
 					} else {
 						values[idx] = &sql.RawBytes{}
 					}
@@ -233,10 +240,16 @@ func Scan(rows *sql.Rows, db *DB, initialized bool) {
 					}
 				}
 			}
+		default:
+			db.AddError(rows.Scan(dest))
 		}
 	}
 
-	if db.RowsAffected == 0 && db.Statement.RaiseErrorOnNotFound {
+	if err := rows.Err(); err != nil && err != db.Error {
+		db.AddError(err)
+	}
+
+	if db.RowsAffected == 0 && db.Statement.RaiseErrorOnNotFound && db.Error == nil {
 		db.AddError(ErrRecordNotFound)
 	}
 }
