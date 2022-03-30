@@ -18,6 +18,13 @@ spec:
       containers:
         - name: tekton-hub-ui
           image: quay.io/tekton-hub/ui
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 500m
+              memory: 500Mi
           env:
             - name: API_URL
               valueFrom:
