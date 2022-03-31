@@ -5,7 +5,7 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o api-server ./api/cmd/api/...
 
-FROM alpine:3.14
+FROM alpine:3.15.3
 
 RUN apk --no-cache add git ca-certificates openssh-client && addgroup -S hub && adduser -S hub -G hub
 USER hub
