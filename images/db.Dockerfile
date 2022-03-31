@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine3.14 AS builder
+FROM golang:1.18.0-alpine3.14 AS builder
 
 WORKDIR /go/src/github.com/tektoncd/hub
 COPY . .
