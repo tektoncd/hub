@@ -221,7 +221,9 @@ scopes:
     users: [foo]
 ```
 
-- Commit the changes and push the changes to your fork
+#### Keeping `config.yaml` on remote location such as github or gcs
+
+- Commit/save the changes and push them on remote git instance such as github or gcs
 
 - Edit the `02-api/21-api-configmap.yaml` and change the URL to point to your fork. By default it is pointing to [config.yaml][config-yaml] in Hub which has Application Data.
 
@@ -239,6 +241,51 @@ data:
 All users have default scopes `rating:read` and `rating:write`. Once user get login to Hub, they get the appropriate scopes which allows them to rate the resource
 
 **WARN** : Make sure you have updated Hub config before starting the api server
+
+
+#### Mounting config.yaml directly via ConfigMap
+
+- Once the changes are made in [config.yaml][config-yaml], create a `ConfigMap` by running:
+
+```bash
+kubectl -n <namespace> create configmap <configmap_name> --from-file=config.yaml="path/to/config.yaml"
+```
+
+- Edit the `02-api/21-api-configmap.yaml` and add the path where the ConfigMap will be mounted. Make sure that the base path of [config.yaml][config.yaml] matches with the one present in the ConfigMap created above:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tekton-hub-api
+  labels:
+    app: tekton-hub-api
+data:
+  CONFIG_FILE_URL: file:///path/to/config.yaml ## Change the file URL here (eg file:///tmp/configdata/config.yaml)
+```
+
+- Update the `02-api/22-api-deployment.yaml` with the following changes:
+
+```yaml
+spec:
+  ...
+    spec:
+      ...
+      volumes:
+      - name: tekton-hub-configyaml
+        configMap:
+          name: <configmap_name> # name you used at the time of creating the config.yaml ConfigMap
+          items:
+          - key: config.yaml
+            path: config.yaml
+      ...
+      containers:
+        - ...
+          volumeMounts:
+          - name: tekton-hub-configyaml
+            mountPath: "/path/to/config.yaml" <---- change here with the path mentioned in `tekton-hub-api` ConfigMap (eg /tmp/configdata)
+          ...
+```
 
 ### Create SSH secrets (Optional)
 
