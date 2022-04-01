@@ -22,7 +22,7 @@ To get started, take a look to the [examples](#examples).
 - Supports map and filters to handle mocks easily.
 - Wide compatible HTTP interceptor using `http.RoundTripper` interface.
 - Works with any `net/http` compatible client, such as [gentleman](https://github.com/h2non/gentleman).
-- Network delay simulation (beta).
+- Network timeout/cancelation delay simulation.
 - Extensible and hackable API.
 - Dependency free.
 
