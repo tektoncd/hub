@@ -1,3 +1,14 @@
+## v1.1.2 / 2021-08-03
+
+  * fix(mock): fix race condition in mock.go file (#92)
+
+## v1.1.1 / 2021-07-14
+
+  * feat(matchers): Support custom MIME types (#88)
+
+## v1.1.0 / 2021-06-02
+  
+  * Add context expiration cancellation support (#86)
 
 ## v1.0.16 / 2020-11-23
   

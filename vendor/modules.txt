@@ -651,7 +651,7 @@ google.golang.org/protobuf/types/known/durationpb
 google.golang.org/protobuf/types/known/fieldmaskpb
 google.golang.org/protobuf/types/known/timestamppb
 google.golang.org/protobuf/types/known/wrapperspb
-# gopkg.in/h2non/gock.v1 v1.0.16
+# gopkg.in/h2non/gock.v1 v1.1.2
 ## explicit
 gopkg.in/h2non/gock.v1
 # gopkg.in/inf.v0 v0.9.1
