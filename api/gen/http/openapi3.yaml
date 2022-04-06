@@ -28,6 +28,9 @@ paths:
                 - error: unable to reach db
                   name: api
                   status: ok
+                - error: unable to reach db
+                  name: api
+                  status: ok
   /catalog/{catalogName}/error:
     get:
       tags:
@@ -164,7 +167,16 @@ paths:
                 - catalogName: tekton
                   id: 1
                   status: queued
+                - catalogName: tekton
+                  id: 1
+                  status: queued
               example:
+              - catalogName: tekton
+                id: 1
+                status: queued
+              - catalogName: tekton
+                id: 1
+                status: queued
               - catalogName: tekton
                 id: 1
                 status: queued
@@ -221,6 +233,67 @@ paths:
                 id: 3F1FKVRR
                 message: Value of ID must be an integer
                 name: bad_request
+  /resource/{catalog}/{kind}/{name}/{version}:
+    get:
+      tags:
+      - resource
+      summary: ByCatalogKindNameVersion resource
+      description: Find resource using name of catalog & name, kind and version of
+        resource
+      operationId: resource#ByCatalogKindNameVersion
+      parameters:
+      - name: catalog
+        in: path
+        description: name of catalog
+        required: true
+        schema:
+          type: string
+          description: name of catalog
+          example: tektoncd
+        example: tektoncd
+      - name: kind
+        in: path
+        description: kind of resource
+        required: true
+        schema:
+          type: string
+          description: kind of resource
+          example: pipeline
+          enum:
+          - task
+          - pipeline
+        example: pipeline
+      - name: name
+        in: path
+        description: name of resource
+        required: true
+        schema:
+          type: string
+          description: name of resource
+          example: buildah
+        example: buildah
+      - name: version
+        in: path
+        description: version of resource
+        required: true
+        schema:
+          type: string
+          description: version of resource
+          example: "0.1"
+        example: "0.1"
+      responses:
+        "302":
+          description: Found response.
+          headers:
+            location:
+              description: Redirect URL
+              required: true
+              schema:
+                type: string
+                description: Redirect URL
+                example: http://labadienolan.com/shemar
+                format: uri
+              example: http://fahey.name/rolando_rowe
   /resource/{id}/rating:
     get:
       tags:
@@ -236,8 +309,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 10930521684337096685
-        example: 14823265084100877150
+          example: 8774254641291276041
+        example: 8951834590360407852
       responses:
         "200":
           description: OK response.
@@ -309,8 +382,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 8881173310038346733
-        example: 16939312758267551472
+          example: 10008120266282246264
+        example: 2934445118719215775
       requestBody:
         required: true
         content:
@@ -318,7 +391,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateRequestBody'
             example:
-              rating: 3
+              rating: 4
       responses:
         "200":
           description: OK response.
@@ -397,9 +470,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://willmsroob.name/darby
+                example: http://aufderhar.biz/emmett
                 format: uri
-              example: http://ondricka.org/susanna
+              example: http://jacobsroob.name/ed
   /resources:
     get:
       tags:
@@ -721,6 +794,9 @@ paths:
                 - error: unable to reach db
                   name: api
                   status: ok
+                - error: unable to reach db
+                  name: api
+                  status: ok
   /v1/categories:
     get:
       tags:
@@ -828,14 +904,6 @@ components:
           - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
           - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
           type: warning
-        - errors:
-          - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
-          - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
-          type: warning
-        - errors:
-          - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
-          - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
-          type: warning
       required:
       - data
     CatalogErrors:
@@ -845,7 +913,7 @@ components:
           type: array
           items:
             type: string
-            example: Laborum ut.
+            example: Mollitia aut neque similique ipsam.
           description: Catalog Error message
           example:
           - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
@@ -886,7 +954,7 @@ components:
         fault:
           type: boolean
           description: Is the error a server-side fault?
-          example: true
+          example: false
         id:
           type: string
           description: ID is a unique identifier for this particular occurrence of
@@ -1000,6 +1068,8 @@ components:
             name: Image Builder
       example:
         data:
+        - id: 1
+          name: Image Builder
         - id: 1
           name: Image Builder
         - id: 1
@@ -1514,9 +1584,6 @@ components:
           - error: unable to reach db
             name: api
             status: ok
-          - error: unable to reach db
-            name: api
-            status: ok
       example:
         services:
         - error: unable to reach db
@@ -1536,7 +1603,7 @@ components:
           type: array
           items:
             type: string
-            example: Cum laborum fugit.
+            example: Rem error consequuntur autem enim.
           description: Scopes required for Agent
           example:
           - catalog-refresh
@@ -1566,11 +1633,11 @@ components:
         rating:
           type: integer
           description: User rating for resource
-          example: 1
+          example: 0
           minimum: 0
           maximum: 5
       example:
-        rating: 2
+        rating: 3
       required:
       - rating
   securitySchemes:

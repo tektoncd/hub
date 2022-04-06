@@ -19,3 +19,14 @@ func TestVersionsByID(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, res.Location, "/v1/resource/6/versions")
 }
+
+func TestByCatalogKindNameVersion(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByCatalogKindNameVersionPayload{Catalog: "catalog-official", Kind: "task", Name: "tkn", Version: "0.1"}
+	res, err := resourceSvc.ByCatalogKindNameVersion(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, res.Location, "/v1/resource/catalog-official/task/tkn/0.1")
+}

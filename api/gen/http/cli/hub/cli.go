@@ -32,7 +32,7 @@ func UsageCommands() string {
 catalog (refresh|refresh-all|catalog-error)
 category list
 rating (get|update)
-resource (list|versions-by-id)
+resource (list|versions-by-id|by-catalog-kind-name-version)
 status status
 `
 }
@@ -46,9 +46,9 @@ func UsageExamples() string {
          "agent:create"
       ]
    }' --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM"` + "\n" +
-		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Pariatur occaecati voluptas assumenda maiores quaerat consequatur."` + "\n" +
+		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Facere cumque omnis non ut aut."` + "\n" +
 		os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` rating get --id 7813958734577306762 --token "Minima autem ut est error eaque."` + "\n" +
+		os.Args[0] + ` rating get --id 7875832644409337079 --token "Enim ut rerum repellat aut."` + "\n" +
 		os.Args[0] + ` resource list` + "\n" +
 		""
 }
@@ -107,6 +107,12 @@ func ParseEndpoint(
 		resourceVersionsByIDFlags  = flag.NewFlagSet("versions-by-id", flag.ExitOnError)
 		resourceVersionsByIDIDFlag = resourceVersionsByIDFlags.String("id", "REQUIRED", "ID of a resource")
 
+		resourceByCatalogKindNameVersionFlags       = flag.NewFlagSet("by-catalog-kind-name-version", flag.ExitOnError)
+		resourceByCatalogKindNameVersionCatalogFlag = resourceByCatalogKindNameVersionFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceByCatalogKindNameVersionKindFlag    = resourceByCatalogKindNameVersionFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceByCatalogKindNameVersionNameFlag    = resourceByCatalogKindNameVersionFlags.String("name", "REQUIRED", "name of resource")
+		resourceByCatalogKindNameVersionVersionFlag = resourceByCatalogKindNameVersionFlags.String("version", "REQUIRED", "version of resource")
+
 		statusFlags = flag.NewFlagSet("status", flag.ContinueOnError)
 
 		statusStatusFlags = flag.NewFlagSet("status", flag.ExitOnError)
@@ -130,6 +136,7 @@ func ParseEndpoint(
 	resourceFlags.Usage = resourceUsage
 	resourceListFlags.Usage = resourceListUsage
 	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
+	resourceByCatalogKindNameVersionFlags.Usage = resourceByCatalogKindNameVersionUsage
 
 	statusFlags.Usage = statusUsage
 	statusStatusFlags.Usage = statusStatusUsage
@@ -224,6 +231,9 @@ func ParseEndpoint(
 			case "versions-by-id":
 				epf = resourceVersionsByIDFlags
 
+			case "by-catalog-kind-name-version":
+				epf = resourceByCatalogKindNameVersionFlags
+
 			}
 
 		case "status":
@@ -302,6 +312,9 @@ func ParseEndpoint(
 			case "versions-by-id":
 				endpoint = c.VersionsByID()
 				data, err = resourcec.BuildVersionsByIDPayload(*resourceVersionsByIDIDFlag)
+			case "by-catalog-kind-name-version":
+				endpoint = c.ByCatalogKindNameVersion()
+				data, err = resourcec.BuildByCatalogKindNameVersionPayload(*resourceByCatalogKindNameVersionCatalogFlag, *resourceByCatalogKindNameVersionKindFlag, *resourceByCatalogKindNameVersionNameFlag, *resourceByCatalogKindNameVersionVersionFlag)
 			}
 		case "status":
 			c := statusc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -385,7 +398,7 @@ Refresh a Catalog by it's name
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Pariatur occaecati voluptas assumenda maiores quaerat consequatur."
+    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Facere cumque omnis non ut aut."
 `, os.Args[0])
 }
 
@@ -396,7 +409,7 @@ Refresh all catalogs
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh-all --token "Quia nihil officia itaque."
+    `+os.Args[0]+` catalog refresh-all --token "Distinctio ipsam eos aut magnam illum ut."
 `, os.Args[0])
 }
 
@@ -457,7 +470,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 7813958734577306762 --token "Minima autem ut est error eaque."
+    `+os.Args[0]+` rating get --id 7875832644409337079 --token "Enim ut rerum repellat aut."
 `, os.Args[0])
 }
 
@@ -471,8 +484,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 3
-   }' --id 18352796980913417722 --token "Ut tenetur laborum."
+      "rating": 4
+   }' --id 7866098007789302988 --token "Ut sunt est ea reiciendis."
 `, os.Args[0])
 }
 
@@ -485,6 +498,7 @@ Usage:
 COMMAND:
     list: List all resources sorted by rating and name
     versions-by-id: Find all versions of a resource by its id
+    by-catalog-kind-name-version: Find resource using name of catalog & name, kind and version of resource
 
 Additional help:
     %s resource COMMAND --help
@@ -508,6 +522,20 @@ Find all versions of a resource by its id
 
 Example:
     `+os.Args[0]+` resource versions-by-id --id 1
+`, os.Args[0])
+}
+
+func resourceByCatalogKindNameVersionUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-catalog-kind-name-version -catalog STRING -kind STRING -name STRING -version STRING
+
+Find resource using name of catalog & name, kind and version of resource
+    -catalog STRING: name of catalog
+    -kind STRING: kind of resource
+    -name STRING: name of resource
+    -version STRING: version of resource
+
+Example:
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
