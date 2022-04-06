@@ -20,6 +20,8 @@ type Service interface {
 	List(context.Context) (res *Resources, err error)
 	// Find all versions of a resource by its id
 	VersionsByID(context.Context, *VersionsByIDPayload) (res *VersionsByIDResult, err error)
+	// Find resource using name of catalog & name, kind and version of resource
+	ByCatalogKindNameVersion(context.Context, *ByCatalogKindNameVersionPayload) (res *ByCatalogKindNameVersionResult, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -30,7 +32,7 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"List", "VersionsByID"}
+var MethodNames = [3]string{"List", "VersionsByID", "ByCatalogKindNameVersion"}
 
 // Resources is the result type of the resource service List method.
 type Resources struct {
@@ -47,6 +49,26 @@ type VersionsByIDPayload struct {
 // VersionsByIDResult is the result type of the resource service VersionsByID
 // method.
 type VersionsByIDResult struct {
+	// Redirect URL
+	Location string
+}
+
+// ByCatalogKindNameVersionPayload is the payload type of the resource service
+// ByCatalogKindNameVersion method.
+type ByCatalogKindNameVersionPayload struct {
+	// name of catalog
+	Catalog string
+	// kind of resource
+	Kind string
+	// name of resource
+	Name string
+	// version of resource
+	Version string
+}
+
+// ByCatalogKindNameVersionResult is the result type of the resource service
+// ByCatalogKindNameVersion method.
+type ByCatalogKindNameVersionResult struct {
 	// Redirect URL
 	Location string
 }

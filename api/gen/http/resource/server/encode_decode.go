@@ -56,6 +56,46 @@ func DecodeVersionsByIDRequest(mux goahttp.Muxer, decoder func(*http.Request) go
 	}
 }
 
+// EncodeByCatalogKindNameVersionResponse returns an encoder for responses
+// returned by the resource ByCatalogKindNameVersion endpoint.
+func EncodeByCatalogKindNameVersionResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*resource.ByCatalogKindNameVersionResult)
+		w.Header().Set("Location", res.Location)
+		w.WriteHeader(http.StatusFound)
+		return nil
+	}
+}
+
+// DecodeByCatalogKindNameVersionRequest returns a decoder for requests sent to
+// the resource ByCatalogKindNameVersion endpoint.
+func DecodeByCatalogKindNameVersionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			catalog string
+			kind    string
+			name    string
+			version string
+			err     error
+
+			params = mux.Vars(r)
+		)
+		catalog = params["catalog"]
+		kind = params["kind"]
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		}
+		name = params["name"]
+		version = params["version"]
+		if err != nil {
+			return nil, err
+		}
+		payload := NewByCatalogKindNameVersionPayload(catalog, kind, name, version)
+
+		return payload, nil
+	}
+}
+
 // marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersion
 // builds a value of type *ResourceDataResponseBodyWithoutVersion from a value
 // of type *resourceviews.ResourceDataView.
