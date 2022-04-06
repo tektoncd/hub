@@ -17,6 +17,7 @@ import (
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	resourceviews "github.com/tektoncd/hub/api/gen/resource/views"
 	goahttp "goa.design/goa/v3/http"
+	goa "goa.design/goa/v3/pkg"
 )
 
 // BuildListRequest instantiates a HTTP request object with method and path set
@@ -104,10 +105,6 @@ func (c *Client) BuildVersionsByIDRequest(ctx context.Context, v interface{}) (*
 // DecodeVersionsByIDResponse returns a decoder for responses returned by the
 // resource VersionsByID endpoint. restoreBody controls whether the response
 // body should be restored after having been read.
-// DecodeVersionsByIDResponse may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
-//	- "not-found" (type *goa.ServiceError): http.StatusNotFound
-//	- error: internal error
 func DecodeVersionsByIDResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
@@ -123,51 +120,23 @@ func DecodeVersionsByIDResponse(decoder func(*http.Response) goahttp.Decoder, re
 			defer resp.Body.Close()
 		}
 		switch resp.StatusCode {
-		case http.StatusOK:
+		case http.StatusFound:
 			var (
-				body VersionsByIDResponseBody
-				err  error
+				location string
+				err      error
 			)
-			err = decoder(resp).Decode(&body)
-			if err != nil {
-				return nil, goahttp.ErrDecodingError("resource", "VersionsByID", err)
+			locationRaw := resp.Header.Get("Location")
+			if locationRaw == "" {
+				err = goa.MergeErrors(err, goa.MissingFieldError("location", "header"))
 			}
-			p := NewVersionsByIDResourceVersionsOK(&body)
-			view := "default"
-			vres := &resourceviews.ResourceVersions{Projected: p, View: view}
-			if err = resourceviews.ValidateResourceVersions(vres); err != nil {
+			location = locationRaw
+			err = goa.MergeErrors(err, goa.ValidateFormat("location", location, goa.FormatURI))
+
+			if err != nil {
 				return nil, goahttp.ErrValidationError("resource", "VersionsByID", err)
 			}
-			res := resource.NewResourceVersions(vres)
+			res := NewVersionsByIDResultFound(location)
 			return res, nil
-		case http.StatusInternalServerError:
-			var (
-				body VersionsByIDInternalErrorResponseBody
-				err  error
-			)
-			err = decoder(resp).Decode(&body)
-			if err != nil {
-				return nil, goahttp.ErrDecodingError("resource", "VersionsByID", err)
-			}
-			err = ValidateVersionsByIDInternalErrorResponseBody(&body)
-			if err != nil {
-				return nil, goahttp.ErrValidationError("resource", "VersionsByID", err)
-			}
-			return nil, NewVersionsByIDInternalError(&body)
-		case http.StatusNotFound:
-			var (
-				body VersionsByIDNotFoundResponseBody
-				err  error
-			)
-			err = decoder(resp).Decode(&body)
-			if err != nil {
-				return nil, goahttp.ErrDecodingError("resource", "VersionsByID", err)
-			}
-			err = ValidateVersionsByIDNotFoundResponseBody(&body)
-			if err != nil {
-				return nil, goahttp.ErrValidationError("resource", "VersionsByID", err)
-			}
-			return nil, NewVersionsByIDNotFound(&body)
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("resource", "VersionsByID", resp.StatusCode, string(body))
@@ -275,19 +244,6 @@ func unmarshalTagResponseBodyToResourceviewsTagView(v *TagResponseBody) *resourc
 	res := &resourceviews.TagView{
 		ID:   v.ID,
 		Name: v.Name,
-	}
-
-	return res
-}
-
-// unmarshalVersionsResponseBodyToResourceviewsVersionsView builds a value of
-// type *resourceviews.VersionsView from a value of type *VersionsResponseBody.
-func unmarshalVersionsResponseBodyToResourceviewsVersionsView(v *VersionsResponseBody) *resourceviews.VersionsView {
-	res := &resourceviews.VersionsView{}
-	res.Latest = unmarshalResourceVersionDataResponseBodyToResourceviewsResourceVersionDataView(v.Latest)
-	res.Versions = make([]*resourceviews.ResourceVersionDataView, len(v.Versions))
-	for i, val := range v.Versions {
-		res.Versions[i] = unmarshalResourceVersionDataResponseBodyToResourceviewsResourceVersionDataView(val)
 	}
 
 	return res

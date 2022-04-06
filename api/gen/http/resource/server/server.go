@@ -141,7 +141,7 @@ func NewVersionsByIDHandler(
 	var (
 		decodeRequest  = DecodeVersionsByIDRequest(mux, decoder)
 		encodeResponse = EncodeVersionsByIDResponse(encoder)
-		encodeError    = EncodeVersionsByIDError(encoder, formatter)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
