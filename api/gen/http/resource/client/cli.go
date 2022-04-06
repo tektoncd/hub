@@ -12,6 +12,7 @@ import (
 	"strconv"
 
 	resource "github.com/tektoncd/hub/api/gen/resource"
+	goa "goa.design/goa/v3/pkg"
 )
 
 // BuildVersionsByIDPayload builds the payload for the resource VersionsByID
@@ -29,6 +30,41 @@ func BuildVersionsByIDPayload(resourceVersionsByIDID string) (*resource.Versions
 	}
 	v := &resource.VersionsByIDPayload{}
 	v.ID = id
+
+	return v, nil
+}
+
+// BuildByCatalogKindNameVersionPayload builds the payload for the resource
+// ByCatalogKindNameVersion endpoint from CLI flags.
+func BuildByCatalogKindNameVersionPayload(resourceByCatalogKindNameVersionCatalog string, resourceByCatalogKindNameVersionKind string, resourceByCatalogKindNameVersionName string, resourceByCatalogKindNameVersionVersion string) (*resource.ByCatalogKindNameVersionPayload, error) {
+	var err error
+	var catalog string
+	{
+		catalog = resourceByCatalogKindNameVersionCatalog
+	}
+	var kind string
+	{
+		kind = resourceByCatalogKindNameVersionKind
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	var name string
+	{
+		name = resourceByCatalogKindNameVersionName
+	}
+	var version string
+	{
+		version = resourceByCatalogKindNameVersionVersion
+	}
+	v := &resource.ByCatalogKindNameVersionPayload{}
+	v.Catalog = catalog
+	v.Kind = kind
+	v.Name = name
+	v.Version = version
 
 	return v, nil
 }

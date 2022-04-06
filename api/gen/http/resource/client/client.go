@@ -24,6 +24,10 @@ type Client struct {
 	// VersionsByID endpoint.
 	VersionsByIDDoer goahttp.Doer
 
+	// ByCatalogKindNameVersion Doer is the HTTP client used to make requests to
+	// the ByCatalogKindNameVersion endpoint.
+	ByCatalogKindNameVersionDoer goahttp.Doer
+
 	// CORS Doer is the HTTP client used to make requests to the  endpoint.
 	CORSDoer goahttp.Doer
 
@@ -47,14 +51,15 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		ListDoer:            doer,
-		VersionsByIDDoer:    doer,
-		CORSDoer:            doer,
-		RestoreResponseBody: restoreBody,
-		scheme:              scheme,
-		host:                host,
-		decoder:             dec,
-		encoder:             enc,
+		ListDoer:                     doer,
+		VersionsByIDDoer:             doer,
+		ByCatalogKindNameVersionDoer: doer,
+		CORSDoer:                     doer,
+		RestoreResponseBody:          restoreBody,
+		scheme:                       scheme,
+		host:                         host,
+		decoder:                      dec,
+		encoder:                      enc,
 	}
 }
 
@@ -91,6 +96,25 @@ func (c *Client) VersionsByID() goa.Endpoint {
 		resp, err := c.VersionsByIDDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("resource", "VersionsByID", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// ByCatalogKindNameVersion returns an endpoint that makes HTTP requests to the
+// resource service ByCatalogKindNameVersion server.
+func (c *Client) ByCatalogKindNameVersion() goa.Endpoint {
+	var (
+		decodeResponse = DecodeByCatalogKindNameVersionResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildByCatalogKindNameVersionRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.ByCatalogKindNameVersionDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("resource", "ByCatalogKindNameVersion", err)
 		}
 		return decodeResponse(resp)
 	}
