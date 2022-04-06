@@ -64,6 +64,7 @@ ui-unittest(){
 
 install-postgres() {
   info Installing postgres 🛢🛢🛢
+  apt-get update
   apt-get install -y postgresql postgresql-contrib
   pg_ctlcluster 11 main start
 }
