@@ -45,14 +45,19 @@ var _ = Service("resource", func() {
 			})
 			Required("id")
 		})
-		Result(types.ResourceVersions)
+		Result(func() {
+			Attribute("location", String, "Redirect URL", func() {
+				Format(FormatURI)
+			})
+			Required("location")
+		})
 
 		HTTP(func() {
 			GET("/resource/{id}/versions")
+			Response(StatusFound, func() {
+				Header("location")
+			})
 
-			Response(StatusOK)
-			Response("internal-error", StatusInternalServerError)
-			Response("not-found", StatusNotFound)
 		})
 	})
 

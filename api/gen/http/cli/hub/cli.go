@@ -46,9 +46,9 @@ func UsageExamples() string {
          "agent:create"
       ]
    }' --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM"` + "\n" +
-		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Qui occaecati officia inventore adipisci molestiae quaerat."` + "\n" +
+		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Pariatur occaecati voluptas assumenda maiores quaerat consequatur."` + "\n" +
 		os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` rating get --id 8747404606346667859 --token "Deserunt vel."` + "\n" +
+		os.Args[0] + ` rating get --id 7813958734577306762 --token "Minima autem ut est error eaque."` + "\n" +
 		os.Args[0] + ` resource list` + "\n" +
 		""
 }
@@ -385,7 +385,7 @@ Refresh a Catalog by it's name
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Qui occaecati officia inventore adipisci molestiae quaerat."
+    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Pariatur occaecati voluptas assumenda maiores quaerat consequatur."
 `, os.Args[0])
 }
 
@@ -396,7 +396,7 @@ Refresh all catalogs
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh-all --token "Qui qui temporibus consequuntur."
+    `+os.Args[0]+` catalog refresh-all --token "Quia nihil officia itaque."
 `, os.Args[0])
 }
 
@@ -457,7 +457,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 8747404606346667859 --token "Deserunt vel."
+    `+os.Args[0]+` rating get --id 7813958734577306762 --token "Minima autem ut est error eaque."
 `, os.Args[0])
 }
 
@@ -471,8 +471,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 0
-   }' --id 12809560377624145324 --token "Qui hic."
+      "rating": 3
+   }' --id 18352796980913417722 --token "Ut tenetur laborum."
 `, os.Args[0])
 }
 
