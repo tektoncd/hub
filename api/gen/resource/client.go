@@ -38,11 +38,11 @@ func (c *Client) List(ctx context.Context) (res *Resources, err error) {
 }
 
 // VersionsByID calls the "VersionsByID" endpoint of the "resource" service.
-func (c *Client) VersionsByID(ctx context.Context, p *VersionsByIDPayload) (res *ResourceVersions, err error) {
+func (c *Client) VersionsByID(ctx context.Context, p *VersionsByIDPayload) (res *VersionsByIDResult, err error) {
 	var ires interface{}
 	ires, err = c.VersionsByIDEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(*ResourceVersions), nil
+	return ires.(*VersionsByIDResult), nil
 }

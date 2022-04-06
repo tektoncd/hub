@@ -10,55 +10,12 @@ package server
 import (
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	resourceviews "github.com/tektoncd/hub/api/gen/resource/views"
-	goa "goa.design/goa/v3/pkg"
 )
 
 // ListResponseBody is the type of the "resource" service "List" endpoint HTTP
 // response body.
 type ListResponseBody struct {
 	Data ResourceDataResponseBodyWithoutVersionCollection `form:"data" json:"data" xml:"data"`
-}
-
-// VersionsByIDResponseBody is the type of the "resource" service
-// "VersionsByID" endpoint HTTP response body.
-type VersionsByIDResponseBody struct {
-	Data *VersionsResponseBody `form:"data" json:"data" xml:"data"`
-}
-
-// VersionsByIDInternalErrorResponseBody is the type of the "resource" service
-// "VersionsByID" endpoint HTTP response body for the "internal-error" error.
-type VersionsByIDInternalErrorResponseBody struct {
-	// Name is the name of this class of errors.
-	Name string `form:"name" json:"name" xml:"name"`
-	// ID is a unique identifier for this particular occurrence of the problem.
-	ID string `form:"id" json:"id" xml:"id"`
-	// Message is a human-readable explanation specific to this occurrence of the
-	// problem.
-	Message string `form:"message" json:"message" xml:"message"`
-	// Is the error temporary?
-	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
-	// Is the error a timeout?
-	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
-	// Is the error a server-side fault?
-	Fault bool `form:"fault" json:"fault" xml:"fault"`
-}
-
-// VersionsByIDNotFoundResponseBody is the type of the "resource" service
-// "VersionsByID" endpoint HTTP response body for the "not-found" error.
-type VersionsByIDNotFoundResponseBody struct {
-	// Name is the name of this class of errors.
-	Name string `form:"name" json:"name" xml:"name"`
-	// ID is a unique identifier for this particular occurrence of the problem.
-	ID string `form:"id" json:"id" xml:"id"`
-	// Message is a human-readable explanation specific to this occurrence of the
-	// problem.
-	Message string `form:"message" json:"message" xml:"message"`
-	// Is the error temporary?
-	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
-	// Is the error a timeout?
-	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
-	// Is the error a server-side fault?
-	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
 // ResourceDataResponseBodyWithoutVersionCollection is used to define fields on
@@ -151,31 +108,6 @@ type TagResponseBody struct {
 	Name string `form:"name" json:"name" xml:"name"`
 }
 
-// VersionsResponseBody is used to define fields on response body types.
-type VersionsResponseBody struct {
-	// Latest Version of resource
-	Latest *ResourceVersionDataResponseBodyMin `form:"latest" json:"latest" xml:"latest"`
-	// List of all versions of resource
-	Versions []*ResourceVersionDataResponseBodyMin `form:"versions" json:"versions" xml:"versions"`
-}
-
-// ResourceVersionDataResponseBodyMin is used to define fields on response body
-// types.
-type ResourceVersionDataResponseBodyMin struct {
-	// ID is the unique id of resource's version
-	ID uint `form:"id" json:"id" xml:"id"`
-	// Version of resource
-	Version string `form:"version" json:"version" xml:"version"`
-	// Raw URL of resource's yaml file of the version
-	RawURL string `form:"rawURL" json:"rawURL" xml:"rawURL"`
-	// Web URL of resource's yaml file of the version
-	WebURL string `form:"webURL" json:"webURL" xml:"webURL"`
-	// Url path of the resource in hub
-	HubURLPath string `form:"hubURLPath" json:"hubURLPath" xml:"hubURLPath"`
-	// Platforms related to resource version
-	Platforms []*PlatformResponseBody `form:"platforms" json:"platforms" xml:"platforms"`
-}
-
 // NewListResponseBody builds the HTTP response body from the result of the
 // "List" endpoint of the "resource" service.
 func NewListResponseBody(res *resourceviews.ResourcesView) *ListResponseBody {
@@ -185,44 +117,6 @@ func NewListResponseBody(res *resourceviews.ResourcesView) *ListResponseBody {
 		for i, val := range res.Data {
 			body.Data[i] = marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersion(val)
 		}
-	}
-	return body
-}
-
-// NewVersionsByIDResponseBody builds the HTTP response body from the result of
-// the "VersionsByID" endpoint of the "resource" service.
-func NewVersionsByIDResponseBody(res *resourceviews.ResourceVersionsView) *VersionsByIDResponseBody {
-	body := &VersionsByIDResponseBody{}
-	if res.Data != nil {
-		body.Data = marshalResourceviewsVersionsViewToVersionsResponseBody(res.Data)
-	}
-	return body
-}
-
-// NewVersionsByIDInternalErrorResponseBody builds the HTTP response body from
-// the result of the "VersionsByID" endpoint of the "resource" service.
-func NewVersionsByIDInternalErrorResponseBody(res *goa.ServiceError) *VersionsByIDInternalErrorResponseBody {
-	body := &VersionsByIDInternalErrorResponseBody{
-		Name:      res.Name,
-		ID:        res.ID,
-		Message:   res.Message,
-		Temporary: res.Temporary,
-		Timeout:   res.Timeout,
-		Fault:     res.Fault,
-	}
-	return body
-}
-
-// NewVersionsByIDNotFoundResponseBody builds the HTTP response body from the
-// result of the "VersionsByID" endpoint of the "resource" service.
-func NewVersionsByIDNotFoundResponseBody(res *goa.ServiceError) *VersionsByIDNotFoundResponseBody {
-	body := &VersionsByIDNotFoundResponseBody{
-		Name:      res.Name,
-		ID:        res.ID,
-		Message:   res.Message,
-		Temporary: res.Temporary,
-		Timeout:   res.Timeout,
-		Fault:     res.Fault,
 	}
 	return body
 }

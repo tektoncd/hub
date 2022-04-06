@@ -19,14 +19,6 @@ type Resources struct {
 	View string
 }
 
-// ResourceVersions is the viewed result type that is projected based on a view.
-type ResourceVersions struct {
-	// Type to project
-	Projected *ResourceVersionsView
-	// View to render
-	View string
-}
-
 // ResourcesView is a type that runs validations on a projected type.
 type ResourcesView struct {
 	Data ResourceDataCollectionView
@@ -128,30 +120,10 @@ type TagView struct {
 	Name *string
 }
 
-// ResourceVersionsView is a type that runs validations on a projected type.
-type ResourceVersionsView struct {
-	Data *VersionsView
-}
-
-// VersionsView is a type that runs validations on a projected type.
-type VersionsView struct {
-	// Latest Version of resource
-	Latest *ResourceVersionDataView
-	// List of all versions of resource
-	Versions []*ResourceVersionDataView
-}
-
 var (
 	// ResourcesMap is a map of attribute names in result type Resources indexed by
 	// view name.
 	ResourcesMap = map[string][]string{
-		"default": []string{
-			"data",
-		},
-	}
-	// ResourceVersionsMap is a map of attribute names in result type
-	// ResourceVersions indexed by view name.
-	ResourceVersionsMap = map[string][]string{
 		"default": []string{
 			"data",
 		},
@@ -295,14 +267,6 @@ var (
 			"platforms",
 		},
 	}
-	// VersionsMap is a map of attribute names in result type Versions indexed by
-	// view name.
-	VersionsMap = map[string][]string{
-		"default": []string{
-			"latest",
-			"versions",
-		},
-	}
 )
 
 // ValidateResources runs the validations defined on the viewed result type
@@ -311,18 +275,6 @@ func ValidateResources(result *Resources) (err error) {
 	switch result.View {
 	case "default", "":
 		err = ValidateResourcesView(result.Projected)
-	default:
-		err = goa.InvalidEnumValueError("view", result.View, []interface{}{"default"})
-	}
-	return
-}
-
-// ValidateResourceVersions runs the validations defined on the viewed result
-// type ResourceVersions.
-func ValidateResourceVersions(result *ResourceVersions) (err error) {
-	switch result.View {
-	case "default", "":
-		err = ValidateResourceVersionsView(result.Projected)
 	default:
 		err = goa.InvalidEnumValueError("view", result.View, []interface{}{"default"})
 	}
@@ -795,39 +747,6 @@ func ValidateTagView(result *TagView) (err error) {
 	}
 	if result.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
-	}
-	return
-}
-
-// ValidateResourceVersionsView runs the validations defined on
-// ResourceVersionsView using the "default" view.
-func ValidateResourceVersionsView(result *ResourceVersionsView) (err error) {
-
-	if result.Data != nil {
-		if err2 := ValidateVersionsView(result.Data); err2 != nil {
-			err = goa.MergeErrors(err, err2)
-		}
-	}
-	return
-}
-
-// ValidateVersionsView runs the validations defined on VersionsView using the
-// "default" view.
-func ValidateVersionsView(result *VersionsView) (err error) {
-	if result.Versions == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("versions", "result"))
-	}
-	for _, e := range result.Versions {
-		if e != nil {
-			if err2 := ValidateResourceVersionDataView(e); err2 != nil {
-				err = goa.MergeErrors(err, err2)
-			}
-		}
-	}
-	if result.Latest != nil {
-		if err2 := ValidateResourceVersionDataViewMin(result.Latest); err2 != nil {
-			err = goa.MergeErrors(err, err2)
-		}
 	}
 	return
 }

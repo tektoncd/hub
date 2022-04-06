@@ -51,11 +51,6 @@ func NewListEndpoint(s Service) goa.Endpoint {
 func NewVersionsByIDEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*VersionsByIDPayload)
-		res, err := s.VersionsByID(ctx, p)
-		if err != nil {
-			return nil, err
-		}
-		vres := NewViewedResourceVersions(res, "default")
-		return vres, nil
+		return s.VersionsByID(ctx, p)
 	}
 }
