@@ -44,6 +44,8 @@ type (
 		StructName string
 		// VarName is the service variable name (first letter in lowercase).
 		VarName string
+		// PathName is the service name as used in file and import paths.
+		PathName string
 		// PkgName is the name of the package containing the generated service
 		// code.
 		PkgName string
@@ -58,6 +60,9 @@ type (
 		Scope *codegen.NameScope
 		// ViewScope initialized with all the viewed types.
 		ViewScope *codegen.NameScope
+		// UserTypeImports lists the import specifications for the user
+		// types used by the service.
+		UserTypeImports []*codegen.ImportSpec
 
 		// userTypes lists the type definitions that the service depends on.
 		userTypes []*UserTypeData
@@ -104,6 +109,9 @@ type (
 		VarName string
 		// Payload is the name of the payload type if any,
 		Payload string
+		// PayloadLoc defines the file and Go package of the payload type
+		// if overridden via Meta.
+		PayloadLoc *codegen.Location
 		// PayloadDef is the payload type definition if any.
 		PayloadDef string
 		// PayloadRef is a reference to the payload type if any,
@@ -126,6 +134,9 @@ type (
 		StreamingPayloadEx interface{}
 		// Result is the name of the result type if any.
 		Result string
+		// ResultLoc defines the file and Go package of the result type
+		// if overridden via Meta.
+		ResultLoc *codegen.Location
 		// ResultDef is the result type definition if any.
 		ResultDef string
 		// ResultRef is the reference to the result type if any.
@@ -227,6 +238,9 @@ type (
 		Def string
 		// Ref is the reference to the type.
 		Ref string
+		// Loc defines the file and Go package of the type if overridden
+		// via Meta.
+		Loc *codegen.Location
 		// Type is the underlying type.
 		Type expr.UserType
 	}
@@ -410,13 +424,46 @@ func (d ServicesData) Get(name string) *Data {
 
 // Method returns the service method data for the method with the given name,
 // nil if there isn't one.
-func (s *Data) Method(name string) *MethodData {
-	for _, m := range s.Methods {
+func (d *Data) Method(name string) *MethodData {
+	for _, m := range d.Methods {
 		if m.Name == name {
 			return m
 		}
 	}
 	return nil
+}
+
+// initUserTypeImports sets the import paths for the user types defined in the
+// service.  User types may be declared in multiple packages when defined with
+// the Meta key "struct:pkg:path".
+func (d *Data) initUserTypeImports(genpkg string) {
+	importsByPath := make(map[string]*codegen.ImportSpec)
+
+	initLoc := func(loc *codegen.Location) {
+		if loc == nil {
+			return
+		}
+		importsByPath[loc.FilePath] = &codegen.ImportSpec{Name: loc.PackageName(), Path: genpkg + "/" + loc.RelImportPath}
+	}
+
+	for _, m := range d.Methods {
+		initLoc(m.PayloadLoc)
+		initLoc(m.ResultLoc)
+		for _, ut := range d.userTypes {
+			initLoc(ut.Loc)
+		}
+		for _, et := range d.errorTypes {
+			initLoc(et.Loc)
+		}
+	}
+
+	imports := make([]*codegen.ImportSpec, len(importsByPath))
+	i := 0
+	for _, imp := range importsByPath { // Order does not matter, imports are sorted during formatting.
+		imports[i] = imp
+		i++
+	}
+	d.UserTypeImports = imports
 }
 
 // Scheme returns the scheme data with the given scheme name.
@@ -562,21 +609,23 @@ func (d ServicesData) analyze(service *expr.ServiceExpr) *Data {
 	}
 
 	for _, t := range expr.Root.Types {
-		if svcs, ok := t.Attribute().Meta["type:generate:force"]; ok {
-			att := &expr.AttributeExpr{Type: t}
-			if len(svcs) > 0 {
-				// Force generate type only in the specified services
-				for _, svc := range svcs {
-					if svc == service.Name {
-						types = append(types, collectTypes(att, scope, seen)...)
-						break
-					}
-				}
-			} else {
-				// Force generate type in all the services
-				types = append(types, collectTypes(att, scope, seen)...)
-			}
+		svcs, ok := t.Attribute().Meta["type:generate:force"]
+		if !ok {
+			continue
 		}
+		att := &expr.AttributeExpr{Type: t}
+		if len(svcs) > 0 {
+			// Force generate type only in the specified services
+			for _, svc := range svcs {
+				if svc == service.Name {
+					types = append(types, collectTypes(att, scope, seen)...)
+					break
+				}
+			}
+			continue
+		}
+		// Force generate type in all the services
+		types = append(types, collectTypes(att, scope, seen)...)
 	}
 
 	var (
@@ -587,35 +636,37 @@ func (d ServicesData) analyze(service *expr.ServiceExpr) *Data {
 		methods = make([]*MethodData, len(service.Methods))
 		for i, e := range service.Methods {
 			m := buildMethodData(e, pkgName, service, scope)
-			if rt, ok := e.Result.Type.(*expr.ResultTypeExpr); ok {
-				var view string
-				if v, ok := e.Result.Meta["view"]; ok {
-					view = v[0]
-				}
-				if vrt, ok := seenViewed[m.Result+"::"+view]; ok {
-					m.ViewedResult = vrt
-				} else {
-					projected := seenProj[rt.ID()]
-					projAtt := &expr.AttributeExpr{Type: projected.Type}
-					vrt := buildViewedResultType(e.Result, projAtt, viewspkg, scope, viewScope)
-					found := false
-					for _, rt := range viewedRTs {
-						if rt.Type.ID() == vrt.Type.ID() {
-							found = true
-							break
-						}
-					}
-					if !found {
-						viewedRTs = append(viewedRTs, vrt)
-					}
-					m.ViewedResult = vrt
-					seenViewed[vrt.Name+"::"+view] = vrt
-				}
-			}
 			methods[i] = m
 			for _, s := range m.Schemes {
 				schemes = schemes.Append(s)
 			}
+			rt, ok := e.Result.Type.(*expr.ResultTypeExpr)
+			if !ok {
+				continue
+			}
+			var view string
+			if v, ok := e.Result.Meta["view"]; ok {
+				view = v[0]
+			}
+			if vrt, ok := seenViewed[m.Result+"::"+view]; ok {
+				m.ViewedResult = vrt
+				continue
+			}
+			projected := seenProj[rt.ID()]
+			projAtt := &expr.AttributeExpr{Type: projected.Type}
+			vrt := buildViewedResultType(e.Result, projAtt, viewspkg, scope, viewScope)
+			found := false
+			for _, rt := range viewedRTs {
+				if rt.Type.ID() == vrt.Type.ID() {
+					found = true
+					break
+				}
+			}
+			if !found {
+				viewedRTs = append(viewedRTs, vrt)
+			}
+			m.ViewedResult = vrt
+			seenViewed[vrt.Name+"::"+view] = vrt
 		}
 	}
 
@@ -629,10 +680,12 @@ func (d ServicesData) analyze(service *expr.ServiceExpr) *Data {
 		}
 	}
 
+	varName := codegen.Goify(service.Name, false)
 	data := &Data{
 		Name:              service.Name,
 		Description:       desc,
-		VarName:           codegen.Goify(service.Name, false),
+		VarName:           varName,
+		PathName:          codegen.SnakeCase(varName),
 		StructName:        codegen.Goify(service.Name, true),
 		PkgName:           pkgName,
 		ViewsPkg:          viewspkg,
@@ -660,8 +713,8 @@ func typeContext(pkg string, scope *codegen.NameScope) *codegen.AttributeContext
 // projectedTypeContext returns a contextual attribute for a projected type.
 // Projected types are Go types that uses pointers for all attributes (even the
 // required ones).
-func projectedTypeContext(pkg string, scope *codegen.NameScope) *codegen.AttributeContext {
-	return codegen.NewAttributeContext(true, false, true, pkg, scope)
+func projectedTypeContext(pkg string, ptr bool, scope *codegen.NameScope) *codegen.AttributeContext {
+	return codegen.NewAttributeContext(ptr, false, true, pkg, scope)
 }
 
 // collectTypes recurses through the attribute to gather all user types and
@@ -682,6 +735,7 @@ func collectTypes(at *expr.AttributeExpr, scope *codegen.NameScope, seen map[str
 			Description: dt.Attribute().Description,
 			Def:         scope.GoTypeDef(dt.Attribute(), false, true),
 			Ref:         scope.GoTypeRef(at),
+			Loc:         codegen.UserTypeLocation(dt),
 			Type:        dt,
 		})
 		seen[dt.ID()] = struct{}{}
@@ -704,12 +758,16 @@ func buildErrorInitData(er *expr.ErrorExpr, scope *codegen.NameScope) *ErrorInit
 	_, temporary := er.AttributeExpr.Meta["goa:error:temporary"]
 	_, timeout := er.AttributeExpr.Meta["goa:error:timeout"]
 	_, fault := er.AttributeExpr.Meta["goa:error:fault"]
+	var pkg string
+	if ut, ok := er.AttributeExpr.Type.(expr.UserType); ok {
+		pkg = codegen.UserTypeLocation(ut).PackageName()
+	}
 	return &ErrorInitData{
 		Name:        fmt.Sprintf("Make%s", codegen.Goify(er.Name, true)),
 		Description: er.Description,
 		ErrName:     er.Name,
 		TypeName:    scope.GoTypeName(er.AttributeExpr),
-		TypeRef:     scope.GoTypeRef(er.AttributeExpr),
+		TypeRef:     scope.GoFullTypeRef(er.AttributeExpr, pkg),
 		Temporary:   temporary,
 		Timeout:     timeout,
 		Fault:       fault,
@@ -723,11 +781,13 @@ func buildMethodData(m *expr.MethodExpr, svcPkgName string, service *expr.Servic
 		vname       string
 		desc        string
 		payloadName string
+		payloadLoc  *codegen.Location
 		payloadDef  string
 		payloadRef  string
 		payloadDesc string
 		payloadEx   interface{}
 		rname       string
+		resultLoc   *codegen.Location
 		resultDef   string
 		resultRef   string
 		resultDesc  string
@@ -743,10 +803,11 @@ func buildMethodData(m *expr.MethodExpr, svcPkgName string, service *expr.Servic
 	}
 	if m.Payload.Type != expr.Empty {
 		payloadName = scope.GoTypeName(m.Payload)
-		payloadRef = scope.GoTypeRef(m.Payload)
 		if dt, ok := m.Payload.Type.(expr.UserType); ok {
 			payloadDef = scope.GoTypeDef(dt.Attribute(), false, true)
+			payloadLoc = codegen.UserTypeLocation(dt)
 		}
+		payloadRef = scope.GoFullTypeRef(m.Payload, payloadLoc.PackageName())
 		payloadDesc = m.Payload.Description
 		if payloadDesc == "" {
 			payloadDesc = fmt.Sprintf("%s is the payload type of the %s service %s method.",
@@ -756,10 +817,11 @@ func buildMethodData(m *expr.MethodExpr, svcPkgName string, service *expr.Servic
 	}
 	if m.Result.Type != expr.Empty {
 		rname = scope.GoTypeName(m.Result)
-		resultRef = scope.GoTypeRef(m.Result)
 		if dt, ok := m.Result.Type.(expr.UserType); ok {
 			resultDef = scope.GoTypeDef(dt.Attribute(), false, true)
+			resultLoc = codegen.UserTypeLocation(dt)
 		}
+		resultRef = scope.GoFullTypeRef(m.Result, resultLoc.PackageName())
 		resultDesc = m.Result.Description
 		if resultDesc == "" {
 			resultDesc = fmt.Sprintf("%s is the result type of the %s service %s method.",
@@ -791,12 +853,14 @@ func buildMethodData(m *expr.MethodExpr, svcPkgName string, service *expr.Servic
 		VarName:                      vname,
 		Description:                  desc,
 		Payload:                      payloadName,
+		PayloadLoc:                   payloadLoc,
 		PayloadDef:                   payloadDef,
 		PayloadRef:                   payloadRef,
 		PayloadDesc:                  payloadDesc,
 		PayloadEx:                    payloadEx,
 		PayloadDefault:               m.Payload.DefaultValue,
 		Result:                       rname,
+		ResultLoc:                    resultLoc,
 		ResultDef:                    resultDef,
 		ResultRef:                    resultRef,
 		ResultDesc:                   resultDesc,
@@ -1309,7 +1373,7 @@ func buildTypeInits(projected, att *expr.AttributeExpr, viewspkg string, scope, 
 				code    string
 				helpers []*codegen.TransformFunctionData
 
-				srcCtx = projectedTypeContext(viewspkg, viewScope)
+				srcCtx = projectedTypeContext(viewspkg, true, viewScope)
 				tgtCtx = typeContext("", scope)
 				resvar = scope.GoTypeName(att)
 			)
@@ -1389,7 +1453,7 @@ func buildProjections(projected, att *expr.AttributeExpr, viewspkg string, scope
 			helpers []*codegen.TransformFunctionData
 
 			srcCtx = typeContext("", scope)
-			tgtCtx = projectedTypeContext(viewspkg, viewScope)
+			tgtCtx = projectedTypeContext(viewspkg, true, viewScope)
 			tname  = scope.GoTypeName(projected)
 		)
 		{
@@ -1473,9 +1537,9 @@ func buildValidations(projected *expr.AttributeExpr, scope *codegen.NameScope) [
 							o.Set(name, attr)
 						}
 					})
-					ctx = projectedTypeContext("", scope)
+					ctx = projectedTypeContext("", !expr.IsPrimitive(projected.Type), scope)
 				}
-				data["Validate"] = codegen.RecursiveValidationCode(&expr.AttributeExpr{Type: o, Validation: rt.Validation}, ctx, true, "result")
+				data["Validate"] = codegen.RecursiveValidationCode(&expr.AttributeExpr{Type: o, Validation: rt.Validation}, ctx, true, false, "result")
 				data["Fields"] = fields
 			}
 
@@ -1495,12 +1559,12 @@ func buildValidations(projected *expr.AttributeExpr, scope *codegen.NameScope) [
 		// for a user type or a result type with single view, we generate only one validation
 		// function containing the validation logic
 		name := "Validate" + tname
-		ctx := projectedTypeContext("", scope)
+		ctx := projectedTypeContext("", !expr.IsPrimitive(projected.Type), scope)
 		validations = append(validations, &ValidateData{
 			Name:        name,
 			Description: fmt.Sprintf("%s runs the validations defined on %s.", name, tname),
 			Ref:         scope.GoTypeRef(projected),
-			Validate:    codegen.RecursiveValidationCode(ut.Attribute(), ctx, true, "result"),
+			Validate:    codegen.RecursiveValidationCode(ut.Attribute(), ctx, true, expr.IsAlias(ut), "result"),
 		})
 	}
 	return validations

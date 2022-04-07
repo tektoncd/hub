@@ -180,7 +180,7 @@ func (r *HTTPResponseExpr) Validate(e *HTTPEndpointExpr) *eval.ValidationErrors 
 
 	if !r.Headers.IsEmpty() {
 		verr.Merge(r.Headers.Validate("HTTP response headers", r))
-		if e.MethodExpr.Result.Type == Empty {
+		if isEmpty(e.MethodExpr.Result) {
 			verr.Add(r, "response defines headers but result is empty")
 		} else if IsObject(e.MethodExpr.Result.Type) {
 			mobj := AsObject(r.Headers.Type)
@@ -188,8 +188,7 @@ func (r *HTTPResponseExpr) Validate(e *HTTPEndpointExpr) *eval.ValidationErrors 
 				t := resultAttributeType(h.Name)
 				if t == nil {
 					verr.Add(r, "header %q has no equivalent attribute in%s result type, use notation 'attribute_name:header_name' to identify corresponding result type attribute.", h.Name, inview)
-				}
-				if IsArray(t) {
+				} else if IsArray(t) {
 					if !IsPrimitive(AsArray(t).ElemType.Type) {
 						verr.Add(e, "attribute %q used in HTTP headers must be a primitive type or an array of primitive types.", h.Name)
 					}
@@ -207,7 +206,7 @@ func (r *HTTPResponseExpr) Validate(e *HTTPEndpointExpr) *eval.ValidationErrors 
 	}
 	if !r.Cookies.IsEmpty() {
 		verr.Merge(r.Cookies.Validate("HTTP response cookies", r))
-		if e.MethodExpr.Result.Type == Empty {
+		if isEmpty(e.MethodExpr.Result) {
 			verr.Add(r, "response defines cookies but result is empty")
 		} else if IsObject(e.MethodExpr.Result.Type) {
 			mobj := AsObject(r.Cookies.Type)
@@ -256,7 +255,7 @@ func (r *HTTPResponseExpr) Validate(e *HTTPEndpointExpr) *eval.ValidationErrors 
 func (r *HTTPResponseExpr) Finalize(a *HTTPEndpointExpr, svcAtt *AttributeExpr) {
 	r.Parent = a
 
-	if r.Body != nil {
+	if r.Body != nil && r.Body.Type != Empty {
 		bodyAtt := svcAtt
 		if o, ok := r.Body.Meta["origin:attribute"]; ok {
 			bodyAtt = svcAtt.Find(o[0])
@@ -297,12 +296,14 @@ func (r *HTTPResponseExpr) Finalize(a *HTTPEndpointExpr, svcAtt *AttributeExpr) 
 			r.Body.Meta = bodyAtt.Meta
 		}
 	}
+
 	// Set response content type if empty and if set in the result type
 	if r.ContentType == "" {
 		if rt, ok := svcAtt.Type.(*ResultTypeExpr); ok && rt.ContentType != "" {
 			r.ContentType = rt.ContentType
 		}
 	}
+
 	initAttr(r.Headers, svcAtt)
 	initAttr(r.Cookies, svcAtt)
 }
@@ -326,6 +327,57 @@ func (r *HTTPResponseExpr) Dup() *HTTPResponseExpr {
 		res.Cookies = DupMappedAtt(r.Cookies)
 	}
 	return &res
+}
+
+// mapUnmappedAttrs maps any unmapped attributes in ErrorResult type to the
+// response headers. Unmapped attributes refer to the attributes in ErrorResult
+// type that are not mapped to response body or headers. Such unmapped
+// attributes are mapped to special goa headers in the form of
+// "Goa-Attribute(-<Attribute Name>)".
+func (r *HTTPResponseExpr) mapUnmappedAttrs(svcAtt *AttributeExpr) {
+	if svcAtt.Type != ErrorResult {
+		return
+	}
+
+	// map attributes to headers that are not explicitly mapped
+	switch {
+	case IsObject(svcAtt.Type):
+		// map the attribute names in the service type to response headers if
+		// not mapped explicitly.
+
+		var originAttr string
+		{
+			if r.Body != nil {
+				if o, ok := r.Body.Meta["origin:attribute"]; ok {
+					originAttr = o[0]
+				}
+			}
+		}
+		// if response body was mapped explicitly using Body(<attribute name>) then
+		// we must make sure we map all the other unmapped attributes to headers.
+		if r.Body == nil || r.Body.Type == Empty || originAttr != "" {
+			for _, nat := range *(AsObject(svcAtt.Type)) {
+				if originAttr == nat.Name {
+					continue
+				}
+				if _, ok := r.Headers.FindKey(nat.Name); ok {
+					continue
+				}
+				r.Headers.Type.(*Object).Set(nat.Name, nat.Attribute)
+				r.Headers.Map("goa-attribute-"+nat.Name, nat.Name)
+				if svcAtt.IsRequired(nat.Name) {
+					if r.Headers.Validation == nil {
+						r.Headers.Validation = &ValidationExpr{}
+					}
+					r.Headers.Validation.AddRequired(nat.Name)
+				}
+			}
+		}
+	default:
+		if r.Headers.IsEmpty() && (r.Body == nil || r.Body.Type == Empty) {
+			r.Headers.Type.(*Object).Set("goa-attribute", svcAtt)
+		}
+	}
 }
 
 // bodyAllowedForStatus reports whether a given response status code

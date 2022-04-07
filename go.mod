@@ -14,7 +14,7 @@ require (
 	github.com/gorilla/sessions v1.2.1
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
 	github.com/hinshun/vt10x v0.0.0-20180616224451-1954e6464174
-	github.com/ikawaha/goahttpcheck v1.3.1
+	github.com/ikawaha/goahttpcheck v1.10.0
 	github.com/joho/godotenv v1.4.0
 	github.com/markbates/goth v1.68.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -25,7 +25,7 @@ require (
 	github.com/tektoncd/plumbing v0.0.0-20211012143332-c7cc43d9bc0c
 	go.uber.org/automaxprocs v1.4.0
 	go.uber.org/zap v1.21.0
-	goa.design/goa/v3 v3.4.0
+	goa.design/goa/v3 v3.6.2
 	goa.design/plugins/v3 v3.1.3
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	gopkg.in/h2non/gock.v1 v1.1.2

@@ -29,7 +29,7 @@ func ClientFiles(genpkg string, root *expr.RootExpr) []*codegen.File {
 // clientFile returns the client HTTP transport file
 func clientFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File {
 	data := HTTPServices.Get(svc.Name())
-	svcName := codegen.SnakeCase(data.Service.VarName)
+	svcName := data.Service.PathName
 	path := filepath.Join(codegen.Gendir, "http", svcName, "client", "client.go")
 	title := fmt.Sprintf("%s client HTTP transport", svc.Name())
 	sections := []*codegen.SectionTemplate{
@@ -75,10 +75,13 @@ func clientFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File {
 
 	for _, e := range data.Endpoints {
 		sections = append(sections, &codegen.SectionTemplate{
-			Name:    "client-endpoint-init",
-			Source:  endpointInitT,
-			Data:    e,
-			FuncMap: map[string]interface{}{"isWebSocketEndpoint": isWebSocketEndpoint},
+			Name:   "client-endpoint-init",
+			Source: endpointInitT,
+			Data:   e,
+			FuncMap: map[string]interface{}{
+				"isWebSocketEndpoint": isWebSocketEndpoint,
+				"responseStructPkg":   responseStructPkg,
+			},
 		})
 	}
 
@@ -89,29 +92,29 @@ func clientFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File {
 // and decoding logic.
 func clientEncodeDecodeFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File {
 	data := HTTPServices.Get(svc.Name())
-	svcName := codegen.SnakeCase(data.Service.VarName)
+	svcName := data.Service.PathName
 	path := filepath.Join(codegen.Gendir, "http", svcName, "client", "encode_decode.go")
 	title := fmt.Sprintf("%s HTTP client encoders and decoders", svc.Name())
-	sections := []*codegen.SectionTemplate{
-		codegen.Header(title, "client", []*codegen.ImportSpec{
-			{Path: "bytes"},
-			{Path: "context"},
-			{Path: "fmt"},
-			{Path: "io"},
-			{Path: "io/ioutil"},
-			{Path: "mime/multipart"},
-			{Path: "net/http"},
-			{Path: "net/url"},
-			{Path: "os"},
-			{Path: "strconv"},
-			{Path: "strings"},
-			{Path: "unicode/utf8"},
-			codegen.GoaImport(""),
-			codegen.GoaNamedImport("http", "goahttp"),
-			{Path: genpkg + "/" + svcName, Name: data.Service.PkgName},
-			{Path: genpkg + "/" + svcName + "/" + "views", Name: data.Service.ViewsPkg},
-		}),
+	imports := []*codegen.ImportSpec{
+		{Path: "bytes"},
+		{Path: "context"},
+		{Path: "fmt"},
+		{Path: "io"},
+		{Path: "io/ioutil"},
+		{Path: "mime/multipart"},
+		{Path: "net/http"},
+		{Path: "net/url"},
+		{Path: "os"},
+		{Path: "strconv"},
+		{Path: "strings"},
+		{Path: "unicode/utf8"},
+		codegen.GoaImport(""),
+		codegen.GoaNamedImport("http", "goahttp"),
+		{Path: genpkg + "/" + svcName, Name: data.Service.PkgName},
+		{Path: genpkg + "/" + svcName + "/" + "views", Name: data.Service.ViewsPkg},
 	}
+	imports = append(imports, data.Service.UserTypeImports...)
+	sections := []*codegen.SectionTemplate{codegen.Header(title, "client", imports)}
 
 	for _, e := range data.Endpoints {
 		sections = append(sections, &codegen.SectionTemplate{
@@ -131,10 +134,17 @@ func clientEncodeDecodeFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.F
 					},
 					"isBearer":    isBearer,
 					"aliasedType": fieldType,
-					"isAliased": func(dt expr.DataType) bool {
+					"isAlias": func(dt expr.DataType) bool {
 						_, ok := dt.(expr.UserType)
 						return ok
 					},
+					"underlyingType": func(dt expr.DataType) expr.DataType {
+						if ut, ok := dt.(expr.UserType); ok {
+							return ut.Attribute().Type
+						}
+						return dt
+					},
+					"requestStructPkg": requestStructPkg,
 				},
 				Data: e,
 			})
@@ -163,6 +173,9 @@ func clientEncodeDecodeFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.F
 				Name:   "build-stream-request",
 				Source: buildStreamRequestT,
 				Data:   e,
+				FuncMap: map[string]interface{}{
+					"requestStructPkg": requestStructPkg,
+				},
 			})
 		}
 	}
@@ -228,6 +241,20 @@ func isBearer(schemes []*service.SchemeData) bool {
 		}
 	}
 	return false
+}
+
+func requestStructPkg(m *service.MethodData, def string) string {
+	if m.PayloadLoc != nil {
+		return m.PayloadLoc.PackageName()
+	}
+	return def
+}
+
+func responseStructPkg(m *service.MethodData, def string) string {
+	if m.ResultLoc != nil {
+		return m.ResultLoc.PackageName()
+	}
+	return def
 }
 
 // input: ServiceData
@@ -356,7 +383,7 @@ func (c *{{ .ClientStruct }}) {{ .EndpointInit }}({{ if .MultipartRequestEncoder
 			resp.Body.Close()
 			return nil, err
 		}
-		return &{{ .ServicePkgName }}.{{ .Method.ResponseStruct }}{ {{ if .Result.Ref }}Result: res.({{ .Result.Ref }}), {{ end }}Body: resp.Body}, nil
+		return &{{ responseStructPkg .Method .ServicePkgName }}.{{ .Method.ResponseStruct }}{ {{ if .Result.Ref }}Result: res.({{ .Result.Ref }}), {{ end }}Body: resp.Body}, nil
 		{{- else }}
 		return decodeResponse(resp)
 		{{- end }}
@@ -377,9 +404,9 @@ const requestEncoderT = `{{ printf "%s returns an encoder for requests sent to t
 func {{ .RequestEncoder }}(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
 		{{- if .Method.SkipRequestBodyEncodeDecode }}
-		data, ok := v.(*{{ .ServicePkgName }}.{{ .Method.RequestStruct }})
+		data, ok := v.(*{{ requestStructPkg .Method .ServicePkgName }}.{{ .Method.RequestStruct }})
 		if !ok {
-			return goahttp.ErrInvalidType("{{ .ServiceName }}", "{{ .Method.Name }}", "*{{ .ServicePkgName}}.{{ .Method.RequestStruct }}", v)
+			return goahttp.ErrInvalidType("{{ .ServiceName }}", "{{ .Method.Name }}", "*{{ requestStructPkg .Method .ServicePkgName }}.{{ .Method.RequestStruct }}", v)
 		}
 		p := data.Payload
 		{{- else }}
@@ -405,6 +432,8 @@ func {{ .RequestEncoder }}(encoder func(*http.Request) goahttp.Encoder) func(*ht
 			for _, val := range head {
 				{{- if eq .Type.ElemType.Type.Name "string" }}
 				req.Header.Add({{ printf "%q" .Name }}, val)
+				{{- else if (and (isAlias .Type.ElemType.Type) (eq (underlyingType .Type.ElemType.Type).Name "string")) }}
+				req.Header.Set({{ printf "%q" .Name }}, string(val))
 				{{- else }}
 				{{ template "type_conversion" (typeConversionData .Type.ElemType.Type (aliasedType .FieldType).ElemType.Type "valStr" "val") }}
 				req.Header.Add({{ printf "%q" .Name }}, valStr)
@@ -412,6 +441,8 @@ func {{ .RequestEncoder }}(encoder func(*http.Request) goahttp.Encoder) func(*ht
 			}
 			{{- else if eq .Type.Name "string" }}
 			req.Header.Set({{ printf "%q" .Name }}, head)
+			{{- else if (and (isAlias .Type) (eq (underlyingType .Type).Name "string")) }}
+			req.Header.Set({{ printf "%q" .Name }}, string(head))
 			{{- else }}
 			{{ template "type_conversion" (typeConversionData .Type .FieldType "headStr" "head") }}
 			req.Header.Set({{ printf "%q" .Name }}, headStr)
@@ -488,11 +519,11 @@ func {{ .RequestEncoder }}(encoder func(*http.Request) goahttp.Encoder) func(*ht
 		if p.{{ .FieldName }} != nil {
 			{{- end }}
 		values.Add("{{ .Name }}",
-			{{- if eq .Type.Name "bytes" }} string(
+			{{- if or (eq .Type.Name "bytes") (and (isAlias .FieldType) (eq (underlyingType .FieldType).Name "string")) }} string(
 			{{- else if not (eq .Type.Name "string") }} fmt.Sprintf("%v",
 			{{- end }}
 			{{- if .FieldPointer }}*{{ end }}p.{{ .FieldName }}
-			{{- if or (eq .Type.Name "bytes") (not (eq .Type.Name "string")) }})
+			{{- if or (eq .Type.Name "bytes") (not (eq .Type.Name "string")) (and (isAlias .FieldType) (eq (underlyingType .FieldType).Name "string")) }})
 			{{- end }})
 			{{- if .FieldPointer }}
 		}
@@ -500,6 +531,8 @@ func {{ .RequestEncoder }}(encoder func(*http.Request) goahttp.Encoder) func(*ht
 		{{- else }}
 			{{- if eq .Type.Name "string" }}
 				values.Add("{{ .Name }}", p)
+			{{- else if (and (isAlias .Type) (eq (underlyingType .Type).Name "string")) }}
+				values.Add("{{ .Name }}", string(p))
 			{{- else }}
 				{{ template "type_conversion" (typeConversionData .Type .FieldType "pStr" "p") }}
 				values.Add("{{ .Name }}", pStr)
@@ -549,11 +582,11 @@ func {{ .RequestEncoder }}(encoder func(*http.Request) goahttp.Encoder) func(*ht
 		{{- end }}
 		key {{ if .NewVar }}:={{ else }}={{ end }} fmt.Sprintf("{{ .VarName }}[%s]", {{ if not .NewVar }}key, {{ end }}k)
 		{{- if eq .Type.ElemType.Type.Name "string" }}
-			values.Add(key, {{ if (isAliased .FieldType.ElemType.Type) }}string({{ end }}value{{ if (isAliased .FieldType.ElemType.Type) }}){{ end }})
+			values.Add(key, {{ if (isAlias .FieldType.ElemType.Type) }}string({{ end }}value{{ if (isAlias .FieldType.ElemType.Type) }}){{ end }})
 		{{- else if eq .Type.ElemType.Type.Name "map" }}
 			{{- template "map_conversion" (mapConversionData .Type.ElemType.Type .FieldType.ElemType.Type "%s" "value" "" false) }}
 		{{- else if eq .Type.ElemType.Type.Name "array" }}
-			{{- if and (eq .Type.ElemType.Type.ElemType.Type.Name "string") (not (isAliased .FieldType.ElemType.Type.ElemType.Type)) }}
+			{{- if and (eq .Type.ElemType.Type.ElemType.Type.Name "string") (not (isAlias .FieldType.ElemType.Type.ElemType.Type)) }}
 				values[key] = value
 			{{- else }}
 				for _, val := range value {
@@ -926,12 +959,12 @@ func {{ .InitName }}(encoderFn {{ .FuncName }}) func(r *http.Request) goahttp.En
 
 // input: streamRequestData
 const buildStreamRequestT = `// {{ printf "%s creates a streaming endpoint request payload from the method payload and the path to the file to be streamed" .BuildStreamPayload | comment }}
-func {{ .BuildStreamPayload }}({{ if .Payload.Ref }}payload interface{}, {{ end }}fpath string) (*{{ .ServicePkgName }}.{{ .Method.RequestStruct }}, error) {
+func {{ .BuildStreamPayload }}({{ if .Payload.Ref }}payload interface{}, {{ end }}fpath string) (*{{ requestStructPkg .Method .ServicePkgName }}.{{ .Method.RequestStruct }}, error) {
 	f, err := os.Open(fpath)
 	if err != nil {
 		return nil, err
 	}
-	return &{{ .ServicePkgName }}.{{ .Method.RequestStruct }}{
+	return &{{ requestStructPkg .Method .ServicePkgName }}.{{ .Method.RequestStruct }}{
 		{{- if .Payload.Ref }}
 		Payload: payload.({{ .Payload.Ref }}),
 		{{- end }}

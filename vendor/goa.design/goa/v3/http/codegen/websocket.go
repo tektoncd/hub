@@ -127,7 +127,7 @@ func initWebSocketData(ed *EndpointData, e *expr.HTTPEndpointExpr, sd *ServiceDa
 							if ut, ok := body.(expr.UserType); ok {
 								if val := ut.Attribute().Validation; val != nil {
 									httpctx := httpContext("", sd.Scope, true, true)
-									svcode = codegen.RecursiveValidationCode(ut.Attribute(), httpctx, true, "body")
+									svcode = codegen.RecursiveValidationCode(ut.Attribute(), httpctx, true, expr.IsAlias(ut), "body")
 								}
 							}
 						}
@@ -228,7 +228,7 @@ func websocketServerFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File
 	if !hasWebSocket(data) {
 		return nil
 	}
-	svcName := codegen.SnakeCase(data.Service.VarName)
+	svcName := data.Service.PathName
 	title := fmt.Sprintf("%s WebSocket server streaming", svc.Name())
 	sections := []*codegen.SectionTemplate{
 		codegen.Header(title, "server", []*codegen.ImportSpec{
@@ -259,7 +259,7 @@ func websocketClientFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File
 	if !hasWebSocket(data) {
 		return nil
 	}
-	svcName := codegen.SnakeCase(data.Service.VarName)
+	svcName := data.Service.PathName
 	title := fmt.Sprintf("%s WebSocket client streaming", svc.Name())
 	sections := []*codegen.SectionTemplate{
 		codegen.Header(title, "client", []*codegen.ImportSpec{
