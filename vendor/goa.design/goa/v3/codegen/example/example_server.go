@@ -54,7 +54,7 @@ func exampleSvrMain(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *c
 		sd := service.Services.Get(svc)
 		svcData[i] = sd
 		specs = append(specs, &codegen.ImportSpec{
-			Path: path.Join(genpkg, codegen.SnakeCase(sd.VarName)),
+			Path: path.Join(genpkg, sd.PathName),
 			Name: scope.Unique(sd.PkgName),
 		})
 	}
@@ -76,7 +76,7 @@ func exampleSvrMain(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *c
 
 	sections := []*codegen.SectionTemplate{
 		codegen.Header("", "main", specs),
-		&codegen.SectionTemplate{
+		{
 			Name:   "server-main-start",
 			Source: mainStartT,
 			Data: map[string]interface{}{
@@ -85,15 +85,13 @@ func exampleSvrMain(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *c
 			FuncMap: map[string]interface{}{
 				"join": strings.Join,
 			},
-		},
-		&codegen.SectionTemplate{
+		}, {
 			Name:   "server-main-logger",
 			Source: mainLoggerT,
 			Data: map[string]interface{}{
 				"APIPkg": apiPkg,
 			},
-		},
-		&codegen.SectionTemplate{
+		}, {
 			Name:   "server-main-services",
 			Source: mainSvcsT,
 			Data: map[string]interface{}{
@@ -103,8 +101,7 @@ func exampleSvrMain(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *c
 			FuncMap: map[string]interface{}{
 				"mustInitServices": mustInitServices,
 			},
-		},
-		&codegen.SectionTemplate{
+		}, {
 			Name:   "server-main-endpoints",
 			Source: mainEndpointsT,
 			Data: map[string]interface{}{
@@ -113,9 +110,10 @@ func exampleSvrMain(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *c
 			FuncMap: map[string]interface{}{
 				"mustInitServices": mustInitServices,
 			},
-		},
-		&codegen.SectionTemplate{Name: "server-main-interrupts", Source: mainInterruptsT},
-		&codegen.SectionTemplate{
+		}, {
+			Name:   "server-main-interrupts",
+			Source: mainInterruptsT,
+		}, {
 			Name:   "server-main-handler",
 			Source: mainServerHndlrT,
 			Data: map[string]interface{}{
@@ -128,7 +126,10 @@ func exampleSvrMain(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *c
 				"toUpper": strings.ToUpper,
 			},
 		},
-		&codegen.SectionTemplate{Name: "server-main-end", Source: mainEndT},
+		{
+			Name:   "server-main-end",
+			Source: mainEndT,
+		},
 	}
 
 	return &codegen.File{Path: mainPath, SectionTemplates: sections, SkipExist: true}
@@ -282,7 +283,7 @@ func main() {
 				}
 				u.Host = net.JoinHostPort(h, *{{ $u.Transport.Type }}PortF)
 			} else if u.Port() == "" {
-				u.Host = net.JoinHostPort(u.Host, ":{{ $u.Port }}")
+				u.Host = net.JoinHostPort(u.Host, "{{ $u.Port }}")
 			}
 			handle{{ toUpper $u.Transport.Name }}Server(ctx, u, {{ range $t := $.Server.Transports }}{{ if eq $t.Type $u.Transport.Type }}{{ range $s := $t.Services }}{{ range $.Services }}{{ if eq $s .Name }}{{ if .Methods }}{{ .VarName }}Endpoints, {{ end }}{{ end }}{{ end }}{{ end }}{{ end }}{{ end }}&wg, errc, logger, *dbgF)
 		}

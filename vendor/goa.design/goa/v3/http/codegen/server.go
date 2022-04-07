@@ -31,16 +31,17 @@ func ServerFiles(genpkg string, root *expr.RootExpr) []*codegen.File {
 // server returns the file implementing the HTTP server.
 func serverFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File {
 	data := HTTPServices.Get(svc.Name())
-	svcName := codegen.SnakeCase(data.Service.VarName)
+	svcName := data.Service.PathName
 	path := filepath.Join(codegen.Gendir, "http", svcName, "server", "server.go")
 	title := fmt.Sprintf("%s HTTP server", svc.Name())
 	funcs := map[string]interface{}{
-		"join":                func(ss []string, s string) string { return strings.Join(ss, s) },
-		"hasWebSocket":        hasWebSocket,
-		"isWebSocketEndpoint": isWebSocketEndpoint,
-		"viewedServerBody":    viewedServerBody,
-		"mustDecodeRequest":   mustDecodeRequest,
-		"addLeadingSlash":     addLeadingSlash,
+		"join":                    func(ss []string, s string) string { return strings.Join(ss, s) },
+		"hasWebSocket":            hasWebSocket,
+		"isWebSocketEndpoint":     isWebSocketEndpoint,
+		"viewedServerBody":        viewedServerBody,
+		"mustDecodeRequest":       mustDecodeRequest,
+		"addLeadingSlash":         addLeadingSlash,
+		"removeTrailingIndexHTML": removeTrailingIndexHTML,
 	}
 	sections := []*codegen.SectionTemplate{
 		codegen.Header(title, "server", []*codegen.ImportSpec{
@@ -92,26 +93,27 @@ func serverFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File {
 // decoding logic.
 func serverEncodeDecodeFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File {
 	data := HTTPServices.Get(svc.Name())
-	svcName := codegen.SnakeCase(data.Service.VarName)
+	svcName := data.Service.PathName
 	path := filepath.Join(codegen.Gendir, "http", svcName, "server", "encode_decode.go")
 	title := fmt.Sprintf("%s HTTP server encoders and decoders", svc.Name())
-	sections := []*codegen.SectionTemplate{
-		codegen.Header(title, "server", []*codegen.ImportSpec{
-			{Path: "context"},
-			{Path: "fmt"},
-			{Path: "io"},
-			{Path: "net/http"},
-			{Path: "strconv"},
-			{Path: "strings"},
-			{Path: "encoding/json"},
-			{Path: "mime/multipart"},
-			{Path: "unicode/utf8"},
-			codegen.GoaImport(""),
-			codegen.GoaNamedImport("http", "goahttp"),
-			{Path: genpkg + "/" + svcName, Name: data.Service.PkgName},
-			{Path: genpkg + "/" + svcName + "/" + "views", Name: data.Service.ViewsPkg},
-		}),
+	imports := []*codegen.ImportSpec{
+		{Path: "context"},
+		{Path: "errors"},
+		{Path: "fmt"},
+		{Path: "io"},
+		{Path: "net/http"},
+		{Path: "strconv"},
+		{Path: "strings"},
+		{Path: "encoding/json"},
+		{Path: "mime/multipart"},
+		{Path: "unicode/utf8"},
+		codegen.GoaImport(""),
+		codegen.GoaNamedImport("http", "goahttp"),
+		{Path: genpkg + "/" + svcName, Name: data.Service.PkgName},
+		{Path: genpkg + "/" + svcName + "/" + "views", Name: data.Service.ViewsPkg},
 	}
+	imports = append(imports, data.Service.UserTypeImports...)
+	sections := []*codegen.SectionTemplate{codegen.Header(title, "server", imports)}
 
 	for _, e := range data.Endpoints {
 		if e.Redirect == nil && !isWebSocketEndpoint(e) {
@@ -246,6 +248,13 @@ func addLeadingSlash(s string) string {
 	return "/" + s
 }
 
+func removeTrailingIndexHTML(s string) string {
+	if strings.HasSuffix(s, "/index.html") {
+		return strings.TrimSuffix(s, "index.html")
+	}
+	return s
+}
+
 func mapQueryDecodeData(dt expr.DataType, varName string, inc int) map[string]interface{} {
 	return map[string]interface{}{
 		"Type":      dt,
@@ -368,11 +377,19 @@ func {{ .MountServer }}(mux goahttp.Muxer, h *{{ .ServerStruct }}) {
 	{{ .MountHandler }}(mux, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "{{ .Redirect.URL }}", {{ .Redirect.StatusCode }})
 		}))
-	 	{{- else }}
-			{{- $filepath := addLeadingSlash .FilePath }}
-	{{ .MountHandler }}(mux, {{ range .RequestPaths }}{{if ne . $filepath }}goahttp.ReplacePrefix("{{ . }}", "{{ $filepath }}", {{ end }}{{ end }}h.{{ .VarName }}){{ range .RequestPaths }}{{ if ne . $filepath }}){{ end}}{{ end }}
+	 	{{- else if .IsDir }}
+			{{- $filepath := addLeadingSlash (removeTrailingIndexHTML .FilePath) }}
+	{{ .MountHandler }}(mux, {{ range .RequestPaths }}{{if ne . $filepath }}goahttp.Replace("{{ . }}", "{{ $filepath }}", {{ end }}{{ end }}h.{{ .VarName }}){{ range .RequestPaths }}{{ if ne . $filepath }}){{ end}}{{ end }}
+		{{- else }}
+			{{- $filepath := addLeadingSlash (removeTrailingIndexHTML .FilePath) }}
+	{{ .MountHandler }}(mux, {{ range .RequestPaths }}{{if ne . $filepath }}goahttp.Replace("", "{{ $filepath }}", {{ end }}{{ end }}h.{{ .VarName }}){{ range .RequestPaths }}{{ if ne . $filepath }}){{ end}}{{ end }}
 		{{- end }}
 	{{- end }}
+}
+
+{{ printf "%s configures the mux to serve the %s endpoints." .MountServer .Service.Name | comment }}
+func (s *{{ .ServerStruct }}) {{ .MountServer }}(mux goahttp.Muxer) {
+	{{ .MountServer }}(mux, s)
 }
 `
 
@@ -479,7 +496,9 @@ func {{ .HandlerInit }}(
 	{{- if not .Redirect }}
 		if err != nil {
 			{{- if isWebSocketEndpoint . }}
-			if _, ok := err.(websocket.HandshakeError); ok {
+			if _, werr := w.Write(nil); werr == http.ErrHijacked {
+				// Response writer has been hijacked, do not encode the error
+				errhandler(ctx, w, err)
 				return
 			}
 			{{- end }}
@@ -1184,15 +1203,16 @@ const errorEncoderT = `{{ printf "%s returns an encoder for errors returned by t
 func {{ .ErrorEncoder }}(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
 	encodeError := goahttp.ErrorEncoder(encoder, formatter)
 	return func(ctx context.Context, w http.ResponseWriter, v error) error {
-		en, ok := v.(ErrorNamer)
-		if !ok {
+		var en ErrorNamer
+		if !errors.As(v, &en) {
 			return encodeError(ctx, w, v)
 		}
 		switch en.ErrorName() {
 	{{- range $gerr := .Errors }}
 	{{- range $err := .Errors }}
 		case {{ printf "%q" .Name }}:
-			res := v.({{ $err.Ref }})
+			var res {{ $err.Ref }}
+			errors.As(v, &res)
 			{{- with .Response}}
 				{{- if .ContentType }}
 					ctx = context.WithValue(ctx, goahttp.ContentTypeKey, "{{ .ContentType }}")
@@ -1248,12 +1268,15 @@ const responseT = `{{ define "response" -}}
 		{{- $initDef := and (or .FieldPointer .Slice) .DefaultValue (not $.TagName) }}
 		{{- $checkNil := and (or .FieldPointer .Slice (eq .Type.Name "bytes") (eq .Type.Name "any") $initDef) (not $.TagName) }}
 		{{- if $checkNil }}
-	if res.{{ if $.ViewedResult }}Projected.{{ end }}{{ .FieldName }} != nil {
+	if res{{ if .FieldName }}.{{ end }}{{ if $.ViewedResult }}Projected.{{ end }}{{ if .FieldName }}{{ .FieldName }}{{ end }} != nil {
 		{{- end }}
 
-		{{- if eq .Type.Name "string" }}
+		{{- if and (eq .Type.Name "string") (not (isAliased .FieldType)) }}
 	w.Header().Set("{{ .CanonicalName }}", {{ if or .FieldPointer $.ViewedResult }}*{{ end }}res{{ if $.ViewedResult }}.Projected{{ end }}{{ if .FieldName }}.{{ .FieldName }}{{ end }})
 		{{- else }}
+{{- if not $checkNil }}
+{
+{{- end }}
 			{{- if isAliased .FieldType }}
 	val := {{ goTypeRef .Type }}({{ if .FieldPointer }}*{{ end }}res{{ if $.ViewedResult }}.Projected{{ end }}{{ if .FieldName }}.{{ .FieldName }}{{ end }})
 	{{ template "header_conversion" (headerConversionData .Type (printf "%ss" .VarName) true "val") }}
@@ -1262,6 +1285,9 @@ const responseT = `{{ define "response" -}}
 	{{ template "header_conversion" (headerConversionData .Type (printf "%ss" .VarName) (not .FieldPointer) "val") }}
 			{{- end }}
 	w.Header().Set("{{ .CanonicalName }}", {{ .VarName }}s)
+{{- if not $checkNil }}
+}
+{{- end }}
 		{{- end }}
 
 		{{- if $initDef }}
@@ -1324,7 +1350,7 @@ const responseT = `{{ define "response" -}}
 	{{- end }}
 
 	{{- if .ErrorHeader }}
-	w.Header().Set("goa-error", {{ printf "%q" .ErrorHeader }})
+	w.Header().Set("goa-error", res.ErrorName())
 	{{- end }}
 	w.WriteHeader({{ .StatusCode }})
 {{- end }}

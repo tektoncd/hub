@@ -271,24 +271,52 @@ func (e *HTTPEndpointExpr) Prepare() {
 		e.Responses = []*HTTPResponseExpr{{StatusCode: status}}
 	}
 
-	// Inherit HTTP errors from service
-	for _, r := range e.Service.HTTPErrors {
-		e.HTTPErrors = append(e.HTTPErrors, r.Dup())
+	// Error -> ResponseError
+	methodErrors := map[string]struct{}{}
+	for _, v := range e.HTTPErrors {
+		methodErrors[v.Name] = struct{}{}
 	}
-
-	// Lookup undefined HTTP errors in API.
-	for _, err := range e.MethodExpr.Errors {
-		found := false
-		for _, herr := range e.HTTPErrors {
-			if err.Name == herr.Name {
+	for _, me := range e.MethodExpr.Errors {
+		if _, ok := methodErrors[me.Name]; ok {
+			continue
+		}
+		methodErrors[me.Name] = struct{}{}
+		var found bool
+		for _, v := range e.Service.HTTPErrors {
+			if me.Name == v.Name {
+				e.HTTPErrors = append(e.HTTPErrors, v.Dup())
 				found = true
 				break
 			}
 		}
+		if found {
+			continue
+		}
+		// Lookup undefined HTTP errors in API.
+		for _, v := range Root.API.HTTP.Errors {
+			if me.Name == v.Name {
+				e.HTTPErrors = append(e.HTTPErrors, v.Dup())
+			}
+		}
+	}
+	// Inherit HTTP errors from service if the error has not added.
+	for _, se := range e.Service.ServiceExpr.Errors {
+		if _, ok := methodErrors[se.Name]; ok {
+			continue
+		}
+		var found bool
+		for _, resp := range e.Service.HTTPErrors {
+			if se.Name == resp.Name {
+				found = true
+				e.HTTPErrors = append(e.HTTPErrors, resp.Dup())
+				break
+			}
+		}
 		if !found {
-			for _, herr := range Root.API.HTTP.Errors {
-				if herr.Name == err.Name {
-					e.HTTPErrors = append(e.HTTPErrors, herr.Dup())
+			for _, ae := range Root.API.HTTP.Errors {
+				if se.Name == ae.Name {
+					e.HTTPErrors = append(e.HTTPErrors, ae.Dup())
+					break
 				}
 			}
 		}
@@ -608,7 +636,7 @@ func (e *HTTPEndpointExpr) Validate() error {
 		}
 	}
 
-	body := extendedHTTPRequestBody(e)
+	body := httpRequestBody(e)
 	if e.SkipRequestBodyEncodeDecode && body.Type != Empty {
 		verr.Add(e, "HTTP endpoint request body must be empty when using SkipRequestBodyEncodeDecode but not all method payload attributes are mapped to headers and params. Make sure to define Headers and Params as needed.")
 	}
@@ -674,21 +702,13 @@ func (e *HTTPEndpointExpr) Finalize() {
 	initAttr(e.Headers, e.MethodExpr.Payload)
 	initAttr(e.Cookies, e.MethodExpr.Payload)
 
-	if e.Body != nil {
-		// rename type to add RequestBody suffix so that we don't end with
-		// duplicate type definitions - https://github.com/goadesign/goa/issues/1969
-		e.Body = httpRequestBody(e)
-		e.Body.Finalize()
-	} else {
-		// Compute body from the payload expression
-		e.Body = httpRequestBody(e)
-		// Don't call e.Body.Finalize() after computing the body because the
-		// payload expression might define bases and references which will be
-		// added to the body even when design explicitly maps them to headers or
-		// params.
-	}
+	e.Body = httpRequestBody(e)
+	e.Body.Finalize()
 
 	e.StreamingBody = httpStreamingBody(e)
+	if e.StreamingBody != nil {
+		e.StreamingBody.Finalize()
+	}
 
 	// Initialize responses parent, headers and body
 	for _, r := range e.Responses {
@@ -903,6 +923,21 @@ func (r *RouteExpr) Validate() *eval.ValidationErrors {
 	if r.Endpoint.MethodExpr.IsStreaming() && len(r.Endpoint.Responses) > 0 {
 		if r.Method != "GET" {
 			verr.Add(r, "WebSocket endpoint supports only \"GET\" method. Got %q.", r.Method)
+		}
+	}
+
+	// HEAD method must not return a response body as per RFC 2616 section 9.4
+	if r.Method == "HEAD" {
+		disallowBody := func(resp *HTTPResponseExpr) {
+			if httpResponseBody(r.Endpoint, resp).Type != Empty {
+				verr.Add(r, "HTTP status %d: Response body defined for HEAD method which does not allow response body.", resp.StatusCode)
+			}
+		}
+		for _, resp := range r.Endpoint.Responses {
+			disallowBody(resp)
+		}
+		for _, e := range r.Endpoint.HTTPErrors {
+			disallowBody(e.Response)
 		}
 	}
 	return verr

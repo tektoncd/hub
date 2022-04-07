@@ -156,8 +156,6 @@ func Attribute(name string, args ...interface{}) {
 				Description: description,
 			}
 		}
-		attr.References = parent.References
-		attr.Bases = parent.Bases
 		if fn != nil {
 			eval.Execute(fn, attr)
 		}
@@ -224,7 +222,7 @@ func Default(def interface{}) {
 // a DSL the Value function can be used to provide the example value.
 //
 // If no example is explicitly provided in an attribute expression then a random
-// example is generated unless the "swagger:example" meta is set to "false".
+// example is generated unless the "openapi:example" meta is set to "false".
 // See Meta.
 //
 // Example must appear in a Attributes, Attribute, Params, Param, Headers or
