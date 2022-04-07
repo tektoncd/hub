@@ -160,8 +160,16 @@ func (sf *schemafier) schemafy(attr *expr.AttributeExpr, noref ...bool) *openapi
 			s.Type = openapi.Type("number")
 			s.Format = "double"
 		case expr.BytesKind, expr.AnyKind:
-			s.Type = openapi.Type("string")
-			s.Format = "binary"
+			if bases := attr.Bases; len(bases) > 0 {
+				for _, b := range bases {
+					// Union type
+					val := sf.schemafy(&expr.AttributeExpr{Type: b}, false)
+					s.AnyOf = append(s.AnyOf, val)
+				}
+			} else {
+				s.Type = openapi.Type("string")
+				s.Format = "binary"
+			}
 		default:
 			s.Type = openapi.Type(t.Name())
 		}
@@ -179,23 +187,37 @@ func (sf *schemafier) schemafy(attr *expr.AttributeExpr, noref ...bool) *openapi
 		}
 	case *expr.Map:
 		s.Type = openapi.Object
-		s.AdditionalProperties = true
-	case expr.UserType:
-		h := sf.hashAttribute(attr, fnv.New64())
-		ref, ok := sf.hashes[h]
-		if len(noref) == 0 && ok {
-			s.Ref = ref
+		// OpenAPI lets you define dictionaries where the keys are strings.
+		// See https://swagger.io/docs/specification/data-models/dictionaries/.
+		if t.KeyType.Type == expr.String {
+			s.AdditionalProperties = sf.schemafy(t.ElemType)
 		} else {
-			name := t.Name()
-			if n, ok := t.Attribute().Meta["name:original"]; ok {
-				name = n[0]
-			}
-			typeName := sf.uniquify(codegen.Goify(name, true))
-			s.Ref = toRef(typeName)
-			sf.hashes[h] = s.Ref
-			sf.schemas[typeName] = sf.schemafy(t.Attribute(), true)
+			s.AdditionalProperties = true
 		}
-		return s // All other schema properties are set in the reference
+	case *expr.Union:
+		for _, val := range t.Values {
+			s.AnyOf = append(s.AnyOf, sf.schemafy(val.Attribute))
+		}
+	case expr.UserType:
+		if !expr.IsAlias(t) {
+			h := sf.hashAttribute(attr, fnv.New64())
+			ref, ok := sf.hashes[h]
+			if len(noref) == 0 && ok {
+				s.Ref = ref
+			} else {
+				name := t.Name()
+				if n, ok := t.Attribute().Meta["name:original"]; ok {
+					name = n[0]
+				}
+				typeName := sf.uniquify(codegen.Goify(name, true))
+				s.Ref = toRef(typeName)
+				sf.hashes[h] = s.Ref
+				sf.schemas[typeName] = sf.schemafy(t.Attribute(), true)
+			}
+			return s // All other schema properties are set in the reference
+		}
+		// Alias primitive type
+		s = sf.schemafy(t.Attribute())
 	default:
 		panic(fmt.Sprintf("unknown type %T", t)) // bug
 	}

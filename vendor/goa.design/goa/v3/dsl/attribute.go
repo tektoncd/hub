@@ -2,6 +2,7 @@ package dsl
 
 import (
 	"fmt"
+	"strings"
 
 	"goa.design/goa/v3/eval"
 	"goa.design/goa/v3/expr"
@@ -131,8 +132,10 @@ func Attribute(name string, args ...interface{}) {
 			parent.Type = &expr.Object{}
 		}
 		if _, ok := parent.Type.(*expr.Object); !ok {
-			eval.ReportError("can't define child attribute %#v on attribute of type %s", name, parent.Type.Name())
-			return
+			if _, ok := parent.Type.(*expr.Union); !ok {
+				eval.ReportError("can't define child attribute %#v on attribute of type %s %T", name, parent.Type.Name(), parent.Type)
+				return
+			}
 		}
 	}
 
@@ -156,8 +159,6 @@ func Attribute(name string, args ...interface{}) {
 				Description: description,
 			}
 		}
-		attr.References = parent.References
-		attr.Bases = parent.Bases
 		if fn != nil {
 			eval.Execute(fn, attr)
 		}
@@ -167,13 +168,23 @@ func Attribute(name string, args ...interface{}) {
 		}
 	}
 
-	parent.Type.(*expr.Object).Set(name, attr)
+	if obj, ok := parent.Type.(*expr.Object); ok {
+		obj.Set(name, attr)
+		return
+	}
+	union := parent.Type.(*expr.Union)
+	if _, ok := attr.Type.(expr.UserType); !ok {
+		att := expr.DupAtt(attr)
+		attr.Type = &expr.UserTypeExpr{AttributeExpr: att, TypeName: union.TypeName + strings.Title(name)}
+	}
+	union.Values = append(union.Values, &expr.NamedAttributeExpr{Name: name, Attribute: attr})
 }
 
-// Field is syntactic sugar to define an attribute with the "rpc:tag" meta
-// set with the value of the first argument.
+// Field is syntactic sugar to define an attribute that defines a tag, e.g. for
+// protobuf.  The result is the same as calling Attribute with the "rpc:tag"
+// meta set with the value of the first argument.
 //
-// Field must appear wherever Attribute can.
+// Field can appear wherever Attribute can.
 //
 // Field takes the same arguments as Attribute with the addition of the tag
 // value as first argument.
@@ -194,6 +205,41 @@ func Field(tag interface{}, name string, args ...interface{}) {
 		}
 	}
 	Attribute(name, append(args, fn)...)
+}
+
+// OneOf creates a union type from a name and a list of attributes.
+//
+// OneOf may be used wherever Attribute can.
+//
+// OneOf takes a name as first argument, a description as optional second
+// argument and a function that lists the union types as last argument.
+//
+// Example:
+//
+//    var PetOwner = Type("PetOwner", func() {
+//        Name("name", String)
+//        OneOf("pet", "Owner's pet", func() {
+//            Attribute("cat", Cat, "Cats are cool")
+//            Attribute("dog", Dog, "Dogs are cool too")
+//        })
+//    })
+//
+func OneOf(name string, args ...interface{}) {
+	if len(args) > 2 {
+		eval.ReportError("OneOf: wrong number of arguments")
+	}
+	fn, ok := args[len(args)-1].(func())
+	if !ok {
+		eval.ReportError("OneOf: last argument must be a function")
+	}
+	var desc string
+	if len(args) > 1 {
+		desc, ok = args[0].(string)
+		if !ok {
+			eval.ReportError("OneOf: description must be a string")
+		}
+	}
+	Attribute(name, &expr.Union{TypeName: name}, desc, fn)
 }
 
 // Default sets the default value for an attribute.
@@ -224,7 +270,7 @@ func Default(def interface{}) {
 // a DSL the Value function can be used to provide the example value.
 //
 // If no example is explicitly provided in an attribute expression then a random
-// example is generated unless the "swagger:example" meta is set to "false".
+// example is generated unless the "openapi:example" meta is set to "false".
 // See Meta.
 //
 // Example must appear in a Attributes, Attribute, Params, Param, Headers or

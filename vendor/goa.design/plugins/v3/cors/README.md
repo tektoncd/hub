@@ -15,8 +15,8 @@ import (
   . "goa.design/goa/v3/dsl"
 )
 ```
-Note the use of blank identifier to import the `cors` package which is necessary
-as the package is imported solely for its side-effects (initialization).
+The `cors` package exports functions that can be used in the design to configure CORS
+options, see below.
 
 ## Effects on Code Generation
 

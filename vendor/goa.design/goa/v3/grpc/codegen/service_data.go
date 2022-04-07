@@ -493,10 +493,12 @@ func (d ServicesData) analyze(gs *expr.GRPCServiceExpr) *ServiceData {
 		)
 		{
 			if e.MethodExpr.Payload.Type != expr.Empty {
-				payloadRef = svc.Scope.GoFullTypeRef(e.MethodExpr.Payload, svc.PkgName)
+				payloadRef = svc.Scope.GoFullTypeRef(e.MethodExpr.Payload,
+					pkgWithDefault(md.PayloadLoc, svc.PkgName))
 			}
 			if e.MethodExpr.Result.Type != expr.Empty {
-				resultRef = svc.Scope.GoFullTypeRef(e.MethodExpr.Result, svc.PkgName)
+				resultRef = svc.Scope.GoFullTypeRef(e.MethodExpr.Result,
+					pkgWithDefault(md.ResultLoc, svc.PkgName))
 			}
 			if md.ViewedResult != nil {
 				viewedResultRef = md.ViewedResult.FullRef
@@ -523,7 +525,7 @@ func (d ServicesData) analyze(gs *expr.GRPCServiceExpr) *ServiceData {
 				ServerConvert: buildRequestConvertData(e.Request, e.MethodExpr.Payload, reqMD, e, sd, true),
 				ClientConvert: buildRequestConvertData(e.Request, e.MethodExpr.Payload, reqMD, e, sd, false),
 			}
-			if obj := expr.AsObject(e.Request.Type); len(*obj) > 0 {
+			if obj := expr.AsObject(e.Request.Type); (obj != nil && len(*obj) > 0) || expr.IsUnion(e.Request.Type) {
 				// add the request message as the first argument to the CLI
 				request.CLIArgs = append(request.CLIArgs, &InitArgData{
 					Name:     "message",
@@ -670,6 +672,10 @@ func collectMessages(at *expr.AttributeExpr, sd *ServiceData, seen map[string]st
 	case *expr.Map:
 		data = append(data, collect(dt.KeyType)...)
 		data = append(data, collect(dt.ElemType)...)
+	case *expr.Union:
+		for _, nat := range dt.Values {
+			data = append(data, collect(nat.Attribute)...)
+		}
 	}
 	return
 }
@@ -709,7 +715,7 @@ func addValidation(att *expr.AttributeExpr, sd *ServiceData, req bool) *Validati
 		}
 	}
 	ctx := protoBufTypeContext("", sd.Scope)
-	if def := codegen.RecursiveValidationCode(att, ctx, true, "message"); def != "" {
+	if def := codegen.RecursiveValidationCode(att, ctx, true, expr.IsAlias(att.Type), "message"); def != "" {
 		v := &ValidationData{
 			Name:    "Validate" + name,
 			Def:     def,
@@ -749,10 +755,10 @@ func collectValidations(att *expr.AttributeExpr, ctx *codegen.AttributeContext, 
 		}
 		sd.validations = append(sd.validations, &ValidationData{
 			Name:    "Validate" + name,
-			Def:     codegen.RecursiveValidationCode(att, ctx, true, "message"),
+			Def:     codegen.RecursiveValidationCode(unAlias(att), ctx, true, false, "message"),
 			ArgName: "message",
 			SrcName: name,
-			SrcRef:  protoBufGoFullTypeRef(att, sd.PkgName, sd.Scope),
+			SrcRef:  protoBufGoFullTypeRef(unAlias(att), sd.PkgName, sd.Scope),
 			Kind:    kind,
 		})
 	collect:
@@ -778,10 +784,10 @@ func collectValidations(att *expr.AttributeExpr, ctx *codegen.AttributeContext, 
 
 // buildRequestConvertData builds the convert data for the server and client
 // requests.
-//	* server side - converts generated gRPC request type in *.pb.go and the
-//									gRPC metadata to method payload type.
-//	* client side - converts method payload type to generated gRPC request
-//									type in *.pb.go.
+//    * server side - converts generated gRPC request type in *.pb.go and the
+//      gRPC  metadata to method payload type.
+//    * client side - converts method payload type to generated gRPC request
+//      type in *.pb.go.
 //
 // svr param indicates that the convert data is generated for server side.
 func buildRequestConvertData(request, payload *expr.AttributeExpr, md []*MetadataData, e *expr.GRPCEndpointExpr, sd *ServiceData, svr bool) *ConvertData {
@@ -797,7 +803,8 @@ func buildRequestConvertData(request, payload *expr.AttributeExpr, md []*Metadat
 
 	var (
 		svc    = sd.Service
-		svcCtx = serviceTypeContext(svc.PkgName, svc.Scope)
+		pkg    = pkgWithDefault(svc.Method(e.MethodExpr.Name).PayloadLoc, svc.PkgName)
+		svcCtx = serviceTypeContext(pkg, svc.Scope)
 	)
 
 	if svr {
@@ -844,8 +851,8 @@ func buildRequestConvertData(request, payload *expr.AttributeExpr, md []*Metadat
 		data.Description = fmt.Sprintf("%s builds the gRPC request type from the payload of the %q endpoint of the %q service.", data.Name, e.Name(), svc.Name)
 	}
 	return &ConvertData{
-		SrcName: svc.Scope.GoFullTypeName(payload, svc.PkgName),
-		SrcRef:  svc.Scope.GoFullTypeRef(payload, svc.PkgName),
+		SrcName: svc.Scope.GoFullTypeName(payload, pkg),
+		SrcRef:  svc.Scope.GoFullTypeRef(payload, pkg),
 		TgtName: protoBufGoFullTypeName(request, sd.PkgName, sd.Scope),
 		TgtRef:  protoBufGoFullTypeRef(request, sd.PkgName, sd.Scope),
 		Init:    data,
@@ -854,10 +861,10 @@ func buildRequestConvertData(request, payload *expr.AttributeExpr, md []*Metadat
 
 // buildResponseConvertData builds the convert data for the server and client
 // responses.
-//	* server side - converts method result type to generated gRPC response type
-//									in *.pb.go
-//	* client side - converts generated gRPC response type in *.pb.go and
-//									response metadata to method result type.
+//     * server side - converts method result type to generated gRPC response
+//       type in *.pb.go
+//     * client side - converts generated gRPC response type in *.pb.go and
+//       response metadata to method result type.
 //
 // svr param indicates that the convert data is generated for server side.
 func buildResponseConvertData(response, result *expr.AttributeExpr, svcCtx *codegen.AttributeContext, hdrs, trlrs []*MetadataData, e *expr.GRPCEndpointExpr, sd *ServiceData, svr bool) *ConvertData {
@@ -962,20 +969,22 @@ func buildInitData(source, target *expr.AttributeExpr, sourceVar, targetVar stri
 		pbCtx = protoBufTypeContext(sd.PkgName, sd.Scope)
 	)
 	{
-		isStruct = expr.IsObject(target.Type)
+		name = "New"
+		srcCtx = pbCtx
+		tgtCtx = svcCtx
+		if proto {
+			srcCtx = svcCtx
+			tgtCtx = pbCtx
+			name += "Proto"
+		}
+		isStruct = expr.IsObject(target.Type) || expr.IsUnion(target.Type)
 		n := protoBufGoTypeName(target, sd.Scope)
 		if !isStruct {
 			// If target is array, map, or primitive the name will be suffixed with
 			// the definition (e.g int, []string, map[int]string) which is incorrect.
 			n = protoBufGoTypeName(source, sd.Scope)
 		}
-		name = "New" + n
-		srcCtx = pbCtx
-		tgtCtx = svcCtx
-		if proto {
-			srcCtx = svcCtx
-			tgtCtx = pbCtx
-		}
+		name += n
 		code, helpers, err = protoBufTransform(source, target, sourceVar, targetVar, srcCtx, tgtCtx, proto, true)
 		if err != nil {
 			fmt.Println(err.Error()) // TBD validate DSL so errors are not possible
@@ -1241,7 +1250,7 @@ func extractMetadata(a *expr.MappedAttributeExpr, service *expr.AttributeExpr, s
 				mp.KeyType.Type.Kind() == expr.StringKind &&
 				mp.ElemType.Type.Kind() == expr.ArrayKind &&
 				expr.AsArray(mp.ElemType.Type).ElemType.Type.Kind() == expr.StringKind,
-			Validate:     codegen.RecursiveValidationCode(c, ctx, required, varn),
+			Validate:     codegen.RecursiveValidationCode(c, ctx, required, expr.IsAlias(c.Type), varn),
 			DefaultValue: c.DefaultValue,
 			Example:      c.Example(expr.Root.API.Random()),
 		})
@@ -1267,7 +1276,16 @@ func resultContext(e *expr.GRPCEndpointExpr, sd *ServiceData) (*expr.AttributeEx
 		// return projected type context
 		return vresAtt, codegen.NewAttributeContext(true, false, true, svc.ViewsPkg, svc.ViewScope)
 	}
-	return e.MethodExpr.Result, serviceTypeContext(svc.PkgName, svc.Scope)
+	pkg := pkgWithDefault(md.ResultLoc, svc.PkgName)
+	return e.MethodExpr.Result, serviceTypeContext(pkg, svc.Scope)
+}
+
+// pkgWithDefault returns the package name of the given location if not nil, def otherwise.
+func pkgWithDefault(loc *codegen.Location, def string) string {
+	if loc == nil {
+		return def
+	}
+	return loc.PackageName()
 }
 
 // getPrimitive returns the primitive expression if the given expression is an alias to one
@@ -1357,6 +1375,9 @@ func (s *{{ .VarName }}) {{ .RecvName }}() ({{ .RecvRef }}, error) {
 {{- if and .Endpoint.Method.ViewedResult (eq .Type "client") }}
 	proj := {{ .RecvConvert.Init.Name }}({{ range .RecvConvert.Init.Args }}{{ .Name }}, {{ end }})
 	vres := {{ if not .Endpoint.Method.ViewedResult.IsCollection }}&{{ end }}{{ .Endpoint.Method.ViewedResult.FullName }}{Projected: proj, View: {{ if .Endpoint.Method.ViewedResult.ViewName }}"{{ .Endpoint.Method.ViewedResult.ViewName }}"{{ else }}s.view{{ end }} }
+	if err := {{ .Endpoint.Method.ViewedResult.ViewsPkg }}.Validate{{ .Endpoint.Method.Result }}(vres); err != nil {
+	  return nil, err
+	}
 	return {{ .Endpoint.ServicePkgName }}.{{ .Endpoint.Method.ViewedResult.ResultInit.Name }}(vres), nil
 {{- else }}
 {{- if .RecvConvert.Validation }}

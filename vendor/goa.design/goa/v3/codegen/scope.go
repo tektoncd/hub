@@ -96,6 +96,10 @@ func (s *NameScope) Name(name string) string {
 // useDefault if true indicates that the attribute must not be a pointer
 // if it has a default value.
 func (s *NameScope) GoTypeDef(att *expr.AttributeExpr, ptr, useDefault bool) string {
+	return s.goTypeDef(att, ptr, useDefault, "")
+}
+
+func (s *NameScope) goTypeDef(att *expr.AttributeExpr, ptr, useDefault bool, pkg string) string {
 	switch actual := att.Type.(type) {
 	case expr.Primitive:
 		if t, _ := GetMetaType(att); t != "" {
@@ -103,24 +107,25 @@ func (s *NameScope) GoTypeDef(att *expr.AttributeExpr, ptr, useDefault bool) str
 		}
 		return GoNativeTypeName(actual)
 	case *expr.Array:
-		d := s.GoTypeDef(actual.ElemType, ptr, useDefault)
+		d := s.goTypeDef(actual.ElemType, ptr, useDefault, pkg)
 		if expr.IsObject(actual.ElemType.Type) {
 			d = "*" + d
 		}
 		return "[]" + d
 	case *expr.Map:
-		keyDef := s.GoTypeDef(actual.KeyType, ptr, useDefault)
+		keyDef := s.goTypeDef(actual.KeyType, ptr, useDefault, pkg)
 		if expr.IsObject(actual.KeyType.Type) {
 			keyDef = "*" + keyDef
 		}
-		elemDef := s.GoTypeDef(actual.ElemType, ptr, useDefault)
+		elemDef := s.goTypeDef(actual.ElemType, ptr, useDefault, pkg)
 		if expr.IsObject(actual.ElemType.Type) {
 			elemDef = "*" + elemDef
 		}
 		return fmt.Sprintf("map[%s]%s", keyDef, elemDef)
+	case *expr.Union:
+		return fmt.Sprintf("interface{\n\t%s()\n}", UnionValTypeName(actual.TypeName))
 	case *expr.Object:
-		var ss []string
-		ss = append(ss, "struct {")
+		ss := []string{"struct {"}
 		for _, nat := range *actual {
 			var (
 				fn   string
@@ -133,7 +138,13 @@ func (s *NameScope) GoTypeDef(att *expr.AttributeExpr, ptr, useDefault bool) str
 			)
 			{
 				fn = GoifyAtt(at, name, true)
-				tdef = s.GoTypeDef(at, ptr, useDefault)
+				var parentPkg string
+				if ut, ok := at.Type.(expr.UserType); ok {
+					if UserTypeLocation(ut) != nil {
+						parentPkg = UserTypeLocation(ut).PackageName()
+					}
+				}
+				tdef = s.goTypeDef(at, ptr, useDefault, parentPkg)
 				if expr.IsObject(at.Type) ||
 					att.IsPrimitivePointer(name, useDefault) ||
 					(ptr && expr.IsPrimitive(at.Type) && at.Type.Kind() != expr.AnyKind && at.Type.Kind() != expr.BytesKind) {
@@ -149,7 +160,14 @@ func (s *NameScope) GoTypeDef(att *expr.AttributeExpr, ptr, useDefault bool) str
 		ss = append(ss, "}")
 		return strings.Join(ss, "\n")
 	case expr.UserType:
-		return s.GoTypeName(att)
+		if actual == expr.Empty {
+			return "struct {}"
+		}
+		var prefix string
+		if loc := UserTypeLocation(actual); loc != nil && loc.PackageName() != pkg {
+			prefix = loc.PackageName() + "."
+		}
+		return prefix + s.GoTypeName(att)
 	default:
 		panic(fmt.Sprintf("unknown data type %T", actual)) // bug
 	}
@@ -223,7 +241,7 @@ func (s *NameScope) GoFullTypeName(att *expr.AttributeExpr, pkg string) string {
 			s.GoFullTypeRef(actual.ElemType, pkg))
 	case *expr.Object:
 		return s.GoTypeDef(att, false, false)
-	case expr.UserType:
+	case expr.UserType, *expr.Union:
 		if actual == expr.ErrorResult {
 			return "goa.ServiceError"
 		}
@@ -252,6 +270,9 @@ func isRawStruct(dt expr.DataType) bool {
 		return true
 	}
 	if expr.IsObject(dt) {
+		return false
+	}
+	if expr.IsUnion(dt) {
 		return false
 	}
 	return true

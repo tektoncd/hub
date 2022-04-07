@@ -46,17 +46,17 @@ func serverType(genpkg string, svc *expr.HTTPServiceExpr, seen map[string]struct
 	var (
 		path    string
 		data    = HTTPServices.Get(svc.Name())
-		svcName = codegen.SnakeCase(data.Service.VarName)
+		svcName = data.Service.PathName
 	)
 	path = filepath.Join(codegen.Gendir, "http", svcName, "server", "types.go")
-	header := codegen.Header(svc.Name()+" HTTP server types", "server",
-		[]*codegen.ImportSpec{
-			{Path: "unicode/utf8"},
-			{Path: genpkg + "/" + svcName, Name: data.Service.PkgName},
-			codegen.GoaImport(""),
-			{Path: genpkg + "/" + svcName + "/" + "views", Name: data.Service.ViewsPkg},
-		},
-	)
+	imports := []*codegen.ImportSpec{
+		{Path: "unicode/utf8"},
+		{Path: genpkg + "/" + svcName, Name: data.Service.PkgName},
+		codegen.GoaImport(""),
+		{Path: genpkg + "/" + svcName + "/" + "views", Name: data.Service.ViewsPkg},
+	}
+	imports = append(imports, data.Service.UserTypeImports...)
+	header := codegen.Header(svc.Name()+" HTTP server types", "server", imports)
 
 	var (
 		initData       []*InitData
@@ -214,10 +214,6 @@ func fieldCode(init *InitData, typ string) string {
 	if typ == "client" {
 		args = init.ClientArgs
 	}
-	mustInit := false
-	if (typ == "server" && init.ServerCode == "") || (typ == "client" && init.ClientCode == "") {
-		mustInit = true
-	}
 	initArgs := make([]*codegen.InitArgData, len(args))
 	for i, arg := range args {
 		initArgs[i] = &codegen.InitArgData{
@@ -231,7 +227,7 @@ func fieldCode(init *InitData, typ string) string {
 	}
 	// We can ignore the transform helpers as there won't be any generated
 	// because the headers and params cannot be user types.
-	c, _, err := codegen.InitStructFields(initArgs, init.ReturnTypeName, varn, "", init.ReturnTypePkg, mustInit)
+	c, _, err := codegen.InitStructFields(initArgs, varn, "", init.ReturnTypePkg)
 	if err != nil {
 		panic(err) //bug
 	}
@@ -276,6 +272,6 @@ func {{ .Name }}({{ range .ServerArgs }}{{ .VarName }} {{.TypeRef }}, {{ end }})
 const validateT = `{{ printf "Validate%s runs the validations defined on %s" .VarName .Name | comment }}
 func Validate{{ .VarName }}(body {{ .Ref }}) (err error) {
 	{{ .ValidateDef }}
-	return
+	return 
 }
 `

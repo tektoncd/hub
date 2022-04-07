@@ -21,7 +21,7 @@ func ViewsFile(genpkg string, service *expr.ServiceExpr) *codegen.File {
 	if len(svc.projectedTypes) == 0 {
 		return nil
 	}
-	path := filepath.Join(codegen.Gendir, codegen.SnakeCase(svc.VarName), "views", "view.go")
+	path := filepath.Join(codegen.Gendir, svc.PathName, "views", "view.go")
 	var (
 		sections []*codegen.SectionTemplate
 	)
@@ -115,10 +115,10 @@ func {{ .Name }}(result {{ .Ref }}) (err error) {
 // input: map[string]interface{}{"ViewedTypes": []*viewedType}
 const viewedMapT = `var (
 {{- range .ViewedTypes }}
-	{{ printf "%sMap is a map of attribute names in result type %s indexed by view name." .Name .Name | comment }}
+	{{ printf "%sMap is a map indexing the attribute names of %s by view name." .Name .Name | comment }}
 	{{ .Name }}Map = map[string][]string{
 	{{- range .Views }}
-		"{{ .Name }}": []string{
+		"{{ .Name }}": {
 			{{- range $n := .Attributes }}
 				"{{ $n }}",
 			{{- end }}
