@@ -67,7 +67,15 @@ func ClientCLIFiles(genpkg string, root *expr.RootExpr) []*codegen.File {
 	}
 	var files []*codegen.File
 	for _, svr := range root.API.Servers {
-		files = append(files, endpointParser(genpkg, root, svr, data))
+		var svrData []*commandData
+		for _, name := range svr.Services {
+			for i, svc := range svcs {
+				if svc.Name() == name {
+					svrData = append(svrData, data[i])
+				}
+			}
+		}
+		files = append(files, endpointParser(genpkg, root, svr, svrData))
 	}
 	for i, svc := range svcs {
 		files = append(files, payloadBuilders(genpkg, svc, data[i].CommandData))
@@ -116,7 +124,7 @@ func endpointParser(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr, da
 			continue
 		}
 		specs = append(specs, &codegen.ImportSpec{
-			Path: genpkg + "/http/" + codegen.SnakeCase(sd.Service.VarName) + "/client",
+			Path: genpkg + "/http/" + sd.Service.PathName + "/client",
 			Name: sd.Service.PkgName + "c",
 		})
 	}
@@ -153,7 +161,7 @@ func endpointParser(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr, da
 // use flag values as arguments.
 func payloadBuilders(genpkg string, svc *expr.HTTPServiceExpr, data *cli.CommandData) *codegen.File {
 	sd := HTTPServices.Get(svc.Name())
-	path := filepath.Join(codegen.Gendir, "http", codegen.SnakeCase(sd.Service.VarName), "client", "cli.go")
+	path := filepath.Join(codegen.Gendir, "http", sd.Service.PathName, "client", "cli.go")
 	title := fmt.Sprintf("%s HTTP client CLI support package", svc.Name())
 	specs := []*codegen.ImportSpec{
 		{Path: "encoding/json"},
@@ -164,8 +172,9 @@ func payloadBuilders(genpkg string, svc *expr.HTTPServiceExpr, data *cli.Command
 		{Path: "unicode/utf8"},
 		codegen.GoaImport(""),
 		codegen.GoaNamedImport("http", "goahttp"),
-		{Path: genpkg + "/" + codegen.SnakeCase(sd.Service.VarName), Name: sd.Service.PkgName},
+		{Path: genpkg + "/" + sd.Service.PathName, Name: sd.Service.PkgName},
 	}
+	specs = append(specs, sd.Service.UserTypeImports...)
 	sections := []*codegen.SectionTemplate{
 		codegen.Header(title, "client", specs),
 	}
@@ -226,7 +235,7 @@ func makeFlags(e *EndpointData, args []*InitArgData, payload expr.DataType) ([]*
 		if arg.FieldName == "" && arg.VarName != "body" {
 			continue
 		}
-		code, chek := cli.FieldLoadCode(f, arg.VarName, arg.TypeName, arg.Validate, arg.DefaultValue, payload)
+		code, chek := cli.FieldLoadCode(f, arg.VarName, arg.TypeName, arg.Validate, arg.DefaultValue, payload, e.Payload.Ref)
 		check = check || chek
 		tn := arg.TypeRef
 		if f.Type == "JSON" {

@@ -53,7 +53,7 @@ github.com/creack/pty
 github.com/davecgh/go-spew/spew
 # github.com/dimfeld/httppath v0.0.0-20170720192232-ee938bf73598
 github.com/dimfeld/httppath
-# github.com/dimfeld/httptreemux/v5 v5.3.0
+# github.com/dimfeld/httptreemux/v5 v5.4.0
 github.com/dimfeld/httptreemux/v5
 # github.com/docker/cli v20.10.12+incompatible
 github.com/docker/cli/cli/config
@@ -169,7 +169,7 @@ github.com/gorilla/securecookie
 # github.com/gorilla/sessions v1.2.1
 ## explicit
 github.com/gorilla/sessions
-# github.com/gorilla/websocket v1.4.2
+# github.com/gorilla/websocket v1.5.0
 github.com/gorilla/websocket
 # github.com/grpc-ecosystem/grpc-gateway v1.16.0
 github.com/grpc-ecosystem/grpc-gateway/internal
@@ -201,10 +201,10 @@ github.com/hashicorp/hcl/json/token
 # github.com/hinshun/vt10x v0.0.0-20180616224451-1954e6464174
 ## explicit
 github.com/hinshun/vt10x
-# github.com/ikawaha/goahttpcheck v1.3.1
+# github.com/ikawaha/goahttpcheck v1.10.0
 ## explicit
 github.com/ikawaha/goahttpcheck
-# github.com/ikawaha/httpcheck v1.2.0
+# github.com/ikawaha/httpcheck v1.6.0
 github.com/ikawaha/httpcheck
 # github.com/imdario/mergo v0.3.12
 github.com/imdario/mergo
@@ -343,6 +343,7 @@ github.com/spf13/viper/internal/encoding/yaml
 # github.com/stretchr/testify v1.7.1
 ## explicit
 github.com/stretchr/testify/assert
+github.com/stretchr/testify/require
 # github.com/subosito/gotenv v1.2.0
 github.com/subosito/gotenv
 # github.com/tektoncd/pipeline v0.34.1
@@ -461,7 +462,7 @@ go.uber.org/zap/internal/exit
 go.uber.org/zap/internal/ztest
 go.uber.org/zap/zapcore
 go.uber.org/zap/zaptest
-# goa.design/goa/v3 v3.4.0
+# goa.design/goa/v3 v3.6.2
 ## explicit
 goa.design/goa/v3/codegen
 goa.design/goa/v3/codegen/cli
@@ -568,7 +569,7 @@ google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
 google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/urlfetch
-# google.golang.org/genproto v0.0.0-20220303160752-862486edd9cc
+# google.golang.org/genproto v0.0.0-20220304144024-325a89244dc8
 google.golang.org/genproto/googleapis/api/httpbody
 google.golang.org/genproto/googleapis/rpc/status
 google.golang.org/genproto/protobuf/field_mask

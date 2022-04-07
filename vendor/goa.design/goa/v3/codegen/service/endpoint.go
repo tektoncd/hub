@@ -59,22 +59,23 @@ const (
 // EndpointFile returns the endpoint file for the given service.
 func EndpointFile(genpkg string, service *expr.ServiceExpr) *codegen.File {
 	svc := Services.Get(service.Name)
-	svcName := codegen.SnakeCase(svc.VarName)
+	svcName := svc.PathName
 	path := filepath.Join(codegen.Gendir, svcName, "endpoints.go")
 	data := endpointData(service)
 	var (
 		sections []*codegen.SectionTemplate
 	)
 	{
-		header := codegen.Header(service.Name+" endpoints", svc.PkgName,
-			[]*codegen.ImportSpec{
-				{Path: "context"},
-				{Path: "io"},
-				{Path: "fmt"},
-				codegen.GoaImport(""),
-				codegen.GoaImport("security"),
-				{Path: genpkg + "/" + svcName + "/" + "views", Name: svc.ViewsPkg},
-			})
+		imports := []*codegen.ImportSpec{
+			{Path: "context"},
+			{Path: "io"},
+			{Path: "fmt"},
+			codegen.GoaImport(""),
+			codegen.GoaImport("security"),
+			{Path: genpkg + "/" + svcName + "/" + "views", Name: svc.ViewsPkg},
+		}
+		imports = append(imports, svc.UserTypeImports...)
+		header := codegen.Header(service.Name+" endpoints", svc.PkgName, imports)
 		def := &codegen.SectionTemplate{
 			Name:   "endpoints-struct",
 			Source: serviceEndpointsT,

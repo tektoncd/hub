@@ -35,11 +35,12 @@ func serverFile(genpkg string, svc *expr.GRPCServiceExpr) *codegen.File {
 		data = GRPCServices.Get(svc.Name())
 	)
 	{
-		svcName := codegen.SnakeCase(data.Service.VarName)
+		svcName := data.Service.PathName
 		fpath = filepath.Join(codegen.Gendir, "grpc", svcName, "server", "server.go")
 		sections = []*codegen.SectionTemplate{
 			codegen.Header(svc.Name()+" gRPC server", "server", []*codegen.ImportSpec{
 				{Path: "context"},
+				{Path: "errors"},
 				codegen.GoaImport(""),
 				codegen.GoaNamedImport("grpc", "goagrpc"),
 				{Path: "google.golang.org/grpc/codes"},
@@ -121,24 +122,24 @@ func serverEncodeDecode(genpkg string, svc *expr.GRPCServiceExpr) *codegen.File 
 		data = GRPCServices.Get(svc.Name())
 	)
 	{
-		svcName := codegen.SnakeCase(data.Service.VarName)
+		svcName := data.Service.PathName
 		fpath = filepath.Join(codegen.Gendir, "grpc", svcName, "server", "encode_decode.go")
 		title := fmt.Sprintf("%s gRPC server encoders and decoders", svc.Name())
-		sections = []*codegen.SectionTemplate{
-			codegen.Header(title, "server", []*codegen.ImportSpec{
-				{Path: "context"},
-				{Path: "strings"},
-				{Path: "strconv"},
-				{Path: "unicode/utf8"},
-				{Path: "google.golang.org/grpc"},
-				{Path: "google.golang.org/grpc/metadata"},
-				codegen.GoaImport(""),
-				codegen.GoaNamedImport("grpc", "goagrpc"),
-				{Path: path.Join(genpkg, svcName), Name: data.Service.PkgName},
-				{Path: path.Join(genpkg, svcName, "views"), Name: data.Service.ViewsPkg},
-				{Path: path.Join(genpkg, "grpc", svcName, pbPkgName), Name: data.PkgName},
-			}),
+		imports := []*codegen.ImportSpec{
+			{Path: "context"},
+			{Path: "strings"},
+			{Path: "strconv"},
+			{Path: "unicode/utf8"},
+			{Path: "google.golang.org/grpc"},
+			{Path: "google.golang.org/grpc/metadata"},
+			codegen.GoaImport(""),
+			codegen.GoaNamedImport("grpc", "goagrpc"),
+			{Path: path.Join(genpkg, svcName), Name: data.Service.PkgName},
+			{Path: path.Join(genpkg, svcName, "views"), Name: data.Service.ViewsPkg},
+			{Path: path.Join(genpkg, "grpc", svcName, pbPkgName), Name: data.PkgName},
 		}
+		imports = append(imports, data.Service.UserTypeImports...)
+		sections = []*codegen.SectionTemplate{codegen.Header(title, "server", imports)}
 
 		for _, e := range data.Endpoints {
 			if e.Response.ServerConvert != nil {
@@ -263,12 +264,14 @@ func (s *{{ .ServerStruct }}) {{ .Method.VarName }}(
 {{- define "handle_error" }}
 	if err != nil {
 	{{- if .Errors }}
-		if en, ok := err.(ErrorNamer); ok {
+		var en ErrorNamer
+		if errors.As(err, &en) {
 			switch en.ErrorName() {
 		{{- range .Errors }}
 			case {{ printf "%q" .Name }}:
 				{{- if .Response.ServerConvert }}
-					er := err.({{ .Response.ServerConvert.SrcRef }})
+					var er {{ .Response.ServerConvert.SrcRef }}
+					errors.As(err, &er)
 				{{- end }}
 				return {{ if not $.ServerStream }}nil, {{ end }}goagrpc.NewStatusError({{ .Response.StatusCode }}, err, {{ if .Response.ServerConvert }}{{ .Response.ServerConvert.Init.Name }}({{ range .Response.ServerConvert.Init.Args }}{{ .Name }}, {{ end }}){{ else }}goagrpc.NewErrorResponse(err){{ end }})
 		{{- end }}
