@@ -47,7 +47,7 @@ err() {
 install-node() {
   info Installing node
 
-  curl -sL https://deb.nodesource.com/setup_14.x | bash -
+  curl -sL https://deb.nodesource.com/setup_17.x | bash -
   apt-get install -y nodejs
 
   node --version
