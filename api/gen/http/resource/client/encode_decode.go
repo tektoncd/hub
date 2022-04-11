@@ -285,6 +285,94 @@ func DecodeByVersionIDResponse(decoder func(*http.Response) goahttp.Decoder, res
 	}
 }
 
+// BuildByCatalogKindNameRequest instantiates a HTTP request object with method
+// and path set to call the "resource" service "ByCatalogKindName" endpoint
+func (c *Client) BuildByCatalogKindNameRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		catalog string
+		kind    string
+		name    string
+	)
+	{
+		p, ok := v.(*resource.ByCatalogKindNamePayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("resource", "ByCatalogKindName", "*resource.ByCatalogKindNamePayload", v)
+		}
+		catalog = p.Catalog
+		kind = p.Kind
+		name = p.Name
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ByCatalogKindNameResourcePath(catalog, kind, name)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("resource", "ByCatalogKindName", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeByCatalogKindNameRequest returns an encoder for requests sent to the
+// resource ByCatalogKindName server.
+func EncodeByCatalogKindNameRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*resource.ByCatalogKindNamePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("resource", "ByCatalogKindName", "*resource.ByCatalogKindNamePayload", v)
+		}
+		values := req.URL.Query()
+		if p.Pipelinesversion != nil {
+			values.Add("pipelinesversion", *p.Pipelinesversion)
+		}
+		req.URL.RawQuery = values.Encode()
+		return nil
+	}
+}
+
+// DecodeByCatalogKindNameResponse returns a decoder for responses returned by
+// the resource ByCatalogKindName endpoint. restoreBody controls whether the
+// response body should be restored after having been read.
+func DecodeByCatalogKindNameResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusFound:
+			var (
+				location string
+				err      error
+			)
+			locationRaw := resp.Header.Get("Location")
+			if locationRaw == "" {
+				err = goa.MergeErrors(err, goa.MissingFieldError("location", "header"))
+			}
+			location = locationRaw
+			err = goa.MergeErrors(err, goa.ValidateFormat("location", location, goa.FormatURI))
+
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByCatalogKindName", err)
+			}
+			res := NewByCatalogKindNameResultFound(location)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("resource", "ByCatalogKindName", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalResourceDataResponseBodyToResourceviewsResourceDataView builds a
 // value of type *resourceviews.ResourceDataView from a value of type
 // *ResourceDataResponseBody.
