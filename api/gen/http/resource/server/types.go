@@ -149,3 +149,15 @@ func NewByVersionIDPayload(versionID uint) *resource.ByVersionIDPayload {
 
 	return v
 }
+
+// NewByCatalogKindNamePayload builds a resource service ByCatalogKindName
+// endpoint payload.
+func NewByCatalogKindNamePayload(catalog string, kind string, name string, pipelinesversion *string) *resource.ByCatalogKindNamePayload {
+	v := &resource.ByCatalogKindNamePayload{}
+	v.Catalog = catalog
+	v.Kind = kind
+	v.Name = name
+	v.Pipelinesversion = pipelinesversion
+
+	return v
+}

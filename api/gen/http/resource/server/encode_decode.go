@@ -134,6 +134,52 @@ func DecodeByVersionIDRequest(mux goahttp.Muxer, decoder func(*http.Request) goa
 	}
 }
 
+// EncodeByCatalogKindNameResponse returns an encoder for responses returned by
+// the resource ByCatalogKindName endpoint.
+func EncodeByCatalogKindNameResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*resource.ByCatalogKindNameResult)
+		w.Header().Set("Location", res.Location)
+		w.WriteHeader(http.StatusFound)
+		return nil
+	}
+}
+
+// DecodeByCatalogKindNameRequest returns a decoder for requests sent to the
+// resource ByCatalogKindName endpoint.
+func DecodeByCatalogKindNameRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			catalog          string
+			kind             string
+			name             string
+			pipelinesversion *string
+			err              error
+
+			params = mux.Vars(r)
+		)
+		catalog = params["catalog"]
+		kind = params["kind"]
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		}
+		name = params["name"]
+		pipelinesversionRaw := r.URL.Query().Get("pipelinesversion")
+		if pipelinesversionRaw != "" {
+			pipelinesversion = &pipelinesversionRaw
+		}
+		if pipelinesversion != nil {
+			err = goa.MergeErrors(err, goa.ValidatePattern("pipelinesversion", *pipelinesversion, "^\\d+(?:\\.\\d+){0,2}$"))
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewByCatalogKindNamePayload(catalog, kind, name, pipelinesversion)
+
+		return payload, nil
+	}
+}
+
 // marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersion
 // builds a value of type *ResourceDataResponseBodyWithoutVersion from a value
 // of type *resourceviews.ResourceDataView.

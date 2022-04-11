@@ -24,6 +24,8 @@ type Service interface {
 	ByCatalogKindNameVersion(context.Context, *ByCatalogKindNameVersionPayload) (res *ByCatalogKindNameVersionResult, err error)
 	// Find a resource using its version's id
 	ByVersionID(context.Context, *ByVersionIDPayload) (res *ByVersionIDResult, err error)
+	// Find resources using name of catalog, resource name and kind of resource
+	ByCatalogKindName(context.Context, *ByCatalogKindNamePayload) (res *ByCatalogKindNameResult, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -34,7 +36,7 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [4]string{"List", "VersionsByID", "ByCatalogKindNameVersion", "ByVersionId"}
+var MethodNames = [5]string{"List", "VersionsByID", "ByCatalogKindNameVersion", "ByVersionId", "ByCatalogKindName"}
 
 // Resources is the result type of the resource service List method.
 type Resources struct {
@@ -85,6 +87,26 @@ type ByVersionIDPayload struct {
 // ByVersionIDResult is the result type of the resource service ByVersionId
 // method.
 type ByVersionIDResult struct {
+	// Redirect URL
+	Location string
+}
+
+// ByCatalogKindNamePayload is the payload type of the resource service
+// ByCatalogKindName method.
+type ByCatalogKindNamePayload struct {
+	// name of catalog
+	Catalog string
+	// kind of resource
+	Kind string
+	// Name of resource
+	Name string
+	// To find resource compatible with a Tekton pipelines version, use this param
+	Pipelinesversion *string
+}
+
+// ByCatalogKindNameResult is the result type of the resource service
+// ByCatalogKindName method.
+type ByCatalogKindNameResult struct {
 	// Redirect URL
 	Location string
 }
