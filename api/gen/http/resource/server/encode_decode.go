@@ -180,6 +180,44 @@ func DecodeByCatalogKindNameRequest(mux goahttp.Muxer, decoder func(*http.Reques
 	}
 }
 
+// EncodeByIDResponse returns an encoder for responses returned by the resource
+// ById endpoint.
+func EncodeByIDResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*resource.ByIDResult)
+		w.Header().Set("Location", res.Location)
+		w.WriteHeader(http.StatusFound)
+		return nil
+	}
+}
+
+// DecodeByIDRequest returns a decoder for requests sent to the resource ById
+// endpoint.
+func DecodeByIDRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			id  uint
+			err error
+
+			params = mux.Vars(r)
+		)
+		{
+			idRaw := params["id"]
+			v, err2 := strconv.ParseUint(idRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("id", idRaw, "unsigned integer"))
+			}
+			id = uint(v)
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewByIDPayload(id)
+
+		return payload, nil
+	}
+}
+
 // marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersion
 // builds a value of type *ResourceDataResponseBodyWithoutVersion from a value
 // of type *resourceviews.ResourceDataView.

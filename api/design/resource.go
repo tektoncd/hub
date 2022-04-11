@@ -157,4 +157,27 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	Method("ById", func() {
+		Description("Find a resource using it's id")
+		Payload(func() {
+			Attribute("id", UInt, "ID of a resource", func() {
+				Example("id", 1)
+			})
+			Required("id")
+		})
+		Result(func() {
+			Attribute("location", String, "Redirect URL", func() {
+				Format(FormatURI)
+			})
+			Required("location")
+		})
+
+		HTTP(func() {
+			GET("/resource/{id}")
+			Response(StatusFound, func() {
+				Header("location")
+			})
+		})
+	})
+
 })

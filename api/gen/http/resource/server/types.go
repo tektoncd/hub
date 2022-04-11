@@ -161,3 +161,11 @@ func NewByCatalogKindNamePayload(catalog string, kind string, name string, pipel
 
 	return v
 }
+
+// NewByIDPayload builds a resource service ById endpoint payload.
+func NewByIDPayload(id uint) *resource.ByIDPayload {
+	v := &resource.ByIDPayload{}
+	v.ID = id
+
+	return v
+}
