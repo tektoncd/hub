@@ -15,6 +15,7 @@ import (
 
 // Endpoints wraps the "resource" service endpoints.
 type Endpoints struct {
+	Query                    goa.Endpoint
 	List                     goa.Endpoint
 	VersionsByID             goa.Endpoint
 	ByCatalogKindNameVersion goa.Endpoint
@@ -26,6 +27,7 @@ type Endpoints struct {
 // NewEndpoints wraps the methods of the "resource" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
+		Query:                    NewQueryEndpoint(s),
 		List:                     NewListEndpoint(s),
 		VersionsByID:             NewVersionsByIDEndpoint(s),
 		ByCatalogKindNameVersion: NewByCatalogKindNameVersionEndpoint(s),
@@ -37,12 +39,22 @@ func NewEndpoints(s Service) *Endpoints {
 
 // Use applies the given middleware to all the "resource" service endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
+	e.Query = m(e.Query)
 	e.List = m(e.List)
 	e.VersionsByID = m(e.VersionsByID)
 	e.ByCatalogKindNameVersion = m(e.ByCatalogKindNameVersion)
 	e.ByVersionID = m(e.ByVersionID)
 	e.ByCatalogKindName = m(e.ByCatalogKindName)
 	e.ByID = m(e.ByID)
+}
+
+// NewQueryEndpoint returns an endpoint function that calls the method "Query"
+// of service "resource".
+func NewQueryEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*QueryPayload)
+		return s.Query(ctx, p)
+	}
 }
 
 // NewListEndpoint returns an endpoint function that calls the method "List" of

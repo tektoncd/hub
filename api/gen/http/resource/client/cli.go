@@ -8,12 +8,104 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	goa "goa.design/goa/v3/pkg"
 )
+
+// BuildQueryPayload builds the payload for the resource Query endpoint from
+// CLI flags.
+func BuildQueryPayload(resourceQueryName string, resourceQueryCatalogs string, resourceQueryCategories string, resourceQueryKinds string, resourceQueryTags string, resourceQueryPlatforms string, resourceQueryLimit string, resourceQueryMatch string) (*resource.QueryPayload, error) {
+	var err error
+	var name string
+	{
+		if resourceQueryName != "" {
+			name = resourceQueryName
+		}
+	}
+	var catalogs []string
+	{
+		if resourceQueryCatalogs != "" {
+			err = json.Unmarshal([]byte(resourceQueryCatalogs), &catalogs)
+			if err != nil {
+				return nil, fmt.Errorf("invalid JSON for catalogs, \nerror: %s, \nexample of valid JSON:\n%s", err, "'[\n      \"tekton\",\n      \"openshift\"\n   ]'")
+			}
+		}
+	}
+	var categories []string
+	{
+		if resourceQueryCategories != "" {
+			err = json.Unmarshal([]byte(resourceQueryCategories), &categories)
+			if err != nil {
+				return nil, fmt.Errorf("invalid JSON for categories, \nerror: %s, \nexample of valid JSON:\n%s", err, "'[\n      \"build\",\n      \"tools\"\n   ]'")
+			}
+		}
+	}
+	var kinds []string
+	{
+		if resourceQueryKinds != "" {
+			err = json.Unmarshal([]byte(resourceQueryKinds), &kinds)
+			if err != nil {
+				return nil, fmt.Errorf("invalid JSON for kinds, \nerror: %s, \nexample of valid JSON:\n%s", err, "'[\n      \"task\",\n      \"pipelines\"\n   ]'")
+			}
+		}
+	}
+	var tags []string
+	{
+		if resourceQueryTags != "" {
+			err = json.Unmarshal([]byte(resourceQueryTags), &tags)
+			if err != nil {
+				return nil, fmt.Errorf("invalid JSON for tags, \nerror: %s, \nexample of valid JSON:\n%s", err, "'[\n      \"image\",\n      \"build\"\n   ]'")
+			}
+		}
+	}
+	var platforms []string
+	{
+		if resourceQueryPlatforms != "" {
+			err = json.Unmarshal([]byte(resourceQueryPlatforms), &platforms)
+			if err != nil {
+				return nil, fmt.Errorf("invalid JSON for platforms, \nerror: %s, \nexample of valid JSON:\n%s", err, "'[\n      \"linux/s390x\",\n      \"linux/amd64\"\n   ]'")
+			}
+		}
+	}
+	var limit uint
+	{
+		if resourceQueryLimit != "" {
+			var v uint64
+			v, err = strconv.ParseUint(resourceQueryLimit, 10, 64)
+			limit = uint(v)
+			if err != nil {
+				return nil, fmt.Errorf("invalid value for limit, must be UINT")
+			}
+		}
+	}
+	var match string
+	{
+		if resourceQueryMatch != "" {
+			match = resourceQueryMatch
+			if !(match == "exact" || match == "contains") {
+				err = goa.MergeErrors(err, goa.InvalidEnumValueError("match", match, []interface{}{"exact", "contains"}))
+			}
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	v := &resource.QueryPayload{}
+	v.Name = name
+	v.Catalogs = catalogs
+	v.Categories = categories
+	v.Kinds = kinds
+	v.Tags = tags
+	v.Platforms = platforms
+	v.Limit = limit
+	v.Match = match
+
+	return v, nil
+}
 
 // BuildVersionsByIDPayload builds the payload for the resource VersionsByID
 // endpoint from CLI flags.

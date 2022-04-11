@@ -116,6 +116,15 @@ type TagResponseBody struct {
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
+// NewQueryResultFound builds a "resource" service "Query" endpoint result from
+// a HTTP "Found" response.
+func NewQueryResultFound(location string) *resource.QueryResult {
+	v := &resource.QueryResult{}
+	v.Location = location
+
+	return v
+}
+
 // NewListResourcesMovedPermanently builds a "resource" service "List" endpoint
 // result from a HTTP "MovedPermanently" response.
 func NewListResourcesMovedPermanently(body *ListResponseBody) *resourceviews.ResourcesView {

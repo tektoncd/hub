@@ -16,6 +16,9 @@ import (
 
 // The resource service provides details about all kind of resources
 type Service interface {
+	// Find resources by a combination of name, kind, catalog, categories,
+	// platforms and tags
+	Query(context.Context, *QueryPayload) (res *QueryResult, err error)
 	// List all resources sorted by rating and name
 	List(context.Context) (res *Resources, err error)
 	// Find all versions of a resource by its id
@@ -38,7 +41,33 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [6]string{"List", "VersionsByID", "ByCatalogKindNameVersion", "ByVersionId", "ByCatalogKindName", "ById"}
+var MethodNames = [7]string{"Query", "List", "VersionsByID", "ByCatalogKindNameVersion", "ByVersionId", "ByCatalogKindName", "ById"}
+
+// QueryPayload is the payload type of the resource service Query method.
+type QueryPayload struct {
+	// Name of resource
+	Name string
+	// Catalogs of resource to filter by
+	Catalogs []string
+	// Kinds of resource to filter by
+	Kinds []string
+	// Category associated with a resource to filter by
+	Categories []string
+	// Tags associated with a resource to filter by
+	Tags []string
+	// Platforms associated with a resource to filter by
+	Platforms []string
+	// Maximum number of resources to be returned
+	Limit uint
+	// Strategy used to find matching resources
+	Match string
+}
+
+// QueryResult is the result type of the resource service Query method.
+type QueryResult struct {
+	// Redirect URL
+	Location string
+}
 
 // Resources is the result type of the resource service List method.
 type Resources struct {
