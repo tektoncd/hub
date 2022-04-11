@@ -120,4 +120,41 @@ var _ = Service("resource", func() {
 
 	})
 
+	Method("ByCatalogKindName", func() {
+		Description("Find resources using name of catalog, resource name and kind of resource")
+		Payload(func() {
+			Attribute("catalog", String, "name of catalog", func() {
+				Example("catalog", "tektoncd")
+			})
+			Attribute("kind", String, "kind of resource", func() {
+				Enum("task", "pipeline")
+			})
+			Attribute("name", String, "Name of resource", func() {
+				Example("name", "buildah")
+			})
+			Attribute("pipelinesversion", String, "To find resource compatible with a Tekton pipelines version, use this param", func() {
+				Pattern(types.PipelinesVersionRegex)
+				Example("pipelinesversion", "0.21.0")
+			})
+			Required("catalog", "kind", "name")
+		})
+		Result(func() {
+			Attribute("location", String, "Redirect URL", func() {
+				Format(FormatURI)
+			})
+			Required("location")
+		})
+
+		HTTP(func() {
+			GET("/resource/{catalog}/{kind}/{name}")
+
+			Param("pipelinesversion")
+
+			Response(StatusFound, func() {
+				Header("location")
+			})
+
+		})
+	})
+
 })
