@@ -58,3 +58,8 @@ func (s *service) ByCatalogKindName(ctx context.Context, p *resource.ByCatalogKi
 	}
 	return &resource.ByCatalogKindNameResult{Location: fmt.Sprintf("/v1/resource/%s/%s/%s", p.Catalog, p.Kind, p.Name)}, nil
 }
+
+// Find a resource using it's id
+func (s *service) ByID(ctx context.Context, p *resource.ByIDPayload) (*resource.ByIDResult, error) {
+	return &resource.ByIDResult{Location: fmt.Sprintf("/v1/resource/%d", p.ID)}, nil
+}

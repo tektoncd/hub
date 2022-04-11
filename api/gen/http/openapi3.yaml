@@ -64,6 +64,16 @@ paths:
                     name
                   - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
                   type: warning
+                - errors:
+                  - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display
+                    name
+                  - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+                  type: warning
+                - errors:
+                  - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display
+                    name
+                  - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+                  type: warning
         "500":
           description: Internal Server Error response.
           content:
@@ -164,6 +174,9 @@ paths:
                 - catalogName: tekton
                   id: 1
                   status: queued
+                - catalogName: tekton
+                  id: 1
+                  status: queued
               example:
               - catalogName: tekton
                 id: 1
@@ -208,8 +221,6 @@ paths:
                 $ref: '#/components/schemas/ListResponseBody'
               example:
                 data:
-                - id: 1
-                  name: Image Builder
                 - id: 1
                   name: Image Builder
                 - id: 1
@@ -265,7 +276,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: Name of resource
@@ -285,9 +296,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://runtewiegand.biz/carmine_koelpin
+                example: http://hintz.name/braulio
                 format: uri
-              example: http://gottlieb.net/avis_o'reilly
+              example: http://bogisich.name/vida.kris
   /resource/{catalog}/{kind}/{name}/{version}:
     get:
       tags:
@@ -317,7 +328,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: task
+        example: pipeline
       - name: name
         in: path
         description: name of resource
@@ -346,9 +357,39 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://mohr.net/nova.mclaughlin
+                example: http://schuster.org/chelsea
                 format: uri
-              example: http://pacocha.name/kaela_adams
+              example: http://schroeder.biz/lia_goyette
+  /resource/{id}:
+    get:
+      tags:
+      - resource
+      summary: ById resource
+      description: Find a resource using it's id
+      operationId: resource#ById
+      parameters:
+      - name: id
+        in: path
+        description: ID of a resource
+        required: true
+        schema:
+          type: integer
+          description: ID of a resource
+          example: 1
+        example: 1
+      responses:
+        "302":
+          description: Found response.
+          headers:
+            location:
+              description: Redirect URL
+              required: true
+              schema:
+                type: string
+                description: Redirect URL
+                example: http://harrisgottlieb.net/constantin
+                format: uri
+              example: http://yost.biz/micah
   /resource/{id}/rating:
     get:
       tags:
@@ -364,8 +405,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 2983562108989999476
-        example: 11478800814045807276
+          example: 15595973357138799589
+        example: 5038586986718798316
       responses:
         "200":
           description: OK response.
@@ -437,8 +478,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 11332527032481152221
-        example: 5180180979732376781
+          example: 12822747110185372831
+        example: 8011058759498614268
       requestBody:
         required: true
         content:
@@ -525,9 +566,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://zemlak.info/cristal.steuber
+                example: http://koelpinhirthe.name/douglas.krajcik
                 format: uri
-              example: http://bergnaum.org/eldora
+              example: http://christiansenspinka.info/danika_nikolaus
   /resource/version/{versionID}:
     get:
       tags:
@@ -555,9 +596,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://hicklereilly.com/ruby.champlin
+                example: http://von.name/kasandra
                 format: uri
-              example: http://jenkins.com/fannie
+              example: http://armstrongcronin.com/adelia.stamm
   /resources:
     get:
       tags:
@@ -899,8 +940,6 @@ paths:
                   name: Image Builder
                 - id: 1
                   name: Image Builder
-                - id: 1
-                  name: Image Builder
         "500":
           description: Internal Server Error response.
           content:
@@ -972,10 +1011,6 @@ components:
             - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
             - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
             type: warning
-          - errors:
-            - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
-            - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
-            type: warning
       example:
         data:
         - errors:
@@ -1003,7 +1038,7 @@ components:
           type: array
           items:
             type: string
-            example: Error nisi quam.
+            example: Occaecati vitae ducimus ab natus autem.
           description: Catalog Error message
           example:
           - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
@@ -1158,8 +1193,6 @@ components:
           name: Image Builder
         - id: 1
           name: Image Builder
-        - id: 1
-          name: Image Builder
     RefreshConfigResponseBody:
       type: object
       properties:
@@ -1288,6 +1321,42 @@ components:
       items:
         $ref: '#/components/schemas/ResourceData'
       example:
+      - catalog:
+          id: 1
+          name: tekton
+          type: community
+        categories:
+        - id: 1
+          name: image-build
+        hubURLPath: tekton/task/buildah
+        id: 1
+        kind: task
+        latestVersion:
+          description: Buildah task builds source into a container image and then
+            pushes it to a container registry.
+          displayName: Buildah
+          id: 1
+          minPipelinesVersion: 0.12.1
+          platforms:
+          - id: 1
+            name: linux/amd64
+          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+          updatedAt: 2020-01-01 12:00:00 +0000 UTC
+          version: "0.1"
+          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        name: buildah
+        platforms:
+        - id: 1
+          name: linux/amd64
+        rating: 4.3
+        tags:
+        - id: 1
+          name: image-build
+        versions:
+        - id: 1
+          version: "0.1"
+        - id: 2
+          version: "0.2"
       - catalog:
           id: 1
           name: tekton
@@ -1692,7 +1761,7 @@ components:
           type: array
           items:
             type: string
-            example: Non nobis delectus iusto quis labore.
+            example: Voluptas animi molestiae nam quas veniam optio.
           description: Scopes required for Agent
           example:
           - catalog-refresh
@@ -1722,11 +1791,11 @@ components:
         rating:
           type: integer
           description: User rating for resource
-          example: 0
+          example: 1
           minimum: 0
           maximum: 5
       example:
-        rating: 1
+        rating: 0
       required:
       - rating
   securitySchemes:

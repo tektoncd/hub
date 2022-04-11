@@ -164,6 +164,15 @@ func NewByCatalogKindNameResultFound(location string) *resource.ByCatalogKindNam
 	return v
 }
 
+// NewByIDResultFound builds a "resource" service "ById" endpoint result from a
+// HTTP "Found" response.
+func NewByIDResultFound(location string) *resource.ByIDResult {
+	v := &resource.ByIDResult{}
+	v.Location = location
+
+	return v
+}
+
 // ValidateResourceDataCollectionResponseBody runs the validations defined on
 // ResourceDataCollectionResponseBody
 func ValidateResourceDataCollectionResponseBody(body ResourceDataCollectionResponseBody) (err error) {

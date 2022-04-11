@@ -32,7 +32,7 @@ func UsageCommands() string {
 catalog (refresh|refresh-all|catalog-error)
 category list
 rating (get|update)
-resource (list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name)
+resource (list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
 status status
 `
 }
@@ -46,9 +46,9 @@ func UsageExamples() string {
          "agent:create"
       ]
    }' --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM"` + "\n" +
-		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Et nihil aut."` + "\n" +
+		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Voluptatem molestiae est facilis beatae itaque et."` + "\n" +
 		os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` rating get --id 17081788299688252022 --token "Voluptatem ipsum tenetur unde et amet."` + "\n" +
+		os.Args[0] + ` rating get --id 185948843419266754 --token "Iusto et dolor vitae voluptatem."` + "\n" +
 		os.Args[0] + ` resource list` + "\n" +
 		""
 }
@@ -122,6 +122,9 @@ func ParseEndpoint(
 		resourceByCatalogKindNameNameFlag             = resourceByCatalogKindNameFlags.String("name", "REQUIRED", "Name of resource")
 		resourceByCatalogKindNamePipelinesversionFlag = resourceByCatalogKindNameFlags.String("pipelinesversion", "", "")
 
+		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
+		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
+
 		statusFlags = flag.NewFlagSet("status", flag.ContinueOnError)
 
 		statusStatusFlags = flag.NewFlagSet("status", flag.ExitOnError)
@@ -148,6 +151,7 @@ func ParseEndpoint(
 	resourceByCatalogKindNameVersionFlags.Usage = resourceByCatalogKindNameVersionUsage
 	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
 	resourceByCatalogKindNameFlags.Usage = resourceByCatalogKindNameUsage
+	resourceByIDFlags.Usage = resourceByIDUsage
 
 	statusFlags.Usage = statusUsage
 	statusStatusFlags.Usage = statusStatusUsage
@@ -251,6 +255,9 @@ func ParseEndpoint(
 			case "by-catalog-kind-name":
 				epf = resourceByCatalogKindNameFlags
 
+			case "by-id":
+				epf = resourceByIDFlags
+
 			}
 
 		case "status":
@@ -338,6 +345,9 @@ func ParseEndpoint(
 			case "by-catalog-kind-name":
 				endpoint = c.ByCatalogKindName()
 				data, err = resourcec.BuildByCatalogKindNamePayload(*resourceByCatalogKindNameCatalogFlag, *resourceByCatalogKindNameKindFlag, *resourceByCatalogKindNameNameFlag, *resourceByCatalogKindNamePipelinesversionFlag)
+			case "by-id":
+				endpoint = c.ByID()
+				data, err = resourcec.BuildByIDPayload(*resourceByIDIDFlag)
 			}
 		case "status":
 			c := statusc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -421,7 +431,7 @@ Refresh a Catalog by it's name
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Et nihil aut."
+    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Voluptatem molestiae est facilis beatae itaque et."
 `, os.Args[0])
 }
 
@@ -432,7 +442,7 @@ Refresh all catalogs
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh-all --token "Quidem magni."
+    `+os.Args[0]+` catalog refresh-all --token "Explicabo vel."
 `, os.Args[0])
 }
 
@@ -493,7 +503,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 17081788299688252022 --token "Voluptatem ipsum tenetur unde et amet."
+    `+os.Args[0]+` rating get --id 185948843419266754 --token "Iusto et dolor vitae voluptatem."
 `, os.Args[0])
 }
 
@@ -508,7 +518,7 @@ Update user's rating for a resource
 Example:
     `+os.Args[0]+` rating update --body '{
       "rating": 4
-   }' --id 776296116100047162 --token "Explicabo enim adipisci."
+   }' --id 18122898894374717144 --token "Nulla quasi."
 `, os.Args[0])
 }
 
@@ -524,6 +534,7 @@ COMMAND:
     by-catalog-kind-name-version: Find resource using name of catalog & name, kind and version of resource
     by-version-id: Find a resource using its version's id
     by-catalog-kind-name: Find resources using name of catalog, resource name and kind of resource
+    by-id: Find a resource using it's id
 
 Additional help:
     %s resource COMMAND --help
@@ -560,7 +571,7 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -586,6 +597,17 @@ Find resources using name of catalog, resource name and kind of resource
 
 Example:
     `+os.Args[0]+` resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah" --pipelinesversion "0.21.0"
+`, os.Args[0])
+}
+
+func resourceByIDUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource by-id -id UINT
+
+Find a resource using it's id
+    -id UINT: ID of a resource
+
+Example:
+    `+os.Args[0]+` resource by-id --id 1
 `, os.Args[0])
 }
 
