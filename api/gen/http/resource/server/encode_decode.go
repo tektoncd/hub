@@ -96,6 +96,44 @@ func DecodeByCatalogKindNameVersionRequest(mux goahttp.Muxer, decoder func(*http
 	}
 }
 
+// EncodeByVersionIDResponse returns an encoder for responses returned by the
+// resource ByVersionId endpoint.
+func EncodeByVersionIDResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*resource.ByVersionIDResult)
+		w.Header().Set("Location", res.Location)
+		w.WriteHeader(http.StatusFound)
+		return nil
+	}
+}
+
+// DecodeByVersionIDRequest returns a decoder for requests sent to the resource
+// ByVersionId endpoint.
+func DecodeByVersionIDRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			versionID uint
+			err       error
+
+			params = mux.Vars(r)
+		)
+		{
+			versionIDRaw := params["versionID"]
+			v, err2 := strconv.ParseUint(versionIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("versionID", versionIDRaw, "unsigned integer"))
+			}
+			versionID = uint(v)
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewByVersionIDPayload(versionID)
+
+		return payload, nil
+	}
+}
+
 // marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersion
 // builds a value of type *ResourceDataResponseBodyWithoutVersion from a value
 // of type *resourceviews.ResourceDataView.

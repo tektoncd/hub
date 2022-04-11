@@ -218,6 +218,73 @@ func DecodeByCatalogKindNameVersionResponse(decoder func(*http.Response) goahttp
 	}
 }
 
+// BuildByVersionIDRequest instantiates a HTTP request object with method and
+// path set to call the "resource" service "ByVersionId" endpoint
+func (c *Client) BuildByVersionIDRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		versionID uint
+	)
+	{
+		p, ok := v.(*resource.ByVersionIDPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("resource", "ByVersionId", "*resource.ByVersionIDPayload", v)
+		}
+		versionID = p.VersionID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ByVersionIDResourcePath(versionID)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("resource", "ByVersionId", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeByVersionIDResponse returns a decoder for responses returned by the
+// resource ByVersionId endpoint. restoreBody controls whether the response
+// body should be restored after having been read.
+func DecodeByVersionIDResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusFound:
+			var (
+				location string
+				err      error
+			)
+			locationRaw := resp.Header.Get("Location")
+			if locationRaw == "" {
+				err = goa.MergeErrors(err, goa.MissingFieldError("location", "header"))
+			}
+			location = locationRaw
+			err = goa.MergeErrors(err, goa.ValidateFormat("location", location, goa.FormatURI))
+
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "ByVersionId", err)
+			}
+			res := NewByVersionIDResultFound(location)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("resource", "ByVersionId", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalResourceDataResponseBodyToResourceviewsResourceDataView builds a
 // value of type *resourceviews.ResourceDataView from a value of type
 // *ResourceDataResponseBody.
