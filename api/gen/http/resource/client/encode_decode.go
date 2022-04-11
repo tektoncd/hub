@@ -10,6 +10,7 @@ package client
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -19,6 +20,95 @@ import (
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )
+
+// BuildQueryRequest instantiates a HTTP request object with method and path
+// set to call the "resource" service "Query" endpoint
+func (c *Client) BuildQueryRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: QueryResourcePath()}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("resource", "Query", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeQueryRequest returns an encoder for requests sent to the resource
+// Query server.
+func EncodeQueryRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*resource.QueryPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("resource", "Query", "*resource.QueryPayload", v)
+		}
+		values := req.URL.Query()
+		values.Add("name", p.Name)
+		for _, value := range p.Catalogs {
+			values.Add("catalogs", value)
+		}
+		for _, value := range p.Categories {
+			values.Add("categories", value)
+		}
+		for _, value := range p.Kinds {
+			values.Add("kinds", value)
+		}
+		for _, value := range p.Tags {
+			values.Add("tags", value)
+		}
+		for _, value := range p.Platforms {
+			values.Add("platforms", value)
+		}
+		values.Add("limit", fmt.Sprintf("%v", p.Limit))
+		values.Add("match", p.Match)
+		req.URL.RawQuery = values.Encode()
+		return nil
+	}
+}
+
+// DecodeQueryResponse returns a decoder for responses returned by the resource
+// Query endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+func DecodeQueryResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusFound:
+			var (
+				location string
+				err      error
+			)
+			locationRaw := resp.Header.Get("Location")
+			if locationRaw == "" {
+				err = goa.MergeErrors(err, goa.MissingFieldError("location", "header"))
+			}
+			location = locationRaw
+			err = goa.MergeErrors(err, goa.ValidateFormat("location", location, goa.FormatURI))
+
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "Query", err)
+			}
+			res := NewQueryResultFound(location)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("resource", "Query", resp.StatusCode, string(body))
+		}
+	}
+}
 
 // BuildListRequest instantiates a HTTP request object with method and path set
 // to call the "resource" service "List" endpoint

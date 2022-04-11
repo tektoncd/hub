@@ -27,6 +27,64 @@ var _ = Service("resource", func() {
 	Error("internal-error", ErrorResult, "Internal Server Error")
 	Error("not-found", ErrorResult, "Resource Not Found Error")
 
+	Method("Query", func() {
+		Description("Find resources by a combination of name, kind, catalog, categories, platforms and tags")
+		Payload(func() {
+			Attribute("name", String, "Name of resource", func() {
+				Default("")
+				Example("name", "buildah")
+			})
+			Attribute("catalogs", ArrayOf(String), "Catalogs of resource to filter by", func() {
+				Example([]string{"tekton", "openshift"})
+			})
+			Attribute("kinds", ArrayOf(String), "Kinds of resource to filter by", func() {
+				Example([]string{"task", "pipelines"})
+			})
+			Attribute("categories", ArrayOf(String), "Category associated with a resource to filter by", func() {
+				Example([]string{"build", "tools"})
+			})
+			Attribute("tags", ArrayOf(String), "Tags associated with a resource to filter by", func() {
+				Example([]string{"image", "build"})
+			})
+			Attribute("platforms", ArrayOf(String), "Platforms associated with a resource to filter by", func() {
+				Example([]string{"linux/s390x", "linux/amd64"})
+			})
+			Attribute("limit", UInt, "Maximum number of resources to be returned", func() {
+				Default(1000)
+				Example("limit", 100)
+			})
+
+			Attribute("match", String, "Strategy used to find matching resources", func() {
+				Enum("exact", "contains")
+				Default("contains")
+			})
+		})
+		Result(func() {
+			Attribute("location", String, "Redirect URL", func() {
+				Format(FormatURI)
+			})
+			Required("location")
+		})
+
+		HTTP(func() {
+			GET("/query")
+
+			Param("name")
+			Param("catalogs")
+			Param("categories")
+			Param("kinds")
+			Param("tags")
+			Param("platforms")
+			Param("limit")
+			Param("match")
+
+			Response(StatusFound, func() {
+				Header("location")
+			})
+
+		})
+	})
+
 	Method("List", func() {
 		Description("List all resources sorted by rating and name")
 		Result(types.Resources)

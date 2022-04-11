@@ -32,7 +32,7 @@ func UsageCommands() string {
 catalog (refresh|refresh-all|catalog-error)
 category list
 rating (get|update)
-resource (list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
+resource (query|list|versions-by-id|by-catalog-kind-name-version|by-version-id|by-catalog-kind-name|by-id)
 status status
 `
 }
@@ -46,10 +46,25 @@ func UsageExamples() string {
          "agent:create"
       ]
    }' --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM"` + "\n" +
-		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Voluptatem molestiae est facilis beatae itaque et."` + "\n" +
+		os.Args[0] + ` catalog refresh --catalog-name "tekton" --token "Perspiciatis sed voluptatem nulla laborum ut quidem."` + "\n" +
 		os.Args[0] + ` category list` + "\n" +
-		os.Args[0] + ` rating get --id 185948843419266754 --token "Iusto et dolor vitae voluptatem."` + "\n" +
-		os.Args[0] + ` resource list` + "\n" +
+		os.Args[0] + ` rating get --id 16939312758267551472 --token "Est quae rerum autem."` + "\n" +
+		os.Args[0] + ` resource query --name "buildah" --catalogs '[
+      "tekton",
+      "openshift"
+   ]' --categories '[
+      "build",
+      "tools"
+   ]' --kinds '[
+      "task",
+      "pipelines"
+   ]' --tags '[
+      "image",
+      "build"
+   ]' --platforms '[
+      "linux/s390x",
+      "linux/amd64"
+   ]' --limit 100 --match "exact"` + "\n" +
 		""
 }
 
@@ -102,6 +117,16 @@ func ParseEndpoint(
 
 		resourceFlags = flag.NewFlagSet("resource", flag.ContinueOnError)
 
+		resourceQueryFlags          = flag.NewFlagSet("query", flag.ExitOnError)
+		resourceQueryNameFlag       = resourceQueryFlags.String("name", "", "")
+		resourceQueryCatalogsFlag   = resourceQueryFlags.String("catalogs", "", "")
+		resourceQueryCategoriesFlag = resourceQueryFlags.String("categories", "", "")
+		resourceQueryKindsFlag      = resourceQueryFlags.String("kinds", "", "")
+		resourceQueryTagsFlag       = resourceQueryFlags.String("tags", "", "")
+		resourceQueryPlatformsFlag  = resourceQueryFlags.String("platforms", "", "")
+		resourceQueryLimitFlag      = resourceQueryFlags.String("limit", "1000", "")
+		resourceQueryMatchFlag      = resourceQueryFlags.String("match", "contains", "")
+
 		resourceListFlags = flag.NewFlagSet("list", flag.ExitOnError)
 
 		resourceVersionsByIDFlags  = flag.NewFlagSet("versions-by-id", flag.ExitOnError)
@@ -146,6 +171,7 @@ func ParseEndpoint(
 	ratingUpdateFlags.Usage = ratingUpdateUsage
 
 	resourceFlags.Usage = resourceUsage
+	resourceQueryFlags.Usage = resourceQueryUsage
 	resourceListFlags.Usage = resourceListUsage
 	resourceVersionsByIDFlags.Usage = resourceVersionsByIDUsage
 	resourceByCatalogKindNameVersionFlags.Usage = resourceByCatalogKindNameVersionUsage
@@ -240,6 +266,9 @@ func ParseEndpoint(
 
 		case "resource":
 			switch epn {
+			case "query":
+				epf = resourceQueryFlags
+
 			case "list":
 				epf = resourceListFlags
 
@@ -330,6 +359,9 @@ func ParseEndpoint(
 		case "resource":
 			c := resourcec.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
+			case "query":
+				endpoint = c.Query()
+				data, err = resourcec.BuildQueryPayload(*resourceQueryNameFlag, *resourceQueryCatalogsFlag, *resourceQueryCategoriesFlag, *resourceQueryKindsFlag, *resourceQueryTagsFlag, *resourceQueryPlatformsFlag, *resourceQueryLimitFlag, *resourceQueryMatchFlag)
 			case "list":
 				endpoint = c.List()
 				data = nil
@@ -431,7 +463,7 @@ Refresh a Catalog by it's name
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Voluptatem molestiae est facilis beatae itaque et."
+    `+os.Args[0]+` catalog refresh --catalog-name "tekton" --token "Perspiciatis sed voluptatem nulla laborum ut quidem."
 `, os.Args[0])
 }
 
@@ -442,7 +474,7 @@ Refresh all catalogs
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` catalog refresh-all --token "Explicabo vel."
+    `+os.Args[0]+` catalog refresh-all --token "Rerum id quia quia molestiae."
 `, os.Args[0])
 }
 
@@ -503,7 +535,7 @@ Find user's rating for a resource
     -token STRING: 
 
 Example:
-    `+os.Args[0]+` rating get --id 185948843419266754 --token "Iusto et dolor vitae voluptatem."
+    `+os.Args[0]+` rating get --id 16939312758267551472 --token "Est quae rerum autem."
 `, os.Args[0])
 }
 
@@ -517,8 +549,8 @@ Update user's rating for a resource
 
 Example:
     `+os.Args[0]+` rating update --body '{
-      "rating": 4
-   }' --id 18122898894374717144 --token "Nulla quasi."
+      "rating": 1
+   }' --id 13743472547044967846 --token "Voluptates illo nostrum illum et."
 `, os.Args[0])
 }
 
@@ -529,6 +561,7 @@ Usage:
     %s [globalflags] resource COMMAND [flags]
 
 COMMAND:
+    query: Find resources by a combination of name, kind, catalog, categories, platforms and tags
     list: List all resources sorted by rating and name
     versions-by-id: Find all versions of a resource by its id
     by-catalog-kind-name-version: Find resource using name of catalog & name, kind and version of resource
@@ -540,6 +573,39 @@ Additional help:
     %s resource COMMAND --help
 `, os.Args[0], os.Args[0])
 }
+func resourceQueryUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] resource query -name STRING -catalogs JSON -categories JSON -kinds JSON -tags JSON -platforms JSON -limit UINT -match STRING
+
+Find resources by a combination of name, kind, catalog, categories, platforms and tags
+    -name STRING: 
+    -catalogs JSON: 
+    -categories JSON: 
+    -kinds JSON: 
+    -tags JSON: 
+    -platforms JSON: 
+    -limit UINT: 
+    -match STRING: 
+
+Example:
+    `+os.Args[0]+` resource query --name "buildah" --catalogs '[
+      "tekton",
+      "openshift"
+   ]' --categories '[
+      "build",
+      "tools"
+   ]' --kinds '[
+      "task",
+      "pipelines"
+   ]' --tags '[
+      "image",
+      "build"
+   ]' --platforms '[
+      "linux/s390x",
+      "linux/amd64"
+   ]' --limit 100 --match "exact"
+`, os.Args[0])
+}
+
 func resourceListUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] resource list
 
@@ -571,7 +637,7 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
+    `+os.Args[0]+` resource by-catalog-kind-name-version --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 

@@ -18,6 +18,71 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
+// EncodeQueryResponse returns an encoder for responses returned by the
+// resource Query endpoint.
+func EncodeQueryResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*resource.QueryResult)
+		w.Header().Set("Location", res.Location)
+		w.WriteHeader(http.StatusFound)
+		return nil
+	}
+}
+
+// DecodeQueryRequest returns a decoder for requests sent to the resource Query
+// endpoint.
+func DecodeQueryRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			name       string
+			catalogs   []string
+			categories []string
+			kinds      []string
+			tags       []string
+			platforms  []string
+			limit      uint
+			match      string
+			err        error
+		)
+		nameRaw := r.URL.Query().Get("name")
+		if nameRaw != "" {
+			name = nameRaw
+		}
+		catalogs = r.URL.Query()["catalogs"]
+		categories = r.URL.Query()["categories"]
+		kinds = r.URL.Query()["kinds"]
+		tags = r.URL.Query()["tags"]
+		platforms = r.URL.Query()["platforms"]
+		{
+			limitRaw := r.URL.Query().Get("limit")
+			if limitRaw == "" {
+				limit = 1000
+			} else {
+				v, err2 := strconv.ParseUint(limitRaw, 10, strconv.IntSize)
+				if err2 != nil {
+					err = goa.MergeErrors(err, goa.InvalidFieldTypeError("limit", limitRaw, "unsigned integer"))
+				}
+				limit = uint(v)
+			}
+		}
+		matchRaw := r.URL.Query().Get("match")
+		if matchRaw != "" {
+			match = matchRaw
+		} else {
+			match = "contains"
+		}
+		if !(match == "exact" || match == "contains") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("match", match, []interface{}{"exact", "contains"}))
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewQueryPayload(name, catalogs, categories, kinds, tags, platforms, limit, match)
+
+		return payload, nil
+	}
+}
+
 // EncodeVersionsByIDResponse returns an encoder for responses returned by the
 // resource VersionsByID endpoint.
 func EncodeVersionsByIDResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {

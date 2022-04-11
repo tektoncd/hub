@@ -17,6 +17,9 @@ import (
 
 // Client lists the resource service endpoint HTTP clients.
 type Client struct {
+	// Query Doer is the HTTP client used to make requests to the Query endpoint.
+	QueryDoer goahttp.Doer
+
 	// List Doer is the HTTP client used to make requests to the List endpoint.
 	ListDoer goahttp.Doer
 
@@ -62,6 +65,7 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
+		QueryDoer:                    doer,
 		ListDoer:                     doer,
 		VersionsByIDDoer:             doer,
 		ByCatalogKindNameVersionDoer: doer,
@@ -74,6 +78,30 @@ func NewClient(
 		host:                         host,
 		decoder:                      dec,
 		encoder:                      enc,
+	}
+}
+
+// Query returns an endpoint that makes HTTP requests to the resource service
+// Query server.
+func (c *Client) Query() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeQueryRequest(c.encoder)
+		decodeResponse = DecodeQueryResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildQueryRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.QueryDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("resource", "Query", err)
+		}
+		return decodeResponse(resp)
 	}
 }
 

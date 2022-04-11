@@ -28,6 +28,9 @@ paths:
                 - error: unable to reach db
                   name: api
                   status: ok
+                - error: unable to reach db
+                  name: api
+                  status: ok
   /catalog/{catalogName}/error:
     get:
       tags:
@@ -54,16 +57,6 @@ paths:
                 $ref: '#/components/schemas/CatalogErrorResponseBody'
               example:
                 data:
-                - errors:
-                  - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display
-                    name
-                  - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
-                  type: warning
-                - errors:
-                  - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display
-                    name
-                  - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
-                  type: warning
                 - errors:
                   - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display
                     name
@@ -171,13 +164,10 @@ paths:
                 - catalogName: tekton
                   id: 1
                   status: queued
-                - catalogName: tekton
-                  id: 1
-                  status: queued
-                - catalogName: tekton
-                  id: 1
-                  status: queued
               example:
+              - catalogName: tekton
+                id: 1
+                status: queued
               - catalogName: tekton
                 id: 1
                 status: queued
@@ -225,6 +215,8 @@ paths:
                   name: Image Builder
                 - id: 1
                   name: Image Builder
+                - id: 1
+                  name: Image Builder
         "500":
           description: Internal Server Error response.
           content:
@@ -235,6 +227,141 @@ paths:
                 id: 3F1FKVRR
                 message: Value of ID must be an integer
                 name: bad_request
+  /query:
+    get:
+      tags:
+      - resource
+      summary: Query resource
+      description: Find resources by a combination of name, kind, catalog, categories,
+        platforms and tags
+      operationId: resource#Query
+      parameters:
+      - name: name
+        in: query
+        description: Name of resource
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Name of resource
+          default: ""
+          example: buildah
+        example: buildah
+      - name: catalogs
+        in: query
+        description: Catalogs of resource to filter by
+        allowEmptyValue: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: Unde quia quia blanditiis nam dolorem.
+          description: Catalogs of resource to filter by
+          example:
+          - tekton
+          - openshift
+        example:
+        - tekton
+        - openshift
+      - name: categories
+        in: query
+        description: Category associated with a resource to filter by
+        allowEmptyValue: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: Eos laborum et nesciunt et temporibus.
+          description: Category associated with a resource to filter by
+          example:
+          - build
+          - tools
+        example:
+        - build
+        - tools
+      - name: kinds
+        in: query
+        description: Kinds of resource to filter by
+        allowEmptyValue: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: Officia quis aliquid rerum perspiciatis voluptatem.
+          description: Kinds of resource to filter by
+          example:
+          - task
+          - pipelines
+        example:
+        - task
+        - pipelines
+      - name: tags
+        in: query
+        description: Tags associated with a resource to filter by
+        allowEmptyValue: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: Quae vel et.
+          description: Tags associated with a resource to filter by
+          example:
+          - image
+          - build
+        example:
+        - image
+        - build
+      - name: platforms
+        in: query
+        description: Platforms associated with a resource to filter by
+        allowEmptyValue: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: Omnis quaerat.
+          description: Platforms associated with a resource to filter by
+          example:
+          - linux/s390x
+          - linux/amd64
+        example:
+        - linux/s390x
+        - linux/amd64
+      - name: limit
+        in: query
+        description: Maximum number of resources to be returned
+        allowEmptyValue: true
+        schema:
+          type: integer
+          description: Maximum number of resources to be returned
+          default: 1000
+          example: 100
+        example: 100
+      - name: match
+        in: query
+        description: Strategy used to find matching resources
+        allowEmptyValue: true
+        schema:
+          type: string
+          description: Strategy used to find matching resources
+          default: contains
+          example: exact
+          enum:
+          - exact
+          - contains
+        example: contains
+      responses:
+        "302":
+          description: Found response.
+          headers:
+            location:
+              description: Redirect URL
+              required: true
+              schema:
+                type: string
+                description: Redirect URL
+                example: http://douglasebert.info/jessie
+                format: uri
+              example: http://predovichahn.info/isidro
   /resource/{catalog}/{kind}/{name}:
     get:
       tags:
@@ -276,7 +403,7 @@ paths:
           enum:
           - task
           - pipeline
-        example: task
+        example: pipeline
       - name: name
         in: path
         description: Name of resource
@@ -296,9 +423,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://hintz.name/braulio
+                example: http://smitham.biz/isac
                 format: uri
-              example: http://bogisich.name/vida.kris
+              example: http://wizafranecki.biz/orie.funk
   /resource/{catalog}/{kind}/{name}/{version}:
     get:
       tags:
@@ -324,11 +451,11 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: task
+          example: pipeline
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: name of resource
@@ -357,9 +484,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://schuster.org/chelsea
+                example: http://parkergusikowski.info/zack_hartmann
                 format: uri
-              example: http://schroeder.biz/lia_goyette
+              example: http://schmeler.biz/payton
   /resource/{id}:
     get:
       tags:
@@ -387,9 +514,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://harrisgottlieb.net/constantin
+                example: http://botsford.net/theron
                 format: uri
-              example: http://yost.biz/micah
+              example: http://connellyschaefer.biz/elody_schumm
   /resource/{id}/rating:
     get:
       tags:
@@ -405,8 +532,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 15595973357138799589
-        example: 5038586986718798316
+          example: 1487680364023662723
+        example: 15108684595389472227
       responses:
         "200":
           description: OK response.
@@ -478,8 +605,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 12822747110185372831
-        example: 8011058759498614268
+          example: 11575953008413914708
+        example: 17027828275307537165
       requestBody:
         required: true
         content:
@@ -487,7 +614,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateRequestBody'
             example:
-              rating: 4
+              rating: 1
       responses:
         "200":
           description: OK response.
@@ -566,9 +693,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://koelpinhirthe.name/douglas.krajcik
+                example: http://volkman.net/abdiel
                 format: uri
-              example: http://christiansenspinka.info/danika_nikolaus
+              example: http://fahey.org/elta
   /resource/version/{versionID}:
     get:
       tags:
@@ -596,9 +723,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://von.name/kasandra
+                example: http://mantehegmann.com/ward_towne
                 format: uri
-              example: http://armstrongcronin.com/adelia.stamm
+              example: http://kozeyschaefer.info/randal
   /resources:
     get:
       tags:
@@ -615,78 +742,6 @@ paths:
                 $ref: '#/components/schemas/Resources'
               example:
                 data:
-                - catalog:
-                    id: 1
-                    name: tekton
-                    type: community
-                  categories:
-                  - id: 1
-                    name: image-build
-                  hubURLPath: tekton/task/buildah
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image
-                      and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    platforms:
-                    - id: 1
-                      name: linux/amd64
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  platforms:
-                  - id: 1
-                    name: linux/amd64
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
-                - catalog:
-                    id: 1
-                    name: tekton
-                    type: community
-                  categories:
-                  - id: 1
-                    name: image-build
-                  hubURLPath: tekton/task/buildah
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image
-                      and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    platforms:
-                    - id: 1
-                      name: linux/amd64
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  platforms:
-                  - id: 1
-                    name: linux/amd64
-                  rating: 4.3
-                  tags:
-                  - id: 1
-                    name: image-build
-                  versions:
-                  - id: 1
-                    version: "0.1"
-                  - id: 2
-                    version: "0.2"
                 - catalog:
                     id: 1
                     name: tekton
@@ -920,6 +975,9 @@ paths:
                 - error: unable to reach db
                   name: api
                   status: ok
+                - error: unable to reach db
+                  name: api
+                  status: ok
   /v1/categories:
     get:
       tags:
@@ -936,6 +994,8 @@ paths:
                 $ref: '#/components/schemas/ListResponseBody'
               example:
                 data:
+                - id: 1
+                  name: Image Builder
                 - id: 1
                   name: Image Builder
                 - id: 1
@@ -1007,16 +1067,8 @@ components:
             - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
             - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
             type: warning
-          - errors:
-            - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
-            - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
-            type: warning
       example:
         data:
-        - errors:
-          - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
-          - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
-          type: warning
         - errors:
           - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
           - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
@@ -1038,7 +1090,7 @@ components:
           type: array
           items:
             type: string
-            example: Occaecati vitae ducimus ab natus autem.
+            example: Aspernatur eos dolores adipisci vel.
           description: Catalog Error message
           example:
           - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
@@ -1079,7 +1131,7 @@ components:
         fault:
           type: boolean
           description: Is the error a server-side fault?
-          example: false
+          example: true
         id:
           type: string
           description: ID is a unique identifier for this particular occurrence of
@@ -1097,7 +1149,7 @@ components:
         temporary:
           type: boolean
           description: Is the error temporary?
-          example: true
+          example: false
         timeout:
           type: boolean
           description: Is the error a timeout?
@@ -1187,8 +1239,14 @@ components:
             name: Image Builder
           - id: 1
             name: Image Builder
+          - id: 1
+            name: Image Builder
       example:
         data:
+        - id: 1
+          name: Image Builder
+        - id: 1
+          name: Image Builder
         - id: 1
           name: Image Builder
         - id: 1
@@ -1647,78 +1705,6 @@ components:
             version: "0.1"
           - id: 2
             version: "0.2"
-        - catalog:
-            id: 1
-            name: tekton
-            type: community
-          categories:
-          - id: 1
-            name: image-build
-          hubURLPath: tekton/task/buildah
-          id: 1
-          kind: task
-          latestVersion:
-            description: Buildah task builds source into a container image and then
-              pushes it to a container registry.
-            displayName: Buildah
-            id: 1
-            minPipelinesVersion: 0.12.1
-            platforms:
-            - id: 1
-              name: linux/amd64
-            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-            updatedAt: 2020-01-01 12:00:00 +0000 UTC
-            version: "0.1"
-            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-          name: buildah
-          platforms:
-          - id: 1
-            name: linux/amd64
-          rating: 4.3
-          tags:
-          - id: 1
-            name: image-build
-          versions:
-          - id: 1
-            version: "0.1"
-          - id: 2
-            version: "0.2"
-        - catalog:
-            id: 1
-            name: tekton
-            type: community
-          categories:
-          - id: 1
-            name: image-build
-          hubURLPath: tekton/task/buildah
-          id: 1
-          kind: task
-          latestVersion:
-            description: Buildah task builds source into a container image and then
-              pushes it to a container registry.
-            displayName: Buildah
-            id: 1
-            minPipelinesVersion: 0.12.1
-            platforms:
-            - id: 1
-              name: linux/amd64
-            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-            updatedAt: 2020-01-01 12:00:00 +0000 UTC
-            version: "0.1"
-            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-          name: buildah
-          platforms:
-          - id: 1
-            name: linux/amd64
-          rating: 4.3
-          tags:
-          - id: 1
-            name: image-build
-          versions:
-          - id: 1
-            version: "0.1"
-          - id: 2
-            version: "0.2"
       required:
       - data
     StatusResponseBody:
@@ -1730,6 +1716,9 @@ components:
             $ref: '#/components/schemas/HubService'
           description: List of services and their status
           example:
+          - error: unable to reach db
+            name: api
+            status: ok
           - error: unable to reach db
             name: api
             status: ok
@@ -1761,7 +1750,7 @@ components:
           type: array
           items:
             type: string
-            example: Voluptas animi molestiae nam quas veniam optio.
+            example: Quia eos ipsum aperiam nam numquam rerum.
           description: Scopes required for Agent
           example:
           - catalog-refresh
@@ -1791,11 +1780,11 @@ components:
         rating:
           type: integer
           description: User rating for resource
-          example: 1
+          example: 4
           minimum: 0
           maximum: 5
       example:
-        rating: 0
+        rating: 4
       required:
       - rating
   securitySchemes:
