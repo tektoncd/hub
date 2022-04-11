@@ -25,3 +25,8 @@ func VersionsByIDResourcePath(id uint) string {
 func ByCatalogKindNameVersionResourcePath(catalog string, kind string, name string, version string) string {
 	return fmt.Sprintf("/resource/%v/%v/%v/%v", catalog, kind, name, version)
 }
+
+// ByVersionIDResourcePath returns the URL path to the resource service ByVersionId HTTP endpoint.
+func ByVersionIDResourcePath(versionID uint) string {
+	return fmt.Sprintf("/resource/version/%v", versionID)
+}

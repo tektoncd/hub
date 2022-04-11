@@ -167,9 +167,6 @@ paths:
                 - catalogName: tekton
                   id: 1
                   status: queued
-                - catalogName: tekton
-                  id: 1
-                  status: queued
               example:
               - catalogName: tekton
                 id: 1
@@ -223,6 +220,8 @@ paths:
                   name: Image Builder
                 - id: 1
                   name: Image Builder
+                - id: 1
+                  name: Image Builder
         "500":
           description: Internal Server Error response.
           content:
@@ -258,11 +257,11 @@ paths:
         schema:
           type: string
           description: kind of resource
-          example: pipeline
+          example: task
           enum:
           - task
           - pipeline
-        example: pipeline
+        example: task
       - name: name
         in: path
         description: name of resource
@@ -291,9 +290,9 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://labadienolan.com/shemar
+                example: http://mccullough.name/alena_zulauf
                 format: uri
-              example: http://fahey.name/rolando_rowe
+              example: http://kautzerbogan.com/titus
   /resource/{id}/rating:
     get:
       tags:
@@ -309,8 +308,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 8774254641291276041
-        example: 8951834590360407852
+          example: 1324133560024870493
+        example: 3919744872328893945
       responses:
         "200":
           description: OK response.
@@ -382,8 +381,8 @@ paths:
         schema:
           type: integer
           description: ID of a resource
-          example: 10008120266282246264
-        example: 2934445118719215775
+          example: 13985324838099175911
+        example: 2707385729433930591
       requestBody:
         required: true
         content:
@@ -391,7 +390,7 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateRequestBody'
             example:
-              rating: 4
+              rating: 0
       responses:
         "200":
           description: OK response.
@@ -470,9 +469,39 @@ paths:
               schema:
                 type: string
                 description: Redirect URL
-                example: http://aufderhar.biz/emmett
+                example: http://lubowitz.net/kathryn.bruen
                 format: uri
-              example: http://jacobsroob.name/ed
+              example: http://johnskreiger.name/kayli
+  /resource/version/{versionID}:
+    get:
+      tags:
+      - resource
+      summary: ByVersionId resource
+      description: Find a resource using its version's id
+      operationId: resource#ByVersionId
+      parameters:
+      - name: versionID
+        in: path
+        description: Version ID of a resource's version
+        required: true
+        schema:
+          type: integer
+          description: Version ID of a resource's version
+          example: 1
+        example: 1
+      responses:
+        "302":
+          description: Found response.
+          headers:
+            location:
+              description: Redirect URL
+              required: true
+              schema:
+                type: string
+                description: Redirect URL
+                example: http://mohr.net/nova.mclaughlin
+                format: uri
+              example: http://pacocha.name/kaela_adams
   /resources:
     get:
       tags:
@@ -819,6 +848,8 @@ paths:
                   name: Image Builder
                 - id: 1
                   name: Image Builder
+                - id: 1
+                  name: Image Builder
         "500":
           description: Internal Server Error response.
           content:
@@ -890,10 +921,6 @@ components:
             - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
             - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
             type: warning
-          - errors:
-            - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
-            - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
-            type: warning
       example:
         data:
         - errors:
@@ -913,7 +940,7 @@ components:
           type: array
           items:
             type: string
-            example: Mollitia aut neque similique ipsam.
+            example: Saepe ut debitis quo necessitatibus enim sapiente.
           description: Catalog Error message
           example:
           - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
@@ -954,7 +981,7 @@ components:
         fault:
           type: boolean
           description: Is the error a server-side fault?
-          example: false
+          example: true
         id:
           type: string
           description: ID is a unique identifier for this particular occurrence of
@@ -976,7 +1003,7 @@ components:
         timeout:
           type: boolean
           description: Is the error a timeout?
-          example: true
+          example: false
       description: Invalid request body
       example:
         id: 3F1FKVRR
@@ -1064,10 +1091,10 @@ components:
             name: Image Builder
           - id: 1
             name: Image Builder
-          - id: 1
-            name: Image Builder
       example:
         data:
+        - id: 1
+          name: Image Builder
         - id: 1
           name: Image Builder
         - id: 1
@@ -1202,42 +1229,6 @@ components:
       items:
         $ref: '#/components/schemas/ResourceData'
       example:
-      - catalog:
-          id: 1
-          name: tekton
-          type: community
-        categories:
-        - id: 1
-          name: image-build
-        hubURLPath: tekton/task/buildah
-        id: 1
-        kind: task
-        latestVersion:
-          description: Buildah task builds source into a container image and then
-            pushes it to a container registry.
-          displayName: Buildah
-          id: 1
-          minPipelinesVersion: 0.12.1
-          platforms:
-          - id: 1
-            name: linux/amd64
-          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-          updatedAt: 2020-01-01 12:00:00 +0000 UTC
-          version: "0.1"
-          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-        name: buildah
-        platforms:
-        - id: 1
-          name: linux/amd64
-        rating: 4.3
-        tags:
-        - id: 1
-          name: image-build
-        versions:
-        - id: 1
-          version: "0.1"
-        - id: 2
-          version: "0.2"
       - catalog:
           id: 1
           name: tekton
@@ -1581,11 +1572,14 @@ components:
           - error: unable to reach db
             name: api
             status: ok
-          - error: unable to reach db
-            name: api
-            status: ok
       example:
         services:
+        - error: unable to reach db
+          name: api
+          status: ok
+        - error: unable to reach db
+          name: api
+          status: ok
         - error: unable to reach db
           name: api
           status: ok
@@ -1603,7 +1597,7 @@ components:
           type: array
           items:
             type: string
-            example: Rem error consequuntur autem enim.
+            example: Et quis vel voluptas fuga soluta.
           description: Scopes required for Agent
           example:
           - catalog-refresh
@@ -1633,7 +1627,7 @@ components:
         rating:
           type: integer
           description: User rating for resource
-          example: 0
+          example: 1
           minimum: 0
           maximum: 5
       example:

@@ -96,4 +96,28 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	Method("ByVersionId", func() {
+		Description("Find a resource using its version's id")
+		Payload(func() {
+			Attribute("versionID", UInt, "Version ID of a resource's version", func() {
+				Example("versionID", 1)
+			})
+			Required("versionID")
+		})
+		Result(func() {
+			Attribute("location", String, "Redirect URL", func() {
+				Format(FormatURI)
+			})
+			Required("location")
+		})
+
+		HTTP(func() {
+			GET("/resource/version/{versionID}")
+			Response(StatusFound, func() {
+				Header("location")
+			})
+		})
+
+	})
+
 })
