@@ -52,3 +52,14 @@ func TestByCatalogKindName(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, res.Location, "/v1/resource/catalog-community/task/img")
 }
+
+func TestByID(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceSvc := New(tc)
+	payload := &resource.ByIDPayload{ID: 1}
+	res, err := resourceSvc.ByID(context.Background(), payload)
+	assert.NoError(t, err)
+	assert.Equal(t, res.Location, "/v1/resource/1")
+}
