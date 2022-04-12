@@ -399,16 +399,8 @@ export const ResourceStore = types
 
   .views((self) => ({
     get filteredResources() {
-      const {
-        resources,
-        kinds,
-        catalogs,
-        platforms,
-        search,
-        sortBy,
-        categories,
-        searchedTags
-      } = self;
+      const { resources, kinds, catalogs, platforms, categories } = self;
+      const { search, sortBy, searchedTags } = self;
 
       const tags = new Set(searchedTags);
 
