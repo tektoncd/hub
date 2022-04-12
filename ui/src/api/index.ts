@@ -98,7 +98,7 @@ export class Hub implements Api {
     }
   }
 
-  async readme(resourceKey: string, version: string) {
+  async readme(resourceKey: string, version?: string) {
     try {
       const URL = `${API_URL}/${API_VERSION}/resource/${resourceKey}/${version}/readme`;
       return axios.get(URL.toLowerCase()).then((response) => response.data.data.readme);
@@ -107,7 +107,7 @@ export class Hub implements Api {
     }
   }
 
-  async yaml(resourceKey: string, version: string) {
+  async yaml(resourceKey: string, version?: string) {
     try {
       const newLine = '\n';
       const URL = `${API_URL}/${API_VERSION}/resource/${resourceKey}/${version}/yaml`;

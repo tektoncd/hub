@@ -66,7 +66,7 @@ export class FakeHub implements Api {
     });
   }
 
-  async readme(resourceKey: string, _: string) {
+  async readme(resourceKey: string) {
     const splitRawUrl = resourceKey.split('/');
     const resourceName = splitRawUrl[splitRawUrl.length - 1];
     const data = `${this.dataDir}/${resourceName}-Readme.md`;
@@ -77,7 +77,7 @@ export class FakeHub implements Api {
     });
   }
 
-  async yaml(resourceKey: string, _: string) {
+  async yaml(resourceKey: string) {
     const splitRawUrl = resourceKey.split('/');
     const resourceName = splitRawUrl[splitRawUrl.length - 1];
     const data = `${this.dataDir}/${resourceName}.yaml`;
