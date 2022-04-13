@@ -1287,7 +1287,7 @@ definitions:
         enum:
         - official
         - community
-    description: CatalogResponseBodyMin result type (default view)
+    description: CatalogResponseBody result type (min view) (default view)
     example:
       id: 1
       name: Tekton
@@ -2207,7 +2207,7 @@ definitions:
         example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         format: uri
     description: The Version result type describes resource's version information.
-      (default view)
+      (withoutResource view) (default view)
     example:
       deprecated: true
       description: Buildah task builds source into a container image and then pushes
