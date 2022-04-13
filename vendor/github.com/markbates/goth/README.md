@@ -63,6 +63,7 @@ $ go get github.com/markbates/goth
 * Steam
 * Strava
 * Stripe
+* TikTok
 * Tumblr
 * Twitch
 * Twitter
@@ -70,10 +71,12 @@ $ go get github.com/markbates/goth
 * Uber
 * VK
 * Wepay
+* WeCom
 * Xero
 * Yahoo
 * Yammer
 * Yandex
+* Zoom
 
 ## Examples
 
