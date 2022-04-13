@@ -492,8 +492,6 @@ exports[`should render the readme file 1`] = `
           <span className=\\"linenumber react-syntax-highlighter-line-number\\" style={{...}}>
             25
           </span>
-          
-          
         </span>
       </code>
     </pre>
