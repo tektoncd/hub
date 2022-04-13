@@ -302,10 +302,11 @@ func TypeSchemaWithPrefix(api *expr.APIExpr, t expr.DataType, prefix string) *Sc
 	s := NewSchema()
 	switch actual := t.(type) {
 	case expr.Primitive:
-		if name := actual.Name(); name != "any" {
-			s.Type = Type(actual.Name())
-		}
+		s.Type = Type(actual.Name())
 		switch actual.Kind() {
+		case expr.AnyKind:
+			s.Type = Type("string")
+			s.Format = "binary"
 		case expr.IntKind, expr.Int64Kind,
 			expr.UIntKind, expr.UInt64Kind:
 			s.Type = Type("integer")
@@ -341,6 +342,10 @@ func TypeSchemaWithPrefix(api *expr.APIExpr, t expr.DataType, prefix string) *Sc
 			s.AdditionalProperties = buildAttributeSchema(api, additionalProperties, actual.ElemType)
 		} else {
 			s.AdditionalProperties = true
+		}
+	case *expr.Union:
+		for _, val := range actual.Values {
+			s.AnyOf = append(s.AnyOf, AttributeTypeSchemaWithPrefix(api, val.Attribute, prefix))
 		}
 	case *expr.UserTypeExpr:
 		s.Ref = TypeRefWithPrefix(api, actual, prefix)

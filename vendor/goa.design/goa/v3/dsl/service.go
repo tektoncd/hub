@@ -58,8 +58,12 @@ func Service(name string, fn func()) *expr.ServiceExpr {
 		return nil
 	}
 	if s := expr.Root.Service(name); s != nil {
-		eval.ReportError("service %#v is defined twice", name)
-		return nil
+		oldDSL := s.DSL()
+		s.DSLFunc = func() {
+			oldDSL()
+			fn()
+		}
+		return s
 	}
 	s := &expr.ServiceExpr{Name: name, DSLFunc: fn}
 	expr.Root.Services = append(expr.Root.Services, s)
