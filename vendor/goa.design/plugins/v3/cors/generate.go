@@ -76,7 +76,7 @@ func buildServiceData(svc string) *ServiceData {
 		Name:           svc,
 		Origins:        expr.Origins(svc),
 		PreflightPaths: preflights,
-		OriginHandler:  "handle" + codegen.Goify(svc, true) + "Origin",
+		OriginHandler:  "Handle" + codegen.Goify(svc, true) + "Origin",
 		Endpoint: &httpcodegen.EndpointData{
 			Method: &service.MethodData{
 				VarName: "CORS",
@@ -168,14 +168,8 @@ func {{ .Endpoint.HandlerInit }}() http.Handler {
 var mountCORST = `{{ printf "%s configures the mux to serve the CORS endpoints for the service %s." .Endpoint.MountHandler .Name | comment }}
 func {{ .Endpoint.MountHandler }}(mux goahttp.Muxer, h http.Handler) {
 	h = {{ .OriginHandler }}(h)
-	f, ok := h.(http.HandlerFunc)
-	if !ok {
-		f = func(w http.ResponseWriter, r *http.Request) {
-			h.ServeHTTP(w, r)
-		}
-	}
 	{{- range $p := .PreflightPaths }}
-	mux.Handle("OPTIONS", "{{ $p }}", f)
+	mux.Handle("OPTIONS", "{{ $p }}", h.ServeHTTP)
 	{{- end }}
 }
 `
@@ -188,12 +182,11 @@ func {{ .OriginHandler }}(h http.Handler) http.Handler {
 	spec{{$i}} := regexp.MustCompile({{ printf "%q" $policy.Origin }})
 	{{- end }}
 {{- end }}
-	origHndlr := h.(http.HandlerFunc)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	origin := r.Header.Get("Origin")
 	if origin == "" {
 		// Not a CORS request
-		origHndlr(w, r)
+		h.ServeHTTP(w, r)
 		return
 	}
 	{{- range $i, $policy := .Origins }}
@@ -203,16 +196,16 @@ func {{ .OriginHandler }}(h http.Handler) http.Handler {
 	if cors.MatchOrigin(origin, {{ printf "%q" $policy.Origin }}) {
 		{{- end }}
 		w.Header().Set("Access-Control-Allow-Origin", origin)
-			{{- if not (eq $policy.Origin "*") }}
 		w.Header().Set("Vary", "Origin")
-			{{- end }}
 			{{- if $policy.Exposed }}
 		w.Header().Set("Access-Control-Expose-Headers", "{{ join $policy.Exposed ", " }}")
 			{{- end }}
 			{{- if gt $policy.MaxAge 0 }}
 		w.Header().Set("Access-Control-Max-Age", "{{ $policy.MaxAge }}")
 			{{- end }}
+			{{- if eq $policy.Credentials true }}
 		w.Header().Set("Access-Control-Allow-Credentials", "{{ $policy.Credentials }}")
+			{{- end }}
 		if acrm := r.Header.Get("Access-Control-Request-Method"); acrm != "" {
 			// We are handling a preflight request
 				{{- if $policy.Methods }}
@@ -222,11 +215,11 @@ func {{ .OriginHandler }}(h http.Handler) http.Handler {
 			w.Header().Set("Access-Control-Allow-Headers", "{{ join $policy.Headers ", " }}")
 				{{- end }}
 		}
-		origHndlr(w, r)
+		h.ServeHTTP(w, r)
 		return
 	}
 	{{- end }}
-	origHndlr(w, r)
+	h.ServeHTTP(w, r)
 	return
   })
 }

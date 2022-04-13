@@ -914,9 +914,10 @@ func (d ServicesData) analyze(hs *expr.HTTPServiceExpr) *ServiceData {
 	return rd
 }
 
-// makeHTTPType traverses the attribute recursively and performs these actions
+// makeHTTPType traverses the attribute recursively and performs these actions:
 //
-// * removes aliased user type by replacing them with the underlying type
+// * removes aliased user type by replacing them with the underlying type.
+// * changes unions into structs with Type and Value fields.
 //
 func makeHTTPType(att *expr.AttributeExpr, seen ...map[string]struct{}) {
 	if att == nil {
@@ -958,6 +959,41 @@ func makeHTTPType(att *expr.AttributeExpr, seen ...map[string]struct{}) {
 		for _, nat := range *dt {
 			makeHTTPType(nat.Attribute, seen...)
 		}
+	case *expr.Union:
+		values := expr.AsUnion(dt).Values
+		names := make([]interface{}, len(values))
+		vals := make([]string, len(values))
+		bases := make([]expr.DataType, len(values))
+		for i, nat := range values {
+			n := nat.Attribute.Type.Name()
+			names[i] = n
+			vals[i] = fmt.Sprintf("- %q", n)
+			bases[i] = nat.Attribute.Type
+		}
+		obj := expr.Object([]*expr.NamedAttributeExpr{
+			{Name: "Type", Attribute: &expr.AttributeExpr{
+				Type:        expr.String,
+				Description: "Union type name, one of:\n" + strings.Join(vals, "\n"),
+				Validation:  &expr.ValidationExpr{Values: names},
+				Meta: expr.MetaExpr{
+					"struct:tag:form": {"Type"},
+					"struct:tag:json": {"Type"},
+					"struct:tag:xml":  {"Type"},
+				},
+			}},
+			{Name: "Value", Attribute: &expr.AttributeExpr{
+				Type:        expr.Any,
+				Description: "Union value, type must be one of service package types listed above",
+				Bases:       bases, // For OpenAPI generation
+				Meta: expr.MetaExpr{
+					"struct:tag:form": {"Value"},
+					"struct:tag:json": {"Value"},
+					"struct:tag:xml":  {"Value"},
+				},
+			}},
+		})
+		att.Type = &obj
+		att.Validation = &expr.ValidationExpr{Required: []string{"Type", "Value"}}
 	}
 }
 

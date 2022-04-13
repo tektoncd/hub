@@ -25,8 +25,8 @@ require (
 	github.com/tektoncd/plumbing v0.0.0-20211012143332-c7cc43d9bc0c
 	go.uber.org/automaxprocs v1.4.0
 	go.uber.org/zap v1.21.0
-	goa.design/goa/v3 v3.6.2
-	goa.design/plugins/v3 v3.1.3
+	goa.design/goa/v3 v3.7.2
+	goa.design/plugins/v3 v3.7.2
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gorm.io/driver/postgres v1.0.2

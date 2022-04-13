@@ -160,8 +160,16 @@ func (sf *schemafier) schemafy(attr *expr.AttributeExpr, noref ...bool) *openapi
 			s.Type = openapi.Type("number")
 			s.Format = "double"
 		case expr.BytesKind, expr.AnyKind:
-			s.Type = openapi.Type("string")
-			s.Format = "binary"
+			if bases := attr.Bases; len(bases) > 0 {
+				for _, b := range bases {
+					// Union type
+					val := sf.schemafy(&expr.AttributeExpr{Type: b}, false)
+					s.AnyOf = append(s.AnyOf, val)
+				}
+			} else {
+				s.Type = openapi.Type("string")
+				s.Format = "binary"
+			}
 		default:
 			s.Type = openapi.Type(t.Name())
 		}
@@ -185,6 +193,10 @@ func (sf *schemafier) schemafy(attr *expr.AttributeExpr, noref ...bool) *openapi
 			s.AdditionalProperties = sf.schemafy(t.ElemType)
 		} else {
 			s.AdditionalProperties = true
+		}
+	case *expr.Union:
+		for _, val := range t.Values {
+			s.AnyOf = append(s.AnyOf, sf.schemafy(val.Attribute))
 		}
 	case expr.UserType:
 		if !expr.IsAlias(t) {
