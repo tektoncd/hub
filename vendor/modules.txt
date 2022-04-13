@@ -212,7 +212,7 @@ github.com/imdario/mergo
 github.com/inconshreveable/mousetrap
 # github.com/jackc/chunkreader/v2 v2.0.1
 github.com/jackc/chunkreader/v2
-# github.com/jackc/pgconn v1.7.0
+# github.com/jackc/pgconn v1.11.0
 github.com/jackc/pgconn
 github.com/jackc/pgconn/internal/ctxwatch
 github.com/jackc/pgconn/stmtcache
@@ -220,19 +220,19 @@ github.com/jackc/pgconn/stmtcache
 github.com/jackc/pgio
 # github.com/jackc/pgpassfile v1.0.0
 github.com/jackc/pgpassfile
-# github.com/jackc/pgproto3/v2 v2.0.5
+# github.com/jackc/pgproto3/v2 v2.2.0
 github.com/jackc/pgproto3/v2
 # github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b
 github.com/jackc/pgservicefile
-# github.com/jackc/pgtype v1.5.0
+# github.com/jackc/pgtype v1.10.0
 github.com/jackc/pgtype
-# github.com/jackc/pgx/v4 v4.9.0
+# github.com/jackc/pgx/v4 v4.15.0
 github.com/jackc/pgx/v4
 github.com/jackc/pgx/v4/internal/sanitize
 github.com/jackc/pgx/v4/stdlib
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
-# github.com/jinzhu/now v1.1.1
+# github.com/jinzhu/now v1.1.4
 github.com/jinzhu/now
 # github.com/joho/godotenv v1.4.0
 ## explicit
@@ -667,10 +667,10 @@ gopkg.in/ini.v1
 gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 gopkg.in/yaml.v3
-# gorm.io/driver/postgres v1.0.2
+# gorm.io/driver/postgres v1.3.4
 ## explicit
 gorm.io/driver/postgres
-# gorm.io/gorm v1.20.7
+# gorm.io/gorm v1.23.1
 ## explicit
 gorm.io/gorm
 gorm.io/gorm/callbacks
