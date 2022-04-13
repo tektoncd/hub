@@ -7,7 +7,7 @@ require (
 	github.com/Netflix/go-expect v0.0.0-20200312175327-da48e75238e2
 	github.com/fatih/color v1.13.0
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
-	github.com/go-testfixtures/testfixtures/v3 v3.2.0
+	github.com/go-testfixtures/testfixtures/v3 v3.6.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
@@ -17,6 +17,7 @@ require (
 	github.com/ikawaha/goahttpcheck v1.10.0
 	github.com/joho/godotenv v1.4.0
 	github.com/markbates/goth v1.71.0
+	github.com/mattn/go-sqlite3 v2.0.2+incompatible // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.10.1

@@ -7,6 +7,10 @@ import (
 
 type mySQL struct {
 	baseHelper
+
+	skipResetSequences bool
+	resetSequencesTo   int64
+
 	tables         []string
 	tablesChecksum map[string]int64
 }
@@ -36,7 +40,7 @@ func (*mySQL) databaseName(q queryable) (string, error) {
 }
 
 func (h *mySQL) tableNames(q queryable) ([]string, error) {
-	query := `
+	const query = `
 		SELECT table_name
 		FROM information_schema.tables
 		WHERE table_schema = ?
@@ -69,6 +73,13 @@ func (h *mySQL) tableNames(q queryable) ([]string, error) {
 }
 
 func (h *mySQL) disableReferentialIntegrity(db *sql.DB, loadFn loadFunction) (err error) {
+	if !h.skipResetSequences {
+		defer func() {
+			if err2 := h.resetSequences(db); err2 != nil && err == nil {
+				err = err2
+			}
+		}()
+	}
 	tx, err := db.Begin()
 	if err != nil {
 		return err
@@ -89,6 +100,20 @@ func (h *mySQL) disableReferentialIntegrity(db *sql.DB, loadFn loadFunction) (er
 	}
 
 	return tx.Commit()
+}
+
+func (h *mySQL) resetSequences(db *sql.DB) error {
+	resetSequencesTo := h.resetSequencesTo
+	if resetSequencesTo == 0 {
+		resetSequencesTo = 10000
+	}
+
+	for _, t := range h.tables {
+		if _, err := db.Exec(fmt.Sprintf("ALTER TABLE %s AUTO_INCREMENT = %d", h.quoteKeyword(t), resetSequencesTo)); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (h *mySQL) isTableModified(q queryable, tableName string) (bool, error) {
@@ -119,13 +144,16 @@ func (h *mySQL) afterLoad(q queryable) error {
 }
 
 func (h *mySQL) getChecksum(q queryable, tableName string) (int64, error) {
-	sql := fmt.Sprintf("CHECKSUM TABLE %s", h.quoteKeyword(tableName))
+	query := fmt.Sprintf("CHECKSUM TABLE %s", h.quoteKeyword(tableName))
 	var (
 		table    string
-		checksum int64
+		checksum sql.NullInt64
 	)
-	if err := q.QueryRow(sql).Scan(&table, &checksum); err != nil {
+	if err := q.QueryRow(query).Scan(&table, &checksum); err != nil {
 		return 0, err
 	}
-	return checksum, nil
+	if !checksum.Valid {
+		return 0, fmt.Errorf("testfixtures: table %s does not exist", tableName)
+	}
+	return checksum.Int64, nil
 }
