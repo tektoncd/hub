@@ -15,6 +15,7 @@ require (
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
 	github.com/hinshun/vt10x v0.0.0-20180616224451-1954e6464174
 	github.com/ikawaha/goahttpcheck v1.10.0
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joho/godotenv v1.4.0
 	github.com/markbates/goth v1.71.1
 	github.com/mattn/go-sqlite3 v2.0.2+incompatible // indirect
@@ -30,7 +31,7 @@ require (
 	goa.design/plugins/v3 v3.7.2
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	gopkg.in/h2non/gock.v1 v1.1.2
-	gorm.io/driver/postgres v1.0.2
+	gorm.io/driver/postgres v1.3.4
 	gorm.io/gorm v1.23.4
 	gotest.tools/v3 v3.1.0
 	k8s.io/apimachinery v0.23.4

@@ -203,12 +203,22 @@ func withResourceDetails(db *gorm.DB) *gorm.DB {
 		Preload("Platforms", orderByPlatforms)
 }
 
+// withResourceDetailsWithoutVersions defines a gorm scope to include all details of resource.
+func withResourceDetailsWithoutVersions(db *gorm.DB) *gorm.DB {
+	return db.
+		Order("rating DESC, resources.name").
+		Preload("Categories", orderByCategories).
+		Scopes(withCatalogAndTags).
+		Preload("Versions.Platforms", orderByPlatforms).
+		Preload("Platforms", orderByPlatforms)
+}
+
 // withVersionInfo defines a gorm scope to include all details of resource
 // and filtering a particular version of the resource.
 func withVersionInfo(version string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.
-			Scopes(withResourceDetails).
+			Scopes(withResourceDetailsWithoutVersions).
 			Preload("Versions", "version = ?", version).
 			Preload("Versions.Platforms", orderByPlatforms)
 	}
