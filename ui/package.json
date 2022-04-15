@@ -7,7 +7,7 @@
     "@patternfly/react-core": "^4.47.0",
     "@seiboston/react-ghe-login": "^1.0.1",
     "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^12.1.4",
+    "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.0.1",
     "@types/enzyme": "^3.10.12",
     "@types/enzyme-adapter-react-16": "^1.0.6",
