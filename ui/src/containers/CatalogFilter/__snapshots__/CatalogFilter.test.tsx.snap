@@ -7,40 +7,42 @@ exports[`CatalogFilter finds the filter component and matches the count 1`] = `
     <Filter store={{...}} header=\\"Catalog\\">
       <div>
         <Grid>
-          <div className=\\"pf-l-grid\\">
+          <div className=\\"pf-l-grid\\" style={[undefined]}>
             <GridItem span={6}>
-              <div className=\\"pf-l-grid__item pf-m-6-col\\">
+              <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
                 <Text component=\\"h1\\" className=\\"hub-filter-header\\">
-                  <h1 data-pf-content={true} className=\\"hub-filter-header\\">
+                  <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-1\\" data-pf-content={true} className=\\"hub-filter-header\\">
                     Catalog
                   </h1>
                 </Text>
               </div>
             </GridItem>
             <GridItem span={3}>
-              <div className=\\"pf-l-grid__item pf-m-3-col\\">
+              <div className=\\"pf-l-grid__item pf-m-3-col\\" style={[undefined]}>
                 <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
-                  <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={1}>
-                    <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
-                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
-                        <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" transform=\\"\\" />
-                      </svg>
-                    </TimesIcon>
-                  </button>
+                  <ButtonBase innerRef={{...}} variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
+                    <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" role={{...}} data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Button-plain-1\\">
+                      <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                          <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" />
+                        </svg>
+                      </TimesIcon>
+                    </button>
+                  </ButtonBase>
                 </Button>
               </div>
             </GridItem>
             <GridItem span={12}>
-              <div className=\\"pf-l-grid__item pf-m-12-col\\">
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"tekton-hub\\" name=\\"tekton-hub\\" isValid={true} isDisabled={false}>
+              <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"tekton-hub\\" name=\\"tekton-hub\\" isValid={true} isDisabled={false} ouiaSafe={true}>
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"tekton-hub\\" name=\\"tekton-hub\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <input id=\\"tekton-hub\\" name=\\"tekton-hub\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-1\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"tekton-hub\\">
                       <div>
                         <Icon id=\\"catalog\\" size=\\"sm\\" label=\\"tekton-hub\\">
                           <CatalogIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton-hub\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                            <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1097 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton-hub\\">
-                              <path d=\\"M509.714 737.371v-0.686c0.229 0.229 0.229 0.457 0 0.686zM184.457 84.114c-67.2-6.171-111.314-83.657-111.314-83.657v877.257c-73.143-2.286-73.143-68.571-73.143-68.571v-813.714c2.971-86.857 109.714-66.286 109.714-66.286 109.714 154.743 402.286-2.286 402.286-2.286v71.314c-125.714 81.829-242.286 95.543-327.543 85.943zM366.629 133.714c53.486-9.371 110.857-52.571 143.086-60.343v72.914h-3.886c-0.229 0-0.457 0-0.686 0h4.571v590.4c0 0 0 0 0 0v0.686c0 0 0 0 0 0l0.229 58.057c0 0-0.229 0-0.229 0.229v8c-119.314 76.8-274.057 129.143-363.429 145.829v-811.2c65.6 18.057 120.229 13.257 220.343-4.571zM587.429 737.371c-0.229-0.229-0.229-0.229 0 0v0zM1024 877.714v-877.257c0 0-44.114 77.486-111.314 83.657-85.257 9.6-201.829-4.114-327.543-85.943v-71.314c0 0 292.571 157.029 402.286 2.286 0 0 106.743-20.571 109.714 66.286v813.714c0 0 0 66.286-73.143 68.571zM587.429 545.143v-398.857l10.514 1.829c-2.057-1.143-4.343-1.829-6.629-1.829h-3.886v-72.914c32.229 7.771 89.6 50.971 143.086 60.343 100.114 17.829 154.743 22.629 220.343 4.571v811.2c-89.371-16.686-244.114-69.029-363.429-145.6v-8.229c0-0.229-0.229-0.229-0.229-0.229l0.229-58.057v-192.229z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                            <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 1088 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton-hub\\">
+                              <path d=\\"M576,160 C687.3,88.6 874.6,32 960,32 L960,800 C898.8,783.1 738,760.5 576,864 L576,160 Z M1024,96 C1088,96 1088,162.8 1088,162.8 L1088,928 C1088,992 985.7,989.9 985.7,989.9 C863.1,804.7 576,992 576,992 L576,925.4 C863,728.7 1024,928 1024,928 L1024,96 Z M128,800 L128,32 C212.9,32 400.6,88.3 512,160 L512,864 C352,760.5 189.3,783.2 128,800 Z M512,925.4 L512,992 C512,992 227.9,805.8 102.5,989.9 C102.5,989.9 0,992 0,928 L0,162.8 C0,162.8 0,96 64,96 L64,928 C64,927.9 226,728.7 512,925.4 Z\\" />
                             </svg>
                           </CatalogIcon>
                         </Icon>
@@ -49,15 +51,15 @@ exports[`CatalogFilter finds the filter component and matches the count 1`] = `
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"tekton\\" name=\\"tekton\\" isValid={true} isDisabled={false}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"tekton\\" name=\\"tekton\\" isValid={true} isDisabled={false} ouiaSafe={true}>
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"tekton\\" name=\\"tekton\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <input id=\\"tekton\\" name=\\"tekton\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-2\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"tekton\\">
                       <div>
                         <Icon id=\\"catalog\\" size=\\"sm\\" label=\\"tekton\\">
                           <CatalogIcon size=\\"sm\\" className=\\"hub-icon\\" label=\\"tekton\\" color=\\"currentColor\\" noVerticalAlign={false}>
-                            <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 64 1097 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
-                              <path d=\\"M509.714 737.371v-0.686c0.229 0.229 0.229 0.457 0 0.686zM184.457 84.114c-67.2-6.171-111.314-83.657-111.314-83.657v877.257c-73.143-2.286-73.143-68.571-73.143-68.571v-813.714c2.971-86.857 109.714-66.286 109.714-66.286 109.714 154.743 402.286-2.286 402.286-2.286v71.314c-125.714 81.829-242.286 95.543-327.543 85.943zM366.629 133.714c53.486-9.371 110.857-52.571 143.086-60.343v72.914h-3.886c-0.229 0-0.457 0-0.686 0h4.571v590.4c0 0 0 0 0 0v0.686c0 0 0 0 0 0l0.229 58.057c0 0-0.229 0-0.229 0.229v8c-119.314 76.8-274.057 129.143-363.429 145.829v-811.2c65.6 18.057 120.229 13.257 220.343-4.571zM587.429 737.371c-0.229-0.229-0.229-0.229 0 0v0zM1024 877.714v-877.257c0 0-44.114 77.486-111.314 83.657-85.257 9.6-201.829-4.114-327.543-85.943v-71.314c0 0 292.571 157.029 402.286 2.286 0 0 106.743-20.571 109.714 66.286v813.714c0 0 0 66.286-73.143 68.571zM587.429 545.143v-398.857l10.514 1.829c-2.057-1.143-4.343-1.829-6.629-1.829h-3.886v-72.914c32.229 7.771 89.6 50.971 143.086 60.343 100.114 17.829 154.743 22.629 220.343 4.571v811.2c-89.371-16.686-244.114-69.029-363.429-145.6v-8.229c0-0.229-0.229-0.229-0.229-0.229l0.229-58.057v-192.229z\\" transform=\\"rotate(180 0 512) scale(-1 1)\\" />
+                            <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 1088 1024\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"hub-icon\\" label=\\"tekton\\">
+                              <path d=\\"M576,160 C687.3,88.6 874.6,32 960,32 L960,800 C898.8,783.1 738,760.5 576,864 L576,160 Z M1024,96 C1088,96 1088,162.8 1088,162.8 L1088,928 C1088,992 985.7,989.9 985.7,989.9 C863.1,804.7 576,992 576,992 L576,925.4 C863,728.7 1024,928 1024,928 L1024,96 Z M128,800 L128,32 C212.9,32 400.6,88.3 512,160 L512,864 C352,760.5 189.3,783.2 128,800 Z M512,925.4 L512,992 C512,992 227.9,805.8 102.5,989.9 C102.5,989.9 0,992 0,928 L0,162.8 C0,162.8 0,96 64,96 L64,928 C64,927.9 226,728.7 512,925.4 Z\\" />
                             </svg>
                           </CatalogIcon>
                         </Icon>

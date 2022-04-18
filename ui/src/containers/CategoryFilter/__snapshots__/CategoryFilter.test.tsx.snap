@@ -7,34 +7,36 @@ exports[`CategoryFilter finds the filter component and matches the count 1`] = `
     <Filter store={{...}} header=\\"Category\\">
       <div>
         <Grid>
-          <div className=\\"pf-l-grid\\">
+          <div className=\\"pf-l-grid\\" style={[undefined]}>
             <GridItem span={6}>
-              <div className=\\"pf-l-grid__item pf-m-6-col\\">
+              <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
                 <Text component=\\"h1\\" className=\\"hub-filter-header\\">
-                  <h1 data-pf-content={true} className=\\"hub-filter-header\\">
+                  <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-1\\" data-pf-content={true} className=\\"hub-filter-header\\">
                     Category
                   </h1>
                 </Text>
               </div>
             </GridItem>
             <GridItem span={3}>
-              <div className=\\"pf-l-grid__item pf-m-3-col\\">
+              <div className=\\"pf-l-grid__item pf-m-3-col\\" style={[undefined]}>
                 <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
-                  <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id={1}>
-                    <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
-                      <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
-                        <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" transform=\\"\\" />
-                      </svg>
-                    </TimesIcon>
-                  </button>
+                  <ButtonBase innerRef={{...}} variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res]}>
+                    <button onClick={[Function: res]} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" role={{...}} data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Button-plain-1\\">
+                      <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                        <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                          <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" />
+                        </svg>
+                      </TimesIcon>
+                    </button>
+                  </ButtonBase>
                 </Button>
               </div>
             </GridItem>
             <GridItem span={12}>
-              <div className=\\"pf-l-grid__item pf-m-12-col\\">
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Build Tools\\" name=\\"Build Tools\\" isValid={true} isDisabled={false}>
+              <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Build Tools\\" name=\\"Build Tools\\" isValid={true} isDisabled={false} ouiaSafe={true}>
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"Build Tools\\" name=\\"Build Tools\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <input id=\\"Build Tools\\" name=\\"Build Tools\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-1\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"Build Tools\\">
                       <div>
                         Build Tools
@@ -42,9 +44,9 @@ exports[`CategoryFilter finds the filter component and matches the count 1`] = `
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"CLI\\" name=\\"CLI\\" isValid={true} isDisabled={false}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"CLI\\" name=\\"CLI\\" isValid={true} isDisabled={false} ouiaSafe={true}>
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"CLI\\" name=\\"CLI\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <input id=\\"CLI\\" name=\\"CLI\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-2\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"CLI\\">
                       <div>
                         Cli
@@ -52,9 +54,9 @@ exports[`CategoryFilter finds the filter component and matches the count 1`] = `
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Cloud\\" name=\\"Cloud\\" isValid={true} isDisabled={false}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Cloud\\" name=\\"Cloud\\" isValid={true} isDisabled={false} ouiaSafe={true}>
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"Cloud\\" name=\\"Cloud\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <input id=\\"Cloud\\" name=\\"Cloud\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-3\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"Cloud\\">
                       <div>
                         Cloud
@@ -62,9 +64,9 @@ exports[`CategoryFilter finds the filter component and matches the count 1`] = `
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Deploy\\" name=\\"Deploy\\" isValid={true} isDisabled={false}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Deploy\\" name=\\"Deploy\\" isValid={true} isDisabled={false} ouiaSafe={true}>
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"Deploy\\" name=\\"Deploy\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <input id=\\"Deploy\\" name=\\"Deploy\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-4\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"Deploy\\">
                       <div>
                         Deploy
@@ -72,9 +74,9 @@ exports[`CategoryFilter finds the filter component and matches the count 1`] = `
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Image Build\\" name=\\"Image Build\\" isValid={true} isDisabled={false}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"Image Build\\" name=\\"Image Build\\" isValid={true} isDisabled={false} ouiaSafe={true}>
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"Image Build\\" name=\\"Image Build\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} />
+                    <input id=\\"Image Build\\" name=\\"Image Build\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-5\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"Image Build\\">
                       <div>
                         Image Build
