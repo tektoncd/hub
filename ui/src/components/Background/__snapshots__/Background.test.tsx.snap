@@ -14,12 +14,18 @@ exports[`should render the background component 1`] = `
   >
     <h1
       className="hub-background-heading"
+      data-ouia-component-id="OUIA-Generated-Text-1"
+      data-ouia-component-type="PF4/Text"
+      data-ouia-safe={true}
       data-pf-content={true}
     >
       Welcome to Tekton Hub
     </h1>
     <h3
       className="hub-tag-line"
+      data-ouia-component-id="OUIA-Generated-Text-2"
+      data-ouia-component-type="PF4/Text"
+      data-ouia-safe={true}
       data-pf-content={true}
     >
       Discover, search and share reusable Tasks and Pipelines
