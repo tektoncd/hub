@@ -39,7 +39,9 @@ const Sort: React.FC = () => {
     else {
       value.toString() === SortByFields.Name
         ? resources.setSortBy(SortByFields.Name)
-        : resources.setSortBy(SortByFields.Rating);
+        : value.toString() === SortByFields.Rating
+        ? resources.setSortBy(SortByFields.Rating)
+        : resources.setSortBy(SortByFields.RecentlyUpdated);
       setIsOpen(false);
     }
   };

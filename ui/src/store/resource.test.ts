@@ -410,6 +410,30 @@ describe('Store functions', () => {
     );
   });
 
+  it('should sort resources based on last updated at', (done) => {
+    const store = ResourceStore.create(
+      {},
+      {
+        api,
+        catalogs: CatalogStore.create({}, { api }),
+        categories: CategoryStore.create({}, { api })
+      }
+    );
+    expect(store.isLoading).toBe(true);
+    when(
+      () => !store.isLoading,
+      () => {
+        const lastUpdated: SortByFields = SortByFields[SortByFields.RecentlyUpdated];
+        store.setSortBy(lastUpdated);
+
+        expect(store.filteredResources[0].rating).toBe(4);
+        expect(store.filteredResources[0].name).toBe(`buildah`);
+
+        done();
+      }
+    );
+  });
+
   it('it should return webURL', (done) => {
     const store = ResourceStore.create(
       {},
