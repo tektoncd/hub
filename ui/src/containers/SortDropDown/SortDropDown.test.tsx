@@ -26,6 +26,6 @@ describe('Sort DropDown', () => {
 
     const keys = item.props().children;
     assert(keys);
-    expect(keys.length).toBe(2);
+    expect(keys.length).toBe(3);
   });
 });

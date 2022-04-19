@@ -112,7 +112,8 @@ export type IVersion = Instance<typeof Version>;
 export enum SortByFields {
   Unknown = '',
   Name = 'Name',
-  Rating = 'Rating'
+  Rating = 'Rating',
+  RecentlyUpdated = 'RecentlyUpdated'
 }
 
 export const ResourceStore = types
@@ -477,6 +478,14 @@ export const ResourceStore = types
         case SortByFields.Name:
           return filteredItems.sort((first: IResource, second: IResource) =>
             first.name > second.name ? 1 : first.name < second.name ? -1 : 0
+          );
+
+        case SortByFields.RecentlyUpdated:
+          return filteredItems.sort((first: IResource, second: IResource) =>
+            first.latestVersion.updatedAt.toDate().getTime() <
+            second.latestVersion.updatedAt.toDate().getTime()
+              ? 1
+              : -1
           );
 
         default:
