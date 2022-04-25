@@ -688,7 +688,7 @@ gorm.io/gorm/logger
 gorm.io/gorm/migrator
 gorm.io/gorm/schema
 gorm.io/gorm/utils
-# gotest.tools/v3 v3.1.0
+# gotest.tools/v3 v3.2.0
 ## explicit
 gotest.tools/v3/assert
 gotest.tools/v3/assert/cmp
