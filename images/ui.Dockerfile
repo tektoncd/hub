@@ -24,5 +24,6 @@ USER nginx
 EXPOSE 8080
 
 COPY ui/image/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ui/image/location.locations /etc/nginx/conf.d/location.locations
 
 CMD /usr/bin/start.sh
