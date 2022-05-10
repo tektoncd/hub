@@ -55,7 +55,7 @@ const Details: React.FC = observer(() => {
   };
 
   return resources.isVersionLoading === true ? (
-    <Spinner className="hub-spinner" />
+    <Spinner className="hub-details-spinner" />
   ) : !validateUrl() ? (
     <PageNotFound />
   ) : (
