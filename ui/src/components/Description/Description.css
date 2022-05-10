@@ -87,7 +87,7 @@ code {
 
 .hub-details-spinner {
   position: fixed;
-  left: 0;
+  left: 48%;
   right: 0;
   top: 2em;
   bottom: 0;

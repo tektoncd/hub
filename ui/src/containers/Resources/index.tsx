@@ -73,7 +73,7 @@ const Resources: React.FC = observer(() => {
   };
 
   return resources.resources.size === 0 ? (
-    <Spinner className="hub-spinner" />
+    <Spinner className="hub-resources-spinner" />
   ) : (
     <React.Fragment>{checkResources(resources.filteredResources)}</React.Fragment>
   );

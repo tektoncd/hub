@@ -4,8 +4,8 @@ exports[`Details component should render the details component 1`] = `
 "<Provider>
    
   <Memo(wrappedComponent)>
-    <Spinner className=\\"hub-spinner\\">
-      <span className=\\"pf-c-spinner pf-m-xl hub-spinner\\" role=\\"progressbar\\" aria-valuetext=\\"Loading...\\" aria-label=\\"Contents\\">
+    <Spinner className=\\"hub-details-spinner\\">
+      <span className=\\"pf-c-spinner pf-m-xl hub-details-spinner\\" role=\\"progressbar\\" aria-valuetext=\\"Loading...\\" aria-label=\\"Contents\\">
         <span className=\\"pf-c-spinner__clipper\\" />
         <span className=\\"pf-c-spinner__lead-ball\\" />
         <span className=\\"pf-c-spinner__tail-ball\\" />
