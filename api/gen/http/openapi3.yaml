@@ -68,15 +68,11 @@ paths:
                   - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
                   type: warning
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -114,25 +110,17 @@ paths:
                 id: 1
                 status: queued
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -178,15 +166,11 @@ paths:
                 id: 1
                 status: queued
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -218,15 +202,11 @@ paths:
                 - id: 1
                   name: Image Builder
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /query:
     get:
       tags:
@@ -544,45 +524,29 @@ paths:
               example:
                 rating: 4
         "401":
-          description: Unauthorized response.
+          description: 'invalid-token: Invalid User token'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "403":
-          description: Forbidden response.
+          description: 'invalid-scopes: Invalid User scope'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal server error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -619,45 +583,29 @@ paths:
         "200":
           description: OK response.
         "401":
-          description: Unauthorized response.
+          description: 'invalid-token: Invalid User token'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "403":
-          description: Forbidden response.
+          description: 'invalid-scopes: Invalid User scope'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal server error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -841,35 +789,23 @@ paths:
               example:
                 checksum: 41ba391c8baf1fcd3c62c11272b913dc6613f4cf3b1833cfbb32431dc4384c93
         "401":
-          description: Unauthorized response.
+          description: 'invalid-token: Invalid User token'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "403":
-          description: Forbidden response.
+          description: 'invalid-scopes: Invalid Token scopes '
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal server error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -906,45 +842,29 @@ paths:
               example:
                 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4ODAzMDAsImlhdCI6MTU3Nzg4MDAwMCwiaWQiOjExLCJpc3MiOiJUZWt0b24gSHViIiwic2NvcGVzIjpbInJhdGluZzpyZWFkIiwicmF0aW5nOndyaXRlIiwiYWdlbnQ6Y3JlYXRlIl0sInR5cGUiOiJhY2Nlc3MtdG9rZW4ifQ.6pDmziSKkoSqI1f0rc4-AqVdcfY0Q8wA-tSLzdTCLgM
         "400":
-          description: Bad Request response.
+          description: 'invalid-payload: Invalid request body'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "401":
-          description: Unauthorized response.
+          description: 'invalid-token: Invalid User token'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "403":
-          description: Forbidden response.
+          description: 'invalid-scopes: Invalid Token scopes '
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal server error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
       security:
       - jwt_header_Authorization:
         - rating:read
@@ -1001,15 +921,11 @@ paths:
                 - id: 1
                   name: Image Builder
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
 components:
   schemas:
     Catalog:

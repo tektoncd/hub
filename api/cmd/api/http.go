@@ -112,7 +112,7 @@ func handleHTTPServer(
 		v1resourceServer = v1resourcesvr.New(v1resourceEndpoints, mux, dec, enc, eh, nil)
 		statusServer = statussvr.New(statusEndpoints, mux, dec, enc, eh, nil)
 		swaggerServer = swaggersvr.New(nil, mux, dec, enc, eh, nil, nil)
-		v1swaggerServer = v1swaggersvr.New(nil, mux, dec, enc, eh, nil)
+		v1swaggerServer = v1swaggersvr.New(nil, mux, dec, enc, eh, nil, nil)
 
 		if debug {
 			servers := goahttp.Servers{
