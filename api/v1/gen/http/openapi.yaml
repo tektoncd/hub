@@ -581,7 +581,7 @@ definitions:
         enum:
         - official
         - community
-    description: CatalogResponseBodyMin result type (default view)
+    description: CatalogResponseBody result type (min view) (default view)
     example:
       id: 1
       name: Tekton
@@ -1384,7 +1384,7 @@ definitions:
         example: |-
           #Readme
            Sample readme content
-    description: ResourceContentResponseBodyReadme result type (default view)
+    description: ResourceContentResponseBody result type (readme view) (default view)
     example:
       readme: |-
         #Readme
@@ -1399,7 +1399,7 @@ definitions:
         example: |-
           #YAML
            Sample yaml content
-    description: ResourceContentResponseBodyYaml result type (default view)
+    description: ResourceContentResponseBody result type (yaml view) (default view)
     example:
       yaml: |-
         #YAML
@@ -1468,7 +1468,7 @@ definitions:
           version: "0.1"
         - id: 2
           version: "0.2"
-    description: The resource type describes resource information.
+    description: The resource type describes resource information. (default view)
     example:
       catalog:
         id: 1
@@ -1570,7 +1570,8 @@ definitions:
         example:
         - id: 1
           name: image-build
-    description: The resource type describes resource information. (default view)
+    description: The resource type describes resource information. (info view) (default
+      view)
     example:
       catalog:
         id: 1
@@ -2229,6 +2230,7 @@ definitions:
         example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         format: uri
     description: The Version result type describes resource's version information.
+      (default view)
     example:
       deprecated: true
       description: Buildah task builds source into a container image and then pushes
@@ -2309,7 +2311,7 @@ definitions:
         example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         format: uri
     description: The Version result type describes resource's version information.
-      (default view)
+      (min view) (default view)
     example:
       hubURLPath: tekton/task/buildah
       id: 1
@@ -2340,7 +2342,7 @@ definitions:
         description: Version of resource
         example: "0.1"
     description: The Version result type describes resource's version information.
-      (default view)
+      (tiny view) (default view)
     example:
       id: 1
       version: "0.1"
@@ -2406,7 +2408,7 @@ definitions:
         example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         format: uri
     description: The Version result type describes resource's version information.
-      (default view)
+      (withoutResource view) (default view)
     example:
       deprecated: true
       description: Buildah task builds source into a container image and then pushes
@@ -2588,7 +2590,7 @@ definitions:
           version: "0.2"
           webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
     description: The Versions type describes response for versions by resource id
-      API.
+      API. (default view)
     example:
       latest:
         id: 2

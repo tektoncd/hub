@@ -43,15 +43,11 @@ paths:
                   type: community
                   url: https://github.com/tektoncd/hub
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /v1/query:
     get:
       tags:
@@ -256,35 +252,23 @@ paths:
                   - id: 2
                     version: "0.2"
         "400":
-          description: Bad Request response.
+          description: 'invalid-kind: Invalid Resource Kind'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /v1/resource/{catalog}/{kind}/{name}:
     get:
       tags:
@@ -382,25 +366,17 @@ paths:
                   - id: 2
                     version: "0.2"
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /v1/resource/{catalog}/{kind}/{name}/{version}:
     get:
       tags:
@@ -490,25 +466,17 @@ paths:
                   version: "0.1"
                   webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /v1/resource/{catalog}/{kind}/{name}/{version}/readme:
     get:
       tags:
@@ -573,25 +541,17 @@ paths:
                     #YAML
                      Sample yaml content
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /v1/resource/{catalog}/{kind}/{name}/{version}/yaml:
     get:
       tags:
@@ -656,25 +616,17 @@ paths:
                     #YAML
                      Sample yaml content
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /v1/resource/{id}:
     get:
       tags:
@@ -738,25 +690,17 @@ paths:
                   - id: 2
                     version: "0.2"
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /v1/resource/{id}/versions:
     get:
       tags:
@@ -798,25 +742,17 @@ paths:
                     version: "0.2"
                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /v1/resource/version/{versionID}:
     get:
       tags:
@@ -875,25 +811,17 @@ paths:
                   version: "0.1"
                   webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
         "404":
-          description: Not Found response.
+          description: 'not-found: Resource Not Found Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /v1/resources:
     get:
       tags:
@@ -994,15 +922,11 @@ paths:
                   - id: 2
                     version: "0.2"
         "500":
-          description: Internal Server Error response.
+          description: 'internal-error: Internal Server Error'
           content:
             application/vnd.goa.error:
               schema:
                 $ref: '#/components/schemas/Error'
-              example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
-                name: bad_request
   /v1/schema/swagger.json:
     get:
       tags:
@@ -1790,3 +1714,10 @@ components:
       required:
       - latest
       - versions
+tags:
+- name: catalog
+  description: The catalog service provides details about catalogs.
+- name: resource
+  description: The resource service provides details about all kind of resources
+- name: swagger
+  description: The swagger service serves the API swagger definition.
