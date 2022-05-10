@@ -17,7 +17,7 @@ require (
 	github.com/ikawaha/goahttpcheck v1.10.0
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joho/godotenv v1.4.0
-	github.com/markbates/goth v1.71.1
+	github.com/markbates/goth v1.72.0
 	github.com/mattn/go-sqlite3 v2.0.2+incompatible // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.4.0
