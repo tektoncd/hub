@@ -3,8 +3,9 @@ module github.com/tektoncd/hub
 go 1.16
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.2.12
-	github.com/Netflix/go-expect v0.0.0-20200312175327-da48e75238e2
+	github.com/ActiveState/vt10x v1.3.1
+	github.com/AlecAivazis/survey/v2 v2.3.4
+	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
 	github.com/fatih/color v1.13.0
 	github.com/go-gormigrate/gormigrate/v2 v2.0.1
 	github.com/go-testfixtures/testfixtures/v3 v3.6.2
@@ -13,7 +14,6 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/sessions v1.2.1
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
-	github.com/hinshun/vt10x v0.0.0-20180616224451-1954e6464174
 	github.com/ikawaha/goahttpcheck v1.10.0
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joho/godotenv v1.4.0
