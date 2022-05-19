@@ -18,10 +18,10 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/ActiveState/vt10x"
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/terminal"
 	goexpect "github.com/Netflix/go-expect"
-	"github.com/hinshun/vt10x"
 	"gotest.tools/v3/assert"
 )
 

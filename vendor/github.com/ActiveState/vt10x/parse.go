@@ -4,10 +4,12 @@ func isControlCode(c rune) bool {
 	return c < 0x20 || c == 0177
 }
 
-func (t *State) parse(c rune) {
+func (t *State) parse(c rune) bool {
+	t.logf("%q", string(c))
 	if isControlCode(c) {
-		if t.handleControlCodes(c) || t.cur.attr.mode&attrGfx == 0 {
-			return
+		wasHandled, isPrintable := t.handleControlCodes(c)
+		if wasHandled || t.cur.attr.mode&attrGfx == 0 {
+			return isPrintable
 		}
 	}
 	// TODO: update selection; see st.c:2450
@@ -28,13 +30,16 @@ func (t *State) parse(c rune) {
 	} else {
 		t.cur.state |= cursorWrapNext
 	}
+
+	return true
 }
 
-func (t *State) parseEsc(c rune) {
-	if t.handleControlCodes(c) {
-		return
+func (t *State) parseEsc(c rune) bool {
+	if wasHandled, isPrintable := t.handleControlCodes(c); wasHandled {
+		return isPrintable
 	}
 	next := t.parse
+	t.logf("%q", string(c))
 	switch c {
 	case '[':
 		next = t.parseEscCSI
@@ -86,19 +91,23 @@ func (t *State) parseEsc(c rune) {
 		t.logf("unknown ESC sequence '%c'\n", c)
 	}
 	t.state = next
+	return false
 }
 
-func (t *State) parseEscCSI(c rune) {
-	if t.handleControlCodes(c) {
-		return
+func (t *State) parseEscCSI(c rune) bool {
+	if wasHandled, isPrintable := t.handleControlCodes(c); wasHandled {
+		return isPrintable
 	}
+	t.logf("%q", string(c))
 	if t.csi.put(byte(c)) {
 		t.state = t.parse
 		t.handleCSI()
 	}
+	return false
 }
 
-func (t *State) parseEscStr(c rune) {
+func (t *State) parseEscStr(c rune) bool {
+	t.logf("%q", string(c))
 	switch c {
 	case '\033':
 		t.state = t.parseEscStrEnd
@@ -108,22 +117,26 @@ func (t *State) parseEscStr(c rune) {
 	default:
 		t.str.put(c)
 	}
+	return false
 }
 
-func (t *State) parseEscStrEnd(c rune) {
-	if t.handleControlCodes(c) {
-		return
+func (t *State) parseEscStrEnd(c rune) bool {
+	if wasHandled, isPrintable := t.handleControlCodes(c); wasHandled {
+		return isPrintable
 	}
+	t.logf("%q", string(c))
 	t.state = t.parse
 	if c == '\\' {
 		t.handleSTR()
 	}
+	return false
 }
 
-func (t *State) parseEscAltCharset(c rune) {
-	if t.handleControlCodes(c) {
-		return
+func (t *State) parseEscAltCharset(c rune) bool {
+	if wasHandled, isPrintable := t.handleControlCodes(c); wasHandled {
+		return isPrintable
 	}
+	t.logf("%q", string(c))
 	switch c {
 	case '0': // line drawing set
 		t.cur.attr.mode |= attrGfx
@@ -138,11 +151,12 @@ func (t *State) parseEscAltCharset(c rune) {
 		t.logf("unknown alt. charset '%c'\n", c)
 	}
 	t.state = t.parse
+	return false
 }
 
-func (t *State) parseEscTest(c rune) {
-	if t.handleControlCodes(c) {
-		return
+func (t *State) parseEscTest(c rune) bool {
+	if wasHandled, isPrintable := t.handleControlCodes(c); wasHandled {
+		return isPrintable
 	}
 	// DEC screen alignment test
 	if c == '8' {
@@ -153,19 +167,29 @@ func (t *State) parseEscTest(c rune) {
 		}
 	}
 	t.state = t.parse
+	return false
 }
 
-func (t *State) handleControlCodes(c rune) bool {
+// handleControlCodes handles control codes and returns two booleans
+// The first boolean indicates whether the control code was handled, the second one whether
+// the rune was printable
+func (t *State) handleControlCodes(c rune) (bool, bool) {
 	if !isControlCode(c) {
-		return false
+		return false, true
 	}
+	isPrintable := false
 	switch c {
 	// HT
 	case '\t':
 		t.putTab(true)
+		isPrintable = true
 	// BS
 	case '\b':
-		t.moveTo(t.cur.x-1, t.cur.y)
+		if t.cur.x == t.cols-1 && t.Mode(ModeWrap) && t.cur.state&cursorWrapNext != 0 {
+			t.cur.state &^= cursorWrapNext
+		} else {
+			t.moveTo(t.cur.x-1, t.cur.y)
+		}
 	// CR
 	case '\r':
 		t.moveTo(0, t.cur.y)
@@ -173,6 +197,7 @@ func (t *State) handleControlCodes(c rune) bool {
 	case '\f', '\v', '\n':
 		// go to first col if mode is set
 		t.newline(t.mode&ModeCRLF != 0)
+		isPrintable = true
 	// BEL
 	case '\a':
 		// TODO: emit sound
@@ -191,7 +216,7 @@ func (t *State) handleControlCodes(c rune) bool {
 	// ignore ENQ, NUL, XON, XOFF, DEL
 	case 005, 000, 021, 023, 0177:
 	default:
-		return false
+		return false, true
 	}
-	return true
+	return true, isPrintable
 }

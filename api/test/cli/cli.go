@@ -22,9 +22,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ActiveState/vt10x"
 	"github.com/Netflix/go-expect"
 	goexpect "github.com/Netflix/go-expect"
-	"github.com/hinshun/vt10x"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/icmd"
 )
