@@ -676,7 +676,7 @@ gopkg.in/ini.v1
 gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 gopkg.in/yaml.v3
-# gorm.io/driver/postgres v1.3.5
+# gorm.io/driver/postgres v1.3.6
 ## explicit
 gorm.io/driver/postgres
 # gorm.io/gorm v1.23.4
