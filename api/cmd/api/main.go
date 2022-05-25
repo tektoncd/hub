@@ -25,14 +25,6 @@ import (
 	"strings"
 	"sync"
 
-	// Go runtime is unaware of CPU quota which means it will set GOMAXPROCS
-	// to underlying host vm node. This high value means that GO runtime
-	// scheduler assumes that it has more threads and does context switching
-	// when it might work with fewer threads.
-	// This doesn't happen# with our other controllers and services because
-	// sharedmain already import this package for them.
-	_ "go.uber.org/automaxprocs"
-
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	admin "github.com/tektoncd/hub/api/gen/admin"
@@ -56,6 +48,14 @@ import (
 	v1resource "github.com/tektoncd/hub/api/v1/gen/resource"
 	v1catalogsvc "github.com/tektoncd/hub/api/v1/service/catalog"
 	v1resourcesvc "github.com/tektoncd/hub/api/v1/service/resource"
+
+	// Go runtime is unaware of CPU quota which means it will set GOMAXPROCS
+	// to underlying host vm node. This high value means that GO runtime
+	// scheduler assumes that it has more threads and does context switching
+	// when it might work with fewer threads.
+	// This doesn't happen# with our other controllers and services because
+	// sharedmain already import this package for them.
+	_ "go.uber.org/automaxprocs"
 )
 
 func main() {
@@ -90,6 +90,12 @@ func main() {
 	initializer := initializer.New(api)
 	if _, err := initializer.Run(context.Background()); err != nil {
 		logger.Fatalf("Failed to populate table: %v", err)
+	}
+
+	// Add resources to database
+	db := initializer.DB(context.Background())
+	if err := initializer.AddResources(db, api, logger); err != nil {
+		logger.Fatalf("Failed to add resources: %v", err)
 	}
 
 	// Initialize the services.

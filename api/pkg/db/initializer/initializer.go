@@ -21,6 +21,7 @@ import (
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
+	catalogsvc "github.com/tektoncd/hub/api/pkg/service/catalog"
 	"gorm.io/gorm"
 )
 
@@ -30,6 +31,13 @@ type Initializer struct {
 	app.Service
 	api app.BaseConfig
 }
+
+var (
+	apiserverID       = 0xFFFF_FFFF
+	apiserverName     = "api-server-bot"
+	apiserverUserName = "apiserver-bot"
+	apiserverEmailID  = "apiserver-bot"
+)
 
 // New returns the Initializer implementation.
 func New(api app.BaseConfig) *Initializer {
@@ -194,5 +202,83 @@ func withTransaction(db *gorm.DB, log *log.Logger, data *app.Data, fns ...initFn
 	}
 
 	txn.Commit()
+	return nil
+}
+
+func addApiServerUser(db *gorm.DB, log *log.Logger) error {
+
+	newUser := model.User{
+		Type:  model.AgentUserType,
+		Email: apiserverEmailID,
+	}
+
+	newUser.ID = uint(apiserverID)
+	if err := db.Create(&newUser).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
+	apiAccount := model.Account{
+		UserID:    uint(apiserverID),
+		UserName:  apiserverUserName,
+		Name:      apiserverName,
+		AvatarURL: "",
+		Provider:  "github",
+	}
+
+	if err := db.Create(&apiAccount).Error; err != nil {
+		log.Error(err)
+		return err
+	}
+
+	return nil
+}
+
+// Check if apiserver account exists or not
+// If does not exists, it creates apiserver account
+func checkIfApiServerAccountExists(db *gorm.DB, logger *log.Logger) error {
+
+	q := db.Model(&model.Account{}).Where("user_name = ?", apiserverUserName)
+	apiAccount := model.Account{}
+
+	if err := q.First(&apiAccount).Error; err == gorm.ErrRecordNotFound {
+
+		logger.Infof("user %s account not found,creating account for apiserver", "apiserver")
+
+		if err := addApiServerUser(db, logger); err != nil {
+			logger.Error(err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+// AddResources func creates an apiserver account and adds resources from catalog to database
+func (i *Initializer) AddResources(db *gorm.DB, api app.BaseConfig, logger *log.Logger) error {
+
+	if err := checkIfApiServerAccountExists(db, logger); err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	catalogs := []model.Catalog{}
+	db.Find(&catalogs)
+
+	syncer := catalogsvc.NewSyncer(api, "")
+
+	for _, c := range catalogs {
+		res := []model.Resource{}
+		db.Model(model.Resource{}).Where("catalog_id = ?", c.ID).Take(&res)
+
+		// If there is no resource from catalog then Enqueue the catalog to syncer
+		if len(res) == 0 {
+			_, err := syncer.Enqueue(uint(apiserverID), c.ID)
+			if err != nil {
+				logger.Error(err)
+				return err
+			}
+		}
+	}
 	return nil
 }
