@@ -46,7 +46,7 @@ var errorTypes = []string{
 // New returns the catalog service implementation.
 func New(api app.Config) catalog.Service {
 	svc := validator.NewService(api, "catalog")
-	wq := newSyncer(api, svc.CatalogClonePath())
+	wq := NewSyncer(api, svc.CatalogClonePath())
 
 	// start running after some delay to allow for all services to mount
 	time.AfterFunc(3*time.Second, wq.Run)

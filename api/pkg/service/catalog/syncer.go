@@ -42,7 +42,7 @@ var (
 	running = &model.SyncJob{Status: model.JobRunning.String()}
 )
 
-func newSyncer(api app.BaseConfig, clonePath string) *syncer {
+func NewSyncer(api app.BaseConfig, clonePath string) *syncer {
 	logger := api.Logger("syncer")
 	return &syncer{
 		db:        app.DBWithLogger(api.Environment(), api.DB(), logger),
