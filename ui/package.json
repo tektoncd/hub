@@ -17,7 +17,7 @@
     "@types/react-router-dom": "^5.1.6",
     "@types/react-syntax-highlighter": "^13.5.2",
     "@types/react-test-renderer": "^18.0.0",
-    "axios": "^0.26.1",
+    "axios": "^0.27.2",
     "fuzzysort": "^1.2.1",
     "mobx": "^6.5.0",
     "mobx-react": "^6.3.1",
