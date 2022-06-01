@@ -73,20 +73,27 @@ const Description: React.FC<Props> = (props) => {
                         <ReactMarkDown
                           linkTarget={' '}
                           transformLinkUri={(uri: string) => transformUri(uri)}
-                          plugins={[[gfm, { tablePipeAlign: false }]]}
-                          source={resource.readme}
-                          escapeHtml={true}
-                          renderers={{ code: Readme }}
+                          remarkPlugins={[[gfm, { tablePipeAlign: false }]]}
+                          skipHtml={true}
+                          components={{
+                            code: ({ ...props }) => <Readme value={props.children as string} />
+                          }}
                           className="hub-readme"
-                        />
+                        >
+                          {resource.readme}
+                        </ReactMarkDown>
                       </Tab>
                       <Tab eventKey={1} title="YAML" id={props.name}>
                         <hr className="hub-horizontal-line"></hr>
                         <ReactMarkDown
-                          source={resource.yaml}
-                          escapeHtml={true}
-                          renderers={{ code: Yaml }}
-                        />
+                          skipHtml={true}
+                          components={{
+                            code: ({ ...props }) => <Yaml value={props.children as string} />,
+                            pre: ({ ...props }) => <span style={{ color: 'green' }} {...props} />
+                          }}
+                        >
+                          {resource.yaml}
+                        </ReactMarkDown>
                       </Tab>
                     </Tabs>
                   </GridItem>

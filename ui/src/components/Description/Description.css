@@ -73,7 +73,7 @@ td {
 
 code {
   font-family: Consolas, 'courier new';
-  font-weight: bold;
+  font-weight: bold !important;
   color: crimson;
   padding: 2px;
   font-size: 100%;
@@ -92,4 +92,16 @@ code {
   top: 2em;
   bottom: 0;
   margin: auto;
+}
+
+/* code {
+  display: none;
+} */
+
+pre:disabled {
+  display: none;
+}
+
+.linenumber {
+  display: none;
 }

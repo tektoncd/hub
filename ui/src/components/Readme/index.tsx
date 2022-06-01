@@ -8,7 +8,19 @@ interface Props {
 const Readme: React.FC<Props> = (props: Props) => {
   const { value } = props;
   return (
-    <SyntaxHighlighter language="markdown" showLineNumbers={true} wrapLines={true}>
+    <SyntaxHighlighter
+      // customStyle={{
+      //   backgroundColor: 'red'
+      // }}
+      // codeTagProps={{
+      //   style: {}
+      // }}
+      // PreTag="span"
+      // CodeTag="span"
+      language="markdown"
+      showLineNumbers={true}
+      wrapLines={true}
+    >
       {value}
     </SyntaxHighlighter>
   );
