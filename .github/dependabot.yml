@@ -4,13 +4,25 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    labels:
+    - "ok-to-test"
+    - "dependencies"
+    - "go"
 
   - package-ecosystem: 'npm'
     directory: '/ui'
     schedule:
       interval: 'weekly'
+    labels:
+    - "ok-to-test"
+    - "dependencies"
+    - "npm"
 
   - package-ecosystem: "docker"
     directory: "/images"
     schedule:
       interval: "weekly"
+    labels:
+    - "ok-to-test"
+    - "dependencies"
+    - "docker"
