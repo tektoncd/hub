@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@patternfly/patternfly": "^4.185.1",
+    "@patternfly/patternfly": "^4.194.4",
     "@patternfly/react-core": "^4.202.16",
     "@seiboston/react-ghe-login": "^1.0.1",
     "@testing-library/jest-dom": "^5.16.4",
