@@ -13,7 +13,7 @@
   - [Update UI ConfigMap](#update-ui-configmap)
   - [Update UI Image](#update-ui-image)
   - [Setup Ingress/Route](#setup-route-or-ingress)
-- [Add resources in DB](#add-resources-in-db)
+- [Update Catalog and Catalog Refresh](#update-catalog-and-catalog-refresh)
 - [Setup Catalog Refresh CronJob](#setup-catalog-refresh-cronjob)
 - [Adding New Users in Config](#adding-new-users-in-config)
 - [Deploying on Disconnected Cluster](#deploying-on-disconnected)
@@ -292,10 +292,6 @@ For `OpenShift`:-
 curl -k -X GET $(oc get -n tekton-hub routes api --template='https://{{ .spec.host }}/v1/categories')
 ```
 
-NOTE: At this moment, there are no resources in the db. Only the categories from hub config are added in the db.
-
-Let's deploy the UI first and then we will add the resources in db.
-
 ## Deploy UI
 
 ### Setup Route or Ingress
@@ -381,17 +377,28 @@ For `OpenShift`:-
 
 Open the URL in a browser.
 
-Note: In UI you won't be able see the resources on homepage as there are not any in the db but you should see Categories on the left side.
+Note: On UI, you should be able to see the resources on homepage and Categories on the left side.
 
 Update your GitHub OAuth created with the UI route in place of `Homepage URL` and `Authorization callback URL`.
 
-## Add resources in DB
+## Update Catalog and Catalog Refresh
 
-1. Login through the Hub UI. Click on `Login` on right corner and then `Sign in with GitHub/Github Enterprise`.
+If you have added and modified catalog in the config file , then you will have to folllow following steps to see resources from catalog on Hub UI
 
+1. Login through the Hub UI. Click on Login on right corner and then Sign in with GitHub/Github Enterprise.
 2. Copy the Hub Token by clicking on the user profile which is at the right corner on the Home Page
+3. Refresh the config file and you need to have `config:refresh` scope.
 
-3. Call the Catalog Refresh API:
+   - To Refresh config file
+
+     ```
+       curl -X POST -H "Authorization: <access-token>" \
+       --header "Content-Type: application/json" \
+       --data '{"force": true} \
+       <api-route>/system/config/refresh
+     ```
+
+4. Call the Catalog Refresh API:
 
    - To refresh a catalog with name
 
@@ -423,7 +430,7 @@ Update your GitHub OAuth created with the UI route in place of `Homepage URL` an
      [{"id":1,"catalogName":"tekton","status":"queued"}]
      ```
 
-4. Refresh your UI, you will be able to see resources.
+5. Refresh your UI, you will be able to see resources.
 
 ## Setup Catalog Refresh CronJob (Optional)
 
@@ -485,7 +492,7 @@ Now, we need to refresh the config. To do that do a POST API call.
 ```
 curl -X POST -H "Authorization: <access-token>" \
     --header "Content-Type: application/json" \
-    --data '{"force": true} \
+    --data '{"force": true}' \
   <api-route>/system/config/refresh
 ```
 

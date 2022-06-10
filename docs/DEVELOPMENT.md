@@ -94,13 +94,11 @@ Wait until the migration completes and logs to show
 
 > DB initialisation successful !!
 
-### Adding GitHub OAuth Configuration
+### Adding GitHub OAuth Configuration (Optional)
 
 Create a GitHub OAuth. You can find the steps to create it [here][gh-oauth] with `Authorization callback URL` as `http://localhost:4200` \
 Create a Gitlab OAuth. You can find the steps to create it [here][gl-oauth] with `Authorization callback URL` as `http://localhost:4200/auth/gitlab/callback` \
 Create a BitBucket OAuth. You can find the steps to create it [here][bb-oauth] with `Authorization callback URL` as `http://localhost:4200`
-
-
 
 After creation, add the OAuth Client ID as \
 OAuth Client ID `GH_CLIENT_ID` and Client Secret as `GH_CLIENT_SECRET` for Github \
