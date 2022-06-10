@@ -7,7 +7,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.4
 	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
 	github.com/fatih/color v1.13.0
-	github.com/go-gormigrate/gormigrate/v2 v2.0.1
+	github.com/go-gormigrate/gormigrate/v2 v2.0.2
 	github.com/go-testfixtures/testfixtures/v3 v3.7.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/gorilla/handlers v1.5.1
@@ -15,7 +15,6 @@ require (
 	github.com/gorilla/sessions v1.2.1
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
 	github.com/ikawaha/goahttpcheck v1.10.0
-	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joho/godotenv v1.4.0
 	github.com/markbates/goth v1.72.0
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
