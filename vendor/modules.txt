@@ -86,7 +86,7 @@ github.com/felixge/httpsnoop
 github.com/fsnotify/fsnotify
 # github.com/ghodss/yaml v1.0.0
 github.com/ghodss/yaml
-# github.com/go-gormigrate/gormigrate/v2 v2.0.1
+# github.com/go-gormigrate/gormigrate/v2 v2.0.2
 ## explicit
 github.com/go-gormigrate/gormigrate/v2
 # github.com/go-kit/log v0.2.0
@@ -233,7 +233,6 @@ github.com/jackc/pgx/v4/stdlib
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
 # github.com/jinzhu/now v1.1.5
-## explicit
 github.com/jinzhu/now
 # github.com/joho/godotenv v1.4.0
 ## explicit
