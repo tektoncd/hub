@@ -25,7 +25,7 @@ import (
 //
 func UsageCommands() string {
 	return `catalog list
-resource (query|list|versions-by-id|by-catalog-kind-name-version|by-catalog-kind-name-version-readme|by-catalog-kind-name-version-yaml|by-version-id|by-catalog-kind-name|by-id)
+resource (query|list|versions-by-id|by-catalog-kind-name-version|by-catalog-kind-name-version-readme|by-catalog-kind-name-version-yaml|by-version-id|by-catalog-kind-name|by-id|get-raw-yaml-by-catalog-kind-name-version)
 `
 }
 
@@ -47,7 +47,7 @@ func UsageExamples() string {
    ]' --platforms '[
       "linux/s390x",
       "linux/amd64"
-   ]' --limit 100 --match "contains"` + "\n" +
+   ]' --limit 100 --match "exact"` + "\n" +
 		""
 }
 
@@ -112,6 +112,12 @@ func ParseEndpoint(
 
 		resourceByIDFlags  = flag.NewFlagSet("by-id", flag.ExitOnError)
 		resourceByIDIDFlag = resourceByIDFlags.String("id", "REQUIRED", "ID of a resource")
+
+		resourceGetRawYamlByCatalogKindNameVersionFlags       = flag.NewFlagSet("get-raw-yaml-by-catalog-kind-name-version", flag.ExitOnError)
+		resourceGetRawYamlByCatalogKindNameVersionCatalogFlag = resourceGetRawYamlByCatalogKindNameVersionFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceGetRawYamlByCatalogKindNameVersionKindFlag    = resourceGetRawYamlByCatalogKindNameVersionFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceGetRawYamlByCatalogKindNameVersionNameFlag    = resourceGetRawYamlByCatalogKindNameVersionFlags.String("name", "REQUIRED", "name of resource")
+		resourceGetRawYamlByCatalogKindNameVersionVersionFlag = resourceGetRawYamlByCatalogKindNameVersionFlags.String("version", "REQUIRED", "version of resource")
 	)
 	catalogFlags.Usage = catalogUsage
 	catalogListFlags.Usage = catalogListUsage
@@ -126,6 +132,7 @@ func ParseEndpoint(
 	resourceByVersionIDFlags.Usage = resourceByVersionIDUsage
 	resourceByCatalogKindNameFlags.Usage = resourceByCatalogKindNameUsage
 	resourceByIDFlags.Usage = resourceByIDUsage
+	resourceGetRawYamlByCatalogKindNameVersionFlags.Usage = resourceGetRawYamlByCatalogKindNameVersionUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -197,6 +204,9 @@ func ParseEndpoint(
 			case "by-id":
 				epf = resourceByIDFlags
 
+			case "get-raw-yaml-by-catalog-kind-name-version":
+				epf = resourceGetRawYamlByCatalogKindNameVersionFlags
+
 			}
 
 		}
@@ -256,6 +266,9 @@ func ParseEndpoint(
 			case "by-id":
 				endpoint = c.ByID()
 				data, err = resourcec.BuildByIDPayload(*resourceByIDIDFlag)
+			case "get-raw-yaml-by-catalog-kind-name-version":
+				endpoint = c.GetRawYamlByCatalogKindNameVersion()
+				data, err = resourcec.BuildGetRawYamlByCatalogKindNameVersionPayload(*resourceGetRawYamlByCatalogKindNameVersionCatalogFlag, *resourceGetRawYamlByCatalogKindNameVersionKindFlag, *resourceGetRawYamlByCatalogKindNameVersionNameFlag, *resourceGetRawYamlByCatalogKindNameVersionVersionFlag)
 			}
 		}
 	}
@@ -305,6 +318,7 @@ COMMAND:
     by-version-id: Find a resource using its version's id
     by-catalog-kind-name: Find resources using name of catalog, resource name and kind of resource
     by-id: Find a resource using it's id
+    get-raw-yaml-by-catalog-kind-name-version: Fetch a raw resource yaml file using the name of catalog, resource name, kind, and version
 
 Additional help:
     %[1]s resource COMMAND --help
@@ -339,7 +353,7 @@ Example:
    ]' --platforms '[
       "linux/s390x",
       "linux/amd64"
-   ]' --limit 100 --match "contains"
+   ]' --limit 100 --match "exact"
 `, os.Args[0])
 }
 
@@ -375,7 +389,7 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    %[1]s resource by-catalog-kind-name-version --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
+    %[1]s resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -403,7 +417,7 @@ Find resource YAML using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    %[1]s resource by-catalog-kind-name-version-yaml --catalog "tektoncd" --kind "pipeline" --name "buildah" --version "0.1"
+    %[1]s resource by-catalog-kind-name-version-yaml --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -428,7 +442,7 @@ Find resources using name of catalog, resource name and kind of resource
     -pipelinesversion STRING: 
 
 Example:
-    %[1]s resource by-catalog-kind-name --catalog "tektoncd" --kind "task" --name "buildah" --pipelinesversion "0.21.0"
+    %[1]s resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah" --pipelinesversion "0.21.0"
 `, os.Args[0])
 }
 
@@ -440,5 +454,19 @@ Find a resource using it's id
 
 Example:
     %[1]s resource by-id --id 1
+`, os.Args[0])
+}
+
+func resourceGetRawYamlByCatalogKindNameVersionUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] resource get-raw-yaml-by-catalog-kind-name-version -catalog STRING -kind STRING -name STRING -version STRING
+
+Fetch a raw resource yaml file using the name of catalog, resource name, kind, and version
+    -catalog STRING: name of catalog
+    -kind STRING: kind of resource
+    -name STRING: name of resource
+    -version STRING: version of resource
+
+Example:
+    %[1]s resource get-raw-yaml-by-catalog-kind-name-version --catalog "tekton" --kind "task" --name "buildah" --version "0.1"
 `, os.Args[0])
 }

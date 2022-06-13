@@ -22,6 +22,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ghodss/yaml"
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/pkg/testutils"
@@ -786,4 +787,32 @@ func TestLatestVersionDeprecationByID_Http(t *testing.T) {
 
 		golden.Assert(t, res, fmt.Sprintf("%s.golden", t.Name()))
 	})
+}
+
+func TestGetYamlByCatalogKindNameVersion_Http(t *testing.T) {
+	os.Setenv("CLONE_BASE_PATH", "testdata/catalog")
+	defer os.Unsetenv("CLONE_BASE_PATH")
+
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	GetYamlByCatalogKindNameVersion_Checker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tkn/0.1/raw").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := ioutil.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		// Check if the yaml is valid
+		err := yaml.Unmarshal(b, &map[string]interface{}{})
+		assert.NoError(t, err)
+	})
+}
+
+func GetYamlByCatalogKindNameVersion_Checker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	checker := goahttpcheck.New()
+	checker.Mount(
+		server.NewGetRawYamlByCatalogKindNameVersionHandler,
+		server.MountGetRawYamlByCatalogKindNameVersionHandler,
+		resource.NewGetRawYamlByCatalogKindNameVersionEndpoint(New(tc)))
+	return checker
 }

@@ -9,6 +9,7 @@ package resource
 
 import (
 	"context"
+	"io"
 
 	resourceviews "github.com/tektoncd/hub/api/v1/gen/resource/views"
 	goa "goa.design/goa/v3/pkg"
@@ -36,6 +37,9 @@ type Service interface {
 	ByCatalogKindName(context.Context, *ByCatalogKindNamePayload) (res *Resource, err error)
 	// Find a resource using it's id
 	ByID(context.Context, *ByIDPayload) (res *Resource, err error)
+	// Fetch a raw resource yaml file using the name of catalog, resource name,
+	// kind, and version
+	GetRawYamlByCatalogKindNameVersion(context.Context, *GetRawYamlByCatalogKindNameVersionPayload) (body io.ReadCloser, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -46,7 +50,7 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [9]string{"Query", "List", "VersionsByID", "ByCatalogKindNameVersion", "ByCatalogKindNameVersionReadme", "ByCatalogKindNameVersionYaml", "ByVersionId", "ByCatalogKindName", "ById"}
+var MethodNames = [10]string{"Query", "List", "VersionsByID", "ByCatalogKindNameVersion", "ByCatalogKindNameVersionReadme", "ByCatalogKindNameVersionYaml", "ByVersionId", "ByCatalogKindName", "ById", "GetRawYamlByCatalogKindNameVersion"}
 
 // ByCatalogKindNamePayload is the payload type of the resource service
 // ByCatalogKindName method.
@@ -131,6 +135,19 @@ type Category struct {
 	ID uint
 	// Name of category
 	Name string
+}
+
+// GetRawYamlByCatalogKindNameVersionPayload is the payload type of the
+// resource service GetRawYamlByCatalogKindNameVersion method.
+type GetRawYamlByCatalogKindNameVersionPayload struct {
+	// name of catalog
+	Catalog string
+	// kind of resource
+	Kind string
+	// name of resource
+	Name string
+	// version of resource
+	Version string
 }
 
 // ListPayload is the payload type of the resource service List method.

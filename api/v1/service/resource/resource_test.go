@@ -323,3 +323,18 @@ func TestCreationRawURLGitlabEnterprise(t *testing.T) {
 	expected := "https://gitlab.myhost.com/org/catalog/-/raw/main/task/name/0.1/name.yaml"
 	assert.Equal(t, expected, rawUrl)
 }
+
+func TestGetYamlByCatalogKindNameVersion(t *testing.T) {
+	os.Setenv("CLONE_BASE_PATH", "testdata/catalog")
+	defer os.Unsetenv("CLONE_BASE_PATH")
+
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceService := New(tc)
+	payload := &resource.GetRawYamlByCatalogKindNameVersionPayload{Catalog: "catalog-official", Kind: "task", Name: "tkn", Version: "0.1"}
+	yamlFile, err := resourceService.GetRawYamlByCatalogKindNameVersion(context.Background(), payload)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, yamlFile)
+}

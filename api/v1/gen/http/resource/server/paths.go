@@ -55,3 +55,8 @@ func ByCatalogKindNameResourcePath(catalog string, kind string, name string) str
 func ByIDResourcePath(id uint) string {
 	return fmt.Sprintf("/v1/resource/%v", id)
 }
+
+// GetRawYamlByCatalogKindNameVersionResourcePath returns the URL path to the resource service GetRawYamlByCatalogKindNameVersion HTTP endpoint.
+func GetRawYamlByCatalogKindNameVersionResourcePath(catalog string, kind string, name string, version string) string {
+	return fmt.Sprintf("/v1/resource/%v/%v/%v/%v/raw", catalog, kind, name, version)
+}

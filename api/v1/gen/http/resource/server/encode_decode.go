@@ -790,6 +790,87 @@ func EncodeByIDError(encoder func(context.Context, http.ResponseWriter) goahttp.
 	}
 }
 
+// EncodeGetRawYamlByCatalogKindNameVersionResponse returns an encoder for
+// responses returned by the resource GetRawYamlByCatalogKindNameVersion
+// endpoint.
+func EncodeGetRawYamlByCatalogKindNameVersionResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		w.WriteHeader(http.StatusOK)
+		return nil
+	}
+}
+
+// DecodeGetRawYamlByCatalogKindNameVersionRequest returns a decoder for
+// requests sent to the resource GetRawYamlByCatalogKindNameVersion endpoint.
+func DecodeGetRawYamlByCatalogKindNameVersionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			catalog string
+			kind    string
+			name    string
+			version string
+			err     error
+
+			params = mux.Vars(r)
+		)
+		catalog = params["catalog"]
+		kind = params["kind"]
+		if !(kind == "task" || kind == "pipeline") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []interface{}{"task", "pipeline"}))
+		}
+		name = params["name"]
+		version = params["version"]
+		if err != nil {
+			return nil, err
+		}
+		payload := NewGetRawYamlByCatalogKindNameVersionPayload(catalog, kind, name, version)
+
+		return payload, nil
+	}
+}
+
+// EncodeGetRawYamlByCatalogKindNameVersionError returns an encoder for errors
+// returned by the GetRawYamlByCatalogKindNameVersion resource endpoint.
+func EncodeGetRawYamlByCatalogKindNameVersionError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en ErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "internal-error":
+			var res *goa.ServiceError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewGetRawYamlByCatalogKindNameVersionInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.ErrorName())
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		case "not-found":
+			var res *goa.ServiceError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewGetRawYamlByCatalogKindNameVersionNotFoundResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.ErrorName())
+			w.WriteHeader(http.StatusNotFound)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersion
 // builds a value of type *ResourceDataResponseBodyWithoutVersion from a value
 // of type *resourceviews.ResourceDataView.
