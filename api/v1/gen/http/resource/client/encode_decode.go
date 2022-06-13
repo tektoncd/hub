@@ -981,6 +981,97 @@ func DecodeByIDResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 	}
 }
 
+// BuildGetRawYamlByCatalogKindNameVersionRequest instantiates a HTTP request
+// object with method and path set to call the "resource" service
+// "GetRawYamlByCatalogKindNameVersion" endpoint
+func (c *Client) BuildGetRawYamlByCatalogKindNameVersionRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		catalog string
+		kind    string
+		name    string
+		version string
+	)
+	{
+		p, ok := v.(*resource.GetRawYamlByCatalogKindNameVersionPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("resource", "GetRawYamlByCatalogKindNameVersion", "*resource.GetRawYamlByCatalogKindNameVersionPayload", v)
+		}
+		catalog = p.Catalog
+		kind = p.Kind
+		name = p.Name
+		version = p.Version
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetRawYamlByCatalogKindNameVersionResourcePath(catalog, kind, name, version)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("resource", "GetRawYamlByCatalogKindNameVersion", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeGetRawYamlByCatalogKindNameVersionResponse returns a decoder for
+// responses returned by the resource GetRawYamlByCatalogKindNameVersion
+// endpoint. restoreBody controls whether the response body should be restored
+// after having been read.
+// DecodeGetRawYamlByCatalogKindNameVersionResponse may return the following
+// errors:
+//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//	- "not-found" (type *goa.ServiceError): http.StatusNotFound
+//	- error: internal error
+func DecodeGetRawYamlByCatalogKindNameVersionResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			return nil, nil
+		case http.StatusInternalServerError:
+			var (
+				body GetRawYamlByCatalogKindNameVersionInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "GetRawYamlByCatalogKindNameVersion", err)
+			}
+			err = ValidateGetRawYamlByCatalogKindNameVersionInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "GetRawYamlByCatalogKindNameVersion", err)
+			}
+			return nil, NewGetRawYamlByCatalogKindNameVersionInternalError(&body)
+		case http.StatusNotFound:
+			var (
+				body GetRawYamlByCatalogKindNameVersionNotFoundResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("resource", "GetRawYamlByCatalogKindNameVersion", err)
+			}
+			err = ValidateGetRawYamlByCatalogKindNameVersionNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("resource", "GetRawYamlByCatalogKindNameVersion", err)
+			}
+			return nil, NewGetRawYamlByCatalogKindNameVersionNotFound(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("resource", "GetRawYamlByCatalogKindNameVersion", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalResourceDataResponseBodyToResourceviewsResourceDataView builds a
 // value of type *resourceviews.ResourceDataView from a value of type
 // *ResourceDataResponseBody.

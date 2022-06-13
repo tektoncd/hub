@@ -32,16 +32,6 @@ paths:
                                       provider: github
                                       type: community
                                       url: https://github.com/tektoncd/hub
-                                    - id: 1
-                                      name: Tekton
-                                      provider: github
-                                      type: community
-                                      url: https://github.com/tektoncd/hub
-                                    - id: 1
-                                      name: Tekton
-                                      provider: github
-                                      type: community
-                                      url: https://github.com/tektoncd/hub
                 "500":
                     description: 'internal-error: Internal Server Error'
                     content:
@@ -74,7 +64,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Rerum ipsa voluptas fuga.
+                        example: Sed dolorem qui ea.
                     description: Catalogs of resource to filter by
                     example:
                         - tekton
@@ -90,7 +80,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Distinctio non sint assumenda non.
+                        example: Et exercitationem molestias id eum illum rerum.
                     description: Category associated with a resource to filter by
                     example:
                         - build
@@ -106,7 +96,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Ratione eos sunt.
+                        example: Nihil sit officia harum sint beatae sit.
                     description: Kinds of resource to filter by
                     example:
                         - task
@@ -122,7 +112,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Sed dolorem qui ea.
+                        example: Et velit ipsam magnam tempore nobis.
                     description: Tags associated with a resource to filter by
                     example:
                         - image
@@ -138,7 +128,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Et exercitationem molestias id eum illum rerum.
+                        example: Id suscipit est voluptatem.
                     description: Platforms associated with a resource to filter by
                     example:
                         - linux/s390x
@@ -164,11 +154,11 @@ paths:
                     type: string
                     description: Strategy used to find matching resources
                     default: contains
-                    example: exact
+                    example: contains
                     enum:
                         - exact
                         - contains
-                  example: contains
+                  example: exact
             responses:
                 "200":
                     description: OK response.
@@ -300,11 +290,11 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: pipeline
+                    example: task
                     enum:
                         - task
                         - pipeline
-                  example: task
+                  example: pipeline
                 - name: name
                   in: path
                   description: Name of resource
@@ -394,7 +384,7 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: task
+                    example: pipeline
                     enum:
                         - task
                         - pipeline
@@ -456,6 +446,68 @@ paths:
                                     updatedAt: 2020-01-01 12:00:00 +0000 UTC
                                     version: "0.1"
                                     webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                "404":
+                    description: 'not-found: Resource Not Found Error'
+                    content:
+                        application/vnd.goa.error:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                "500":
+                    description: 'internal-error: Internal Server Error'
+                    content:
+                        application/vnd.goa.error:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+    /v1/resource/{catalog}/{kind}/{name}/{version}/raw:
+        get:
+            tags:
+                - resource
+            summary: GetRawYamlByCatalogKindNameVersion resource
+            description: Fetch a raw resource yaml file using the name of catalog, resource name, kind, and version
+            operationId: resource#GetRawYamlByCatalogKindNameVersion
+            parameters:
+                - name: catalog
+                  in: path
+                  description: name of catalog
+                  required: true
+                  schema:
+                    type: string
+                    description: name of catalog
+                    example: tekton
+                  example: tekton
+                - name: kind
+                  in: path
+                  description: kind of resource
+                  required: true
+                  schema:
+                    type: string
+                    description: kind of resource
+                    example: pipeline
+                    enum:
+                        - task
+                        - pipeline
+                  example: pipeline
+                - name: name
+                  in: path
+                  description: name of resource
+                  required: true
+                  schema:
+                    type: string
+                    description: name of resource
+                    example: buildah
+                  example: buildah
+                - name: version
+                  in: path
+                  description: version of resource
+                  required: true
+                  schema:
+                    type: string
+                    description: version of resource
+                    example: "0.1"
+                  example: "0.1"
+            responses:
+                "200":
+                    description: OK response.
                 "404":
                     description: 'not-found: Resource Not Found Error'
                     content:
@@ -985,7 +1037,7 @@ components:
                 fault:
                     type: boolean
                     description: Is the error a server-side fault?
-                    example: true
+                    example: false
                 id:
                     type: string
                     description: ID is a unique identifier for this particular occurrence of the problem.
@@ -1005,7 +1057,7 @@ components:
                 timeout:
                     type: boolean
                     description: Is the error a timeout?
-                    example: true
+                    example: false
             description: Internal Server Error
             example:
                 id: 3F1FKVRR
@@ -1038,11 +1090,6 @@ components:
                           url: https://github.com/tektoncd/hub
             example:
                 data:
-                    - id: 1
-                      name: Tekton
-                      provider: github
-                      type: community
-                      url: https://github.com/tektoncd/hub
                     - id: 1
                       name: Tekton
                       provider: github

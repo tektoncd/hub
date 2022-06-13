@@ -15,8 +15,10 @@
 package resource
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/url"
 	"strings"
@@ -500,4 +502,19 @@ func versionInfoFromVersion(v model.ResourceVersion) *resource.ResourceVersion {
 	// the required info
 	v.Resource.Versions = []model.ResourceVersion{v}
 	return versionInfoFromResource(v.Resource, "")
+}
+
+// Fetch a raw resource yaml file using the name of catalog, resource name, kind, and version
+func (s *service) GetRawYamlByCatalogKindNameVersion(ctx context.Context, p *resource.GetRawYamlByCatalogKindNameVersionPayload) (io.ReadCloser, error) {
+	s.Logger(ctx).Info(fmt.Sprintf("Fetching YAML for resource %s", p.Name))
+
+	yamlPath := fmt.Sprintf("%s/%s/%s/%s/%s", s.CatalogClonePath(), strings.ToLower(p.Catalog), strings.ToLower(p.Kind), p.Name, p.Version)
+	yamlPath = fmt.Sprintf("%s/%s.yaml", yamlPath, p.Name)
+
+	content, err := ioutil.ReadFile(yamlPath)
+	if err != nil {
+		return nil, resource.MakeNotFound(fmt.Errorf("resource not found"))
+	}
+
+	return ioutil.NopCloser(bytes.NewBuffer(content)), nil
 }

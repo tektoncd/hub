@@ -280,4 +280,34 @@ var _ = Service("resource", func() {
 		})
 	})
 
+	Method("GetRawYamlByCatalogKindNameVersion", func() {
+		Description("Fetch a raw resource yaml file using the name of catalog, resource name, kind, and version")
+
+		Payload(func() {
+			Attribute("catalog", String, "name of catalog", func() {
+				Example("catalog", "tekton")
+			})
+			Attribute("kind", String, "kind of resource", func() {
+				Enum("task", "pipeline")
+			})
+			Attribute("name", String, "name of resource", func() {
+				Example("name", "buildah")
+			})
+			Attribute("version", String, "version of resource", func() {
+				Example("version", "0.1")
+			})
+
+			Required("catalog", "kind", "name", "version")
+		})
+
+		HTTP(func() {
+			GET("/resource/{catalog}/{kind}/{name}/{version}/raw")
+
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
+			SkipResponseBodyEncodeDecode()
+		})
+	})
+
 })
