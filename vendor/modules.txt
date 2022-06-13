@@ -5,7 +5,7 @@ contrib.go.opencensus.io/exporter/prometheus
 # github.com/ActiveState/vt10x v1.3.1
 ## explicit
 github.com/ActiveState/vt10x
-# github.com/AlecAivazis/survey/v2 v2.3.4
+# github.com/AlecAivazis/survey/v2 v2.3.5
 ## explicit
 github.com/AlecAivazis/survey/v2
 github.com/AlecAivazis/survey/v2/core
