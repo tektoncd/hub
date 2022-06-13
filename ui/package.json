@@ -64,7 +64,7 @@
     "@typescript-eslint/parser": "4.0.1",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
-    "enzyme-to-json": "^3.5.0",
+    "enzyme-to-json": "^3.6.2",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-react": "^1.1.7",
     "eslint-plugin-prettier": "^4.0.0",
