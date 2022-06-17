@@ -41,7 +41,7 @@ const Header: React.FC = observer(() => {
   const headerTools = (
     <PageHeaderTools>
       <Grid>
-        <GridItem span={10}>
+        <GridItem span={AUTH_BASE_URL !== '' ? 10 : 11}>
           <Search />
         </GridItem>
         <GridItem span={1} onClick={() => setIsModalOpen(true)} className="hub-header-search-hint">
@@ -50,7 +50,7 @@ const Header: React.FC = observer(() => {
       </Grid>
       {user.isAuthenticated && user.refreshTokenInfo.expiresAt * 1000 > global.Date.now() ? (
         <UserProfile />
-      ) : (
+      ) : AUTH_BASE_URL !== '' ? (
         <Text
           style={{ textDecoration: 'none' }}
           component={TextVariants.a}
@@ -60,7 +60,7 @@ const Header: React.FC = observer(() => {
             <b>Login</b>
           </span>
         </Text>
-      )}
+      ) : null}
     </PageHeaderTools>
   );
 
