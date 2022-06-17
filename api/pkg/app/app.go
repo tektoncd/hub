@@ -376,6 +376,12 @@ func jwtConfig() (*JWTConfig, error) {
 
 	conf := &JWTConfig{}
 
+	// If AUTH_BASE_URL key is empty then skips to read the JWTConfig
+	authBaseURL := viper.GetString("AUTH_BASE_URL")
+	if authBaseURL == "" && Environment() != "test" {
+		return conf, nil
+	}
+
 	conf.SigningKey = viper.GetString("JWT_SIGNING_KEY")
 	if conf.SigningKey == "" {
 		return nil, fmt.Errorf("no JWT_SIGNING_KEY environment variable defined")
@@ -397,7 +403,6 @@ func jwtConfig() (*JWTConfig, error) {
 	if conf.RefreshExpiresIn, err = computeDuration(refreshExpiresIn); err != nil {
 		return nil, fmt.Errorf("invalid time format specified for REFRESH_JWT_EXPIRES_IN: %v", err)
 	}
-
 	return conf, nil
 }
 
