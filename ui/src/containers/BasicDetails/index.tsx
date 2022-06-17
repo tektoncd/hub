@@ -35,6 +35,7 @@ import TooltipDisplay from '../../components/TooltipDisplay';
 import Rating from '../Rating';
 import { titleCase } from '../../common/titlecase';
 import { assert } from '../../store/utils';
+import { AUTH_BASE_URL } from '../../config/constants';
 import './BasicDetails.css';
 
 const BasicDetails: React.FC = () => {
@@ -190,8 +191,10 @@ const BasicDetails: React.FC = () => {
                   <GridItem span={1}>
                     <Text> {resource.rating}</Text>
                   </GridItem>
-                  <GridItem className="hub-details-rating__margin">
-                    <Rating />
+                  <GridItem
+                    className={`${AUTH_BASE_URL !== '' ? 'hub-details-rating__margin' : ''}`}
+                  >
+                    {AUTH_BASE_URL !== '' ? <Rating /> : null}
                   </GridItem>
                   <GridItem className="hub-details-rating__margin">
                     <Button
