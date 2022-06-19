@@ -26,7 +26,10 @@ spec:
           image: quay.io/tekton-hub/db-migration
           env:
             - name: POSTGRES_HOST
-              value: tekton-hub-db
+              valueFrom:
+                secretKeyRef:
+                  name: tekton-hub-db
+                  key: POSTGRES_HOST
             - name: POSTGRES_PORT
               valueFrom:
                 secretKeyRef:
