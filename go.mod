@@ -32,7 +32,7 @@ require (
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gorm.io/driver/postgres v1.3.7
 	gorm.io/gorm v1.23.6
-	gotest.tools/v3 v3.2.0
+	gotest.tools/v3 v3.3.0
 	k8s.io/apimachinery v0.23.4
 	k8s.io/client-go v1.5.2
 	knative.dev/pkg v0.0.0-20220131144930-f4b57aef0006
