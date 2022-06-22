@@ -21,7 +21,6 @@ import (
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
-	catalogsvc "github.com/tektoncd/hub/api/pkg/service/catalog"
 	"gorm.io/gorm"
 )
 
@@ -236,14 +235,13 @@ func addApiServerUser(db *gorm.DB, log *log.Logger) error {
 
 // Check if apiserver account exists or not
 // If does not exists, it creates apiserver account
-func checkIfApiServerAccountExists(db *gorm.DB, logger *log.Logger) error {
+func (i *Initializer) CreateApiServerAccount(db *gorm.DB, logger *log.Logger) error {
 
 	q := db.Model(&model.Account{}).Where("user_name = ?", apiserverUserName)
-	apiAccount := model.Account{}
 
-	if err := q.First(&apiAccount).Error; err == gorm.ErrRecordNotFound {
+	if err := q.First(&model.Account{}).Error; err == gorm.ErrRecordNotFound {
 
-		logger.Infof("user %s account not found,creating account for apiserver", "apiserver")
+		logger.Infof("user %s account not found, creating account for apiserver", "apiserver")
 
 		if err := addApiServerUser(db, logger); err != nil {
 			logger.Error(err)
@@ -251,34 +249,5 @@ func checkIfApiServerAccountExists(db *gorm.DB, logger *log.Logger) error {
 		}
 	}
 
-	return nil
-}
-
-// AddResources func creates an apiserver account and adds resources from catalog to database
-func (i *Initializer) AddResources(db *gorm.DB, api app.BaseConfig, logger *log.Logger) error {
-
-	if err := checkIfApiServerAccountExists(db, logger); err != nil {
-		logger.Error(err)
-		return err
-	}
-
-	catalogs := []model.Catalog{}
-	db.Find(&catalogs)
-
-	syncer := catalogsvc.NewSyncer(api, "")
-
-	for _, c := range catalogs {
-		res := []model.Resource{}
-		db.Model(model.Resource{}).Where("catalog_id = ?", c.ID).Take(&res)
-
-		// If there is no resource from catalog then Enqueue the catalog to syncer
-		if len(res) == 0 {
-			_, err := syncer.Enqueue(uint(apiserverID), c.ID)
-			if err != nil {
-				logger.Error(err)
-				return err
-			}
-		}
-	}
 	return nil
 }
