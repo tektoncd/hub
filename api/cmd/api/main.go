@@ -92,9 +92,9 @@ func main() {
 		logger.Fatalf("Failed to populate table: %v", err)
 	}
 
-	// Add resources to database
+	// Add apiserver-bot user account
 	db := initializer.DB(context.Background())
-	if err := initializer.AddResources(db, api, logger); err != nil {
+	if err := initializer.CreateApiServerAccount(db, logger); err != nil {
 		logger.Fatalf("Failed to add resources: %v", err)
 	}
 

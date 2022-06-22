@@ -16,9 +16,11 @@ package catalog
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
+	"github.com/go-co-op/gocron"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/git"
@@ -64,6 +66,7 @@ func (s *syncer) Enqueue(userID, catalogID uint) (*model.SyncJob, error) {
 	if err := s.db.Where(queued).Or(running).FirstOrCreate(&newJob).Error; err != nil {
 		return nil, internalError
 	}
+
 	s.wakeUp()
 
 	return &newJob, nil
@@ -108,8 +111,66 @@ func (s *syncer) Run() {
 		}
 	}()
 
+	if err := s.SyncCatalogs(); err != nil {
+		s.logger.Error(err)
+	}
+
 	s.wakeUp()
 	s.running = true
+}
+
+func (s *syncer) enqueueCatalog(catalogs []model.Catalog, apiServerBot model.Account) error {
+	for _, c := range catalogs {
+		_, err := s.Enqueue(apiServerBot.UserID, c.ID)
+		if err != nil {
+			s.logger.Error(err)
+			return err
+		}
+	}
+	return nil
+
+}
+
+// Sync catalogs on sheduled interval
+func (s *syncer) SyncCatalogs() error {
+
+	catalogs := []model.Catalog{}
+	s.db.Find(&catalogs)
+
+	apiserverBot := model.Account{}
+	user := s.db.Model(&model.Account{}).Where("user_name = ?", "apiserver-bot")
+
+	if err := user.First(&apiserverBot).Error; err == gorm.ErrRecordNotFound {
+		s.logger.Error("apiserver-bot account is not found", err)
+	}
+
+	getCatalogRefreshInterval, err := app.ComputeDuration(os.Getenv("CATALOG_REFRESH_INTERVAL"))
+	if err != nil {
+		s.logger.Error(err)
+	}
+
+	// Checks catalog refresh interval time and do catalog refresh only when it's valid
+	if getCatalogRefreshInterval.Seconds() != 0 {
+		// creates cron job
+		cron := gocron.NewScheduler(time.UTC)
+		_, err := cron.Every(getCatalogRefreshInterval).Do(func() error {
+			return s.enqueueCatalog(catalogs, apiserverBot)
+		})
+
+		if err != nil {
+			s.logger.Error(err)
+		}
+		// Starts the cron job
+		cron.StartAsync()
+	} else {
+		s.logger.Infof("Skips CronJob Setup and does catalog refresh once")
+		err := s.enqueueCatalog(catalogs, apiserverBot)
+		if err != nil {
+			s.logger.Error(err)
+			return err
+		}
+	}
+	return nil
 }
 
 func (s *syncer) Stop() {
@@ -169,8 +230,6 @@ func (s *syncer) Process() error {
 		log.Error(err)
 		return err
 	}
-
-	fmt.Println("dddd", s.clonePath)
 
 	fetchSpec := git.FetchSpec{URL: catalog.URL, Revision: catalog.Revision, Path: s.clonePath, SSHUrl: catalog.SSHURL, CatalogName: catalog.Name}
 	repo, err := s.git.Fetch(fetchSpec)

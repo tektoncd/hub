@@ -392,7 +392,7 @@ func jwtConfig() (*JWTConfig, error) {
 		return nil, fmt.Errorf("no ACCESS_JWT_EXPIRES_IN environment variable defined")
 	}
 	var err error
-	if conf.AccessExpiresIn, err = computeDuration(accessExpiresIn); err != nil {
+	if conf.AccessExpiresIn, err = ComputeDuration(accessExpiresIn); err != nil {
 		return nil, fmt.Errorf("invalid time format specified for ACCESS_JWT_EXPIRES_IN: %v", err)
 	}
 
@@ -400,13 +400,13 @@ func jwtConfig() (*JWTConfig, error) {
 	if refreshExpiresIn == "" {
 		return nil, fmt.Errorf("no REFRESH_JWT_EXPIRES_IN environment variable defined")
 	}
-	if conf.RefreshExpiresIn, err = computeDuration(refreshExpiresIn); err != nil {
+	if conf.RefreshExpiresIn, err = ComputeDuration(refreshExpiresIn); err != nil {
 		return nil, fmt.Errorf("invalid time format specified for REFRESH_JWT_EXPIRES_IN: %v", err)
 	}
 	return conf, nil
 }
 
-func computeDuration(dur string) (time.Duration, error) {
+func ComputeDuration(dur string) (time.Duration, error) {
 	switch true {
 	case strings.Contains(dur, "d"):
 		days, err := strconv.Atoi(dur[:len(dur)-1])

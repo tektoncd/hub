@@ -22,13 +22,13 @@ import (
 
 func TestComputeDuration(t *testing.T) {
 	duration := "5d"
-	dur, err := computeDuration(duration)
+	dur, err := ComputeDuration(duration)
 	assert.NoError(t, err)
 	assert.Equal(t, dur.String(), "120h0m0s")
 }
 
 func TestComputeDurationError(t *testing.T) {
 	duration := "5M"
-	_, err := computeDuration(duration)
+	_, err := ComputeDuration(duration)
 	assert.Equal(t, err.Error(), "JWT doesn't support the duration specified 5M. \nSupported formats are w(weeks), d(days), h(hours), m(min), s(sec)")
 }
