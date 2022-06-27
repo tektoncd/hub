@@ -14,6 +14,7 @@
   - [Update UI Image](#update-ui-image)
   - [Setup Ingress/Route](#setup-route-or-ingress)
 - [Update Catalog and Catalog Refresh](#update-catalog-and-catalog-refresh)
+- [Schedule Catalog Refresh On an Interval](#schedule-catalog-refresh-on-an-interval)
 - [Setup Catalog Refresh CronJob](#setup-catalog-refresh-cronjob)
 - [Adding New Users in Config](#adding-new-users-in-config)
 - [Deploying on Disconnected Cluster](#deploying-on-disconnected)
@@ -234,9 +235,29 @@ metadata:
     app: tekton-hub-api
 data:
   CONFIG_FILE_URL: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml ## Change the file URL here
+  CATALOG_REFRESH_INTERVAL: 30m ## change the catalog refresh interval here
 ```
 
 All users have default scopes `rating:read` and `rating:write`. Once user get login to Hub, they get the appropriate scopes which allows them to rate the resource
+
+### Schedule Catalog Refresh On an Interval
+
+- Default Catalog refresh interval time is 30 minutes. After every 30 minutes catalog resources in the hub db would be refreshed. If you want to change catalog refresh interval, update the `CATALOG_REFRESH_INTERVAL` in `tekton-hub-api` configmap with any one of these supported time units
+As(A seconds), Bm(B minutes) Ch(C hours), Dd(D days) and Ew(E weeks).
+
+- If you want to skip automate catalog refresh, keep `CATALOG_REFRESH_INTERVAL` as empty or `0`. Negative value is also not supported.
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tekton-hub-api
+  labels:
+    app: tekton-hub-api
+data:
+  CONFIG_FILE_URL: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml
+  CATALOG_REFRESH_INTERVAL: 30m ## change the catalog refresh interval here
+```
 
 **WARN** : Make sure you have updated Hub config before starting the api server
 
