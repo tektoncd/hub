@@ -29,13 +29,13 @@ spec:
         app: tekton-hub-api
     spec:
       volumes:
-      - name: catalog-source
-        persistentVolumeClaim:
-          claimName: tekton-hub-api
-      - name: ssh-creds
-        secret:
-          secretName: tekton-hub-api-ssh-crds
-          optional: true
+        - name: catalog-source
+          persistentVolumeClaim:
+            claimName: tekton-hub-api
+        - name: ssh-creds
+          secret:
+            secretName: tekton-hub-api-ssh-crds
+            optional: true
       securityContext:
         fsGroup: 101
       containers:
@@ -49,10 +49,10 @@ spec:
               cpu: 500m
               memory: 500Mi
           volumeMounts:
-          - name: catalog-source
-            mountPath: "/tmp/catalog"
-          - name: ssh-creds
-            mountPath: "/home/hub/.ssh"
+            - name: catalog-source
+              mountPath: "/tmp/catalog"
+            - name: ssh-creds
+              mountPath: "/home/hub/.ssh"
           ports:
             - containerPort: 8000
             - containerPort: 4200
@@ -107,6 +107,11 @@ spec:
                 configMapKeyRef:
                   name: tekton-hub-api
                   key: CONFIG_FILE_URL
+            - name: CATALOG_REFRESH_INTERVAL
+              valueFrom:
+                configMapKeyRef:
+                  name: tekton-hub-api
+                  key: CATALOG_REFRESH_INTERVAL
             - name: GH_CLIENT_ID
               valueFrom:
                 secretKeyRef:
