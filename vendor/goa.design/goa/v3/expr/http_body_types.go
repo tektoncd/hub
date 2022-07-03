@@ -85,7 +85,7 @@ func httpRequestBody(a *HTTPEndpointExpr) *AttributeExpr {
 		return unionToObject(payload, name, suffix, a.Service.Name())
 	}
 
-	// 2. If Payload is not an objectthen check whether there are
+	// 2. If Payload is not an object then check whether there are
 	// params, cookies or headers defined and if so return empty type
 	// (payload encoded in request params or headers) otherwise return
 	// payload type (payload encoded in request body).
@@ -297,15 +297,16 @@ func unionToObject(att *AttributeExpr, name, suffix, svcName string) *AttributeE
 		names[i] = nat.Attribute.Type.Name()
 		vals[i] = fmt.Sprintf("- %q", nat.Attribute.Type.Name())
 	}
-	obj := Object([]*NamedAttributeExpr{
-		{"Type", &AttributeExpr{
+	obj := Object([]*NamedAttributeExpr{{
+		"Type", &AttributeExpr{
 			Type:        String,
 			Description: "Union type name, one of:\n" + strings.Join(vals, "\n"),
 			Validation:  &ValidationExpr{Values: names},
-		}},
-		{"Value", &AttributeExpr{
-			Type:        Any,
-			Description: "Union value, type must be one of service package types listed above",
+		}}, {
+		"Value", &AttributeExpr{
+			Type:         String,
+			Description:  "JSON formatted union value",
+			UserExamples: []*ExampleExpr{{Value: `"JSON"`}},
 		}},
 	})
 	uatt := &AttributeExpr{
