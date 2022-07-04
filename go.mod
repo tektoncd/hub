@@ -24,8 +24,8 @@ require (
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.0
-	github.com/tektoncd/pipeline v0.34.1
-	github.com/tektoncd/plumbing v0.0.0-20211012143332-c7cc43d9bc0c
+	github.com/tektoncd/pipeline v0.37.1
+	github.com/tektoncd/plumbing v0.0.0-20220329085922-d765a5cba75f
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/zap v1.21.0
 	goa.design/goa/v3 v3.7.10
@@ -35,12 +35,7 @@ require (
 	gorm.io/driver/postgres v1.3.7
 	gorm.io/gorm v1.23.7
 	gotest.tools/v3 v3.3.0
-	k8s.io/apimachinery v0.23.4
-	k8s.io/client-go v1.5.2
-	knative.dev/pkg v0.0.0-20220131144930-f4b57aef0006
-)
-
-replace (
-	k8s.io/apimachinery => k8s.io/apimachinery v0.22.5
-	k8s.io/client-go => k8s.io/client-go v0.22.5
+	k8s.io/apimachinery v0.23.5
+	k8s.io/client-go v0.23.5
+	knative.dev/pkg v0.0.0-20220329144915-0a1ec2e0d46c
 )
