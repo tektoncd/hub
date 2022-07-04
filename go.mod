@@ -16,7 +16,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/sessions v1.2.1
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
-	github.com/ikawaha/goahttpcheck v1.11.0
+	github.com/ikawaha/goahttpcheck v1.11.1
 	github.com/joho/godotenv v1.4.0
 	github.com/markbates/goth v1.72.0
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect

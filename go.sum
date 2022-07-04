@@ -937,10 +937,10 @@ github.com/hudl/fargo v1.4.0/go.mod h1:9Ai6uvFy5fQNq6VPKtg+Ceq1+eTY4nKUlR2JElEOc
 github.com/iancoleman/strcase v0.2.0/go.mod h1:iwCmte+B7n89clKwxIoIXy/HfoL7AsD47ZCWhYzw7ho=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
-github.com/ikawaha/goahttpcheck v1.11.0 h1:4w8BjDWUheJisN6/8fZnAJURxBFWitTmNcxsNKSB438=
-github.com/ikawaha/goahttpcheck v1.11.0/go.mod h1:udznR5JvQou5+jCULJ5wokn21F91R+4x2xoe8bRjyLA=
-github.com/ikawaha/httpcheck v1.6.1 h1:aXICzxJvSMIvOCGyVzHVbNCa4RzFgepbJu7bqc1Lz1o=
-github.com/ikawaha/httpcheck v1.6.1/go.mod h1:kJJtG6w4Zx+BT7vIXP8NzUN6j10NhA/b/Fo1U3559hE=
+github.com/ikawaha/goahttpcheck v1.11.1 h1:wPwNXlM0IT3wA0Gu7G35FSXvhjkRBCejxegre8syb0g=
+github.com/ikawaha/goahttpcheck v1.11.1/go.mod h1:tRk0J467EFbO1FrBuDoaGRRRmi2unJGHo+jNeqZHAoE=
+github.com/ikawaha/httpcheck v1.6.2 h1:tJWXjI34m+M6yQF1aVVfrjYgRscB4EDkWZFvQjH4Pzc=
+github.com/ikawaha/httpcheck v1.6.2/go.mod h1:J50TcJysmqwDOVx85SuhGamUIblNHRxgNIFZj2FPHAY=
 github.com/imdario/mergo v0.3.4/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/imdario/mergo v0.3.5/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/imdario/mergo v0.3.8/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
@@ -1549,6 +1549,7 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.2/go.mod h1:R6va5+xMeoiuVRoj+gSkQ7d3FALtqAAGI1FQKckRals=
+github.com/stretchr/testify v1.7.3/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/stretchr/testify v1.8.0 h1:pSgiaMZlXftHpm5L7V1+rVB+AZJydKsMxsQBIJw4PKk=
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
