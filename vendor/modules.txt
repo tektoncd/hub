@@ -106,7 +106,7 @@ github.com/go-openapi/jsonpointer
 github.com/go-openapi/jsonreference
 # github.com/go-openapi/swag v0.19.15
 github.com/go-openapi/swag
-# github.com/go-testfixtures/testfixtures/v3 v3.7.0
+# github.com/go-testfixtures/testfixtures/v3 v3.8.0
 ## explicit
 github.com/go-testfixtures/testfixtures/v3
 # github.com/gogo/protobuf v1.3.2
