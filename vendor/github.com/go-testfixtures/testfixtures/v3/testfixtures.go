@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
@@ -14,7 +14,7 @@ import (
 	"text/template"
 	"time"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // Loader is the responsible to loading fixtures.
@@ -32,6 +32,8 @@ type Loader struct {
 	templateRightDelim string
 	templateOptions    []string
 	templateData       interface{}
+
+	fs fs.FS
 }
 
 type fixtureFile struct {
@@ -60,6 +62,7 @@ func New(options ...func(*Loader) error) (*Loader, error) {
 		templateLeftDelim:  "{{",
 		templateRightDelim: "}}",
 		templateOptions:    []string{"missingkey=zero"},
+		fs:                 defaultFS{},
 	}
 
 	for _, option := range options {
@@ -83,6 +86,17 @@ func New(options ...func(*Loader) error) (*Loader, error) {
 	}
 
 	return l, nil
+}
+
+// FS sets other fs.FS implementation
+//
+// Example embed.FS
+// By default usage os package implementation
+func FS(fs fs.FS) func(*Loader) error {
+	return func(l *Loader) error {
+		l.fs = fs
+		return nil
+	}
 }
 
 // Database sets an existing sql.DB instant to Loader.
@@ -437,7 +451,7 @@ func (l *Loader) buildInterfacesSlice(records interface{}) ([]interface{}, error
 	switch records := records.(type) {
 	case []interface{}:
 		return records, nil
-	case map[interface{}]interface{}:
+	case map[string]interface{}:
 		var result []interface{}
 		for _, record := range records {
 			result = append(result, record)
@@ -463,7 +477,7 @@ func (l *Loader) buildInsertSQLs() error {
 		f.insertSQLs = make([]insertSQL, 0, len(result))
 
 		for _, record := range result {
-			recordMap, ok := record.(map[interface{}]interface{})
+			recordMap, ok := record.(map[string]interface{})
 			if !ok {
 				return fmt.Errorf("testfixtures: could not cast record: not a map[interface{}]interface{}")
 			}
@@ -491,20 +505,14 @@ func (f *fixtureFile) delete(tx *sql.Tx, h helper) error {
 	return nil
 }
 
-func (l *Loader) buildInsertSQL(f *fixtureFile, record map[interface{}]interface{}) (sqlStr string, values []interface{}, err error) {
+func (l *Loader) buildInsertSQL(f *fixtureFile, record map[string]interface{}) (sqlStr string, values []interface{}, err error) {
 	var (
 		sqlColumns = make([]string, 0, len(record))
 		sqlValues  = make([]string, 0, len(record))
 		i          = 1
 	)
 	for key, value := range record {
-		keyStr, ok := key.(string)
-		if !ok {
-			err = fmt.Errorf("testfixtures: record map key is not a string")
-			return
-		}
-
-		sqlColumns = append(sqlColumns, l.helper.quoteKeyword(keyStr))
+		sqlColumns = append(sqlColumns, l.helper.quoteKeyword(key))
 
 		// if string, try convert to SQL or time
 		// if map or array, convert to json
@@ -519,7 +527,7 @@ func (l *Loader) buildInsertSQL(f *fixtureFile, record map[interface{}]interface
 			} else if t, err := l.tryStrToDate(v); err == nil {
 				value = t
 			}
-		case []interface{}, map[interface{}]interface{}:
+		case []interface{}, map[string]interface{}:
 			var bytes []byte
 			bytes, err = json.Marshal(recursiveToJSON(v))
 			if err != nil {
@@ -551,7 +559,7 @@ func (l *Loader) buildInsertSQL(f *fixtureFile, record map[interface{}]interface
 }
 
 func (l *Loader) fixturesFromDir(dir string) ([]*fixtureFile, error) {
-	fileinfos, err := ioutil.ReadDir(dir)
+	fileinfos, err := fs.ReadDir(l.fs, dir)
 	if err != nil {
 		return nil, fmt.Errorf(`testfixtures: could not stat directory "%s": %w`, dir, err)
 	}
@@ -565,7 +573,7 @@ func (l *Loader) fixturesFromDir(dir string) ([]*fixtureFile, error) {
 				path:     path.Join(dir, fileinfo.Name()),
 				fileName: fileinfo.Name(),
 			}
-			fixture.content, err = ioutil.ReadFile(fixture.path)
+			fixture.content, err = fs.ReadFile(l.fs, fixture.path)
 			if err != nil {
 				return nil, fmt.Errorf(`testfixtures: could not read file "%s": %w`, fixture.path, err)
 			}
@@ -589,7 +597,7 @@ func (l *Loader) fixturesFromFiles(fileNames ...string) ([]*fixtureFile, error) 
 			path:     f,
 			fileName: filepath.Base(f),
 		}
-		fixture.content, err = ioutil.ReadFile(fixture.path)
+		fixture.content, err = fs.ReadFile(l.fs, fixture.path)
 		if err != nil {
 			return nil, fmt.Errorf(`testfixtures: could not read file "%s": %w`, fixture.path, err)
 		}
@@ -641,7 +649,7 @@ func (l *Loader) fixturesFromFilesMultiTables(fileNames ...string) ([]*fixtureFi
 			err     error
 		)
 
-		content, err = ioutil.ReadFile(f)
+		content, err = fs.ReadFile(l.fs, f)
 		if err != nil {
 			return nil, fmt.Errorf(`testfixtures: could not read file "%s": %w`, f, err)
 		}
@@ -656,17 +664,12 @@ func (l *Loader) fixturesFromFilesMultiTables(fileNames ...string) ([]*fixtureFi
 			return nil, fmt.Errorf("testfixtures: could not unmarshal YAML: %w", err)
 		}
 
-		tables, ok := data.(map[interface{}]interface{})
+		tables, ok := data.(map[string]interface{})
 		if !ok {
-			return nil, fmt.Errorf("testfixtures: could not cast tables: not a map[interface{}]interface{}")
+			return nil, fmt.Errorf("testfixtures: could not cast tables: not a map[string]interface{}")
 		}
 
 		for table, records := range tables {
-			tableName, ok := table.(string)
-			if !ok {
-				return nil, fmt.Errorf("testfixtures: could not cast tableName: not a string")
-			}
-
 			result, err := l.buildInterfacesSlice(records)
 			if err != nil {
 				return nil, err
@@ -677,7 +680,7 @@ func (l *Loader) fixturesFromFilesMultiTables(fileNames ...string) ([]*fixtureFi
 				return nil, fmt.Errorf("testfixtures: could not marshal YAML: %w", err)
 			}
 
-			file := tableName + ".yml"
+			file := fmt.Sprintf("%s.yml", table)
 			path := filepath.Join(filepath.Dir(f), file)
 			fixtureFiles = append(fixtureFiles, &fixtureFile{
 				path:     path,

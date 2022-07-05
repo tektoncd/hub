@@ -643,8 +643,8 @@ github.com/go-sql-driver/mysql v1.6.0 h1:BCTh4TKNUYmOmMUcQ3IipzF5prigylS7XXjEkfC
 github.com/go-sql-driver/mysql v1.6.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
 github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
-github.com/go-testfixtures/testfixtures/v3 v3.7.0 h1:NdOJhGqDC+G15lb6tI/Bm9UYW1boFIHtScqh9hdMN+A=
-github.com/go-testfixtures/testfixtures/v3 v3.7.0/go.mod h1:TgqLoLUYI3LsvFNqQ7bxg5xIgH9MH/IsoXrXo4w5n+8=
+github.com/go-testfixtures/testfixtures/v3 v3.8.0 h1:ZdMx3/TQvzOWMm7x03IMpGTsIKRo6WCIfNm6dBOYO1M=
+github.com/go-testfixtures/testfixtures/v3 v3.8.0/go.mod h1:r3jeE9Ten7qBsZYSCwZiqCCUnq4pJsZEsq5ShqoX5aA=
 github.com/go-toolsmith/astcast v1.0.0/go.mod h1:mt2OdQTeAQcY4DQgPSArJjHCcOwlX+Wl/kwN+LbLGQ4=
 github.com/go-toolsmith/astcopy v1.0.0/go.mod h1:vrgyG+5Bxrnz4MZWPF+pI4R8h3qKRjjyvV/DSez4WVQ=
 github.com/go-toolsmith/astequal v1.0.0/go.mod h1:H+xSiq0+LtiDC11+h1G32h7Of5O3CYFJ99GVbS5lDKY=
