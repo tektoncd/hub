@@ -23,7 +23,7 @@ require (
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.0
-	github.com/tektoncd/pipeline v0.37.1
+	github.com/tektoncd/pipeline v0.37.2
 	github.com/tektoncd/plumbing v0.0.0-20220329085922-d765a5cba75f
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/zap v1.21.0
