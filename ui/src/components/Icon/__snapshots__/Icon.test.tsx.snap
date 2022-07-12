@@ -10,6 +10,8 @@ exports[`Icon Component should render icon for Github 1`] = `"<GithubIcon size=\
 
 exports[`Icon Component should render icon for Gitlab 1`] = `"<GitlabIcon size=\\"sm\\" label=\\"Gitlab\\" className=\\"hub-icon\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;
 
+exports[`Icon Component should render icon for InfoCircleIcon 1`] = `"<InfoCircleIcon size=\\"sm\\" label=\\"info\\" className=\\"hub-icon\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;
+
 exports[`Icon Component should render icon for Official Catalog 1`] = `"<CatIcon size=\\"lg\\" className=\\"hub-icon\\" label=\\"Official\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;
 
 exports[`Icon Component should render icon for Pipeline Kind 1`] = `"<DomainIcon size=\\"md\\" className=\\"hub-icon\\" label=\\"Pipeline\\" color=\\"currentColor\\" noVerticalAlign={false} />"`;

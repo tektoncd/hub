@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import '@patternfly/react-core/dist/styles/base.css';
 import { Grid, GridItem, Page, PageSection } from '@patternfly/react-core';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import LeftPane from '../../components/LeftPane';
 import Background from '../../components/Background';
 import Header from '../../containers/Header';
@@ -21,6 +21,7 @@ const App: React.FC = observer(() => {
       <Router>
         <ParseUrl />
         <Page header={<Header />} className="hub-page">
+          <Route exact path="/login" render={() => <Redirect to="/" />} />
           <Route exact path="/" component={Background} />
           <PageSection>
             <Grid hasGutter>

@@ -62,6 +62,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
+    "status": 0,
     "tags": Array [
       "resource",
     ],
@@ -88,6 +89,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -114,6 +116,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -143,6 +146,7 @@ Object {
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -169,6 +173,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
+    "status": 0,
     "tags": Array [
       "build-tool",
     ],
@@ -195,6 +200,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
+    "status": 0,
     "tags": Array [
       "build",
       "jenkins",
@@ -222,6 +228,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -254,6 +261,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
+    "status": 0,
     "tags": Array [
       "resource",
     ],
@@ -280,6 +288,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -306,6 +315,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -335,6 +345,7 @@ Object {
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -361,6 +372,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
+    "status": 0,
     "tags": Array [
       "build-tool",
     ],
@@ -387,6 +399,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
+    "status": 0,
     "tags": Array [
       "build",
       "jenkins",
@@ -414,6 +427,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -446,6 +460,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
+    "status": 0,
     "tags": Array [
       "resource",
     ],
@@ -472,6 +487,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -498,6 +514,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -527,6 +544,7 @@ Object {
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -553,6 +571,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
+    "status": 0,
     "tags": Array [
       "build-tool",
     ],
@@ -579,6 +598,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
+    "status": 0,
     "tags": Array [
       "build",
       "jenkins",
@@ -606,6 +626,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -638,6 +659,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
+    "status": 0,
     "tags": Array [
       "resource",
     ],
@@ -660,6 +682,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton-hub/Task/golang-build",
+    "status": 0,
     "tags": Array [
       1,
     ],
@@ -686,6 +709,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -712,6 +736,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -741,6 +766,7 @@ Object {
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -767,6 +793,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
+    "status": 0,
     "tags": Array [
       "build-tool",
     ],
@@ -793,6 +820,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
+    "status": 0,
     "tags": Array [
       "build",
       "jenkins",
@@ -820,6 +848,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -852,6 +881,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
+    "status": 0,
     "tags": Array [
       "resource",
     ],
@@ -878,6 +908,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -904,6 +935,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -933,6 +965,7 @@ Object {
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -955,6 +988,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
+    "status": 0,
     "tags": Array [
       1,
     ],
@@ -981,6 +1015,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
+    "status": 0,
     "tags": Array [
       "build",
       "jenkins",
@@ -1008,6 +1043,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -1040,6 +1076,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
+    "status": 0,
     "tags": Array [
       "resource",
     ],
@@ -1066,6 +1103,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -1092,6 +1130,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -1121,6 +1160,7 @@ Object {
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -1147,6 +1187,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
+    "status": 0,
     "tags": Array [
       "build-tool",
     ],
@@ -1173,6 +1214,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
+    "status": 0,
     "tags": Array [
       "build",
       "jenkins",
@@ -1200,6 +1242,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -1232,6 +1275,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton-hub/Pipeline/hub",
+    "status": 0,
     "tags": Array [
       "resource",
     ],
@@ -1258,6 +1302,7 @@ Object {
     "rating": 4.5,
     "readme": "",
     "resourceKey": "tekton/Task/ansible-runner",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -1284,6 +1329,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/aws-cli",
+    "status": 0,
     "tags": Array [
       "cli",
     ],
@@ -1313,6 +1359,7 @@ Object {
     "rating": 4,
     "readme": "",
     "resourceKey": "tekton/Task/buildah",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],
@@ -1339,6 +1386,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/golang-build",
+    "status": 0,
     "tags": Array [
       "build-tool",
     ],
@@ -1365,6 +1413,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jenkins",
+    "status": 0,
     "tags": Array [
       "build",
       "jenkins",
@@ -1392,6 +1441,7 @@ Object {
     "rating": 5,
     "readme": "",
     "resourceKey": "tekton/Task/jib-maven",
+    "status": 0,
     "tags": Array [
       "image-build",
     ],

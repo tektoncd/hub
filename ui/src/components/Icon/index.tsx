@@ -12,7 +12,8 @@ import {
   CatalogIcon,
   HelpIcon,
   GitlabIcon,
-  BitbucketIcon
+  BitbucketIcon,
+  InfoCircleIcon
 } from '@patternfly/react-icons';
 import { Icons } from '../../common/icons';
 import './Icon.css';
@@ -50,6 +51,8 @@ const Icon: React.FC<Props> = (props: Props) => {
       return <HelpIcon size={size} label={label} />;
     case Icons.Gitlab:
       return <GitlabIcon size={size} label={label} className="hub-icon" />;
+    case Icons.InfoCircleIcon:
+      return <InfoCircleIcon size={size} label={label} className="hub-icon" />;
     case Icons.Bitbucket:
       return <BitbucketIcon size={size} label={label} className="hub-icon" />;
   }

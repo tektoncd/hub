@@ -2,6 +2,7 @@ import { Instance, types, flow, getEnv } from 'mobx-state-tree';
 import { Icons } from '../common/icons';
 import { titleCase } from '../common/titlecase';
 import { Api } from '../api';
+import { catalogConfigureError } from '../common/errors';
 
 const icons: { [catalog: string]: Icons } = {
   community: Icons.Catalog
@@ -93,15 +94,17 @@ export const CatalogStore = types
         const { api } = self;
 
         const json = yield api.catalogs();
-
-        const catalogs: ICatalog[] = json.data.map((c: ICatalog) => ({
-          id: c.id,
-          name: c.name,
-          type: c.type,
-          provider: c.provider
-        }));
-
-        catalogs.forEach((c: ICatalog) => self.add(c));
+        try {
+          const catalogs: ICatalog[] = json.data.map((c: ICatalog) => ({
+            id: c.id,
+            name: c.name,
+            type: c.type,
+            provider: c.provider
+          }));
+          catalogs.forEach((c: ICatalog) => self.add(c));
+        } catch (err) {
+          throw catalogConfigureError;
+        }
       } catch (err) {
         self.err = err.toString();
       }

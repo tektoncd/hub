@@ -21,7 +21,6 @@ import {
 import logo from '../../assets/logo/logo.png';
 import { IconSize } from '@patternfly/react-icons';
 import Search from '../../containers/Search';
-import './Header.css';
 import { scrollToTop } from '../../common/scrollToTop';
 import Icon from '../../components/Icon';
 import { Icons } from '../../common/icons';
@@ -31,9 +30,11 @@ import { AUTH_BASE_URL, REDIRECT_URI } from '../../config/constants';
 import { IProvider } from '../../store/provider';
 import { titleCase } from '../../common/titlecase';
 import AlertDisplay from '../../components/AlertDisplay';
+import './Header.css';
+import { apiDownError } from '../../common/errors';
 
 const Header: React.FC = observer(() => {
-  const { user, providers } = useMst();
+  const { user, resources, providers } = useMst();
   const history = useHistory();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [disable, setDisable] = React.useState(false);
@@ -54,7 +55,7 @@ const Header: React.FC = observer(() => {
         <Text
           style={{ textDecoration: 'none' }}
           component={TextVariants.a}
-          onClick={() => user.setIsAuthModalOpen(true)}
+          onClick={() => (resources.err !== apiDownError ? user.setIsAuthModalOpen(true) : null)}
         >
           <span className="hub-header-login">
             <b>Login</b>
@@ -107,7 +108,6 @@ const Header: React.FC = observer(() => {
           <Divider />
           <Text component={TextVariants.h6}>Sign In With</Text>
         </TextContent>
-
         <Grid>
           {providers.values.map((provider: IProvider) => (
             <GridItem key={provider.name} offset={1} span={10} className="hub-header-sigin-button">

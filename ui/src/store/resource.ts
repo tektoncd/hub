@@ -12,6 +12,7 @@ import { assert } from './utils';
 import { Params } from '../common/params';
 import { Tag, TagStore, ITag } from './tag';
 import { TagsKeyword } from '../containers/Search';
+import { apiDownError, serverError, resourceNotFoundError } from '../common/errors';
 
 export const updatedAt = types.custom<string, Moment>({
   name: 'momentDate',
@@ -62,7 +63,8 @@ export const Resource = types
     displayName: '',
     tagsString: '',
     readme: '',
-    yaml: ''
+    yaml: '',
+    status: 0
   })
   .views((self) => ({
     get resourceName() {
@@ -129,7 +131,8 @@ export const ResourceStore = types
     err: '',
     isLoading: true,
     isVersionLoading: true,
-    isResourceLoading: true
+    isResourceLoading: true,
+    status: 0
   })
   .views((self) => ({
     get items() {
@@ -286,53 +289,77 @@ export const ResourceStore = types
         self.setLoading(true);
 
         const { api } = self;
+
         const json = yield api.resources();
+        switch (true) {
+          case json.data === undefined:
+            self.status = 503;
+            self.err = apiDownError;
+            break;
+          case json.status !== undefined:
+            switch (json.status) {
+              case 404:
+                self.status = json.status;
+                self.err = resourceNotFoundError;
+                break;
+              case 500:
+                self.status = json.status;
+                self.err = serverError;
+                break;
+            }
+            break;
+          default:
+            {
+              const kinds: string[] = json.data.map((r: IResource) => r.kind);
+              kinds.forEach((k) => self.kinds.add(k));
 
-        const kinds: string[] = json.data.map((r: IResource) => r.kind);
-        kinds.forEach((k) => self.kinds.add(k));
+              json.data.forEach((r: IResource) => {
+                self.versions.put(r.latestVersion);
+              });
+              // Adding the tags to the store - normalized
+              const tags: ITag[] = json.data.flatMap((item: IResource) => item.tags);
+              tags.forEach((t) => self.tags.add(t));
 
-        json.data.forEach((r: IResource) => {
-          self.versions.put(r.latestVersion);
-        });
+              const allCatalogs: ICatalog[] = json.data.flatMap((item: IResource) => item.catalog);
+              allCatalogs.forEach((t) => self.catalog.put(t));
 
-        // adding the tags to the store - normalized
-        const tags: ITag[] = json.data.flatMap((item: IResource) => item.tags);
-        tags.forEach((t) => self.tags.add(t));
+              //Adding the categories to the store - normalized
+              const categories: ICategory[] = json.data.flatMap(
+                (item: IResource) => item.categories
+              );
+              categories.forEach((c) => {
+                self.category.put(c);
+              });
 
-        const allCatalogs: ICatalog[] = json.data.flatMap((item: IResource) => item.catalog);
-        allCatalogs.forEach((t) => self.catalog.put(t));
+              const allPlatforms: IPlatform[] = json.data.flatMap(
+                (item: IResource) => item.platforms
+              );
+              allPlatforms.forEach((p) => self.platforms.add(p));
 
-        //Adding the categories to the store - normalized
-        const categories: ICategory[] = json.data.flatMap((item: IResource) => item.categories);
-        categories.forEach((c) => {
-          self.category.put(c);
-        });
+              const resources: IResource[] = json.data.map((r: IResource) => ({
+                id: r.id,
+                name: r.name,
+                resourceKey: `${r.catalog.name}/${r.kind}/${r.name}`,
+                catalog: r.catalog.id,
+                kind: r.kind,
+                latestVersion: r.latestVersion.id,
+                displayVersion: r.latestVersion.id,
+                tags: r.tags != null ? r.tags.map((tag: ITag) => tag.name) : [],
+                categories: r.categories != null ? r.categories.map((c: ICategory) => c.id) : [],
+                platforms: r.platforms != null ? r.platforms.map((p: IPlatform) => p.id) : [],
+                rating: r.rating,
+                versions: [],
+                displayName: r.latestVersion.displayName,
+                tagsString: r.tags.map((tag: ITag) => tag.name).join(' ')
+              }));
 
-        const allPlatforms: IPlatform[] = json.data.flatMap((item: IResource) => item.platforms);
-        allPlatforms.forEach((p) => self.platforms.add(p));
-
-        const resources: IResource[] = json.data.map((r: IResource) => ({
-          id: r.id,
-          name: r.name,
-          resourceKey: `${r.catalog.name}/${r.kind}/${r.name}`,
-          catalog: r.catalog.id,
-          kind: r.kind,
-          latestVersion: r.latestVersion.id,
-          displayVersion: r.latestVersion.id,
-          tags: r.tags != null ? r.tags.map((tag: ITag) => tag.name) : [],
-          categories: r.categories != null ? r.categories.map((c: ICategory) => c.id) : [],
-          platforms: r.platforms != null ? r.platforms.map((p: IPlatform) => p.id) : [],
-          rating: r.rating,
-          versions: [],
-          displayName: r.latestVersion.displayName,
-          tagsString: r.tags.map((tag: ITag) => tag.name).join(' ')
-        }));
-
-        resources.forEach((r: IResource) => {
-          r.versions.push(r.latestVersion);
-          self.add(r);
-        });
-
+              resources.forEach((r: IResource) => {
+                r.versions.push(r.latestVersion);
+                self.add(r);
+              });
+            }
+            break;
+        }
         // Url parsing after resource load
         if (self.urlParams) self.parseUrl();
       } catch (err) {

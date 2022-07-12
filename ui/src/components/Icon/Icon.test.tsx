@@ -53,4 +53,9 @@ describe('Icon Component', () => {
     expect(component.debug()).toMatchSnapshot();
     expect(component.find('BitbucketIcon[label="Bitbucket"]').length).toEqual(1);
   });
+  it('should render icon for InfoCircleIcon', () => {
+    const component = shallow(<Icon id={Icons.InfoCircleIcon} size="sm" label="info" />);
+    expect(component.debug()).toMatchSnapshot();
+    expect(component.find('InfoCircleIcon[label="info"]').length).toEqual(1);
+  });
 });

@@ -102,6 +102,7 @@ var _ = Service("resource", func() {
 
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
 		})
 	})
 

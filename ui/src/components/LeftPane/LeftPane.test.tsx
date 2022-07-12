@@ -1,15 +1,24 @@
 import React from 'react';
 import LeftPane from '.';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 
 import KindFilter from '../../containers/KindFilter';
 import CatalogFilter from '../../containers/CatalogFilter';
 import CategoryFilter from '../../containers/CategoryFilter';
 import PlatformFilter from '../../containers/PlatformFilter';
+import { FakeHub } from '../../api/testutil';
+import { createProviderAndStore } from '../../store/root';
+const TESTDATA_DIR = `src/store/testdata`;
+const api = new FakeHub(TESTDATA_DIR);
+const { Provider } = createProviderAndStore(api);
 
 describe('LeftPane', () => {
   it('should find the components and match the count', () => {
-    const component = shallow(<LeftPane />);
+    const component = mount(
+      <Provider>
+        <LeftPane />
+      </Provider>
+    );
 
     expect(component.debug()).toMatchSnapshot();
 

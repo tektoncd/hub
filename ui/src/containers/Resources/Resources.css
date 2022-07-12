@@ -11,6 +11,23 @@
   margin: auto;
 }
 
-.hub-resource-emptystate__margin {
-  margin-left: -12em;
+.hub-resource-not-found__margin {
+  margin-left: -20%;
+  margin-bottom: 50em;
+}
+
+.hub-resource-not-found__margin h1 {
+  margin-top: -0.5em;
+}
+
+.hub-resource-error {
+  color: #d6645c;
+}
+
+.hub-resource-warning {
+  color: #ffcc00;
+}
+
+.hub-resource-waring__margin {
+  margin-top: -0.7em;
 }

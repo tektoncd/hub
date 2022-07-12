@@ -11,5 +11,6 @@ export enum Icons {
   Catalog = 'catalog',
   Help = 'help',
   Gitlab = 'gitlab',
-  Bitbucket = 'bitbucket'
+  Bitbucket = 'bitbucket',
+  InfoCircleIcon = 'infocircleicon'
 }

@@ -64,7 +64,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Sed dolorem qui ea.
+                        example: Exercitationem molestias id eum illum rerum.
                     description: Catalogs of resource to filter by
                     example:
                         - tekton
@@ -80,7 +80,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Et exercitationem molestias id eum illum rerum.
+                        example: Nihil sit officia harum sint beatae sit.
                     description: Category associated with a resource to filter by
                     example:
                         - build
@@ -96,7 +96,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Nihil sit officia harum sint beatae sit.
+                        example: Et velit ipsam magnam tempore nobis.
                     description: Kinds of resource to filter by
                     example:
                         - task
@@ -112,7 +112,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Et velit ipsam magnam tempore nobis.
+                        example: Id suscipit est voluptatem.
                     description: Tags associated with a resource to filter by
                     example:
                         - image
@@ -128,7 +128,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Id suscipit est voluptatem.
+                        example: Occaecati maxime quia.
                     description: Platforms associated with a resource to filter by
                     example:
                         - linux/s390x
@@ -158,7 +158,7 @@ paths:
                     enum:
                         - exact
                         - contains
-                  example: exact
+                  example: contains
             responses:
                 "200":
                     description: OK response.
@@ -290,11 +290,11 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: task
+                    example: pipeline
                     enum:
                         - task
                         - pipeline
-                  example: pipeline
+                  example: task
                 - name: name
                   in: path
                   description: Name of resource
@@ -384,7 +384,7 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: pipeline
+                    example: task
                     enum:
                         - task
                         - pipeline
@@ -482,11 +482,11 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: pipeline
+                    example: task
                     enum:
                         - task
                         - pipeline
-                  example: pipeline
+                  example: task
                 - name: name
                   in: path
                   description: name of resource
@@ -544,7 +544,7 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: pipeline
+                    example: task
                     enum:
                         - task
                         - pipeline
@@ -618,11 +618,11 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: task
+                    example: pipeline
                     enum:
                         - task
                         - pipeline
-                  example: task
+                  example: pipeline
                 - name: name
                   in: path
                   description: name of resource
@@ -958,6 +958,12 @@ paths:
                                           version: "0.1"
                                         - id: 2
                                           version: "0.2"
+                "404":
+                    description: 'not-found: Resource Not Found Error'
+                    content:
+                        application/vnd.goa.error:
+                            schema:
+                                $ref: '#/components/schemas/Error'
                 "500":
                     description: 'internal-error: Internal Server Error'
                     content:
@@ -1037,7 +1043,7 @@ components:
                 fault:
                     type: boolean
                     description: Is the error a server-side fault?
-                    example: false
+                    example: true
                 id:
                     type: string
                     description: ID is a unique identifier for this particular occurrence of the problem.
@@ -1053,7 +1059,7 @@ components:
                 temporary:
                     type: boolean
                     description: Is the error temporary?
-                    example: false
+                    example: true
                 timeout:
                     type: boolean
                     description: Is the error a timeout?
@@ -1282,41 +1288,6 @@ components:
             items:
                 $ref: '#/components/schemas/ResourceData'
             example:
-                - catalog:
-                    id: 1
-                    name: tekton
-                    type: community
-                  categories:
-                    - id: 1
-                      name: image-build
-                  hubURLPath: tekton/task/buildah
-                  id: 1
-                  kind: task
-                  latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
-                    displayName: Buildah
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    platforms:
-                        - id: 1
-                          name: linux/amd64
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                  name: buildah
-                  platforms:
-                    - id: 1
-                      name: linux/amd64
-                  rating: 4.3
-                  tags:
-                    - id: 1
-                      name: image-build
-                  versions:
-                    - id: 1
-                      version: "0.1"
-                    - id: 2
-                      version: "0.2"
                 - catalog:
                     id: 1
                     name: tekton
