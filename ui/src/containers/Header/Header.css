@@ -54,6 +54,11 @@
   text-align: center;
 }
 
+.hub-header-sigin-modal-icon svg {
+  color: #2b9af3 !important;
+  vertical-align: -0.2em !important;
+}
+
 .pf-c-backdrop {
   backdrop-filter: blur(1px);
 }

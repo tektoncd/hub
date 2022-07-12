@@ -53,7 +53,9 @@ export class Hub implements Api {
 
   async resources() {
     try {
-      return axios.get(`${API_URL}/${API_VERSION}/resources`).then((response) => response.data);
+      return await axios
+        .get(`${API_URL}/${API_VERSION}/resources`)
+        .then((response) => response.data);
     } catch (err) {
       return err.response;
     }
@@ -61,7 +63,10 @@ export class Hub implements Api {
 
   async catalogs() {
     try {
-      return axios.get(`${API_URL}/${API_VERSION}/catalogs`).then((response) => response.data);
+      const result = await axios
+        .get(`${API_URL}/${API_VERSION}/catalogs`)
+        .then((response) => response.data);
+      return result;
     } catch (err) {
       return err.response;
     }

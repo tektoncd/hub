@@ -76,6 +76,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                 </Modal>
               </Memo(wrappedComponent)>
               <main role={[undefined]} id={[undefined]} className=\\"pf-c-page__main\\" tabIndex={-1} aria-label={[undefined]}>
+                <Route exact={true} path=\\"/login\\" render={[Function: render]} />
                 <Route exact={true} path=\\"/\\" component={[Function: Background]}>
                   <Background history={{...}} location={{...}} match={{...}} staticContext={[undefined]}>
                     <div className=\\"hub-background-image\\" style={{...}}>
