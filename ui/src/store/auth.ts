@@ -32,6 +32,11 @@ interface Refresh {
   (): void;
 }
 
+type AxiosCustomError = {
+  status: number;
+  data: string;
+};
+
 export const AuthStore = types
   .model('AuthStore', {
     accessTokenInfo: types.optional(TokenInfo, {}),
@@ -119,7 +124,8 @@ export const AuthStore = types
         if (historyBack) {
           historyBack();
         }
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosCustomError;
         if (err === undefined) {
           self.isAuthenticated = false;
         } else {
@@ -144,13 +150,14 @@ export const AuthStore = types
           const json = yield api.getRating(resourceId, self.accessTokenInfo.token);
           self.setUserRating(json.rating);
         }
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosCustomError;
         if (err === undefined) {
           self.isAuthenticated = false;
         } else {
           const error: IError = {
             status: err.status,
-            serverMessage: titleCase(err.data.message),
+            serverMessage: titleCase(err.data),
             customMessage: ''
           };
           self.isAuthenticated = false;
@@ -171,10 +178,11 @@ export const AuthStore = types
           yield api.setRating(resourceId, self.accessTokenInfo.token, rating);
           self.setUserRating(rating);
         }
-      } catch (err) {
+      } catch (ratingError) {
+        const err = ratingError as AxiosCustomError;
         const error: IError = {
           status: err.status,
-          serverMessage: titleCase(err.data.message),
+          serverMessage: titleCase(err.data),
           customMessage: ''
         };
         self.isAuthenticated = false;
@@ -191,7 +199,8 @@ export const AuthStore = types
         const refresh = yield api.getRefreshToken(self.refreshTokenInfo.token);
         const newRefreshToken = refresh.data;
         self.addRefreshTokenInfo(newRefreshToken.refresh);
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosCustomError;
         if (err === undefined) {
           self.isAuthenticated = false;
         } else {
@@ -213,7 +222,8 @@ export const AuthStore = types
         const access = yield api.getAccessToken(self.refreshTokenInfo.token);
         const newAccessToken = access.data;
         self.addAccessTokenInfo(newAccessToken.access);
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosCustomError;
         if (err === undefined) {
           self.isAuthenticated = false;
         } else {
@@ -238,7 +248,8 @@ export const AuthStore = types
         const access = yield api.profile(self.accessTokenInfo.token);
         const userdata = access.data;
         self.addUserProfile(userdata);
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosCustomError;
         if (err === undefined) {
           self.isAuthenticated = false;
         } else {

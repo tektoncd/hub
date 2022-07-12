@@ -1,4 +1,5 @@
 import { Instance, types, flow, getEnv } from 'mobx-state-tree';
+import { AxiosError } from 'axios';
 import { Icons } from '../common/icons';
 import { titleCase } from '../common/titlecase';
 import { Api } from '../api';
@@ -105,7 +106,8 @@ export const CatalogStore = types
         } catch (err) {
           throw catalogConfigureError;
         }
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosError;
         self.err = err.toString();
       }
 
