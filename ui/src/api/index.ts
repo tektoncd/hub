@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { API_URL, AUTH_BASE_URL, API_VERSION } from '../config/constants';
 import { ICategory } from '../store/category';
 import { IResource, IVersion } from '../store/resource';
@@ -33,7 +33,10 @@ export interface Api {
   versionUpdate(versionId: number): Promise<IVersion>;
   authentication(authCode: string): Promise<AuthResponse>;
   readme(resourceKey: string, version: string): Promise<string>;
-  yaml(resourceKey: string, version: string): Promise<string>;
+  yaml(
+    resourceKey: string,
+    version: string
+  ): Promise<string | AxiosResponse<unknown, unknown> | undefined>;
   getRating(resourceId: number, token: string): Promise<Rating>;
   setRating(resourceId: number, token: string, rating: number): Promise<void | null>;
   getRefreshToken(refreshToken: string): Promise<ITokenInfo>;
@@ -46,17 +49,16 @@ export class Hub implements Api {
   async categories() {
     try {
       return axios.get(`${API_URL}/categories`).then((response) => response.data);
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err.response;
     }
   }
-
   async resources() {
     try {
-      return await axios
-        .get(`${API_URL}/${API_VERSION}/resources`)
-        .then((response) => response.data);
-    } catch (err) {
+      return axios.get(`${API_URL}/${API_VERSION}/resources`).then((response) => response.data);
+    } catch (error) {
+      const err = error as AxiosError;
       return err.response;
     }
   }
@@ -67,7 +69,8 @@ export class Hub implements Api {
         .get(`${API_URL}/${API_VERSION}/catalogs`)
         .then((response) => response.data);
       return result;
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err.response;
     }
   }
@@ -78,7 +81,8 @@ export class Hub implements Api {
         .post(`${AUTH_BASE_URL}/auth/login?code=${authCode}`)
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err;
     }
   }
@@ -88,7 +92,8 @@ export class Hub implements Api {
       return axios
         .get(`${API_URL}/${API_VERSION}/resource/${resourceId}/versions`)
         .then((response) => response.data);
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err.response;
     }
   }
@@ -98,7 +103,8 @@ export class Hub implements Api {
       return axios
         .get(`${API_URL}/${API_VERSION}/resource/version/${versionId}`)
         .then((response) => response.data);
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err.response;
     }
   }
@@ -107,7 +113,8 @@ export class Hub implements Api {
     try {
       const URL = `${API_URL}/${API_VERSION}/resource/${resourceKey}/${version}/readme`;
       return axios.get(URL.toLowerCase()).then((response) => response.data.data.readme);
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err.response;
     }
   }
@@ -119,7 +126,8 @@ export class Hub implements Api {
       return axios
         .get(URL.toLowerCase())
         .then((response) => '```yaml' + newLine + response.data.data.yaml);
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err.response;
     }
   }
@@ -134,7 +142,8 @@ export class Hub implements Api {
         })
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err;
     }
   }
@@ -153,7 +162,8 @@ export class Hub implements Api {
         )
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err;
     }
   }
@@ -169,7 +179,8 @@ export class Hub implements Api {
       })
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err;
     }
   }
@@ -185,7 +196,8 @@ export class Hub implements Api {
       })
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err;
     }
   }
@@ -200,7 +212,8 @@ export class Hub implements Api {
         })
         .then((response) => response.data)
         .catch((err) => Promise.reject(err.response));
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err;
     }
   }
@@ -208,7 +221,8 @@ export class Hub implements Api {
   async providers() {
     try {
       return axios.get(`${AUTH_BASE_URL}/auth/providers`).then((response) => response.data);
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError;
       return err.response;
     }
   }

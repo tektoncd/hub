@@ -1,6 +1,7 @@
 import { types, Instance } from 'mobx-state-tree';
 import { cast } from 'mobx-state-tree';
 import fuzzysort from 'fuzzysort';
+import { AxiosError } from 'axios';
 import moment, { Moment } from 'moment';
 import { flow, getEnv } from 'mobx-state-tree';
 import { ICategoryStore, Category, ICategory } from './category';
@@ -248,7 +249,8 @@ export const ResourceStore = types
             }
           }
         });
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosError;
         self.err = err.toString();
       }
       self.setVersionLoading(false);
@@ -278,7 +280,8 @@ export const ResourceStore = types
         };
 
         self.versions.put(version);
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosError;
         self.err = err.toString();
       }
       self.setLoading(false);
@@ -362,7 +365,8 @@ export const ResourceStore = types
         }
         // Url parsing after resource load
         if (self.urlParams) self.parseUrl();
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosError;
         self.err = err.toString();
       }
       self.setLoading(false);
@@ -381,7 +385,8 @@ export const ResourceStore = types
 
         const readme = yield api.readme(name, version);
         resource.readme = readme;
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosError;
         self.err = err.toString();
       }
       self.setLoading(false);
@@ -399,7 +404,8 @@ export const ResourceStore = types
 
         const yaml = yield api.yaml(name, version);
         resource.yaml = yaml;
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosError;
         self.err = err.toString();
       }
       self.setLoading(false);

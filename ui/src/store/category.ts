@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import { types, getEnv, flow, Instance } from 'mobx-state-tree';
 import { Api } from '../api';
 
@@ -95,7 +96,8 @@ export const CategoryStore = types
         }));
 
         categories.forEach((c: ICategory) => self.add(c));
-      } catch (err) {
+      } catch (error) {
+        const err = error as AxiosError;
         self.err = err.toString();
       }
 
