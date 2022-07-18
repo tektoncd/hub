@@ -389,7 +389,7 @@ Find resource using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    %[1]s resource by-catalog-kind-name-version --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
+    %[1]s resource by-catalog-kind-name-version --catalog "tekton" --kind "task" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -403,7 +403,7 @@ Find resource README using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    %[1]s resource by-catalog-kind-name-version-readme --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
+    %[1]s resource by-catalog-kind-name-version-readme --catalog "tekton" --kind "task" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -417,7 +417,7 @@ Find resource YAML using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    %[1]s resource by-catalog-kind-name-version-yaml --catalog "tektoncd" --kind "task" --name "buildah" --version "0.1"
+    %[1]s resource by-catalog-kind-name-version-yaml --catalog "tekton" --kind "task" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -442,7 +442,7 @@ Find resources using name of catalog, resource name and kind of resource
     -pipelinesversion STRING: 
 
 Example:
-    %[1]s resource by-catalog-kind-name --catalog "tektoncd" --kind "pipeline" --name "buildah" --pipelinesversion "0.21.0"
+    %[1]s resource by-catalog-kind-name --catalog "tekton" --kind "pipeline" --name "buildah" --pipelinesversion "0.21.0"
 `, os.Args[0])
 }
 
