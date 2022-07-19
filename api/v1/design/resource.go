@@ -129,7 +129,7 @@ var _ = Service("resource", func() {
 		Description("Find resource using name of catalog & name, kind and version of resource")
 		Payload(func() {
 			Attribute("catalog", String, "name of catalog", func() {
-				Example("catalog", "tektoncd")
+				Example("catalog", "tekton")
 			})
 			Attribute("kind", String, "kind of resource", func() {
 				Enum("task", "pipeline")
@@ -158,7 +158,7 @@ var _ = Service("resource", func() {
 		Description("Find resource README using name of catalog & name, kind and version of resource")
 		Payload(func() {
 			Attribute("catalog", String, "name of catalog", func() {
-				Example("catalog", "tektoncd")
+				Example("catalog", "tekton")
 			})
 			Attribute("kind", String, "kind of resource", func() {
 				Enum("task", "pipeline")
@@ -187,7 +187,7 @@ var _ = Service("resource", func() {
 		Description("Find resource YAML using name of catalog & name, kind and version of resource")
 		Payload(func() {
 			Attribute("catalog", String, "name of catalog", func() {
-				Example("catalog", "tektoncd")
+				Example("catalog", "tekton")
 			})
 			Attribute("kind", String, "kind of resource", func() {
 				Enum("task", "pipeline")
@@ -235,7 +235,7 @@ var _ = Service("resource", func() {
 		Description("Find resources using name of catalog, resource name and kind of resource")
 		Payload(func() {
 			Attribute("catalog", String, "name of catalog", func() {
-				Example("catalog", "tektoncd")
+				Example("catalog", "tekton")
 			})
 			Attribute("kind", String, "kind of resource", func() {
 				Enum("task", "pipeline")

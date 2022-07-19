@@ -281,8 +281,8 @@ paths:
                   schema:
                     type: string
                     description: name of catalog
-                    example: tektoncd
-                  example: tektoncd
+                    example: tekton
+                  example: tekton
                 - name: kind
                   in: path
                   description: kind of resource
@@ -375,8 +375,8 @@ paths:
                   schema:
                     type: string
                     description: name of catalog
-                    example: tektoncd
-                  example: tektoncd
+                    example: tekton
+                  example: tekton
                 - name: kind
                   in: path
                   description: kind of resource
@@ -535,8 +535,8 @@ paths:
                   schema:
                     type: string
                     description: name of catalog
-                    example: tektoncd
-                  example: tektoncd
+                    example: tekton
+                  example: tekton
                 - name: kind
                   in: path
                   description: kind of resource
@@ -609,8 +609,8 @@ paths:
                   schema:
                     type: string
                     description: name of catalog
-                    example: tektoncd
-                  example: tektoncd
+                    example: tekton
+                  example: tekton
                 - name: kind
                   in: path
                   description: kind of resource
