@@ -338,7 +338,7 @@ paths:
                                 description: Redirect URL
                                 example: http://douglasebert.info/jessie
                                 format: uri
-                            example: http://predovichahn.info/isidro
+                            example: http://volkman.net/abdiel
     /resource/{catalog}/{kind}/{name}:
         get:
             tags:
@@ -377,7 +377,7 @@ paths:
                     enum:
                         - task
                         - pipeline
-                  example: pipeline
+                  example: task
                 - name: name
                   in: path
                   description: Name of resource
@@ -397,9 +397,9 @@ paths:
                             schema:
                                 type: string
                                 description: Redirect URL
-                                example: http://smitham.biz/isac
+                                example: http://waterslemke.org/mabelle
                                 format: uri
-                            example: http://wizafranecki.biz/orie.funk
+                            example: http://ohara.name/vicente_rogahn
     /resource/{catalog}/{kind}/{name}/{version}:
         get:
             tags:
@@ -424,7 +424,7 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: pipeline
+                    example: task
                     enum:
                         - task
                         - pipeline
@@ -457,9 +457,9 @@ paths:
                             schema:
                                 type: string
                                 description: Redirect URL
-                                example: http://parkergusikowski.info/zack_hartmann
+                                example: http://mantehegmann.com/ward_towne
                                 format: uri
-                            example: http://schmeler.biz/payton
+                            example: http://koch.net/waino
     /resource/{id}:
         get:
             tags:
@@ -487,9 +487,9 @@ paths:
                             schema:
                                 type: string
                                 description: Redirect URL
-                                example: http://botsford.net/theron
+                                example: http://hyatt.org/charity
                                 format: uri
-                            example: http://connellyschaefer.biz/elody_schumm
+                            example: http://stracke.com/alysson
     /resource/{id}/rating:
         get:
             tags:
@@ -634,9 +634,9 @@ paths:
                             schema:
                                 type: string
                                 description: Redirect URL
-                                example: http://volkman.net/abdiel
+                                example: http://fahey.org/elta
                                 format: uri
-                            example: http://fahey.org/elta
+                            example: http://bayer.name/lafayette
     /resource/version/{versionID}:
         get:
             tags:
@@ -664,9 +664,9 @@ paths:
                             schema:
                                 type: string
                                 description: Redirect URL
-                                example: http://mantehegmann.com/ward_towne
+                                example: http://christiansen.name/haylee
                                 format: uri
-                            example: http://kozeyschaefer.info/randal
+                            example: http://connellyschaefer.biz/elody_schumm
     /resources:
         get:
             tags:
