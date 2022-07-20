@@ -122,7 +122,7 @@ goa-gen() {
   }
 
   files=$(git diff api | wc -l)
-	if [[ ${files} == 0 ]];then
+	if [[ ${files} -eq 0 ]];then
     echo "    Git repo is clean."
   else
     echo "---------------------------------------"
