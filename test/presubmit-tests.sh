@@ -32,6 +32,11 @@ declare -r UI_DIR="$SCRIPT_DIR/../ui"
 
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-tests.sh
 
+detect_changes() {
+  local dir=${1}
+  git --no-pager diff --name-only "${PULL_BASE_SHA}".."${PULL_PULL_SHA}"|grep "${dir}"
+}
+
 info() {
   echo "INFO: $@"
 }
@@ -167,41 +172,48 @@ api-e2e(){
 build_tests() {
   # run in a subshell so that path and shell options -eu -o pipefail will
   # will remain the same when it exits
-  (
-    set -eu -o pipefail
+  [[ ! -z $(detect_changes "api") ]] && {
+    (
+      set -eu -o pipefail
 
-    api-build
-  ) || exit 1
+      api-build
+    ) || exit 1
+  } || echo "No changes detected related to API"
 
-   (
-    set -eu -o pipefail
+   [[ ! -z $(detect_changes "ui") ]] && {
+    (
+      set -eu -o pipefail
 
-    ui-build
-  ) || exit 1
+      ui-build
+    ) || exit 1
+  } || echo "No changes detected related to UI"
 }
 
 unit_tests() {
   # run in a subshell so that path and shell options -eu -o pipefail will
   # will remain the same when it exits
-  (
+  [[ ! -z $(detect_changes "api") ]] && {
+    (
       set -eu -o pipefail
 
       goa-gen || return 1
-  ) || exit 1
+    ) || exit 1
 
-  (
-    set -eu -o pipefail
+    (
+      set -eu -o pipefail
 
-    api-unittest || return 1
-    api-golangci-lint || return 1
-  ) || exit 1
+      api-unittest || return 1
+      api-golangci-lint || return 1
+    ) || exit 1
+  } || echo "No changes detected related to API"
 
-  (
-    set -eu -o pipefail
+  [[ ! -z $(detect_changes "ui") ]] && {
+    (
+      set -eu -o pipefail
 
-    ui-unittest || return 1
-  ) || exit 1
-
+      ui-unittest || return 1
+    ) || exit 1
+  } || echo "No changes detected related to UI"
   (
     set -eu -o pipefail
 
