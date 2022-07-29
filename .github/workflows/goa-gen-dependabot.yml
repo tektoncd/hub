@@ -1,0 +1,56 @@
+name: Bump Goa version and updates `gen` directory on main branch
+
+on:
+  schedule:
+  - cron: '0 0 * * *'
+
+jobs:
+  bump-payloads:
+    name: "Bump payloads"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-go@v2
+      with:
+        go-version: 1.17.x
+    - uses: actions/checkout@v2
+    - name: Goa bump
+      run: |
+
+        # Get the current version
+        currentVersion=$(go list -mod=mod -m all | grep goa.design/goa/v3 | awk '{print $2}')
+        echo ${currentVersion}
+
+        # Get the list of all versions
+        listAllLatestVersions=( $(go list -mod=mod -m -versions goa.design/goa/v3) )
+        echo ${listAllLatestVersions[-1]}
+
+        # Compare the versions
+        if [ "${currentVersion}" != "${listAllLatestVersions[-1]}" ]
+        then
+          sed -i "s@goa.design/goa/v3 ${currentVersion}@goa.design/goa/v3 ${listAllLatestVersions[-1]}@g" go.mod
+          sed -i "s@goa.design/plugins/v3 ${currentVersion}@goa.design/plugins/v3 ${listAllLatestVersions[-1]}@g" go.mod
+          go mod tidy
+          go mod vendor
+
+          go install goa.design/goa/v3/cmd/goa@v3
+
+          goa version
+
+          echo "----------------------------"
+          echo "-- Generating API Design... "
+          echo "----------------------------"
+          cd api && go mod vendor && goa gen github.com/tektoncd/hub/api/design
+
+          echo "----------------------------"
+          echo "- Generating v1 API Design... "
+          echo "----------------------------"
+          cd v1 && go mod vendor && goa gen github.com/tektoncd/hub/api/v1/design
+
+        fi
+
+    - name: create pull request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        commit-message: Bumps goa version and updates the gen folder
+        delete-branch: true
+        title: "[bot] Bump goa version and updates gen folder"
