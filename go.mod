@@ -23,7 +23,7 @@ require (
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.0
-	github.com/tektoncd/pipeline v0.37.2
+	github.com/tektoncd/pipeline v0.38.1
 	github.com/tektoncd/plumbing v0.0.0-20220329085922-d765a5cba75f
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/zap v1.21.0
@@ -49,7 +49,7 @@ require (
 	github.com/blendle/zapdriver v1.3.1 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/cloudevents/sdk-go/v2 v2.5.0 // indirect
+	github.com/cloudevents/sdk-go/v2 v2.10.1 // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.11.0 // indirect
 	github.com/creack/pty v1.1.17 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
