@@ -30,12 +30,17 @@ declare -r SCRIPT_DIR=$(cd $(dirname "$SCRIPT_PATH") && pwd)
 declare -r API_DIR="$SCRIPT_DIR/../api"
 declare -r UI_DIR="$SCRIPT_DIR/../ui"
 
+# Define this variable if you want to run all tests and not just the modified one.
+TEST_RUN_ALL_TESTS=${TEST_RUN_ALL_TESTS:-""}
+
 source $(dirname $0)/../vendor/github.com/tektoncd/plumbing/scripts/presubmit-tests.sh
 
 detect_changes() {
   local dir=${1}
   git --no-pager diff --name-only "${PULL_BASE_SHA}".."${PULL_PULL_SHA}"|grep "${dir}"
 }
+
+[[ -z ${TEST_RUN_ALL_TESTS} ]] && [[ ! -z $(detect_changes "test") ]] && TEST_RUN_ALL_TESTS=1
 
 info() {
   echo "INFO: $@"
@@ -58,7 +63,7 @@ install-node() {
   node --version
 }
 
-ui-unittest(){
+ui-unittest() {
   install-node
 
   make ui-test || {
@@ -80,7 +85,7 @@ set-pg-passwd() {
     "psql -c \"ALTER USER postgres PASSWORD '$pass';\""
 }
 
-api-unittest(){
+api-unittest() {
   install-postgres
   source $API_DIR/test/config/env.test
   set-pg-passwd "$POSTGRES_PASSWORD"
@@ -136,14 +141,14 @@ goa-gen() {
   fi
 }
 
-api-build(){
+api-build() {
   make api-build || {
     err 'Api build failed'
     return 1
   }
 }
 
-ui-build(){
+ui-build() {
   install-node
 
   make ui-build || {
@@ -152,7 +157,7 @@ ui-build(){
   }
 }
 
-api-e2e(){
+api-e2e() {
   info Runnning Hub CLI E2E tests
 
   go mod vendor
@@ -167,12 +172,16 @@ api-e2e(){
 
 }
 
+detect_api_related_changes() {
+  [[ ! -z $(detect_changes "api") ]] || [[ ! -z $(detect_changes "go.*") ]] && echo "changes detected related to API"
+}
+
 ### presubmit hooks ###
 
 build_tests() {
   # run in a subshell so that path and shell options -eu -o pipefail will
   # will remain the same when it exits
-  [[ ! -z $(detect_changes "api") ]] && {
+  [[ ! -z ${TEST_RUN_ALL_TESTS} ]] || [[ ! -z $(detect_api_related_changes) ]] && {
     (
       set -eu -o pipefail
 
@@ -180,7 +189,7 @@ build_tests() {
     ) || exit 1
   } || echo "No changes detected related to API"
 
-   [[ ! -z $(detect_changes "ui") ]] && {
+  [[ ! -z ${TEST_RUN_ALL_TESTS} ]] || [[ ! -z $(detect_changes "ui") ]] && {
     (
       set -eu -o pipefail
 
@@ -192,7 +201,7 @@ build_tests() {
 unit_tests() {
   # run in a subshell so that path and shell options -eu -o pipefail will
   # will remain the same when it exits
-  [[ ! -z $(detect_changes "api") ]] && {
+  [[ ! -z ${TEST_RUN_ALL_TESTS} ]] || [[ ! -z $(detect_api_related_changes) ]] && {
     (
       set -eu -o pipefail
 
@@ -207,7 +216,7 @@ unit_tests() {
     ) || exit 1
   } || echo "No changes detected related to API"
 
-  [[ ! -z $(detect_changes "ui") ]] && {
+  [[ ! -z ${TEST_RUN_ALL_TESTS} ]] || [[ ! -z $(detect_changes "ui") ]] && {
     (
       set -eu -o pipefail
 
