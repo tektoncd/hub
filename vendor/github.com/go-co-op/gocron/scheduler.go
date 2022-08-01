@@ -26,7 +26,7 @@ type Scheduler struct {
 	runningMutex  sync.RWMutex
 	running       bool // represents if the scheduler is running at the moment or not
 
-	time     timeWrapper // wrapper around time.Time
+	time     TimeWrapper // wrapper around time.Time
 	executor *executor   // executes jobs passed via chan
 
 	tags sync.Map // for storing tags when unique tags is set
@@ -403,7 +403,8 @@ func (s *Scheduler) calculateDuration(job *Job) time.Duration {
 }
 
 func shouldRunAtSpecificTime(job *Job) bool {
-	return job.getAtTime(job.lastRun) != 0
+	jobLastRun := job.LastRun()
+	return job.getAtTime(jobLastRun) != 0
 }
 
 func (s *Scheduler) remainingDaysToWeekday(lastRun time.Time, job *Job) int {
@@ -532,21 +533,6 @@ func (s *Scheduler) run(job *Job) {
 		return
 	}
 
-	job = s.addJobDetails(job)
-	if job.error != nil {
-		// delete the job from the scheduler as this job
-		// cannot be executed
-		s.RemoveByReference(job)
-		return
-		// return job.error
-	}
-
-	s.executor.jobFunctions <- job.jobFunction.copy()
-	job.setLastRun(s.now())
-	job.incrementRunCount()
-}
-
-func (s *Scheduler) addJobDetails(job *Job) *Job {
 	job.mu.Lock()
 	defer job.mu.Unlock()
 
@@ -559,10 +545,13 @@ func (s *Scheduler) addJobDetails(job *Job) *Job {
 		default:
 			// something is really wrong and we should never get here
 			job.error = wrapOrError(job.error, ErrInvalidFunctionParameters)
+			return
 		}
 	}
 
-	return job
+	s.executor.jobFunctions <- job.jobFunction.copy()
+	job.setLastRun(s.now())
+	job.runCount++
 }
 
 func (s *Scheduler) runContinuous(job *Job) {
@@ -580,9 +569,11 @@ func (s *Scheduler) runContinuous(job *Job) {
 	job.setTimer(time.AfterFunc(next.duration, func() {
 		if !next.dateTime.IsZero() {
 			for {
-				if time.Now().Unix() >= next.dateTime.Unix() {
+				n := s.now().UnixNano() - next.dateTime.UnixNano()
+				if n >= 0 {
 					break
 				}
+				s.time.Sleep(time.Duration(n))
 			}
 		}
 		s.runContinuous(job)
@@ -830,7 +821,8 @@ func (s *Scheduler) doCommon(jobFun interface{}, params ...interface{}) (*Job, e
 	job := s.getCurrentJob()
 
 	jobUnit := job.getUnit()
-	if job.getAtTime(job.lastRun) != 0 && (jobUnit <= hours || jobUnit >= duration) {
+	jobLastRun := job.LastRun()
+	if job.getAtTime(jobLastRun) != 0 && (jobUnit <= hours || jobUnit >= duration) {
 		job.error = wrapOrError(job.error, ErrAtTimeNotSupported)
 	}
 
@@ -1292,4 +1284,11 @@ func (s *Scheduler) StartImmediately() *Scheduler {
 	job := s.getCurrentJob()
 	job.startsImmediately = true
 	return s
+}
+
+// CustomTime takes an in a struct that implements the TimeWrapper interface
+// allowing the caller to mock the time used by the scheduler. This is useful
+// for tests relying on gocron.
+func (s *Scheduler) CustomTime(customTimeWrapper TimeWrapper) {
+	s.time = customTimeWrapper
 }
