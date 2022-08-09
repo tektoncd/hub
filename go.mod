@@ -10,7 +10,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-co-op/gocron v1.16.2
 	github.com/go-gormigrate/gormigrate/v2 v2.0.2
-	github.com/go-testfixtures/testfixtures/v3 v3.8.0
+	github.com/go-testfixtures/testfixtures/v3 v3.8.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
