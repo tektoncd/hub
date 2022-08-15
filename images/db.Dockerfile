@@ -5,7 +5,7 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o db-migration ./api/cmd/db/...
 
-FROM alpine:3.16.1
+FROM alpine:3.16.2
 
 RUN apk --no-cache add ca-certificates && addgroup -S hub && adduser -S hub -G hub
 USER hub
