@@ -105,6 +105,7 @@ api-unittest() {
 
 api-golangci-lint() {
 
+  export GOFLAGS="-mod=vendor"
   make api-lint || {
     err 'go lint failed'
     return 1
@@ -122,7 +123,8 @@ yaml-lint() {
 goa-gen() {
   go version
 
-  go get goa.design/goa/v3/cmd/goa@v3
+  export GOFLAGS=""
+  go install goa.design/goa/v3/cmd/goa@v3
 
   goa version
 
