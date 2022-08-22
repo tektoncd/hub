@@ -23,8 +23,8 @@ require (
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.0
-	github.com/tektoncd/pipeline v0.38.2
-	github.com/tektoncd/plumbing v0.0.0-20220329085922-d765a5cba75f
+	github.com/tektoncd/pipeline v0.39.0
+	github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/zap v1.22.0
 	goa.design/goa/v3 v3.8.2
@@ -34,9 +34,9 @@ require (
 	gorm.io/driver/postgres v1.3.8
 	gorm.io/gorm v1.23.8
 	gotest.tools/v3 v3.3.0
-	k8s.io/apimachinery v0.23.5
-	k8s.io/client-go v0.23.5
-	knative.dev/pkg v0.0.0-20220329144915-0a1ec2e0d46c
+	k8s.io/apimachinery v0.23.9
+	k8s.io/client-go v0.23.9
+	knative.dev/pkg v0.0.0-20220805012121-7b8b06028e4f
 )
 
 require (
@@ -49,7 +49,7 @@ require (
 	github.com/blendle/zapdriver v1.3.1 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/cloudevents/sdk-go/v2 v2.10.1 // indirect
+	github.com/cloudevents/sdk-go/v2 v2.11.0 // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.11.0 // indirect
 	github.com/creack/pty v1.1.17 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -161,8 +161,8 @@ require (
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.23.5 // indirect
-	k8s.io/klog/v2 v2.60.1-0.20220317184644-43cc75f9ae89 // indirect
+	k8s.io/api v0.23.9 // indirect
+	k8s.io/klog/v2 v2.70.2-0.20220707122935-0990e81f1a8f // indirect
 	k8s.io/kube-openapi v0.0.0-20220124234850-424119656bbf // indirect
 	k8s.io/utils v0.0.0-20220210201930-3a6ce19ff2f9 // indirect
 	sigs.k8s.io/json v0.0.0-20211208200746-9f7c6b3444d2 // indirect
