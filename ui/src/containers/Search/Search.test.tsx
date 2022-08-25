@@ -1,4 +1,5 @@
-import { TextInput } from '@patternfly/react-core';
+import { ReactComponent } from '*.svg';
+import { FormSelectOption, TextInput } from '@patternfly/react-core';
 import { mount, shallow } from 'enzyme';
 import { when } from 'mobx';
 import React from 'react';
@@ -40,10 +41,8 @@ describe('search resources', () => {
         return !resources.isLoading;
       },
       () => {
-        const node = component.find(TextInput);
-
         act(() => {
-          node.props().onChange('golang');
+          component.find(TextInput).simulate('change');
         });
         const resourceName = jest.fn(() => 'golang');
 
