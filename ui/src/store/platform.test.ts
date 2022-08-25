@@ -54,10 +54,11 @@ describe('Store Object', () => {
   it('should clear all the selected platforms', (done) => {
     const store = PlatformStore.create({});
 
-    const item = {
+    const item = Platform.create({
       id: 1,
-      name: 'linux/amd64'
-    };
+      name: 'linux/amd64',
+      selected: false
+    });
 
     store.add(item);
 
