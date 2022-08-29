@@ -53,5 +53,8 @@ jobs:
       uses: peter-evans/create-pull-request@v4
       with:
         commit-message: Bumps goa version and updates the gen folder
+        committer: Puneet Punamiya <ppunamiy@redhat.com>
+        author: Puneet Punamiya <ppunamiy@redhat.com>
+        signoff: true
         delete-branch: true
         title: "[bot] Bump goa version and updates gen folder"
