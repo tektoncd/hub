@@ -1,8 +1,8 @@
 import { TrimUrl } from '../common/trimUrl';
 
 window.config = window.config || {
-  API_URL: 'no API_URL  set',
-  API_VERSION: 'no API_VERSION set',
+  API_URL: 'https://fake.api.hub.tekton.dev',
+  API_VERSION: 'v1',
   AUTH_BASE_URL: 'no AUTH_BASE_URL set',
   REDIRECT_URI: 'no REDIRECT_URI set'
 };
