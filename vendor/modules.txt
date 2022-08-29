@@ -604,7 +604,7 @@ go.uber.org/zap/internal/exit
 go.uber.org/zap/internal/ztest
 go.uber.org/zap/zapcore
 go.uber.org/zap/zaptest
-# goa.design/goa/v3 v3.8.3
+# goa.design/goa/v3 v3.8.4
 ## explicit; go 1.19
 goa.design/goa/v3/codegen
 goa.design/goa/v3/codegen/cli
@@ -624,7 +624,7 @@ goa.design/goa/v3/http/middleware
 goa.design/goa/v3/middleware
 goa.design/goa/v3/pkg
 goa.design/goa/v3/security
-# goa.design/plugins/v3 v3.8.3
+# goa.design/plugins/v3 v3.8.4
 ## explicit; go 1.18
 goa.design/plugins/v3/cors
 goa.design/plugins/v3/cors/dsl
