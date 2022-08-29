@@ -531,7 +531,7 @@ describe('Store functions', () => {
         assert(resource);
 
         expect(resource.installCommand).toBe(
-          'kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/master/task/aws-cli/0.1/aws-cli.yaml'
+          'kubectl apply -f https://fake.api.hub.tekton.dev/v1/resource/tekton/task/aws-cli/0.1/raw'
         );
         done();
       }

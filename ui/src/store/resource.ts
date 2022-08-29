@@ -14,6 +14,7 @@ import { Params } from '../common/params';
 import { Tag, TagStore, ITag } from './tag';
 import { TagsKeyword } from '../containers/Search';
 import { apiDownError, serverError, resourceNotFoundError } from '../common/errors';
+import { API_URL, API_VERSION } from '../config/constants';
 
 export const updatedAt = types.custom<string, Moment>({
   name: 'momentDate',
@@ -89,7 +90,9 @@ export const Resource = types
       return index !== -1 ? description.substring(index + 1).trim() : '';
     },
     get installCommand() {
-      return `kubectl apply -f ${self.displayVersion.rawURL}`;
+      return `kubectl apply -f ${API_URL}/${API_VERSION}/resource/${
+        self.catalog.name
+      }/${self.kind.name.toLowerCase()}/${self.name}/${self.displayVersion.version}/raw`;
     },
     get tknInstallCommand() {
       const versionFlag =
