@@ -26,7 +26,7 @@ require (
 	github.com/tektoncd/pipeline v0.39.0
 	github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
 	go.uber.org/automaxprocs v1.5.1
-	go.uber.org/zap v1.22.0
+	go.uber.org/zap v1.23.0
 	goa.design/goa/v3 v3.8.4
 	goa.design/plugins/v3 v3.8.4
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
