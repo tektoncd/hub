@@ -2,7 +2,7 @@ FROM node:18-alpine3.14 as BUILD
 WORKDIR /app
 
 # install deps and the copy the src to speed up docker build
-COPY ui/package-lock.json ui/package.json ui/.npmrc /app/
+COPY ui/package-lock.json ui/package.json ui/.npmrc ui/config-overrides.js /app/
 RUN npm install
 
 COPY ui/tsconfig.json /app/
