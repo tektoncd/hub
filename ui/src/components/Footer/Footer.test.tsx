@@ -1,5 +1,4 @@
-import React from 'react';
-import renderer from 'react-test-renderer';
+import { shallow } from 'enzyme';
 import Footer from '.';
 import { FakeDate, ActualDate } from '../../common/testutils';
 
@@ -10,6 +9,6 @@ FakeDate();
 ActualDate();
 
 it('should render the footer component', () => {
-  const component = renderer.create(<Footer />).toJSON();
-  expect(component).toMatchSnapshot();
+  const component = shallow(<Footer />);
+  expect(component.debug()).toMatchSnapshot();
 });
