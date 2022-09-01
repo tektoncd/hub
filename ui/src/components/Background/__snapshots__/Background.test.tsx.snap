@@ -1,35 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should render the background component 1`] = `
-<div
-  className="hub-background-image"
-  style={
-    Object {
-      "backgroundImage": "url(background.jpg)",
-    }
-  }
->
-  <div
-    className="pf-c-content"
-  >
-    <h1
-      className="hub-background-heading"
-      data-ouia-component-id="OUIA-Generated-Text-1"
-      data-ouia-component-type="PF4/Text"
-      data-ouia-safe={true}
-      data-pf-content={true}
-    >
+"<div className=\\"hub-background-image\\" style={{...}}>
+  <TextContent>
+    <Text component=\\"h1\\" className=\\"hub-background-heading\\">
       Welcome to Tekton Hub
-    </h1>
-    <h3
-      className="hub-tag-line"
-      data-ouia-component-id="OUIA-Generated-Text-2"
-      data-ouia-component-type="PF4/Text"
-      data-ouia-safe={true}
-      data-pf-content={true}
-    >
+    </Text>
+    <Text component=\\"h3\\" className=\\"hub-tag-line\\">
       Discover, search and share reusable Tasks and Pipelines
-    </h3>
-  </div>
-</div>
+    </Text>
+  </TextContent>
+</div>"
 `;
