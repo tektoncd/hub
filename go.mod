@@ -27,8 +27,8 @@ require (
 	github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/zap v1.23.0
-	goa.design/goa/v3 v3.8.4
-	goa.design/plugins/v3 v3.8.4
+	goa.design/goa/v3 v3.8.5
+	goa.design/plugins/v3 v3.8.5
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	golang.org/x/text v0.3.7
 	gopkg.in/h2non/gock.v1 v1.1.2
@@ -155,7 +155,7 @@ require (
 	google.golang.org/api v0.81.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220803205849-8f55acc8769f // indirect
-	google.golang.org/grpc v1.48.0 // indirect
+	google.golang.org/grpc v1.49.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
