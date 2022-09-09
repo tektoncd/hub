@@ -60,7 +60,7 @@
     "@testing-library/react-hooks": "^8.0.0",
     "@types/react": "^16.14.28",
     "@typescript-eslint/eslint-plugin": "5.30.7",
-    "@typescript-eslint/parser": "4.0.1",
+    "@typescript-eslint/parser": "5.36.2",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
