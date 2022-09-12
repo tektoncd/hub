@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/ActiveState/vt10x v1.3.1
-	github.com/AlecAivazis/survey/v2 v2.3.5
+	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
 	github.com/fatih/color v1.13.0
 	github.com/ghodss/yaml v1.0.0
