@@ -34,7 +34,7 @@ const Cards: React.FC<Props> = (resources) => {
             }}
             className="hub-card-link"
           >
-            <Card className="hub-resource-card">
+            <Card className="hub-resource-card" data-test={resource.name}>
               <CardHeader>
                 <span className="hub-kind-icon">
                   <TooltipDisplay name={resource.kind.name} id={resource.kind.icon} />

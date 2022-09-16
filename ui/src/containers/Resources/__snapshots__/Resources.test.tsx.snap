@@ -14,8 +14,8 @@ exports[`Resource Component should render the resources component 1`] = `
                   <Link to={{...}} className=\\"hub-card-link\\">
                     <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/buildah\\" navigate={[Function: navigate]}>
                       <a className=\\"hub-card-link\\" href=\\"tekton/task/buildah\\" onClick={[Function: onClick]}>
-                        <Card className=\\"hub-resource-card\\">
-                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-1\\">
+                        <Card className=\\"hub-resource-card\\" data-test=\\"buildah\\">
+                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-test=\\"buildah\\" data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-1\\">
                             <CardHeader>
                               <div className=\\"pf-c-card__header\\" id={[undefined]}>
                                 <span className=\\"hub-kind-icon\\">
@@ -118,8 +118,8 @@ exports[`Resource Component should render the resources component 1`] = `
                   <Link to={{...}} className=\\"hub-card-link\\">
                     <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/aws-cli\\" navigate={[Function: navigate]}>
                       <a className=\\"hub-card-link\\" href=\\"tekton/task/aws-cli\\" onClick={[Function: onClick]}>
-                        <Card className=\\"hub-resource-card\\">
-                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-2\\">
+                        <Card className=\\"hub-resource-card\\" data-test=\\"aws-cli\\">
+                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-test=\\"aws-cli\\" data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-2\\">
                             <CardHeader>
                               <div className=\\"pf-c-card__header\\" id={[undefined]}>
                                 <span className=\\"hub-kind-icon\\">
@@ -221,8 +221,8 @@ exports[`Resource Component should render the resources component 1`] = `
                   <Link to={{...}} className=\\"hub-card-link\\">
                     <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/golang-build\\" navigate={[Function: navigate]}>
                       <a className=\\"hub-card-link\\" href=\\"tekton/task/golang-build\\" onClick={[Function: onClick]}>
-                        <Card className=\\"hub-resource-card\\">
-                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-3\\">
+                        <Card className=\\"hub-resource-card\\" data-test=\\"golang-build\\">
+                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-test=\\"golang-build\\" data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-3\\">
                             <CardHeader>
                               <div className=\\"pf-c-card__header\\" id={[undefined]}>
                                 <span className=\\"hub-kind-icon\\">
@@ -324,8 +324,8 @@ exports[`Resource Component should render the resources component 1`] = `
                   <Link to={{...}} className=\\"hub-card-link\\">
                     <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/jenkins\\" navigate={[Function: navigate]}>
                       <a className=\\"hub-card-link\\" href=\\"tekton/task/jenkins\\" onClick={[Function: onClick]}>
-                        <Card className=\\"hub-resource-card\\">
-                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-4\\">
+                        <Card className=\\"hub-resource-card\\" data-test=\\"jenkins\\">
+                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-test=\\"jenkins\\" data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-4\\">
                             <CardHeader>
                               <div className=\\"pf-c-card__header\\" id={[undefined]}>
                                 <span className=\\"hub-kind-icon\\">
@@ -432,8 +432,8 @@ exports[`Resource Component should render the resources component 1`] = `
                   <Link to={{...}} className=\\"hub-card-link\\">
                     <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/jib-maven\\" navigate={[Function: navigate]}>
                       <a className=\\"hub-card-link\\" href=\\"tekton/task/jib-maven\\" onClick={[Function: onClick]}>
-                        <Card className=\\"hub-resource-card\\">
-                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-5\\">
+                        <Card className=\\"hub-resource-card\\" data-test=\\"jib-maven\\">
+                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-test=\\"jib-maven\\" data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-5\\">
                             <CardHeader>
                               <div className=\\"pf-c-card__header\\" id={[undefined]}>
                                 <span className=\\"hub-kind-icon\\">
@@ -536,8 +536,8 @@ exports[`Resource Component should render the resources component 1`] = `
                   <Link to={{...}} className=\\"hub-card-link\\">
                     <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton/task/ansible-runner\\" navigate={[Function: navigate]}>
                       <a className=\\"hub-card-link\\" href=\\"tekton/task/ansible-runner\\" onClick={[Function: onClick]}>
-                        <Card className=\\"hub-resource-card\\">
-                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-6\\">
+                        <Card className=\\"hub-resource-card\\" data-test=\\"ansible-runner\\">
+                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-test=\\"ansible-runner\\" data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-6\\">
                             <CardHeader>
                               <div className=\\"pf-c-card__header\\" id={[undefined]}>
                                 <span className=\\"hub-kind-icon\\">
@@ -639,8 +639,8 @@ exports[`Resource Component should render the resources component 1`] = `
                   <Link to={{...}} className=\\"hub-card-link\\">
                     <LinkAnchor className=\\"hub-card-link\\" href=\\"tekton-hub/pipeline/hub\\" navigate={[Function: navigate]}>
                       <a className=\\"hub-card-link\\" href=\\"tekton-hub/pipeline/hub\\" onClick={[Function: onClick]}>
-                        <Card className=\\"hub-resource-card\\">
-                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-7\\">
+                        <Card className=\\"hub-resource-card\\" data-test=\\"hub\\">
+                          <article id=\\"\\" className=\\"pf-c-card hub-resource-card\\" tabIndex={[undefined]} data-test=\\"hub\\" data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-7\\">
                             <CardHeader>
                               <div className=\\"pf-c-card__header\\" id={[undefined]}>
                                 <span className=\\"hub-kind-icon\\">

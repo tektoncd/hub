@@ -17,6 +17,7 @@
     "@types/react-router-dom": "^5.1.6",
     "@types/react-syntax-highlighter": "^15.5.5",
     "axios": "^0.27.2",
+    "cypress": "^10.8.0",
     "fuzzysort": "^2.0.1",
     "mobx": "^6.6.1",
     "mobx-react": "^6.3.1",

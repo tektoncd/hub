@@ -46,6 +46,7 @@ const checkboxes = (values: Filterable[]) => {
       aria-label="controlled checkbox"
       id={`${c.name}`}
       name={c.name}
+      data-test={c.name}
     />
   ));
 };

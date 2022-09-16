@@ -4,7 +4,7 @@ exports[`Cards should render the resources on cards 1`] = `
 "<Fragment>
   <GalleryItem>
     <Link to={{...}} className=\\"hub-card-link\\">
-      <Card className=\\"hub-resource-card\\">
+      <Card className=\\"hub-resource-card\\" data-test=\\"buildah\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
@@ -50,7 +50,7 @@ exports[`Cards should render the resources on cards 1`] = `
   </GalleryItem>
   <GalleryItem>
     <Link to={{...}} className=\\"hub-card-link\\">
-      <Card className=\\"hub-resource-card\\">
+      <Card className=\\"hub-resource-card\\" data-test=\\"aws-cli\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
@@ -95,7 +95,7 @@ exports[`Cards should render the resources on cards 1`] = `
   </GalleryItem>
   <GalleryItem>
     <Link to={{...}} className=\\"hub-card-link\\">
-      <Card className=\\"hub-resource-card\\">
+      <Card className=\\"hub-resource-card\\" data-test=\\"golang-build\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
@@ -140,7 +140,7 @@ exports[`Cards should render the resources on cards 1`] = `
   </GalleryItem>
   <GalleryItem>
     <Link to={{...}} className=\\"hub-card-link\\">
-      <Card className=\\"hub-resource-card\\">
+      <Card className=\\"hub-resource-card\\" data-test=\\"jenkins\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
@@ -188,7 +188,7 @@ exports[`Cards should render the resources on cards 1`] = `
   </GalleryItem>
   <GalleryItem>
     <Link to={{...}} className=\\"hub-card-link\\">
-      <Card className=\\"hub-resource-card\\">
+      <Card className=\\"hub-resource-card\\" data-test=\\"jib-maven\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
@@ -234,7 +234,7 @@ exports[`Cards should render the resources on cards 1`] = `
   </GalleryItem>
   <GalleryItem>
     <Link to={{...}} className=\\"hub-card-link\\">
-      <Card className=\\"hub-resource-card\\">
+      <Card className=\\"hub-resource-card\\" data-test=\\"ansible-runner\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
             <TooltipDisplay name=\\"Task\\" id=\\"build\\" />
@@ -279,7 +279,7 @@ exports[`Cards should render the resources on cards 1`] = `
   </GalleryItem>
   <GalleryItem>
     <Link to={{...}} className=\\"hub-card-link\\">
-      <Card className=\\"hub-resource-card\\">
+      <Card className=\\"hub-resource-card\\" data-test=\\"hub\\">
         <CardHeader>
           <span className=\\"hub-kind-icon\\">
             <TooltipDisplay name=\\"Pipeline\\" id=\\"domain\\" />

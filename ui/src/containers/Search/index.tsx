@@ -82,6 +82,7 @@ const Search: React.FC = observer(() => {
 
   return (
     <TextInput
+      data-test="search"
       ref={inputRef}
       type="search"
       value={value}
