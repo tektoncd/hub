@@ -49,7 +49,8 @@ const Sort: React.FC = () => {
   return useObserver(() => (
     <div className="hub-sort">
       <Select
-        variant={SelectVariant.typeahead}
+        variant={SelectVariant.single}
+        isPlain={true}
         typeAheadAriaLabel="Sort By"
         onToggle={onToggle}
         onSelect={onSelect}
