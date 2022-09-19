@@ -162,6 +162,12 @@ createGitTag() {
    -m "${RELEASE_VERSION}" "${RELEASE_VERSION}"
 }
 
+createNewBranchAndPush() {
+  hub branch --create release-${RELEASE_VERSION}
+
+  hub push upstream release-${RELEASE_VERSION}
+}
+
 main() {
 
   # Check if all required command exists
@@ -201,6 +207,11 @@ main() {
   info            Create Git Tag
   echo "********************************************"
   createGitTag
+
+  echo "********************************************"
+  info            Create New Branch And Push
+  echo "********************************************"
+  createNewBranchAndPush
 
   echo "********************************************"
   echo "***" Release Created for Hub successfully "***"
