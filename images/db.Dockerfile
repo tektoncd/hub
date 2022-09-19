@@ -1,9 +1,11 @@
-FROM golang:1.18.2-alpine3.14 AS builder
+FROM --platform=$BUILDPLATFORM golang:1.18.2-alpine3.14 AS builder
 
 WORKDIR /go/src/github.com/tektoncd/hub
 COPY . .
+ARG TARGETOS
+ARG TARGETARCH
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o db-migration ./api/cmd/db/...
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o db-migration ./api/cmd/db/...
 
 FROM alpine:3.16.2
 

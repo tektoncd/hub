@@ -24,7 +24,7 @@ declare -r RELEASE_DIR="$SCRIPT_DIR/release"
 DOCKER_CMD=${DOCKER_CMD:-docker}
 REGISTRY_BASE_URL=${REGISTRY_BASE_URL:-quay.io/tekton-hub}
 
-BINARIES="ko hub"
+BINARIES="ko hub qemu-ppc64le-static qemu-s390x-static"
 
 info() {
   echo "INFO: $@"
@@ -51,7 +51,7 @@ getReleaseVersion() {
 buildDbMigrationImage() {
   info Building DB Migration Image
   echo -----------------------------------
-  ${DOCKER_CMD} build -f images/db.Dockerfile -t ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION}
+  ${DOCKER_CMD} buildx build --platform linux/amd64,linux/s390x,linux/ppc64le -f images/db.Dockerfile -t ${REGISTRY_BASE_URL}/db-migration:${RELEASE_VERSION} --push .
   info DB Migration Image Build Successfully
   echo -----------------------------------
 }
@@ -59,7 +59,7 @@ buildDbMigrationImage() {
 buildApiImage() {
   info Building API Image
   echo -----------------------------------
-  ${DOCKER_CMD} build -f images/api.Dockerfile -t ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION}
+  ${DOCKER_CMD} buildx build --platform linux/amd64,linux/s390x,linux/ppc64le -f images/api.Dockerfile -t ${REGISTRY_BASE_URL}/api:${RELEASE_VERSION} --push .
   info API Image Build Successfully
   echo -----------------------------------
 }
@@ -67,7 +67,7 @@ buildApiImage() {
 buildUiImage() {
   info Building UI Image
   echo -----------------------------------
-  ${DOCKER_CMD} build -f images/ui.Dockerfile -t ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION} . && ${DOCKER_CMD} push ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION}
+  ${DOCKER_CMD} buildx build --platform linux/amd64,linux/s390x,linux/ppc64le -f images/ui.Dockerfile -t ${REGISTRY_BASE_URL}/ui:${RELEASE_VERSION} --push .
   info UI Image Build Successfully
   echo -----------------------------------
 }
