@@ -8,6 +8,7 @@
 - [ko][ko]
 - [docker][docker] or [podman][podman]
 - [hub][hub]
+- [buildx][buildx]
 
 ## Implementation
 
@@ -39,3 +40,4 @@
 [docker]: https://docs.docker.com/engine/install/
 [podman]: https://podman.io/getting-started/installation
 [hub]: https://github.com/github/hub#installation
+[buildx]: https://github.com/docker/buildx#installing
