@@ -1,6 +1,6 @@
 .hub-footer-card {
-  padding: 2em;
-  background-color: #151515;
+  padding: 2em !important;
+  background-color: #151515 !important;
 }
 
 .hub-footer-info {
