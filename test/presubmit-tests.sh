@@ -29,6 +29,7 @@ declare -r SCRIPT_PATH=$(readlink -f "$0")
 declare -r SCRIPT_DIR=$(cd $(dirname "$SCRIPT_PATH") && pwd)
 declare -r API_DIR="$SCRIPT_DIR/../api"
 declare -r UI_DIR="$SCRIPT_DIR/../ui"
+export NO_COLOR=1
 
 # Define this variable if you want to run all tests and not just the modified one.
 TEST_RUN_ALL_TESTS=${TEST_RUN_ALL_TESTS:-""}
@@ -174,6 +175,31 @@ api-e2e() {
 
 }
 
+ui-e2e() {
+
+  install-node
+
+  npm ci
+
+  npm i -y wait-on
+
+  echo "=========== Start the server =============================="
+  BROWSER=none npm start &
+  echo "============================================================"
+
+  npx wait-on http://localhost:3000
+
+  echo "============= Starts with the other dependencies================"
+  apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+  echo "================================================================"
+
+  # ## and now run cypress
+
+  echo "================= Start cypress ======================="
+  npx cypress run
+}
+
+
 detect_api_related_changes() {
   [[ ! -z $(detect_changes "api") ]] || [[ ! -z $(detect_changes "go.*") ]] && echo "changes detected related to API"
 }
@@ -239,6 +265,13 @@ integration_tests() {
 
     cd "$API_DIR"
     api-e2e || return 1
+  ) || exit 1
+
+  (
+    set -eu -o pipefail
+
+    cd "$UI_DIR"
+    ui-e2e || return 1
   ) || exit 1
 
 }
