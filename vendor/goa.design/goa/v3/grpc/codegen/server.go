@@ -205,12 +205,6 @@ type {{ .ServerStruct }} struct {
 {{- end }}
 	{{ .PkgName }}.Unimplemented{{ .ServerInterface }}
 }
-
-// ErrorNamer is an interface implemented by generated error structs that
-// exposes the name of the error as defined in the expr.
-type ErrorNamer interface {
-  ErrorName() string
-}
 `
 
 // input: ServiceData
@@ -266,9 +260,9 @@ func (s *{{ .ServerStruct }}) {{ .Method.VarName }}(
 {{- define "handle_error" }}
 	if err != nil {
 	{{- if .Errors }}
-		var en ErrorNamer
+		var en goa.GoaErrorNamer
 		if errors.As(err, &en) {
-			switch en.ErrorName() {
+			switch en.GoaErrorName() {
 		{{- range .Errors }}
 			case {{ printf "%q" .Name }}:
 				{{- if .Response.ServerConvert }}
