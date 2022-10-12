@@ -18,7 +18,7 @@ require (
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
 	github.com/ikawaha/goahttpcheck v1.12.1
 	github.com/joho/godotenv v1.4.0
-	github.com/markbates/goth v1.73.0
+	github.com/markbates/goth v1.73.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.13.0
@@ -32,9 +32,9 @@ require (
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	golang.org/x/text v0.3.7
 	gopkg.in/h2non/gock.v1 v1.1.2
-	gorm.io/driver/postgres v1.3.10
+	gorm.io/driver/postgres v1.4.4
 	gorm.io/gorm v1.23.10
-	gotest.tools/v3 v3.3.0
+	gotest.tools/v3 v3.4.0
 	k8s.io/apimachinery v0.23.9
 	k8s.io/client-go v0.23.9
 	knative.dev/pkg v0.0.0-20220818004048-4a03844c0b15
