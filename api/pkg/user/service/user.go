@@ -131,7 +131,6 @@ func (s *UserService) RefreshAccessToken(res http.ResponseWriter, req *http.Requ
 	refreshToken := req.Header.Get("Authorization")
 	user, err := s.validateRefreshToken(userId, refreshToken)
 	if err != nil {
-		r.log.Error(err)
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -203,7 +202,6 @@ func (s *UserService) NewRefreshToken(res http.ResponseWriter, req *http.Request
 	refreshToken := req.Header.Get("Authorization")
 	user, err := s.validateRefreshToken(userId, refreshToken)
 	if err != nil {
-		r.log.Error(err)
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}

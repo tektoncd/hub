@@ -32,15 +32,15 @@ func TestCheckNotNull(t *testing.T) {
 
 	err := db.Create(&model.Catalog{Name: "tekton", Type: "", URL: "", Revision: "master"}).Error
 	assert.Error(t, err)
-	assert.Equal(t, "ERROR: null value in column \"type\" violates not-null constraint (SQLSTATE 23502)", err.Error())
+	assert.Equal(t, "ERROR: null value in column \"type\" of relation \"catalogs\" violates not-null constraint (SQLSTATE 23502)", err.Error())
 
 	err = db.Create(&model.Resource{Name: "tekton", Rating: 4}).Error
 	assert.Error(t, err)
-	assert.Equal(t, "ERROR: null value in column \"kind\" violates not-null constraint (SQLSTATE 23502)", err.Error())
+	assert.Equal(t, "ERROR: null value in column \"kind\" of relation \"resources\" violates not-null constraint (SQLSTATE 23502)", err.Error())
 
 	err = db.Create(&model.ResourceVersion{Version: "", Description: "task", URL: "", DisplayName: "Task", MinPipelinesVersion: ""}).Error
 	assert.Error(t, err)
-	assert.Equal(t, "ERROR: null value in column \"version\" violates not-null constraint (SQLSTATE 23502)", err.Error())
+	assert.Equal(t, "ERROR: null value in column \"version\" of relation \"resource_versions\" violates not-null constraint (SQLSTATE 23502)", err.Error())
 }
 
 // Checks the Unique constraint
