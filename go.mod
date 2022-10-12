@@ -33,7 +33,7 @@ require (
 	golang.org/x/text v0.3.8
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gorm.io/driver/postgres v1.4.4
-	gorm.io/gorm v1.23.10
+	gorm.io/gorm v1.24.0
 	gotest.tools/v3 v3.4.0
 	k8s.io/apimachinery v0.23.9
 	k8s.io/client-go v0.23.9
