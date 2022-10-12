@@ -149,7 +149,6 @@ func (s *service) HubAuthenticate(res http.ResponseWriter, req *http.Request) {
 	err := q.First(&gitUser).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			r.log.Error(err)
 			http.Error(res, err.Error(), http.StatusBadRequest)
 			return
 		} else {
