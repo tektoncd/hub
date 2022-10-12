@@ -16,7 +16,7 @@ type (
 	decoder      = func(*http.Request) goahttp.Decoder
 	encoder      = func(context.Context, http.ResponseWriter) goahttp.Encoder
 	errorHandler = func(context.Context, http.ResponseWriter, error)
-	formatter    = func(error) goahttp.Statuser
+	formatter    = func(context.Context, error) goahttp.Statuser
 	middleware   = func(http.Handler) http.Handler
 
 	// HandlerBuilder represents the goa http handler builder.
@@ -55,9 +55,9 @@ func CheckRedirect(policy func(req *http.Request, via []*http.Request) error) Op
 
 // NoRedirect is the alias of the following:
 //
-//  CheckRedirect(func(req *http.Request, via []*http.Request) error {
-//      return http.ErrUseLastResponse
-//  })
+//	CheckRedirect(func(req *http.Request, via []*http.Request) error {
+//	    return http.ErrUseLastResponse
+//	})
 //
 // Client returns ErrUseLastResponse, the next request is not sent and the most recent
 // response is returned with its body unclosed.
