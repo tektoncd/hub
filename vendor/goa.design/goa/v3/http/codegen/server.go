@@ -76,6 +76,7 @@ func serverFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File {
 	sections = append(sections, &codegen.SectionTemplate{Name: "server-init", Source: serverInitT, Data: data, FuncMap: funcs})
 	sections = append(sections, &codegen.SectionTemplate{Name: "server-service", Source: serverServiceT, Data: data})
 	sections = append(sections, &codegen.SectionTemplate{Name: "server-use", Source: serverUseT, Data: data})
+	sections = append(sections, &codegen.SectionTemplate{Name: "server-method-names", Source: serverMethodNamesT, Data: data})
 	sections = append(sections, &codegen.SectionTemplate{Name: "server-mount", Source: serverMountT, Data: data, FuncMap: funcs})
 
 	for _, e := range data.Endpoints {
@@ -276,12 +277,6 @@ type {{ .ServerStruct }} struct {
 	{{ .VarName }} http.Handler
 	{{- end }}
 }
-
-// ErrorNamer is an interface implemented by generated error structs that
-// exposes the name of the error as defined in the design.
-type ErrorNamer interface {
-	ErrorName() string
-}
 `
 
 // input: ServiceData
@@ -304,7 +299,7 @@ func {{ .ServerInit }}(
 	decoder func(*http.Request) goahttp.Decoder,
 	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
 	errhandler func(context.Context, http.ResponseWriter, error),
-	formatter func(err error) goahttp.Statuser,
+	formatter func(ctx context.Context, err error) goahttp.Statuser,
 	{{- if hasWebSocket . }}
 	upgrader goahttp.Upgrader,
 	configurer *ConnConfigurer,
@@ -355,6 +350,11 @@ func {{ .ServerInit }}(
 // input: ServiceData
 const serverServiceT = `{{ printf "%s returns the name of the service served." .ServerService | comment }}
 func (s *{{ .ServerStruct }}) {{ .ServerService }}() string { return "{{ .Service.Name }}" }
+`
+
+// input: ServiceData
+const serverMethodNamesT = `{{ printf "MethodNames returns the methods served." | comment }}
+func (s *{{ .ServerStruct }}) MethodNames() []string { return {{ .Service.PkgName }}.MethodNames[:] }
 `
 
 // input: ServiceData
@@ -432,7 +432,7 @@ func {{ .HandlerInit }}(
 	decoder func(*http.Request) goahttp.Decoder,
 	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
 	errhandler func(context.Context, http.ResponseWriter, error),
-	formatter func(err error) goahttp.Statuser,
+	formatter func(ctx context.Context, err error) goahttp.Statuser,
 	{{- if isWebSocketEndpoint . }}
 	upgrader goahttp.Upgrader,
 	configurer goahttp.ConnConfigureFunc,
@@ -694,7 +694,7 @@ const requestElementsT = `{{- define "request_elements" }}
 			{{ .VarName }} = []string{
                 {{- range $i, $v := .DefaultValue }}
                     {{- if $i }}{{ print ", " }}{{ end }}
-                    {{- printf "%q" $v -}} 
+                    {{- printf "%q" $v -}}
                 {{- end -}} }
 		}
 		{{- end }}
@@ -1200,14 +1200,14 @@ func {{ .ResponseEncoder }}(encoder func(context.Context, http.ResponseWriter) g
 
 // input: EndpointData
 const errorEncoderT = `{{ printf "%s returns an encoder for errors returned by the %s %s endpoint." .ErrorEncoder .Method.Name .ServiceName | comment }}
-func {{ .ErrorEncoder }}(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+func {{ .ErrorEncoder }}(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(ctx context.Context, err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
 	encodeError := goahttp.ErrorEncoder(encoder, formatter)
 	return func(ctx context.Context, w http.ResponseWriter, v error) error {
-		var en ErrorNamer
+		var en goa.GoaErrorNamer
 		if !errors.As(v, &en) {
 			return encodeError(ctx, w, v)
 		}
-		switch en.ErrorName() {
+		switch en.GoaErrorName() {
 	{{- range $gerr := .Errors }}
 	{{- range $err := .Errors }}
 		case {{ printf "%q" .Name }}:
@@ -1253,7 +1253,7 @@ const responseT = `{{ define "response" -}}
 			{{- if .ErrorHeader }}
 	var body interface{}
 	if formatter != nil {
-		body = formatter({{ (index (index .ServerBody 0).Init.ServerArgs 0).Ref }})
+		body = formatter(ctx, {{ (index (index .ServerBody 0).Init.ServerArgs 0).Ref }})
 	} else {
 			{{- end }}
 	body {{ if not .ErrorHeader}}:{{ end }}= {{ (index .ServerBody 0).Init.Name }}({{ range (index .ServerBody 0).Init.ServerArgs }}{{ .Ref }}, {{ end }})
@@ -1350,7 +1350,7 @@ const responseT = `{{ define "response" -}}
 	{{- end }}
 
 	{{- if .ErrorHeader }}
-	w.Header().Set("goa-error", res.ErrorName())
+	w.Header().Set("goa-error", res.GoaErrorName())
 	{{- end }}
 	w.WriteHeader({{ .StatusCode }})
 {{- end }}
