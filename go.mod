@@ -16,18 +16,18 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/sessions v1.2.1
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
-	github.com/ikawaha/goahttpcheck v1.12.1
+	github.com/ikawaha/goahttpcheck v1.13.0
 	github.com/joho/godotenv v1.4.0
 	github.com/markbates/goth v1.73.1
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/spf13/cobra v1.5.0
+	github.com/spf13/cobra v1.6.0
 	github.com/spf13/viper v1.13.0
 	github.com/stretchr/testify v1.8.0
 	github.com/tektoncd/pipeline v0.40.2
 	github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/zap v1.23.0
-	goa.design/goa/v3 v3.8.5
+	goa.design/goa/v3 v3.9.1
 	goa.design/plugins/v3 v3.8.5
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	golang.org/x/text v0.3.7
@@ -89,7 +89,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/ikawaha/httpcheck v1.7.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.13.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
