@@ -33,7 +33,7 @@ type cli struct {
 var _ app.CLI = (*cli)(nil)
 
 func NewCLI() *cli {
-	h := hub.NewClient()
+	h := hub.NewTektonHubClient()
 	if err := h.SetURL(API); err != nil {
 		fmt.Printf("Failed validate and set the hub apiURL server URL %v", err)
 	}
@@ -54,4 +54,16 @@ func (c *cli) SetStream(out, err io.Writer) {
 
 func (c *cli) Hub() hub.Client {
 	return c.hub
+}
+
+func (c *cli) SetHub(hubType string) error {
+	if hubType == hub.TektonHubType {
+		c.hub = hub.NewTektonHubClient()
+		return nil
+	} else if hubType == hub.ArtifactHubType {
+		c.hub = hub.NewArtifactHubClient()
+		return nil
+	}
+
+	return fmt.Errorf("invalid hub type: %s", hubType)
 }

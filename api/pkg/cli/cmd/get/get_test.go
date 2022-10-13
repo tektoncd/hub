@@ -20,6 +20,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tektoncd/hub/api/pkg/cli/app"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	goa "goa.design/goa/v3/pkg"
@@ -76,22 +78,35 @@ Get a Abc of name 'foo' of version '0.3':
 `
 
 func TestValidate(t *testing.T) {
+	cli := app.New()
+	if err := cli.SetHub(hub.TektonHubType); err != nil {
+		assert.Error(t, err)
+	}
+
 	opt := options{
 		version: "0.1",
+		cli:     cli,
 	}
 	err := opt.validate()
 	assert.NoError(t, err)
 
 	opt = options{
 		version: "0.3.1",
+		cli:     cli,
 	}
 	err = opt.validate()
 	assert.NoError(t, err)
 }
 
 func TestValidate_ErrorCase(t *testing.T) {
+	cli := app.New()
+	if err := cli.SetHub(hub.TektonHubType); err != nil {
+		assert.Error(t, err)
+	}
+
 	opt := options{
 		version: "abc",
+		cli:     cli,
 	}
 	err := opt.validate()
 	assert.EqualError(t, err, "invalid value \"abc\" set for option version. valid eg. 0.1, 1.2.1")

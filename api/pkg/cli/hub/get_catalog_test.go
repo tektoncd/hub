@@ -21,7 +21,5 @@ import (
 )
 
 func TestGetCatalogEndpoint(t *testing.T) {
-	url := catalogEndpoint()
-	assert.Equal(t, "/v1/catalogs", url)
-
+	assert.Equal(t, "/v1/catalogs", tektonHubCatEndpoint)
 }
