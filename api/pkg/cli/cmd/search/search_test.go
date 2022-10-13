@@ -20,8 +20,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	res "github.com/tektoncd/hub/api/v1/gen/resource"
+	"github.com/tektoncd/hub/api/pkg/cli/app"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
+	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	goa "goa.design/goa/v3/pkg"
 	"gopkg.in/h2non/gock.v1"
 	"gotest.tools/v3/golden"
@@ -91,11 +93,17 @@ var res2 = &res.ResourceData{
 }
 
 func TestValidate(t *testing.T) {
+	cli := app.New()
+	if err := cli.SetHub(hub.TektonHubType); err != nil {
+		assert.Error(t, err)
+	}
+
 	opt := options{
 		kinds:  []string{"pipeline"},
 		tags:   []string{"abc,def", "mno"},
 		match:  "exact",
 		output: "table",
+		cli:    cli,
 	}
 
 	err := opt.validate()
@@ -105,6 +113,7 @@ func TestValidate(t *testing.T) {
 		args:   []string{"abc"},
 		match:  "contains",
 		output: "json",
+		cli:    cli,
 	}
 
 	err = opt.validate()
@@ -113,7 +122,12 @@ func TestValidate(t *testing.T) {
 
 func TestValidate_ErrorCases(t *testing.T) {
 
-	opt := options{}
+	cli := app.New()
+	if err := cli.SetHub(hub.TektonHubType); err != nil {
+		assert.Error(t, err)
+	}
+
+	opt := options{cli: cli}
 	err := opt.validate()
 	assert.Error(t, err)
 	assert.EqualError(t, err, "please specify a resource name, --tags, --platforms, --categories or --kinds flag to search")
@@ -122,6 +136,7 @@ func TestValidate_ErrorCases(t *testing.T) {
 		kinds:  []string{"abc"},
 		match:  "exact",
 		output: "table",
+		cli:    cli,
 	}
 	err = opt.validate()
 	assert.Error(t, err)
@@ -131,6 +146,7 @@ func TestValidate_ErrorCases(t *testing.T) {
 		kinds:  []string{"task"},
 		match:  "abc",
 		output: "table",
+		cli:    cli,
 	}
 	err = opt.validate()
 	assert.Error(t, err)
@@ -140,6 +156,7 @@ func TestValidate_ErrorCases(t *testing.T) {
 		kinds:  []string{"task"},
 		match:  "exact",
 		output: "abc",
+		cli:    cli,
 	}
 	err = opt.validate()
 	assert.Error(t, err)
