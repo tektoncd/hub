@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/ikawaha/goahttpcheck.svg?branch=master)](https://travis-ci.com/ikawaha/goahttpcheck)
+[![Go](https://github.com/ikawaha/goahttpcheck/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ikawaha/goahttpcheck/actions/workflows/test.yml)
 
 goahttpcheck
 ---
