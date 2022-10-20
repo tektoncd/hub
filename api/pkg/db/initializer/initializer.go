@@ -91,7 +91,7 @@ func addCategories(db *gorm.DB, log *log.Logger, data *app.Data) error {
 
 	var configCatID []uint
 	for _, c := range data.Categories {
-		cat := model.Category{Name: c.Name}
+		cat := model.Category{Name: c}
 		if err := db.Where(cat).FirstOrCreate(&cat).Error; err != nil {
 			log.Error(err)
 			return err
