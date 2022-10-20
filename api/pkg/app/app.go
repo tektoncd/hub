@@ -83,9 +83,12 @@ type EnvMode string
 
 // Types of EnvMode
 const (
-	Production  EnvMode = "production"
-	Development EnvMode = "development"
-	Test        EnvMode = "test"
+	Production             EnvMode = "production"
+	Development            EnvMode = "development"
+	Test                   EnvMode = "test"
+	ConfigFileDir          string  = "/tmp/config/"
+	CatalogRefreshInterval string  = "catalog_refresh_interval"
+	DefaultScopes          string  = "default"
 )
 
 // DBDialect defines dialect for db connection
@@ -168,17 +171,47 @@ func (ab *APIBase) Data() *Data {
 
 // ReloadData reads config file and loads data in Data object
 func (ab *APIBase) ReloadData() error {
-	// Reads config file url from env
-	url, err := configFileURL()
-	if err != nil {
-		return err
-	}
 
-	// Reads data from config file
-	fileData, err := dataFromURL(url)
-	if err != nil {
-		ab.logger.Errorf("failed to read config file: %v", err)
-		return err
+	var fileData []byte
+
+	if ab.Environment() == Production {
+		// checks Config dir is present or not
+		dir, err := os.ReadDir(ConfigFileDir)
+		if err != nil {
+			ab.logger.Errorf("Directory %s not found : %s", ConfigFileDir, err)
+			return err
+		}
+		// Iterate on all keys to construct file of config data by adding key,value pair
+		for _, f := range dir {
+			//Skips to read hiden files
+			if !strings.Contains(f.Name(), "..") {
+				d, err := readLocalFile(ConfigFileDir + f.Name())
+				if err != nil {
+					return err
+				}
+				if strings.ToLower(f.Name()) == CatalogRefreshInterval {
+					continue
+				} else if strings.ToLower(f.Name()) == DefaultScopes {
+					fileData = append(fileData, []byte(fmt.Sprintf("\n%s:\n %s", strings.ToLower(f.Name()), string(d)))...)
+				} else {
+					fileData = append(fileData, []byte(fmt.Sprintf("\n%s:\n%s", strings.ToLower(f.Name()), string(d)))...)
+				}
+			}
+		}
+	} else {
+
+		url, err := configFileURL()
+		if err != nil {
+			return err
+		}
+
+		// Reads data from config file
+		data, err := dataFromURL(url)
+		if err != nil {
+			ab.logger.Errorf("failed to read config file: %v", err)
+			return err
+		}
+		fileData = append(fileData, data...)
 	}
 
 	// Viper unmarshals data from config file into Data Object
@@ -188,6 +221,7 @@ func (ab *APIBase) ReloadData() error {
 		ab.logger.Errorf("failed to read configuration file: %v", err)
 		return err
 	}
+
 	if err := viper.Unmarshal(&data); err != nil {
 		ab.logger.Errorf("failed to unmarshal config data: %v", err)
 		return err
@@ -251,7 +285,7 @@ func FromEnvFile(file string) (*APIConfig, error) {
 // This will initialise db connection and logger only. This is called while
 // running db migration.
 func APIBaseFromEnv() (*APIBase, error) {
-	// load from .env.dev file for development but skip if not found
+	// load from .env.dev file for development but   if not found
 	return APIBaseFromEnvFile(".env.dev")
 }
 
