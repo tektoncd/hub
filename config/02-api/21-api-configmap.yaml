@@ -19,5 +19,43 @@ metadata:
   labels:
     app: tekton-hub-api
 data:
-  CONFIG_FILE_URL: https://raw.githubusercontent.com/tektoncd/hub/main/config.yaml
+  CATEGORIES: |
+    - Automation
+    - Build Tools
+    - CLI
+    - Cloud
+    - Code Quality
+    - Continuous Integration
+    - Deployment
+    - Developer Tools
+    - Image Build
+    - Integration & Delivery
+    - Git
+    - Kubernetes
+    - Messaging
+    - Monitoring
+    - Networking
+    - Openshift
+    - Publishing
+    - Security
+    - Storage
+    - Testing
+  CATALOGS: |
+    - name: tekton
+      org: tektoncd
+      type: community
+      provider: github
+      url: https://github.com/tektoncd/catalog
+      revision: main
+  SCOPES: |
+    - name: agent:create
+      users: [vinamra28, piyush-garg, pratap0007, puneetpunamiya, sm43, sthaha, vdemeester]
+    - name: catalog:refresh
+      users: [vinamra28, piyush-garg, pratap0007, puneetpunamiya, sm43, sthaha, vdemeester]
+    - name: config:refresh
+      users: [vinamra28, piyush-garg, pratap0007, puneetpunamiya, sm43, sthaha, vdemeester]
+  DEFAULT: |
+    scopes:
+      - rating:read
+      - rating:write
   CATALOG_REFRESH_INTERVAL: 30m

@@ -32,6 +32,20 @@ spec:
         - name: catalog-source
           persistentVolumeClaim:
             claimName: tekton-hub-api
+        - name: tekton-hub-config
+          configMap:
+            name: tekton-hub-api
+            items:
+              - key: CATEGORIES
+                path: 'categories'
+              - key: CATALOGS
+                path: 'catalogs'
+              - key: SCOPES
+                path: 'scopes'
+              - key: CATALOG_REFRESH_INTERVAL
+                path: 'catalog_refresh_interval'
+              - key: DEFAULT
+                path: 'default'
         - name: ssh-creds
           secret:
             secretName: tekton-hub-api-ssh-crds
@@ -50,9 +64,11 @@ spec:
               memory: 500Mi
           volumeMounts:
             - name: catalog-source
-              mountPath: "/tmp/catalog"
+              mountPath: '/tmp/catalog'
             - name: ssh-creds
-              mountPath: "/home/hub/.ssh"
+              mountPath: '/home/hub/.ssh'
+            - name: tekton-hub-config
+              mountPath: '/tmp/config'
           ports:
             - containerPort: 8000
             - containerPort: 4200
@@ -102,11 +118,6 @@ spec:
                 secretKeyRef:
                   name: tekton-hub-db
                   key: POSTGRES_PASSWORD
-            - name: CONFIG_FILE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: tekton-hub-api
-                  key: CONFIG_FILE_URL
             - name: CATALOG_REFRESH_INTERVAL
               valueFrom:
                 configMapKeyRef:

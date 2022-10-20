@@ -13,26 +13,26 @@
 # limitations under the License.
 ---
 categories:
-  - name: Automation
-  - name: Build Tools
-  - name: CLI
-  - name: Cloud
-  - name: Code Quality
-  - name: Continuous Integration
-  - name: Deployment
-  - name: Developer Tools
-  - name: Image Build
-  - name: Integration & Delivery
-  - name: Git
-  - name: Kubernetes
-  - name: Messaging
-  - name: Monitoring
-  - name: Networking
-  - name: Openshift
-  - name: Publishing
-  - name: Security
-  - name: Storage
-  - name: Testing
+  - Automation
+  - Build Tools
+  - CLI
+  - Cloud
+  - Code Quality
+  - Continuous Integration
+  - Deployment
+  - Developer Tools
+  - Image Build
+  - Integration & Delivery
+  - Git
+  - Kubernetes
+  - Messaging
+  - Monitoring
+  - Networking
+  - Openshift
+  - Publishing
+  - Security
+  - Storage
+  - Testing
 
 catalogs:
   - name: tekton
