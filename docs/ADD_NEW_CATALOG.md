@@ -4,8 +4,8 @@ This doc defines the steps to add a new catalog in Hub. The catalog **must** fol
 
 Process to add a new catalog:
 
-- Create a pull request to Hub repository adding your catalog details in [Hub Config file][config].
--  Make sure you give a unique name which is not used for other catalogs defined in Config file.
+- Create a pull request to Hub repository adding your catalog details in [Hub Api ConfigMap][config].
+-  Make sure you give a unique name which is not used for other catalogs defined in Hub Api ConfigMap.
     This name will be used in identifying catalog and will be used in API to search resources.
  eg.`/resource/<catalog-name>/<resource-name>`
  
@@ -18,4 +18,4 @@ Once the pull request is reviewed and merged, the Next Steps are to be performed
 After the catalog refresh is done, UI will reflect the resources from the newly added catalog.
 
 [tep]: https://github.com/tektoncd/community/blob/main/teps/0003-tekton-catalog-organization.md
-[config]: https://github.com/tektoncd/hub/blob/d29cf3d2a522bc6d27357083aa0cf896ea22f242/config.yaml#L49
+[config]: https://github.com/tektoncd/hub/blob/main/config/02-api/21-api-configmap.yaml

@@ -43,12 +43,18 @@ Lets build and push all images to a registry and then create deployments.
 
   - API Image: quay.io/tekton-hub/api:v1.3.0
 
+- To Build images for multi-architecture use the following command and default value of architecture is `linux/amd64`.
+
+```
+docker builx build  --platform linux/amd64,linux/s390x,linux/ppc64le -f images/api.Dockerfile -t <image> --push .
+```
+
 ### UI Image
 
 Ensure you are in the root of project and logged in you image registry.
 
 ```
-docker build -f images/ui.Dockerfile -t <image> . && docker push <image>
+docker buildx build -f images/ui.Dockerfile -t <image> --push .
 ```
 
 Replace `<image>` with the registry and image name.
@@ -61,7 +67,7 @@ Ensure you are in the root of project and logged in you image registry.
 Build the API image using below command
 
 ```
-docker build -f images/api.Dockerfile -t <image> . && docker push <image>
+docker buildx build -f images/api.Dockerfile -t <image> --push .
 ```
 
 Replace `<image>` with the registry and image name.
@@ -70,7 +76,7 @@ eg. `quay.io/<username>/api`
 Now, Build the Db migration image using below command
 
 ```
-docker build -f images/db.Dockerfile -t <image> . && docker push <image>
+docker buildx build -f images/db.Dockerfile -t <image> --push .
 ```
 
 Replace `<image>` with the registry and image name.
@@ -204,13 +210,15 @@ stringData:
 
 ### Update API ConfigMap
 
-- Update the [config.yaml][config-yaml] to add at least one user with all scopes such as
+- ConfigMap (`02-api/21-api-configmap.yaml`) contains information for Api such as categories, default Catalog [tektoncd](https://github.com/tektoncd/catalog]) and Scopes.
 
+- This configMap have the enough information to deploy the default catalog [tektoncd](https://github.com/tektoncd/catalog]), if changes are required then the ConfigMap should be modified accordingly .
+
+- Update the ConfigMap to add at least one user with all scopes such as
+- For example
   - refresh a catalog,
   - refresh config file
   - create an agent token
-
-- For example
 
 ```
 scopes:
@@ -222,9 +230,7 @@ scopes:
     users: [foo]
 ```
 
-- Commit the changes and push the changes to your fork
-
-- Edit the `02-api/21-api-configmap.yaml` and change the URL to point to your fork. By default it is pointing to [config.yaml][config-yaml] in Hub which has Application Data.
+- Final ConfigMap would look like below:
 
 ```yaml
 apiVersion: v1
@@ -234,8 +240,28 @@ metadata:
   labels:
     app: tekton-hub-api
 data:
-  CONFIG_FILE_URL: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml ## Change the file URL here
   CATALOG_REFRESH_INTERVAL: 30m ## change the catalog refresh interval here
+  CATEGORIES: |
+    - Automation
+    - Build Tools
+  CATALOGS: | ## Add the new catalog information here
+    - name: tekton
+      org: tektoncd
+      type: community
+      provider: github
+      url: https://github.com/tektoncd/catalog
+      revision: main
+  SCOPES: | # Update the scopes as for your requirements
+    - name: agent:create
+      users: [vinamra28, piyush-garg, pratap0007, puneetpunamiya, sm43, sthaha, vdemeester]
+    - name: catalog:refresh
+      users: [vinamra28, piyush-garg, pratap0007, puneetpunamiya, sm43, sthaha, vdemeester]
+    - name: config:refresh
+      users: [vinamra28, piyush-garg, pratap0007, puneetpunamiya, sm43, sthaha, vdemeester]
+  DEFAULT: | # This is default scopes required to rate a resource.
+    scopes:
+      - rating:read
+      - rating:write
 ```
 
 All users have default scopes `rating:read` and `rating:write`. Once user get login to Hub, they get the appropriate scopes which allows them to rate the resource
@@ -243,7 +269,7 @@ All users have default scopes `rating:read` and `rating:write`. Once user get lo
 ### Schedule Catalog Refresh On an Interval
 
 - Default Catalog refresh interval time is 30 minutes. After every 30 minutes catalog resources in the hub db would be refreshed. If you want to change catalog refresh interval, update the `CATALOG_REFRESH_INTERVAL` in `tekton-hub-api` configmap with any one of these supported time units
-As(A seconds), Bm(B minutes) Ch(C hours), Dd(D days) and Ew(E weeks).
+  As(A seconds), Bm(B minutes) Ch(C hours), Dd(D days) and Ew(E weeks).
 
 - If you want to skip automate catalog refresh, keep `CATALOG_REFRESH_INTERVAL` as empty or `0`. Negative value is also not supported.
 
@@ -255,8 +281,8 @@ metadata:
   labels:
     app: tekton-hub-api
 data:
-  CONFIG_FILE_URL: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml
   CATALOG_REFRESH_INTERVAL: 30m ## change the catalog refresh interval here
+  ...
 ```
 
 **WARN** : Make sure you have updated Hub config before starting the api server
@@ -289,11 +315,15 @@ spec:
           volumeMounts:
           - name: catalog-source
             mountPath: "/home/hub/catalog" <---- change here with path/where/catalog/to/be/cloned eg /tmp/catalog
+          - name: tekton-hub-config
+            mountPath: '/tmp/config' <---- path where config map to be mounted
           ...
           env:
           - name: CLONE_BASE_PATH
             value: <path/where/catalog/to/be/cloned> eg /tmp/catalog
 ```
+
+**Note**: Mount path of api ConfigMap is fixed and shouldn't be changed.
 
 ### Update API Image
 
@@ -463,7 +493,7 @@ NOTE: The catalog refresh will add new resources or update existing resource if 
 
 2. A User token is short lived so you can create an agent token which will not expire.
 
-3. To create an agent, you can use the `/system/user/agent`. You will need `agent:create` scope in your JWT which has to be added in config.yaml
+3. To create an agent, you can use the `/system/user/agent`. You will need `agent:create` scope in your JWT which has to be added in the Api config map.
 
    ```
    curl -X PUT --header "Content-Type: application/json" \
@@ -506,7 +536,7 @@ NOTE: The catalog refresh will add new resources or update existing resource if 
 
 ## Adding New Users in Config
 
-By default when any user login for the first time, they will have only default scope even if they are added in config.yaml. To get additinal scopes, make sure the user has logged in once.
+By default when any user login for the first time, they will have only default scope even if they are added in api config map. To get additinal scopes, make sure the user has logged in once.
 
 Now, we need to refresh the config. To do that do a POST API call.
 
@@ -522,7 +552,7 @@ Replace `<access-token>` with your JWT token. you must have `config-refresh` sco
 ## Deploying on Disconnected Cluster
 
 - To deploy on a disconnected cluster you need to fork the [tektoncd/catalog][catalog] or you can use your own catalog but it must follow the [Catalog TEP][catalog-tep].
-- Fork the tektoncd/hub and update the [hub config][hub-config] file for your catalog details.
+- Fork the tektoncd/hub and update the [hub api config map][hub-api-configmap] file for your catalog details.
   - Update the catalog details with your catalog
   ```
   catalogs:
@@ -532,7 +562,6 @@ Replace `<access-token>` with your JWT token. you must have `config-refresh` sco
       url: https://github.com/tektoncd/catalog
       revision: main
   ```
-  You can find the template at bottom of [hub config][hub-config] file.
 - Mirror the Hub Deployment Images to the registry disconnected cluster has access to.
   You can use release images or build your own. For hub release images, you can use latest release tag as image tag. for eg. `quay.io/tekton-hub/ui:v1.3.0`. You can check the latest release [here][hub-releases].
 - List of images to be mirrored
@@ -572,11 +601,10 @@ Replace `<access-token>` with your JWT token. you must have `config-refresh` sco
 [openshift]: https://www.openshift.com/try
 [docker]: https://docs.docker.com/engine/install/
 [podman]: https://podman.io/getting-started/installation
-[config-yaml]: https://raw.githubusercontent.com/tektoncd/hub/master/config.yaml
 [github-oauth-steps]: https://docs.github.com/en/developers/apps/creating-an-oauth-app
 [gitlab-oauth-steps]: https://docs.gitlab.com/ee/integration/oauth_provider.html#user-owned-applications
 [bitbucket-oauth-steps]: https://support.atlassian.com/bitbucket-cloud/docs/use-oauth-on-bitbucket-cloud
 [catalog]: https://github.com/tektoncd/catalog
 [catalog-tep]: https://github.com/tektoncd/community/blob/main/teps/0003-tekton-catalog-organization.md
-[hub-config]: https://github.com/tektoncd/hub/blob/main/config.yaml
+[hub-api-configmap]: https://github.com/tektoncd/hub/blob/main/config/02-api/21-api-configmap.yaml
 [upgrade-v1.6.0-to-v1.7.0]: https://github.com/tektoncd/hub/blob/main/docs/UPGRADE_V1.6.0_TO_V1.7.0.md
