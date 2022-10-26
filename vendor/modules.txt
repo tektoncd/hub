@@ -334,7 +334,7 @@ github.com/mailru/easyjson/jwriter
 # github.com/manveru/faker v0.0.0-20171103152722-9fbc68a78c4d
 ## explicit
 github.com/manveru/faker
-# github.com/markbates/goth v1.74.1
+# github.com/markbates/goth v1.74.2
 ## explicit; go 1.15
 github.com/markbates/goth
 github.com/markbates/goth/gothic
