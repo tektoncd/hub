@@ -32,8 +32,8 @@ require (
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	golang.org/x/text v0.4.0
 	gopkg.in/h2non/gock.v1 v1.1.2
-	gorm.io/driver/postgres v1.4.4
-	gorm.io/gorm v1.24.0
+	gorm.io/driver/postgres v1.4.5
+	gorm.io/gorm v1.24.1-0.20221019064659-5dd2bb482755
 	gotest.tools/v3 v3.4.0
 	k8s.io/apimachinery v0.23.9
 	k8s.io/client-go v0.23.9
