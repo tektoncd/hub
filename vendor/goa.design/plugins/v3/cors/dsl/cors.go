@@ -21,42 +21,50 @@ import (
 // Origin accepts an origin string as the first argument and
 // an optional DSL function as the second argument.
 //
+// Optionally, you can specify the name of an environment variable instead, prefixed by a "$".
+// The value you store in that environment variable follows the same rules as the above
+// and can similarly be a regular expression.
+//
 // Example:
 //
-//    import cors "goa.design/plugins/v3/cors"
+//	import cors "goa.design/plugins/v3/cors"
 //
-//    var _ = API("calc", func() {
-//        cors.Origin("http://swagger.goa.design", func() { // Define CORS policy, may be prefixed with "*" wildcard
-//            cors.Headers("X-Shared-Secret")  // One or more authorized headers, use "*" to authorize all
-//            cors.Methods("GET", "POST")      // One or more authorized HTTP methods
-//            cors.Expose("X-Time")            // One or more headers exposed to clients
-//            cors.MaxAge(600)                 // How long to cache a preflight request response
-//            cors.Credentials()               // Sets Access-Control-Allow-Credentials header
-//        })
-//    })
+//	var _ = API("calc", func() {
+//	    cors.Origin("http://swagger.goa.design", func() { // Define CORS policy, may be prefixed with "*" wildcard
+//	        cors.Headers("X-Shared-Secret")  // One or more authorized headers, use "*" to authorize all
+//	        cors.Methods("GET", "POST")      // One or more authorized HTTP methods
+//	        cors.Expose("X-Time")            // One or more headers exposed to clients
+//	        cors.MaxAge(600)                 // How long to cache a preflight request response
+//	        cors.Credentials()               // Sets Access-Control-Allow-Credentials header
+//	    })
 //
-//    var _ = Service("calculator", func() {
-//        cors.Origin("/(api|swagger)[.]goa[.]design/") // Define CORS policy with a regular expression
+//	    cors.Origin("$ORIGIN") // Simple example to demonstrate using an environment variable
+//	})
 //
-//        Method("add", func() {
-//            Description("Add two operands")
-//            Payload(Operands)
-//            Error(ErrBadRequest, ErrorResult)
-//        })
-//    })
+//	var _ = Service("calculator", func() {
+//	    cors.Origin("/(api|swagger)[.]goa[.]design/") // Define CORS policy with a regular expression
 //
+//	    Method("add", func() {
+//	        Description("Add two operands")
+//	        Payload(Operands)
+//	        Error(ErrBadRequest, ErrorResult)
+//	    })
+//	})
 func Origin(origin string, args ...interface{}) {
 	o := &expr.OriginExpr{Origin: origin}
 	if strings.HasPrefix(origin, "/") && strings.HasSuffix(origin, "/") {
 		o.Regexp = true
 		o.Origin = strings.Trim(origin, "/")
 	}
+	if strings.HasPrefix(origin, "$") {
+		o.EnvVar = true
+		o.Origin = strings.Trim(origin, "$")
+	}
 
 	var dsl func()
 	{
 		if len(args) > 0 {
 			if d, ok := args[len(args)-1].(func()); ok {
-				args = args[:len(args)-1]
 				dsl = d
 			}
 		}
@@ -68,12 +76,12 @@ func Origin(origin string, args ...interface{}) {
 	}
 
 	current := eval.Current()
-	switch current.(type) {
+	switch actual := current.(type) {
 	case *goaexpr.APIExpr:
 		expr.Root.APIOrigins[origin] = o
 	case *goaexpr.ServiceExpr:
 		{
-			s := current.(*goaexpr.ServiceExpr).Name
+			s := actual.Name
 			if _, ok := expr.Root.ServiceOrigins[s]; !ok {
 				expr.Root.ServiceOrigins[s] = make(map[string]*expr.OriginExpr)
 			}
@@ -92,10 +100,9 @@ func Origin(origin string, args ...interface{}) {
 //
 // Example:
 //
-//     Origin("http://swagger.goa.design", func() {
-//         Methods("GET", "POST")           // One or more authorized HTTP methods
-//     })
-//
+//	Origin("http://swagger.goa.design", func() {
+//	    Methods("GET", "POST")           // One or more authorized HTTP methods
+//	})
 func Methods(vals ...string) {
 	switch o := eval.Current().(type) {
 	case *expr.OriginExpr:
@@ -111,10 +118,9 @@ func Methods(vals ...string) {
 //
 // Example:
 //
-//     Origin("http://swagger.goa.design", func() {
-//         Expose("X-Time")               // One or more headers exposed to clients
-//     })
-//
+//	Origin("http://swagger.goa.design", func() {
+//	    Expose("X-Time")               // One or more headers exposed to clients
+//	})
 func Expose(vals ...string) {
 	switch o := eval.Current().(type) {
 	case *expr.OriginExpr:
@@ -130,14 +136,13 @@ func Expose(vals ...string) {
 //
 // Example:
 //
-//     Origin("http://swagger.goa.design", func() {
-//         Headers("X-Shared-Secret")
-//     })
+//	Origin("http://swagger.goa.design", func() {
+//	    Headers("X-Shared-Secret")
+//	})
 //
-//     Origin("http://swagger.goa.design", func() {
-//         Headers("*")
-//     })
-//
+//	Origin("http://swagger.goa.design", func() {
+//	    Headers("*")
+//	})
 func Headers(vals ...string) {
 	switch o := eval.Current().(type) {
 	case *expr.OriginExpr:
@@ -153,10 +158,9 @@ func Headers(vals ...string) {
 //
 // Example:
 //
-//     Origin("http://swagger.goa.design", func() {
-//         MaxAge(600)            // How long to cache a preflight request response
-//     })
-//
+//	Origin("http://swagger.goa.design", func() {
+//	    MaxAge(600)            // How long to cache a preflight request response
+//	})
 func MaxAge(val uint) {
 	switch o := eval.Current().(type) {
 	case *expr.OriginExpr:
@@ -172,10 +176,9 @@ func MaxAge(val uint) {
 //
 // Example:
 //
-//     Origin("http://swagger.goa.design", func() {
-//         Credentials()            // Sets Access-Control-Allow-Credentials header
-//     })
-//
+//	Origin("http://swagger.goa.design", func() {
+//	    Credentials()            // Sets Access-Control-Allow-Credentials header
+//	})
 func Credentials() {
 	switch o := eval.Current().(type) {
 	case *expr.OriginExpr:

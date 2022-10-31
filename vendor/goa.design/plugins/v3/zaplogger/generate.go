@@ -1,7 +1,6 @@
 package zaplogger
 
 import (
-	"fmt"
 	"path"
 	"path/filepath"
 	"strings"
@@ -87,7 +86,7 @@ func GenerateFiles(genpkg string, root *expr.RootExpr) []*codegen.File {
 // GenerateLoggerFile returns the generated zap logger file.
 func GenerateLoggerFile(genpkg string) *codegen.File {
 	path := filepath.Join(codegen.Gendir, "log", "logger.go")
-	title := fmt.Sprint("Zap logger implementation")
+	title := "Zap logger implementation"
 	sections := []*codegen.SectionTemplate{
 		codegen.Header(title, "log", []*codegen.ImportSpec{
 			{Path: "go.uber.org/zap"},
