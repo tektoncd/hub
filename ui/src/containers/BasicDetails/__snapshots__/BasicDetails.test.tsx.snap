@@ -181,7 +181,7 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                             </GridItem>
                             <GridItem className=\\"hub-details-rating__margin\\">
                               <div className=\\"pf-l-grid__item hub-details-rating__margin\\" style={[undefined]}>
-                                <Memo(wrappedComponent)>
+                                <Memo(observerComponent)>
                                   <div className=\\"hub-details-rating\\">
                                     <form onClick={[Function: rateResource]}>
                                       <ul className=\\"hub-rate-area\\">
@@ -238,7 +238,7 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                                       </ul>
                                     </form>
                                   </div>
-                                </Memo(wrappedComponent)>
+                                </Memo(observerComponent)>
                               </div>
                             </GridItem>
                             <GridItem className=\\"hub-details-rating__margin\\">
@@ -470,7 +470,7 @@ exports[`should render the BasicDetails component 1`] = `
                             </GridItem>
                             <GridItem className=\\"hub-details-rating__margin\\">
                               <div className=\\"pf-l-grid__item hub-details-rating__margin\\" style={[undefined]}>
-                                <Memo(wrappedComponent)>
+                                <Memo(observerComponent)>
                                   <div className=\\"hub-details-rating\\">
                                     <form onClick={[Function: rateResource]}>
                                       <ul className=\\"hub-rate-area\\">
@@ -527,7 +527,7 @@ exports[`should render the BasicDetails component 1`] = `
                                       </ul>
                                     </form>
                                   </div>
-                                </Memo(wrappedComponent)>
+                                </Memo(observerComponent)>
                               </div>
                             </GridItem>
                             <GridItem className=\\"hub-details-rating__margin\\">
