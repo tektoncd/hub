@@ -28,6 +28,8 @@ type (
 		Credentials bool
 		// Regexp tells whether the Origin string is a regular expression.
 		Regexp bool
+		// EnvVar tells whether the Origin string should be pulled from an environment variable
+		EnvVar bool
 		// Parent expression, ServiceExpr or APIExpr.
 		Parent eval.Expression
 	}
@@ -120,6 +122,9 @@ func (o *OriginExpr) EvalName() string {
 // Validate ensures the origin expression is valid.
 func (o *OriginExpr) Validate() *eval.ValidationErrors {
 	verr := new(eval.ValidationErrors)
+	if o.EnvVar {
+		return verr
+	}
 	if !o.Regexp && strings.Count(o.Origin, "*") > 1 {
 		verr.Add(o, "invalid origin, can only contain one wildcard character")
 	}

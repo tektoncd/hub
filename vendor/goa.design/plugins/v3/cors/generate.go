@@ -9,6 +9,7 @@ import (
 	"goa.design/goa/v3/codegen/service"
 	"goa.design/goa/v3/eval"
 	httpcodegen "goa.design/goa/v3/http/codegen"
+
 	"goa.design/plugins/v3/cors/expr"
 )
 
@@ -119,6 +120,15 @@ func serverCORS(f *codegen.File) {
 				break
 			}
 		}
+		for _, o := range svcData.Origins {
+			if o.EnvVar {
+				codegen.AddImport(f.SectionTemplates[0],
+					&codegen.ImportSpec{Path: "os"})
+				codegen.AddImport(f.SectionTemplates[0],
+					&codegen.ImportSpec{Path: "strings"})
+				break
+			}
+		}
 		data.Endpoints = append(data.Endpoints, svcData.Endpoint)
 		fm := codegen.TemplateFuncs()
 		f.SectionTemplates = append(f.SectionTemplates, &codegen.SectionTemplate{
@@ -178,6 +188,12 @@ func {{ .Endpoint.MountHandler }}(mux goahttp.Muxer, h http.Handler) {
 var handleCORST = `{{ printf "%s applies the CORS response headers corresponding to the origin for the service %s." .OriginHandler .Name | comment }}
 func {{ .OriginHandler }}(h http.Handler) http.Handler {
 {{- range $i, $policy := .Origins }}
+	{{- if $policy.EnvVar }}
+	originStr{{$i}}, present := os.LookupEnv({{ printf "%q" $policy.Origin }})
+	if !present {
+		panic("CORS origin environment variable \"{{ $policy.Origin }}\" not set!")
+	}
+	{{- end }}
 	{{- if $policy.Regexp }}
 	spec{{$i}} := regexp.MustCompile({{ printf "%q" $policy.Origin }})
 	{{- end }}
@@ -193,7 +209,11 @@ func {{ .OriginHandler }}(h http.Handler) http.Handler {
 		{{- if $policy.Regexp }}
 	if cors.MatchOriginRegexp(origin, spec{{$i}}) {
 		{{- else }}
+	{{- if $policy.EnvVar }}
+	if cors.MatchOrigin(origin, originStr{{$i}}) {
+	{{- else }}
 	if cors.MatchOrigin(origin, {{ printf "%q" $policy.Origin }}) {
+	{{- end }}
 		{{- end }}
 		w.Header().Set("Access-Control-Allow-Origin", origin)
 		w.Header().Set("Vary", "Origin")
