@@ -134,6 +134,7 @@ export const ResourceStore = types
     tagsString: '',
     urlParams: '',
     err: '',
+    networkErr: true,
     isLoading: true,
     isVersionLoading: true,
     isResourceLoading: true,
@@ -298,6 +299,8 @@ export const ResourceStore = types
         const { api } = self;
 
         const json = yield api.resources();
+
+        self.networkErr = false;
         switch (true) {
           case json.data === undefined:
             self.status = 503;
