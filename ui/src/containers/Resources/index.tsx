@@ -92,7 +92,9 @@ const Resources: React.FC = observer(() => {
           }`}
         />
         <Title headingLevel="h2" className="hub-resource-waring__margin">
-          {catalogs.err === catalogConfigureError && resources.err !== apiDownError
+          {resources.networkErr == true
+            ? apiDownError
+            : catalogs.err === catalogConfigureError && resources.err !== apiDownError
             ? catalogs.err
             : resources.err}
         </Title>
