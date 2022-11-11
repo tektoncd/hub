@@ -28,6 +28,10 @@ spec:
       labels:
         app: tekton-hub-db
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: tekton-hub-db
           image: postgres:13
@@ -42,6 +46,12 @@ spec:
           ports:
             - containerPort: 5432
               protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 65532
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: POSTGRES_DB
               valueFrom:

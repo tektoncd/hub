@@ -21,9 +21,19 @@ metadata:
 spec:
   template:
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: tekton-hub-db-migration
           image: quay.io/tekton-hub/db-migration
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 65532
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: POSTGRES_HOST
               valueFrom:
