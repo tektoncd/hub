@@ -15,9 +15,19 @@ spec:
       labels:
         app: swagger
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: swagger
           image: quay.io/tekton-hub/swagger
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 65532
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: API_URL
               valueFrom:

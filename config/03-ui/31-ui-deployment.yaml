@@ -15,6 +15,10 @@ spec:
       labels:
         app: tekton-hub-ui
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: tekton-hub-ui
           image: quay.io/tekton-hub/ui
@@ -25,6 +29,12 @@ spec:
             limits:
               cpu: 500m
               memory: 500Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsUser: 65532
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: API_URL
               valueFrom:
