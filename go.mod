@@ -35,7 +35,7 @@ require (
 	gorm.io/driver/postgres v1.4.5
 	gorm.io/gorm v1.24.1-0.20221019064659-5dd2bb482755
 	gotest.tools/v3 v3.4.0
-	k8s.io/apimachinery v0.25.3
+	k8s.io/apimachinery v0.25.4
 	k8s.io/client-go v0.25.3
 	knative.dev/pkg v0.0.0-20221011175852-714b7630a836
 )
