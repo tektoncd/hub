@@ -16,6 +16,7 @@ spec:
         app: swagger
     spec:
       securityContext:
+        fsGroup: 65532
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault

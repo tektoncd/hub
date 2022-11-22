@@ -16,6 +16,7 @@ spec:
         app: tekton-hub-ui
     spec:
       securityContext:
+        fsGroup: 65532
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault

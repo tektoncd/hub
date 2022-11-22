@@ -51,7 +51,7 @@ spec:
             secretName: tekton-hub-api-ssh-crds
             optional: true
       securityContext:
-        fsGroup: 101
+        fsGroup: 65532
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
