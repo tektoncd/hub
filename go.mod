@@ -18,7 +18,7 @@ require (
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
 	github.com/ikawaha/goahttpcheck v1.13.3
 	github.com/joho/godotenv v1.4.0
-	github.com/markbates/goth v1.75.1
+	github.com/markbates/goth v1.75.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.6.0
 	github.com/spf13/viper v1.14.0
