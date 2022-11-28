@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"testing"
 	"time"
 
 	"github.com/ikawaha/httpcheck"
@@ -133,9 +132,15 @@ func (c *APIChecker) Use(middleware func(http.Handler) http.Handler) {
 	c.Middleware = append(c.Middleware, middleware)
 }
 
+// TestingT is an interface wrapper around *testing.T.
+type TestingT interface {
+	Errorf(format string, args ...any)
+	FailNow()
+}
+
 // Test returns a http checker that tests the endpoint.
 // see. https://github.com/ikawaha/httpcheck/
-func (c APIChecker) Test(t *testing.T, method, path string) *httpcheck.Tester {
+func (c APIChecker) Test(t TestingT, method, path string) *httpcheck.Tester {
 	var handler http.Handler = c.Mux
 	for _, v := range c.Middleware {
 		handler = v(handler)
