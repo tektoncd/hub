@@ -58,6 +58,8 @@ or
 Install a %S of name 'foo' of version '0.3' from Catalog 'Tekton':
 
     tkn hub install %s foo --version 0.3 --from tekton
+
+Note that the resources in Artifact Hub follow full SemVer - <major>.<minor>.<patch> (e.g. 0.3.0), please double check the version used
 `
 
 func Command(cli app.CLI) *cobra.Command {
@@ -184,11 +186,6 @@ func msg(res *unstructured.Unstructured) string {
 }
 
 func (opts *options) validate() error {
-	// Todo: support install sub command for artifact type
-	if opts.cli.Hub().GetType() == hub.ArtifactHubType {
-		return fmt.Errorf("install sub command is not supported for artifact type")
-	}
-
 	return flag.ValidateVersion(opts.version)
 }
 
@@ -222,8 +219,16 @@ func (opts *options) errors(pipelinesVersion string, errors []error) error {
 	for _, err := range errors {
 		if err == installer.ErrAlreadyExist {
 			existingVersion, ok := opts.resource.GetLabels()[versionLabel]
-			if ok {
 
+			// if version uses simple SemVer(<major>.<minor>), convert it to full SemVer (<major>.<minor>.<patch>)for comparison
+			if len(strings.Split(existingVersion, ".")) == 2 {
+				existingVersion += ".0"
+			}
+			if len(strings.Split(resourceVersion, ".")) == 2 {
+				resourceVersion += ".0"
+			}
+
+			if ok {
 				switch {
 				case existingVersion == resourceVersion:
 					return fmt.Errorf("%s %s(%s) already exists in %s namespace. Use reinstall command to overwrite existing",

@@ -65,7 +65,7 @@ func (t *tektonHubclient) Search(so SearchOption) SearchResult {
 }
 
 // Search queries the data using Hub Endpoint
-func (h *artifactHubCatalogResponse) Search(so SearchOption) SearchResult {
+func (h *ArtifactHubCatalogResponse) Search(so SearchOption) SearchResult {
 	// todo: implement Search function for Artifact Hub
 	return SearchResult{}
 }

@@ -44,6 +44,7 @@ type ResourceResult struct {
 	err                     error
 	version                 string
 	set                     bool
+	hubType                 string
 	resourceData            *ResourceData
 	resourceWithVersionData *ResourceWithVersionData
 	ResourceContent         *ResourceContent
@@ -72,10 +73,27 @@ type ResourceWithVersionData = rclient.ResourceVersionDataResponseBody
 
 type resourceYaml = rclient.ByCatalogKindNameVersionYamlResponseBody
 
+type ArtifactHubPkgResponse struct {
+	Name              string    `json:"name,omitempty"`
+	Data              PkgData   `json:"data,omitempty"`
+	AvailableVersions []Version `json:"available_versions,omitempty"`
+}
+
+type PkgData struct {
+	PipelineMinVer string   `json:"pipelines.minVersion"`
+	ManifestRaw    string   `json:"manifestRaw"`
+	Platforms      []string `json:"platforms"`
+}
+
+type Version struct {
+	Version string `json:"version"`
+	TS      int64  `json:"ts"`
+}
+
 // GetResource queries the data using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResource(opt ResourceOption) ResourceResult {
 	// Todo: implement GetResource for Artifact Hub
-	return ResourceResult{}
+	return ResourceResult{hubType: ArtifactHubType}
 }
 
 // GetResource queries the data using Tekton Hub Endpoint
@@ -88,18 +106,26 @@ func (t *tektonHubclient) GetResource(opt ResourceOption) ResourceResult {
 		status:  status,
 		err:     err,
 		set:     false,
+		hubType: TektonHubType,
 	}
 }
 
-// GetResource queries the data using Artifact Hub Endpoint
+// GetResourceYaml queries the data using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResourceYaml(opt ResourceOption) ResourceResult {
-	// Todo: implement GetResourceYaml for Artifact Hub
-	return ResourceResult{}
+	data, status, err := a.Get(fmt.Sprintf("%s-%s/%s/%s/%s", artifactHubCatInfoEndpoint, opt.Kind, opt.Catalog, opt.Name, opt.Version))
+
+	return ResourceResult{
+		data:    data,
+		version: opt.Version,
+		status:  status,
+		err:     err,
+		set:     false,
+		hubType: ArtifactHubType,
+	}
 }
 
-// GetResource queries the data using Tekton Hub Endpoint
+// GetResourceYaml queries the data using Tekton Hub Endpoint
 func (t *tektonHubclient) GetResourceYaml(opt ResourceOption) ResourceResult {
-
 	yaml, yamlStatus, yamlErr := t.Get(fmt.Sprintf("/v1/resource/%s/%s/%s/%s/yaml", opt.Catalog, opt.Kind, opt.Name, opt.Version))
 	data, status, err := t.Get(opt.Endpoint())
 
@@ -112,6 +138,7 @@ func (t *tektonHubclient) GetResourceYaml(opt ResourceOption) ResourceResult {
 		yamlStatus: yamlStatus,
 		yamlErr:    yamlErr,
 		set:        false,
+		hubType:    TektonHubType,
 	}
 }
 
@@ -130,16 +157,23 @@ func (opt ResourceOption) Endpoint() string {
 	return fmt.Sprintf("/v1/resource/%s/%s/%s", opt.Catalog, opt.Kind, opt.Name)
 }
 
-func (rr *ResourceResult) unmarshalData() error {
+func (rr *ResourceResult) validateData() error {
 	if rr.err != nil {
 		return rr.err
 	}
 	if rr.set {
 		return nil
 	}
-
 	if rr.status == http.StatusNotFound {
-		return fmt.Errorf("No Resource Found")
+		return fmt.Errorf("no Resource Found")
+	}
+
+	return nil
+}
+
+func (rr *ResourceResult) unmarshalData() error {
+	if err := rr.validateData(); err != nil {
+		return err
 	}
 
 	// API Response when version is not mentioned, will fetch latest by default
@@ -210,49 +244,93 @@ func (rr *ResourceResult) Resource() (interface{}, error) {
 
 // Resource returns the resource found
 func (rr *ResourceResult) ResourceYaml() (string, error) {
+	switch rr.hubType {
+	case TektonHubType:
+		if rr.yamlErr != nil {
+			return "", rr.err
+		}
+		if rr.set {
+			return "", nil
+		}
+		if rr.yamlStatus == http.StatusNotFound {
+			return "", fmt.Errorf("no Resource Found")
+		}
 
-	if rr.yamlErr != nil {
-		return "", rr.err
+		res := resourceYaml{}
+		if err := json.Unmarshal(rr.yaml, &res); err != nil {
+			return "", err
+		}
+		rr.ResourceContent = res.Data
+		return *rr.ResourceContent.Yaml, nil
+	case ArtifactHubType:
+		if err := rr.validateData(); err != nil {
+			return "", err
+		}
+		res := ArtifactHubPkgResponse{}
+		if err := json.Unmarshal(rr.data, &res); err != nil {
+			return "", err
+		}
+		return res.Data.ManifestRaw, nil
+	default:
+		return "", fmt.Errorf("hub type: %s not supported to resolve resource yaml", rr.hubType)
 	}
-	if rr.set {
-		return "", nil
-	}
-
-	if rr.yamlStatus == http.StatusNotFound {
-		return "", fmt.Errorf("No Resource Found")
-	}
-
-	res := resourceYaml{}
-	if err := json.Unmarshal(rr.yaml, &res); err != nil {
-		return "", err
-	}
-	rr.ResourceContent = res.Data
-
-	return *rr.ResourceContent.Yaml, nil
 }
 
 // ResourceVersion returns the resource version found
 func (rr *ResourceResult) ResourceVersion() (string, error) {
-	if err := rr.unmarshalData(); err != nil {
-		return "", err
-	}
+	switch rr.hubType {
+	case TektonHubType:
+		if err := rr.unmarshalData(); err != nil {
+			return "", err
+		}
 
-	if rr.version != "" {
-		return *rr.resourceWithVersionData.Version, nil
+		if rr.version != "" {
+			return *rr.resourceWithVersionData.Version, nil
+		}
+		return *rr.resourceData.LatestVersion.Version, nil
+	case ArtifactHubType:
+		if err := rr.validateData(); err != nil {
+			return "", err
+		}
+		if rr.version == "" {
+			versions, err := findVerions(rr.data)
+			if err != nil {
+				return "", err
+			}
+			return versions[0], nil
+		}
+		return rr.version, nil
+	default:
+		return "", fmt.Errorf("hub type: %s not supported to resolve resource version", rr.hubType)
 	}
-	return *rr.resourceData.LatestVersion.Version, nil
 }
 
 // MinPipelinesVersion returns the minimum pipeline version the resource is compatible
 func (rr *ResourceResult) MinPipelinesVersion() (string, error) {
-	if err := rr.unmarshalData(); err != nil {
-		return "", err
+	switch rr.hubType {
+	case TektonHubType:
+		if err := rr.unmarshalData(); err != nil {
+			return "", err
+		}
+		if rr.version != "" {
+			return *rr.resourceWithVersionData.MinPipelinesVersion, nil
+		}
+		return *rr.resourceData.LatestVersion.MinPipelinesVersion, nil
+	case ArtifactHubType:
+		if err := rr.validateData(); err != nil {
+			return "", err
+		}
+		resp := ArtifactHubPkgResponse{}
+		if err := json.Unmarshal(rr.data, &resp); err != nil {
+			return "", err
+		}
+		if resp.Data.PipelineMinVer == "" {
+			return "", fmt.Errorf("min pipeline version is not specified in the resource")
+		}
+		return resp.Data.PipelineMinVer, nil
+	default:
+		return "", fmt.Errorf("hub type: %s not supported to resolve min pipeline version", rr.hubType)
 	}
-
-	if rr.version != "" {
-		return *rr.resourceWithVersionData.MinPipelinesVersion, nil
-	}
-	return *rr.resourceData.LatestVersion.MinPipelinesVersion, nil
 }
 
 func (a *artifactHubClient) GetResourcesList(so SearchOption) ([]string, error) {
@@ -288,8 +366,35 @@ func (t *tektonHubclient) GetResourcesList(so SearchOption) ([]string, error) {
 }
 
 func (a *artifactHubClient) GetResourceVersionslist(r ResourceOption) ([]string, error) {
-	// Todo: implement GetResourceVersionslist for Artifact Hub
-	return []string{}, nil
+	data, _, err := a.Get(fmt.Sprintf("%s-%s/%s/%s", artifactHubCatInfoEndpoint, r.Kind, r.Catalog, r.Name))
+	if err != nil {
+		return nil, err
+	}
+
+	versions, err := findVerions(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return versions, nil
+}
+
+func findVerions(data []byte) ([]string, error) {
+	resp := ArtifactHubPkgResponse{}
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return nil, fmt.Errorf("error unmarshalling json response: %w", err)
+	}
+	if len(resp.AvailableVersions) == 0 {
+		return nil, fmt.Errorf("no available versions found in Artifact Hub")
+	}
+
+	var versions []string
+	for _, r := range resp.AvailableVersions {
+		versions = append(versions, r.Version)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(versions)))
+
+	return versions, nil
 }
 
 func (t *tektonHubclient) GetResourceVersionslist(r ResourceOption) ([]string, error) {

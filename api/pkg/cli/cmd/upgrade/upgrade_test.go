@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
 	res "github.com/tektoncd/hub/api/v1/gen/resource"
@@ -78,7 +79,7 @@ var taskWithNewVersionYaml = &res.ResourceContent{
 }
 
 func TestUpgrade_ResourceNotExist(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	version := "v1beta1"
 	dynamic := test.DynamicClient()
@@ -99,7 +100,7 @@ func TestUpgrade_ResourceNotExist(t *testing.T) {
 }
 
 func TestUpgrade_VersionCatalogMissing(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	existingTask := &v1beta1.Task{
 		ObjectMeta: metav1.ObjectMeta{
@@ -127,7 +128,7 @@ func TestUpgrade_VersionCatalogMissing(t *testing.T) {
 }
 
 func TestUpgrade_VersionMissing(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	existingTask := &v1beta1.Task{
 		ObjectMeta: metav1.ObjectMeta{
@@ -156,7 +157,7 @@ func TestUpgrade_VersionMissing(t *testing.T) {
 }
 
 func TestUpgrade_ToSpecificVersion(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -211,7 +212,7 @@ func TestUpgrade_ToSpecificVersion(t *testing.T) {
 }
 
 func TestUpgrade_SameVersionError(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -263,7 +264,7 @@ func TestUpgrade_SameVersionError(t *testing.T) {
 }
 
 func TestUpgrade_LowerVersionError(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -315,7 +316,7 @@ func TestUpgrade_LowerVersionError(t *testing.T) {
 }
 
 func TestUpgrade_ToSpecificVersion_RespectingPipelineSuccess(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -375,7 +376,7 @@ func TestUpgrade_ToSpecificVersion_RespectingPipelineSuccess(t *testing.T) {
 }
 
 func TestUpgrade_ToSpecificVersion_RespectingPipelineFailure(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
