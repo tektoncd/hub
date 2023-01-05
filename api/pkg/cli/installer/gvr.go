@@ -17,6 +17,7 @@ package installer
 import (
 	"sync"
 
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/restmapper"
@@ -43,6 +44,18 @@ func getGroupVersionResource(gr schema.GroupVersionResource, discovery discovery
 	}
 
 	return &gvr, nil
+}
+
+func getGVRWithObject(object *unstructured.Unstructured, gr schema.GroupVersionResource, discovery discovery.DiscoveryInterface) (*schema.GroupVersionResource, error) {
+	gvr, err := getGroupVersionResource(gr, discovery)
+	if err != nil {
+		return nil, err
+	}
+	gv, err := schema.ParseGroupVersion(object.GetAPIVersion())
+	if err == nil {
+		gvr.Version = gv.Version
+	}
+	return gvr, nil
 }
 
 func initializeAPIGroupRes(discovery discovery.DiscoveryInterface) error {

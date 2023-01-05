@@ -28,7 +28,7 @@ const tektonGroup = "tekton.dev"
 func (i *Installer) create(object *unstructured.Unstructured, namespace string, op metav1.CreateOptions) (*unstructured.Unstructured, error) {
 
 	gvrObj := schema.GroupVersionResource{Group: tektonGroup, Resource: object.GetKind()}
-	gvr, err := getGroupVersionResource(gvrObj, i.cs.Tekton().Discovery())
+	gvr, err := getGVRWithObject(object, gvrObj, i.cs.Tekton().Discovery())
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (i *Installer) get(objectName, kind, namespace string, op metav1.GetOptions
 func (i *Installer) update(object *unstructured.Unstructured, namespace string, op metav1.UpdateOptions) (*unstructured.Unstructured, error) {
 
 	gvrObj := schema.GroupVersionResource{Group: tektonGroup, Resource: object.GetKind()}
-	gvr, err := getGroupVersionResource(gvrObj, i.cs.Tekton().Discovery())
+	gvr, err := getGVRWithObject(object, gvrObj, i.cs.Tekton().Discovery())
 	if err != nil {
 		return nil, err
 	}
