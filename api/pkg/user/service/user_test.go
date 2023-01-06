@@ -215,3 +215,11 @@ func TestNewRefreshToken_RefreshTokenChecksumIsDifferent(t *testing.T) {
 
 	assert.Equal(t, res.Body.String(), "invalid refresh token\n")
 }
+
+func TestParseStringToFloat(t *testing.T) {
+	got, err := ParseStringToFloat("1.123456789e+09")
+	want := 1123456789
+
+	assert.NoError(t, err)
+	assert.Equal(t, int(got), want)
+}
