@@ -18,8 +18,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
@@ -78,14 +80,14 @@ func (s *UserService) Info(res http.ResponseWriter, req *http.Request) {
 		provider:      provider,
 	}
 
-	userId, err := strconv.Atoi(id)
+	userId, err := ParseStringToFloat(id)
 	if err != nil {
 		r.log.Error(err)
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	gitUser, err := r.GitUser(userId)
+	gitUser, err := r.GitUser(int(userId))
 	if err != nil {
 		r.log.Error(err)
 		http.Error(res, err.Error(), http.StatusInternalServerError)
@@ -121,7 +123,7 @@ func (s *UserService) RefreshAccessToken(res http.ResponseWriter, req *http.Requ
 		provider:      provider,
 	}
 
-	userId, err := strconv.Atoi(id)
+	userId, err := ParseStringToFloat(id)
 	if err != nil {
 		r.log.Error(err)
 		http.Error(res, err.Error(), http.StatusInternalServerError)
@@ -129,7 +131,7 @@ func (s *UserService) RefreshAccessToken(res http.ResponseWriter, req *http.Requ
 	}
 
 	refreshToken := req.Header.Get("Authorization")
-	user, err := s.validateRefreshToken(userId, refreshToken)
+	user, err := s.validateRefreshToken(int(userId), refreshToken)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
@@ -192,7 +194,7 @@ func (s *UserService) NewRefreshToken(res http.ResponseWriter, req *http.Request
 		provider:      provider,
 	}
 
-	userId, err := strconv.Atoi(id)
+	userId, err := ParseStringToFloat(id)
 	if err != nil {
 		r.log.Error(err)
 		http.Error(res, err.Error(), http.StatusInternalServerError)
@@ -200,7 +202,7 @@ func (s *UserService) NewRefreshToken(res http.ResponseWriter, req *http.Request
 	}
 
 	refreshToken := req.Header.Get("Authorization")
-	user, err := s.validateRefreshToken(userId, refreshToken)
+	user, err := s.validateRefreshToken(int(userId), refreshToken)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
@@ -249,4 +251,34 @@ func (r *request) newRefreshToken() (*userApp.NewRefreshTokenResult, error) {
 	}
 
 	return &userApp.NewRefreshTokenResult{Data: data}, nil
+}
+
+func ParseStringToFloat(str string) (float64, error) {
+	val, err := strconv.ParseFloat(str, 64)
+	if err == nil {
+		return val, nil
+	}
+
+	//If user id is specifed in scientific notation
+	pos := strings.IndexAny(str, "eE")
+	if pos < 0 {
+		return strconv.ParseFloat(str, 64)
+	}
+
+	var baseVal float64
+	var expVal int64
+
+	baseStr := str[0:pos]
+	baseVal, err = strconv.ParseFloat(baseStr, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	expStr := str[(pos + 1):]
+	expVal, err = strconv.ParseInt(expStr, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return baseVal * math.Pow10(int(expVal)), nil
 }
