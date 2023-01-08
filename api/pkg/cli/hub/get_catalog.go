@@ -22,13 +22,6 @@ import (
 	cclient "github.com/tektoncd/hub/api/v1/gen/http/catalog/client"
 )
 
-const (
-	tektonHubCatEndpoint    = "/v1/catalogs"
-	artifactHubCatEndpoint  = "/api/v1/repositories/search"
-	artifactHubTaskType     = 7
-	artifactHubPipelineType = 11
-)
-
 type CatalogResult struct {
 	data    []byte
 	status  int
@@ -64,7 +57,7 @@ func (cr *CatalogResult) Type() (CatalogData, error) {
 }
 
 func (a *artifactHubClient) GetCatalogsList() ([]string, error) {
-	data, _, err := a.Get(fmt.Sprintf("%s?kind=%v&kind=%v", artifactHubCatEndpoint, artifactHubTaskType, artifactHubPipelineType))
+	data, _, err := a.Get(fmt.Sprintf("%s?kind=%v&kind=%v", artifactHubCatSearchEndpoint, artifactHubTaskType, artifactHubPipelineType))
 	if err != nil {
 		return nil, err
 	}

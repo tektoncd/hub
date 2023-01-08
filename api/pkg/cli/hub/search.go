@@ -64,12 +64,6 @@ func (t *tektonHubclient) Search(so SearchOption) SearchResult {
 	return SearchResult{data: data, status: status, err: err}
 }
 
-// Search queries the data using Hub Endpoint
-func (h *artifactHubCatalogResponse) Search(so SearchOption) SearchResult {
-	// todo: implement Search function for Artifact Hub
-	return SearchResult{}
-}
-
 // Raw returns API response as byte array
 func (sr *SearchResult) Raw() ([]byte, error) {
 	return sr.data, sr.err

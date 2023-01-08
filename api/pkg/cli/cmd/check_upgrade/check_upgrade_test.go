@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
 	res "github.com/tektoncd/hub/api/v1/gen/resource"
@@ -65,7 +66,7 @@ var resVersion = &res.ResourceData{
 }
 
 func TestUpdateAvailable(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -114,7 +115,7 @@ func TestUpdateAvailable(t *testing.T) {
 }
 
 func TestUpdateAvailable_WithSkippedTasks(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -173,7 +174,7 @@ func TestUpdateAvailable_WithSkippedTasks(t *testing.T) {
 }
 
 func TestNoUpdateAvailable(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -222,7 +223,7 @@ func TestNoUpdateAvailable(t *testing.T) {
 }
 
 func TestNoUpdateAvailable_TaskNotInstalledViaHubCLI(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -270,7 +271,7 @@ func TestNoUpdateAvailable_TaskNotInstalledViaHubCLI(t *testing.T) {
 }
 
 func TestUpdateAvailable_PipelinesUnknown(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -313,7 +314,7 @@ func TestUpdateAvailable_PipelinesUnknown(t *testing.T) {
 }
 
 func TestUpdateAvailable_WithSkippedTasks_PipelinesUnknown(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 

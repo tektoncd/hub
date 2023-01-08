@@ -33,6 +33,12 @@ const (
 	tektonHubURL   = "https://api.hub.tekton.dev"
 	artifactHubURL = "https://artifacthub.io"
 	hubConfigPath  = ".tekton/hub-config"
+
+	tektonHubCatEndpoint         = "/v1/catalogs"
+	artifactHubCatSearchEndpoint = "/api/v1/repositories/search"
+	artifactHubCatInfoEndpoint   = "/api/v1/packages/tekton"
+	artifactHubTaskType          = 7
+	artifactHubPipelineType      = 11
 )
 
 type Client interface {

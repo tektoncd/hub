@@ -164,7 +164,7 @@ func TestValidate_ErrorCases(t *testing.T) {
 }
 
 func TestSearch_TableFormat(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 	rArr := &res.Resources{Data: res.ResourceDataCollection{res1, res2}}
@@ -193,7 +193,7 @@ func TestSearch_TableFormat(t *testing.T) {
 
 // Updates golden file as GOA is unable to pick the min view of catalog
 func TestSearch_JSONFormat(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 	rArr := &res.Resources{Data: res.ResourceDataCollection{res2}}
@@ -221,7 +221,7 @@ func TestSearch_JSONFormat(t *testing.T) {
 }
 
 func TestSearch_ResourceNotFound(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -250,7 +250,7 @@ func TestSearch_ResourceNotFound(t *testing.T) {
 }
 
 func TestSearch_InternalServerError(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -280,7 +280,7 @@ func TestSearch_InternalServerError(t *testing.T) {
 }
 
 func TestSearch_InvalidAPIServerURL(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	err := cli.Hub().SetURL("api")
 	assert.Error(t, err)

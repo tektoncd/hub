@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
 	res "github.com/tektoncd/hub/api/v1/gen/resource"
@@ -100,89 +101,129 @@ var taskWithOldVersionYaml = &res.ResourceContent{
 }
 
 func TestInstall_NewResource(t *testing.T) {
-	cli := test.NewCLI()
+	t.Run("TestInstall_NewResource_TektonHub", func(t *testing.T) {
+		defer gock.Off()
 
-	defer gock.Off()
+		rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
+		resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+		resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+		gock.New(test.API).
+			Get("/resource/" + resInfo + "/yaml").
+			Reply(200).
+			JSON(&resWithVersion.Projected)
 
-	rVer := &res.ResourceVersionYaml{Data: taskWithNewVersionYaml}
-	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
+		resVersion := &res.ResourceVersion{Data: resVersion}
+		resource := res.NewViewedResourceVersion(resVersion, "default")
+		gock.New(test.API).
+			Get("/resource/tekton/task/foo/0.3").
+			Reply(200).
+			JSON(&resource.Projected)
 
-	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.3")
+		buf := new(bytes.Buffer)
+		from := "tekton"
+		version := "0.3"
+		opts := createOpts(t, buf, hub.TektonHubType, from, version)
 
-	gock.New(test.API).
-		Get("/resource/" + resInfo + "/yaml").
-		Reply(200).
-		JSON(&resWithVersion.Projected)
+		err := opts.run()
+		assert.NoError(t, err)
+		assert.Equal(t, "WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v0.12\nTask foo(0.3) installed in hub namespace\n", buf.String())
+		assert.Equal(t, gock.IsDone(), true)
+	})
 
-	resVersion := &res.ResourceVersion{Data: resVersion}
-	resource := res.NewViewedResourceVersion(resVersion, "default")
-	gock.New(test.API).
-		Get("/resource/tekton/task/foo/0.3").
-		Reply(200).
-		JSON(&resource.Projected)
+	t.Run("TestInstall_NewResource_ArtifactHub", func(t *testing.T) {
+		defer gock.Off()
 
-	buf := new(bytes.Buffer)
-	cli.SetStream(buf, buf)
+		from := "tekton-catalog-tasks"
+		task := "foo"
+		version := "0.3.0"
+		ahPkgData := hub.ArtifactHubPkgData{
+			ManifestRaw:    task1,
+			PipelineMinVer: "0.12",
+		}
+		ahPkg := hub.ArtifactHubPkgResponse{Data: ahPkgData}
+		resInfo := fmt.Sprintf("%s-%s/%s/%s/%s", "/api/v1/packages/tekton", "task", from, task, version)
 
-	version := "v1beta1"
-	dynamic := test.DynamicClient()
+		gock.New(test.API).
+			Get(resInfo).
+			Reply(200).
+			JSON(&ahPkg)
 
-	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{})
-	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
+		buf := new(bytes.Buffer)
+		opts := createOpts(t, buf, hub.ArtifactHubType, from, version)
 
-	opts := &options{
-		cs:      test.FakeClientSet(cs.Pipeline, dynamic, "hub"),
-		cli:     cli,
-		kind:    "task",
-		args:    []string{"foo"},
-		from:    "tekton",
-		version: "0.3",
-	}
+		err := opts.run()
 
-	err := opts.run()
-	assert.NoError(t, err)
-	assert.Equal(t, "WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v0.12\nTask foo(0.3) installed in hub namespace\n", buf.String())
-	assert.Equal(t, gock.IsDone(), true)
+		assert.NoError(t, err)
+		assert.Equal(t, "WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v0.12\nTask foo(0.3) installed in hub namespace\n", buf.String())
+		assert.Equal(t, gock.IsDone(), true)
+	})
 }
 
-func TestInstall_ResourceNotFoundInHub(t *testing.T) {
-	cli := test.NewCLI()
-
-	defer gock.Off()
-
-	gock.New(test.API).
-		Get("/resource/tekton/task/foo/0.3/yaml").
-		Reply(404).
-		JSON(&goa.ServiceError{
-			ID:      "123456",
-			Name:    "not-found",
-			Message: "resource not found",
-		})
-
-	gock.New(test.API).
-		Get("/resource/tekton/task/foo/0.3").
-		Reply(404).
-		JSON(&goa.ServiceError{
-			ID:      "123456",
-			Name:    "not-found",
-			Message: "resource not found",
-		})
-
-	opts := &options{
-		cli:     cli,
-		kind:    "task",
-		args:    []string{"foo"},
-		from:    "tekton",
-		version: "0.3",
+func TestInstall_ResourceNotFound(t *testing.T) {
+	serviceErr := &goa.ServiceError{
+		ID:      "123456",
+		Name:    "not-found",
+		Message: "resource not found",
 	}
 
-	err := opts.run()
-	assert.Error(t, err)
-	assert.EqualError(t, err, "Task foo(0.3) from tekton catalog not found in Hub")
+	t.Run("TestInstall_ResourceNotFound_TektonHub", func(t *testing.T) {
+		cli := test.NewCLI(hub.TektonHubType)
+
+		defer gock.Off()
+
+		gock.New(test.API).
+			Get("/resource/tekton/task/foo/0.3/yaml").
+			Reply(404).
+			JSON(serviceErr)
+		gock.New(test.API).
+			Get("/resource/tekton/task/foo/0.3").
+			Reply(404).
+			JSON(serviceErr)
+
+		opts := &options{
+			cli:     cli,
+			kind:    "task",
+			args:    []string{"foo"},
+			from:    "tekton",
+			version: "0.3",
+		}
+
+		err := opts.run()
+		assert.Error(t, err)
+		assert.EqualError(t, err, "Task foo(0.3) from tekton catalog not found in Hub")
+	})
+
+	t.Run("TestInstall_ResourceNotFound_ArtifactHub", func(t *testing.T) {
+		cli := test.NewCLI(hub.ArtifactHubType)
+
+		defer gock.Off()
+
+		from := "tekton-catalog-tasks-not-exist"
+		task := "foo"
+		version := "0.3.0"
+		resInfo := fmt.Sprintf("%s-%s/%s/%s/%s", "/api/v1/packages/tekton", "task", from, task, version)
+
+		gock.New(test.API).
+			Get(resInfo).
+			Reply(404).
+			JSON(serviceErr)
+
+		opts := &options{
+			cli:     cli,
+			kind:    "task",
+			args:    []string{"foo"},
+			from:    from,
+			version: version,
+		}
+
+		err := opts.run()
+		assert.Error(t, err)
+		assert.EqualError(t, err, "Task foo(0.3.0) from tekton-catalog-tasks-not-exist catalog not found in Hub")
+	})
 }
 
 func TestInstall_ResourceAlreadyExistError(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -235,7 +276,7 @@ func TestInstall_ResourceAlreadyExistError(t *testing.T) {
 }
 
 func TestInstall_UpgradeError(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -284,12 +325,12 @@ func TestInstall_UpgradeError(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Task foo(0.1) already exists in hub namespace. Use upgrade command to install v0.3")
+	assert.EqualError(t, err, "Task foo(0.1.0) already exists in hub namespace. Use upgrade command to install v0.3.0")
 	assert.Equal(t, gock.IsDone(), true)
 }
 
 func TestInstall_SameVersionError(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -338,12 +379,12 @@ func TestInstall_SameVersionError(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Task foo(0.3) already exists in hub namespace. Use reinstall command to overwrite existing")
+	assert.EqualError(t, err, "Task foo(0.3.0) already exists in hub namespace. Use reinstall command to overwrite existing")
 	assert.Equal(t, gock.IsDone(), true)
 }
 
 func TestInstall_LowerVersionError(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -391,12 +432,12 @@ func TestInstall_LowerVersionError(t *testing.T) {
 
 	err := opts.run()
 	assert.Error(t, err)
-	assert.EqualError(t, err, "Task foo(0.7) already exists in hub namespace. Use downgrade command to install v0.3")
+	assert.EqualError(t, err, "Task foo(0.7.0) already exists in hub namespace. Use downgrade command to install v0.3.0")
 	assert.Equal(t, gock.IsDone(), true)
 }
 
 func TestInstall_RespectingPipelinesVersion(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -447,7 +488,7 @@ func TestInstall_RespectingPipelinesVersion(t *testing.T) {
 }
 
 func TestInstall_RespectingPipelinesVersionFailure(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -498,7 +539,7 @@ func TestInstall_RespectingPipelinesVersionFailure(t *testing.T) {
 }
 
 func TestInstall_DeprecatedVersion(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -542,4 +583,22 @@ func TestInstall_DeprecatedVersion(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "WARN: tekton pipelines version unknown, this resource is compatible with pipelines min version v0.12\nWARN: This version has been deprecated\nTask foo(0.2) installed in hub namespace\n", buf.String())
 	assert.Equal(t, gock.IsDone(), true)
+}
+
+func createOpts(t *testing.T, buf *bytes.Buffer, hubType, from, version string) *options {
+	cli := test.NewCLI(hubType)
+	cli.SetStream(buf, buf)
+
+	dynamic := test.DynamicClient()
+	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{})
+	cs.Pipeline.Resources = cb.APIResourceList("v1beta1", []string{"task"})
+
+	return &options{
+		cs:      test.FakeClientSet(cs.Pipeline, dynamic, "hub"),
+		cli:     cli,
+		kind:    "task",
+		args:    []string{"foo"},
+		from:    from,
+		version: version,
+	}
 }

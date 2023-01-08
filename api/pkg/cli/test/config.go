@@ -32,8 +32,18 @@ type cli struct {
 
 var _ app.CLI = (*cli)(nil)
 
-func NewCLI() *cli {
-	h := hub.NewTektonHubClient()
+func NewCLI(hubType string) *cli {
+	var h hub.Client
+	switch hubType {
+	case hub.TektonHubType:
+		h = hub.NewTektonHubClient()
+	case hub.ArtifactHubType:
+		h = hub.NewArtifactHubClient()
+	default:
+		fmt.Printf("invalid hub type: %s, using default type: %s to continue", hubType, hub.TektonHubType)
+		h = hub.NewTektonHubClient()
+	}
+
 	if err := h.SetURL(API); err != nil {
 		fmt.Printf("Failed validate and set the hub apiURL server URL %v", err)
 	}
