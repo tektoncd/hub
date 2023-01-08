@@ -34,8 +34,18 @@ type ResourceOption struct {
 	PipelineVersion string
 }
 
+type ResourceResult interface {
+	RawURL() (string, error)
+	Manifest() ([]byte, error)
+	Resource() (interface{}, error)
+	ResourceYaml() (string, error)
+	ResourceVersion() (string, error)
+	MinPipelinesVersion() (string, error)
+	UnmarshalData() error
+}
+
 // ResourceResult defines API response
-type ResourceResult struct {
+type THResourceResult struct {
 	data                    []byte
 	yaml                    []byte
 	status                  int
@@ -47,6 +57,14 @@ type ResourceResult struct {
 	resourceData            *ResourceData
 	resourceWithVersionData *ResourceWithVersionData
 	ResourceContent         *ResourceContent
+}
+
+type AHResourceResult struct {
+	data    []byte
+	status  int
+	err     error
+	version string
+	set     bool
 }
 
 type ResourceVersionOptions struct {
@@ -75,14 +93,14 @@ type resourceYaml = rclient.ByCatalogKindNameVersionYamlResponseBody
 // GetResource queries the data using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResource(opt ResourceOption) ResourceResult {
 	// Todo: implement GetResource for Artifact Hub
-	return ResourceResult{}
+	return nil
 }
 
 // GetResource queries the data using Tekton Hub Endpoint
 func (t *tektonHubclient) GetResource(opt ResourceOption) ResourceResult {
 	data, status, err := t.Get(opt.Endpoint())
 
-	return ResourceResult{
+	return &THResourceResult{
 		data:    data,
 		version: opt.Version,
 		status:  status,
@@ -94,7 +112,7 @@ func (t *tektonHubclient) GetResource(opt ResourceOption) ResourceResult {
 // GetResource queries the data using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResourceYaml(opt ResourceOption) ResourceResult {
 	// Todo: implement GetResourceYaml for Artifact Hub
-	return ResourceResult{}
+	return nil
 }
 
 // GetResource queries the data using Tekton Hub Endpoint
@@ -103,7 +121,7 @@ func (t *tektonHubclient) GetResourceYaml(opt ResourceOption) ResourceResult {
 	yaml, yamlStatus, yamlErr := t.Get(fmt.Sprintf("/v1/resource/%s/%s/%s/%s/yaml", opt.Catalog, opt.Kind, opt.Name, opt.Version))
 	data, status, err := t.Get(opt.Endpoint())
 
-	return ResourceResult{
+	return &THResourceResult{
 		data:       data,
 		yaml:       yaml,
 		version:    opt.Version,
@@ -113,146 +131,6 @@ func (t *tektonHubclient) GetResourceYaml(opt ResourceOption) ResourceResult {
 		yamlErr:    yamlErr,
 		set:        false,
 	}
-}
-
-// Endpoint computes the endpoint url using input provided
-func (opt ResourceOption) Endpoint() string {
-	if opt.Version != "" {
-		// API: /resource/<catalog>/<kind>/<name>/<version>
-		return fmt.Sprintf("/v1/resource/%s/%s/%s/%s", opt.Catalog, opt.Kind, opt.Name, opt.Version)
-	}
-	if opt.PipelineVersion != "" {
-		opt.PipelineVersion = strings.TrimLeft(opt.PipelineVersion, "v")
-		// API: /resource/<catalog>/<kind>/<name>?pipelinesversion=<version>
-		return fmt.Sprintf("/v1/resource/%s/%s/%s?pipelinesversion=%s", opt.Catalog, opt.Kind, opt.Name, opt.PipelineVersion)
-	}
-	// API: /resource/<catalog>/<kind>/<name>
-	return fmt.Sprintf("/v1/resource/%s/%s/%s", opt.Catalog, opt.Kind, opt.Name)
-}
-
-func (rr *ResourceResult) unmarshalData() error {
-	if rr.err != nil {
-		return rr.err
-	}
-	if rr.set {
-		return nil
-	}
-
-	if rr.status == http.StatusNotFound {
-		return fmt.Errorf("No Resource Found")
-	}
-
-	// API Response when version is not mentioned, will fetch latest by default
-	if rr.version == "" {
-		res := resResponse{}
-		if err := json.Unmarshal(rr.data, &res); err != nil {
-			return err
-		}
-		rr.resourceData = res.Data
-
-		rr.set = true
-		return nil
-	}
-
-	// API Response when a specific version is mentioned
-	res := resVersionResponse{}
-	if err := json.Unmarshal(rr.data, &res); err != nil {
-		return err
-	}
-	rr.resourceWithVersionData = res.Data
-	rr.set = true
-	return nil
-}
-
-// RawURL returns the raw url of the resource yaml file
-func (rr *ResourceResult) RawURL() (string, error) {
-	if err := rr.unmarshalData(); err != nil {
-		return "", err
-	}
-
-	if rr.version != "" {
-		return *rr.resourceWithVersionData.RawURL, nil
-	}
-	return *rr.resourceData.LatestVersion.RawURL, nil
-}
-
-// Manifest gets the resource from catalog
-func (rr *ResourceResult) Manifest() ([]byte, error) {
-	rawURL, err := rr.RawURL()
-	if err != nil {
-		return nil, err
-	}
-
-	data, status, err := httpGet(rawURL)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if status != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch resource from catalog")
-	}
-
-	return data, nil
-}
-
-// Resource returns the resource found
-func (rr *ResourceResult) Resource() (interface{}, error) {
-	if err := rr.unmarshalData(); err != nil {
-		return "", err
-	}
-
-	if rr.version != "" {
-		return *rr.resourceWithVersionData, nil
-	}
-	return *rr.resourceData, nil
-}
-
-// Resource returns the resource found
-func (rr *ResourceResult) ResourceYaml() (string, error) {
-
-	if rr.yamlErr != nil {
-		return "", rr.err
-	}
-	if rr.set {
-		return "", nil
-	}
-
-	if rr.yamlStatus == http.StatusNotFound {
-		return "", fmt.Errorf("No Resource Found")
-	}
-
-	res := resourceYaml{}
-	if err := json.Unmarshal(rr.yaml, &res); err != nil {
-		return "", err
-	}
-	rr.ResourceContent = res.Data
-
-	return *rr.ResourceContent.Yaml, nil
-}
-
-// ResourceVersion returns the resource version found
-func (rr *ResourceResult) ResourceVersion() (string, error) {
-	if err := rr.unmarshalData(); err != nil {
-		return "", err
-	}
-
-	if rr.version != "" {
-		return *rr.resourceWithVersionData.Version, nil
-	}
-	return *rr.resourceData.LatestVersion.Version, nil
-}
-
-// MinPipelinesVersion returns the minimum pipeline version the resource is compatible
-func (rr *ResourceResult) MinPipelinesVersion() (string, error) {
-	if err := rr.unmarshalData(); err != nil {
-		return "", err
-	}
-
-	if rr.version != "" {
-		return *rr.resourceWithVersionData.MinPipelinesVersion, nil
-	}
-	return *rr.resourceData.LatestVersion.MinPipelinesVersion, nil
 }
 
 func (a *artifactHubClient) GetResourcesList(so SearchOption) ([]string, error) {
@@ -314,4 +192,185 @@ func (t *tektonHubclient) GetResourceVersionslist(r ResourceOption) ([]string, e
 	sort.Sort(sort.Reverse(sort.StringSlice(ver)))
 
 	return ver, nil
+}
+
+// Endpoint computes the endpoint url using input provided
+func (opt ResourceOption) Endpoint() string {
+	if opt.Version != "" {
+		// API: /resource/<catalog>/<kind>/<name>/<version>
+		return fmt.Sprintf("/v1/resource/%s/%s/%s/%s", opt.Catalog, opt.Kind, opt.Name, opt.Version)
+	}
+	if opt.PipelineVersion != "" {
+		opt.PipelineVersion = strings.TrimLeft(opt.PipelineVersion, "v")
+		// API: /resource/<catalog>/<kind>/<name>?pipelinesversion=<version>
+		return fmt.Sprintf("/v1/resource/%s/%s/%s?pipelinesversion=%s", opt.Catalog, opt.Kind, opt.Name, opt.PipelineVersion)
+	}
+	// API: /resource/<catalog>/<kind>/<name>
+	return fmt.Sprintf("/v1/resource/%s/%s/%s", opt.Catalog, opt.Kind, opt.Name)
+}
+
+func (rr *THResourceResult) UnmarshalData() error {
+	if rr.err != nil {
+		return rr.err
+	}
+	if rr.set {
+		return nil
+	}
+
+	if rr.status == http.StatusNotFound {
+		return fmt.Errorf("No Resource Found")
+	}
+
+	// API Response when version is not mentioned, will fetch latest by default
+	if rr.version == "" {
+		res := resResponse{}
+		if err := json.Unmarshal(rr.data, &res); err != nil {
+			return err
+		}
+		rr.resourceData = res.Data
+
+		rr.set = true
+		return nil
+	}
+
+	// API Response when a specific version is mentioned
+	res := resVersionResponse{}
+	if err := json.Unmarshal(rr.data, &res); err != nil {
+		return err
+	}
+	rr.resourceWithVersionData = res.Data
+	rr.set = true
+	return nil
+}
+
+func (rr *AHResourceResult) UnmarshalData() error {
+	// TODO
+	return nil
+}
+
+// RawURL returns the raw url of the resource yaml file
+func (rr *THResourceResult) RawURL() (string, error) {
+	if err := rr.UnmarshalData(); err != nil {
+		return "", err
+	}
+
+	if rr.version != "" {
+		return *rr.resourceWithVersionData.RawURL, nil
+	}
+	return *rr.resourceData.LatestVersion.RawURL, nil
+}
+
+// RawURL returns the raw url of the resource yaml file
+func (rr *AHResourceResult) RawURL() (string, error) {
+	// TODO
+	return "", nil
+}
+
+// Manifest gets the resource from catalog
+func (rr *THResourceResult) Manifest() ([]byte, error) {
+	rawURL, err := rr.RawURL()
+	if err != nil {
+		return nil, err
+	}
+
+	data, status, err := httpGet(rawURL)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if status != http.StatusOK {
+		return nil, fmt.Errorf("failed to fetch resource from catalog")
+	}
+
+	return data, nil
+}
+
+// Manifest gets the resource from catalog
+func (rr *AHResourceResult) Manifest() ([]byte, error) {
+	// TODO
+	return []byte{}, nil
+}
+
+// Resource returns the resource found
+func (rr *THResourceResult) Resource() (interface{}, error) {
+	if err := rr.UnmarshalData(); err != nil {
+		return "", err
+	}
+
+	if rr.version != "" {
+		return *rr.resourceWithVersionData, nil
+	}
+	return *rr.resourceData, nil
+}
+
+// Resource returns the resource found
+func (rr *AHResourceResult) Resource() (interface{}, error) {
+	// TODO
+	return "", nil
+}
+
+// Resource returns the resource found
+func (rr *THResourceResult) ResourceYaml() (string, error) {
+
+	if rr.yamlErr != nil {
+		return "", rr.err
+	}
+	if rr.set {
+		return "", nil
+	}
+
+	if rr.yamlStatus == http.StatusNotFound {
+		return "", fmt.Errorf("No Resource Found")
+	}
+
+	res := resourceYaml{}
+	if err := json.Unmarshal(rr.yaml, &res); err != nil {
+		return "", err
+	}
+	rr.ResourceContent = res.Data
+
+	return *rr.ResourceContent.Yaml, nil
+}
+
+// Resource returns the resource found
+func (rr *AHResourceResult) ResourceYaml() (string, error) {
+	// TODO
+	return "", nil
+}
+
+// ResourceVersion returns the resource version found
+func (rr *THResourceResult) ResourceVersion() (string, error) {
+	if err := rr.UnmarshalData(); err != nil {
+		return "", err
+	}
+
+	if rr.version != "" {
+		return *rr.resourceWithVersionData.Version, nil
+	}
+	return *rr.resourceData.LatestVersion.Version, nil
+}
+
+// ResourceVersion returns the resource version found
+func (rr *AHResourceResult) ResourceVersion() (string, error) {
+	//TODO
+	return "", nil
+}
+
+// MinPipelinesVersion returns the minimum pipeline version the resource is compatible
+func (rr *THResourceResult) MinPipelinesVersion() (string, error) {
+	if err := rr.UnmarshalData(); err != nil {
+		return "", err
+	}
+
+	if rr.version != "" {
+		return *rr.resourceWithVersionData.MinPipelinesVersion, nil
+	}
+	return *rr.resourceData.LatestVersion.MinPipelinesVersion, nil
+}
+
+// MinPipelinesVersion returns the minimum pipeline version the resource is compatible
+func (rr *AHResourceResult) MinPipelinesVersion() (string, error) {
+	//TODO
+	return "", nil
 }
