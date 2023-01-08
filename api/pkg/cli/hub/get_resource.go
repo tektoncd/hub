@@ -34,6 +34,7 @@ type ResourceOption struct {
 	PipelineVersion string
 }
 
+// ResourceResult defines API response
 type ResourceResult interface {
 	RawURL() (string, error)
 	Manifest() ([]byte, error)
@@ -61,6 +62,11 @@ type TektonHubResourceResult struct {
 
 // ArtifactHubResourceResult defines Artifact Hub API response
 type ArtifactHubResourceResult struct {
+	data    []byte
+	status  int
+	err     error
+	version string
+	set     bool
 }
 
 type ResourceVersionOptions struct {
@@ -86,10 +92,25 @@ type ResourceWithVersionData = rclient.ResourceVersionDataResponseBody
 
 type resourceYaml = rclient.ByCatalogKindNameVersionYamlResponseBody
 
+type ArtifactHubPkgResponse struct {
+	Name              string               `json:"name,omitempty"`
+	Data              ArtifactHubPkgData   `json:"data,omitempty"`
+	AvailableVersions []ArtifactHubVersion `json:"available_versions,omitempty"`
+}
+
+type ArtifactHubPkgData struct {
+	PipelineMinVer string   `json:"pipelines.minVersion"`
+	ManifestRaw    string   `json:"manifestRaw"`
+	Platforms      []string `json:"platforms"`
+}
+
+type ArtifactHubVersion struct {
+	Version string `json:"version"`
+}
+
 // GetResource queries the data using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResource(opt ResourceOption) ResourceResult {
-	// Todo: implement GetResource for Artifact Hub
-	return nil
+	panic("GetResource() not implemented for artifact type")
 }
 
 // GetResource queries the data using Tekton Hub Endpoint
@@ -105,13 +126,20 @@ func (t *tektonHubclient) GetResource(opt ResourceOption) ResourceResult {
 	}
 }
 
-// GetResource queries the data using Artifact Hub Endpoint
+// GetResourceYaml queries the resource yaml using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResourceYaml(opt ResourceOption) ResourceResult {
-	// Todo: implement GetResourceYaml for Artifact Hub
-	return nil
+	data, status, err := a.Get(fmt.Sprintf("%s-%s/%s/%s/%s", artifactHubCatInfoEndpoint, opt.Kind, opt.Catalog, opt.Name, opt.Version))
+
+	return &ArtifactHubResourceResult{
+		data:    data,
+		version: opt.Version,
+		status:  status,
+		err:     err,
+		set:     false,
+	}
 }
 
-// GetResource queries the data using Tekton Hub Endpoint
+// GetResourceYaml queries the resource yaml using Tekton Hub Endpoint
 func (t *tektonHubclient) GetResourceYaml(opt ResourceOption) ResourceResult {
 
 	yaml, yamlStatus, yamlErr := t.Get(fmt.Sprintf("/v1/resource/%s/%s/%s/%s/yaml", opt.Catalog, opt.Kind, opt.Name, opt.Version))
@@ -129,11 +157,12 @@ func (t *tektonHubclient) GetResourceYaml(opt ResourceOption) ResourceResult {
 	}
 }
 
+// GetResourcesList queries the resources in the catalog using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResourcesList(so SearchOption) ([]string, error) {
-	// Todo: implement GetResourcesList for Artifact Hub
-	return []string{}, nil
+	panic("GetResourcesList() not implemented for artifact type")
 }
 
+// GetResourcesList queries the resources in the catalog using Tekton Hub Endpoint
 func (t *tektonHubclient) GetResourcesList(so SearchOption) ([]string, error) {
 	// Get all resources
 	result := t.Search(SearchOption{
@@ -161,11 +190,22 @@ func (t *tektonHubclient) GetResourcesList(so SearchOption) ([]string, error) {
 	return resources, nil
 }
 
+// GetResourceVersionslist queries the versions of a resource using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResourceVersionslist(r ResourceOption) ([]string, error) {
-	// Todo: implement GetResourceVersionslist for Artifact Hub
-	return []string{}, nil
+	data, _, err := a.Get(fmt.Sprintf("%s-%s/%s/%s", artifactHubCatInfoEndpoint, r.Kind, r.Catalog, r.Name))
+	if err != nil {
+		return nil, err
+	}
+
+	versions, err := findArtifactHubResourceVersions(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return versions, nil
 }
 
+// GetResourceVersionslist queries the versions of a resource using Tekton Hub Endpoint
 func (t *tektonHubclient) GetResourceVersionslist(r ResourceOption) ([]string, error) {
 	opts := &ResourceVersionOptions{}
 	// Get the resource versions
@@ -205,6 +245,7 @@ func (opt ResourceOption) Endpoint() string {
 	return fmt.Sprintf("/v1/resource/%s/%s/%s", opt.Catalog, opt.Kind, opt.Name)
 }
 
+// UnmarshalData unmarshals the data embedded in TektonHubResourceResult
 func (rr *TektonHubResourceResult) UnmarshalData() error {
 	if rr.err != nil {
 		return rr.err
@@ -239,12 +280,12 @@ func (rr *TektonHubResourceResult) UnmarshalData() error {
 	return nil
 }
 
+// UnmarshalData unmarshals the data embedded in ArtifactHubResourceResult
 func (rr *ArtifactHubResourceResult) UnmarshalData() error {
-	// TODO
-	return nil
+	panic("UnmarshalData() not implemented for artifact type")
 }
 
-// RawURL returns the raw url of the resource yaml file
+// RawURL returns the raw url of the resource yaml file from TektonHubResourceResult
 func (rr *TektonHubResourceResult) RawURL() (string, error) {
 	if err := rr.UnmarshalData(); err != nil {
 		return "", err
@@ -256,13 +297,12 @@ func (rr *TektonHubResourceResult) RawURL() (string, error) {
 	return *rr.resourceData.LatestVersion.RawURL, nil
 }
 
-// RawURL returns the raw url of the resource yaml file
+// RawURL returns the raw url of the resource yaml file from ArtifactHubResourceResult
 func (rr *ArtifactHubResourceResult) RawURL() (string, error) {
-	// TODO
-	return "", nil
+	panic("RawURL() not implemented for artifact type")
 }
 
-// Manifest gets the resource from catalog
+// Manifest gets the raw resource of the catalog from TektonHubResourceResult
 func (rr *TektonHubResourceResult) Manifest() ([]byte, error) {
 	rawURL, err := rr.RawURL()
 	if err != nil {
@@ -282,13 +322,12 @@ func (rr *TektonHubResourceResult) Manifest() ([]byte, error) {
 	return data, nil
 }
 
-// Manifest gets the resource from catalog
+// Manifest gets the raw resource of the catalog from ArtifactHubResourceResult
 func (rr *ArtifactHubResourceResult) Manifest() ([]byte, error) {
-	// TODO
-	return []byte{}, nil
+	panic("Manifest() not implemented for artifact type")
 }
 
-// Resource returns the resource found
+// Resource returns the resource found from TektonHubResourceResult
 func (rr *TektonHubResourceResult) Resource() (interface{}, error) {
 	if err := rr.UnmarshalData(); err != nil {
 		return "", err
@@ -300,13 +339,12 @@ func (rr *TektonHubResourceResult) Resource() (interface{}, error) {
 	return *rr.resourceData, nil
 }
 
-// Resource returns the resource found
+// Resource returns the resource found from ArtifactHubResourceResult
 func (rr *ArtifactHubResourceResult) Resource() (interface{}, error) {
-	// TODO
-	return "", nil
+	panic("Resource() not implemented for artifact type")
 }
 
-// Resource returns the resource found
+// ResourceYaml returns the resource yaml file found from TektonHubResourceResult
 func (rr *TektonHubResourceResult) ResourceYaml() (string, error) {
 
 	if rr.yamlErr != nil {
@@ -329,13 +367,19 @@ func (rr *TektonHubResourceResult) ResourceYaml() (string, error) {
 	return *rr.ResourceContent.Yaml, nil
 }
 
-// Resource returns the resource found
+// ResourceYaml returns the resource yaml file found from ArtifactHubResourceResult
 func (rr *ArtifactHubResourceResult) ResourceYaml() (string, error) {
-	// TODO
-	return "", nil
+	if err := rr.validateData(); err != nil {
+		return "", err
+	}
+	res := ArtifactHubPkgResponse{}
+	if err := json.Unmarshal(rr.data, &res); err != nil {
+		return "", err
+	}
+	return res.Data.ManifestRaw, nil
 }
 
-// ResourceVersion returns the resource version found
+// ResourceVersion returns the resource version found from TektonHubResourceResult
 func (rr *TektonHubResourceResult) ResourceVersion() (string, error) {
 	if err := rr.UnmarshalData(); err != nil {
 		return "", err
@@ -347,13 +391,22 @@ func (rr *TektonHubResourceResult) ResourceVersion() (string, error) {
 	return *rr.resourceData.LatestVersion.Version, nil
 }
 
-// ResourceVersion returns the resource version found
+// ResourceVersion returns the resource version found from ArtifactHubResourceResult
 func (rr *ArtifactHubResourceResult) ResourceVersion() (string, error) {
-	//TODO
-	return "", nil
+	if err := rr.validateData(); err != nil {
+		return "", err
+	}
+	if rr.version == "" {
+		versions, err := findArtifactHubResourceVersions(rr.data)
+		if err != nil {
+			return "", err
+		}
+		return versions[0], nil
+	}
+	return rr.version, nil
 }
 
-// MinPipelinesVersion returns the minimum pipeline version the resource is compatible
+// MinPipelinesVersion returns the minimum pipeline version the resource is compatible from TektonHubResourceResult
 func (rr *TektonHubResourceResult) MinPipelinesVersion() (string, error) {
 	if err := rr.UnmarshalData(); err != nil {
 		return "", err
@@ -365,8 +418,49 @@ func (rr *TektonHubResourceResult) MinPipelinesVersion() (string, error) {
 	return *rr.resourceData.LatestVersion.MinPipelinesVersion, nil
 }
 
-// MinPipelinesVersion returns the minimum pipeline version the resource is compatible
+// MinPipelinesVersion returns the minimum pipeline version the resource is compatible from ArtifactHubResourceResult
 func (rr *ArtifactHubResourceResult) MinPipelinesVersion() (string, error) {
-	//TODO
-	return "", nil
+	if err := rr.validateData(); err != nil {
+		return "", err
+	}
+	resp := ArtifactHubPkgResponse{}
+	if err := json.Unmarshal(rr.data, &resp); err != nil {
+		return "", err
+	}
+	if resp.Data.PipelineMinVer == "" {
+		return "", fmt.Errorf("Minimum pipeline version is not specified in the resource")
+	}
+	return resp.Data.PipelineMinVer, nil
+}
+
+func (rr *ArtifactHubResourceResult) validateData() error {
+	if rr.err != nil {
+		return rr.err
+	}
+	if rr.set {
+		return nil
+	}
+	if rr.status == http.StatusNotFound {
+		return fmt.Errorf("No Resource Found")
+	}
+
+	return nil
+}
+
+func findArtifactHubResourceVersions(data []byte) ([]string, error) {
+	resp := ArtifactHubPkgResponse{}
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return nil, fmt.Errorf("Error unmarshalling json response: %w", err)
+	}
+	if len(resp.AvailableVersions) == 0 {
+		return nil, fmt.Errorf("No available versions found in Artifact Hub")
+	}
+
+	var versions []string
+	for _, r := range resp.AvailableVersions {
+		versions = append(versions, r.Version)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(versions)))
+
+	return versions, nil
 }

@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
 	res "github.com/tektoncd/hub/api/v1/gen/resource"
@@ -78,7 +79,7 @@ var taskWithNewVersionYaml = &res.ResourceContent{
 }
 
 func TestReinstall_ResourceNotExist(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	version := "v1beta1"
 	dynamic := test.DynamicClient()
@@ -99,7 +100,7 @@ func TestReinstall_ResourceNotExist(t *testing.T) {
 }
 
 func TestReinstall_VersionCatalogMissing(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	existingTask := &v1beta1.Task{
 		ObjectMeta: metav1.ObjectMeta{
@@ -127,7 +128,7 @@ func TestReinstall_VersionCatalogMissing(t *testing.T) {
 }
 
 func TestReinstall_VersionMissing(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	existingTask := &v1beta1.Task{
 		ObjectMeta: metav1.ObjectMeta{
@@ -156,7 +157,7 @@ func TestReinstall_VersionMissing(t *testing.T) {
 }
 
 func TestReinstall_DifferentVersionPassedByFlag(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -210,7 +211,7 @@ func TestReinstall_DifferentVersionPassedByFlag(t *testing.T) {
 }
 
 func TestReinstall_DifferentCatalogPassedByFlag(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -267,7 +268,7 @@ func TestReinstall_DifferentCatalogPassedByFlag(t *testing.T) {
 }
 
 func TestReinstall(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -321,7 +322,7 @@ func TestReinstall(t *testing.T) {
 }
 
 func TestReinstall_RespectPipelinesVersionSuccess(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -379,7 +380,7 @@ func TestReinstall_RespectPipelinesVersionSuccess(t *testing.T) {
 }
 
 func TestReinstall_RespectPipelinesVersionFailure(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 

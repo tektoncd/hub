@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
 	res "github.com/tektoncd/hub/api/v1/gen/resource"
@@ -111,7 +112,7 @@ var taskWitholdVersionYaml = &res.ResourceContent{
 }
 
 func TestDowngrade_ResourceNotExist(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	version := "v1beta1"
 	dynamic := test.DynamicClient()
@@ -132,7 +133,7 @@ func TestDowngrade_ResourceNotExist(t *testing.T) {
 }
 
 func TestDowngrade_VersionCatalogMissing(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	existingTask := &v1beta1.Task{
 		ObjectMeta: metav1.ObjectMeta{
@@ -160,7 +161,7 @@ func TestDowngrade_VersionCatalogMissing(t *testing.T) {
 }
 
 func TestDowngrade_VersionMissing(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	existingTask := &v1beta1.Task{
 		ObjectMeta: metav1.ObjectMeta{
@@ -189,7 +190,7 @@ func TestDowngrade_VersionMissing(t *testing.T) {
 }
 
 func TestDowngrade(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -256,7 +257,7 @@ func TestDowngrade(t *testing.T) {
 }
 
 func TestDowngrade_ToSpecificVersion(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -324,7 +325,7 @@ func TestDowngrade_ToSpecificVersion(t *testing.T) {
 }
 
 func TestDowngrade_SameVersionError(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -389,7 +390,7 @@ func TestDowngrade_SameVersionError(t *testing.T) {
 }
 
 func TestDowngrade_HigherVersionError(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -439,7 +440,7 @@ func TestDowngrade_HigherVersionError(t *testing.T) {
 }
 
 func TestDowngrade_ToSpecificVersionRespectingPipelinesVersionSuccess(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -511,7 +512,7 @@ func TestDowngrade_ToSpecificVersionRespectingPipelinesVersionSuccess(t *testing
 }
 
 func TestDowngrade_ToSpecificVersionRespectingPipelinesVersionFailure(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 

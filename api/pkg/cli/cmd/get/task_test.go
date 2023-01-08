@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"gopkg.in/h2non/gock.v1"
@@ -63,7 +64,7 @@ var taskWithOldVersionYaml = &res.ResourceContent{
 }
 
 func TestGetTask_WithNewVersion(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -96,7 +97,7 @@ func TestGetTask_WithNewVersion(t *testing.T) {
 }
 
 func TestGetTask_AsClusterTask(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
