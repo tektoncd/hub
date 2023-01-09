@@ -58,7 +58,7 @@ func (c *cli) Hub() hub.Client {
 
 func (c *cli) SetHub(hubType string) error {
 	if hubType == hub.TektonHubType {
-		c.hub = hub.NewTektonHubClient()
+		c.hub = hub.NewtektonHubClient()
 		return nil
 	} else if hubType == hub.ArtifactHubType {
 		c.hub = hub.NewArtifactHubClient()

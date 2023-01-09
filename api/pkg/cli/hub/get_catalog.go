@@ -34,7 +34,7 @@ type ArtifactHubCatalogResponse struct {
 	Name string `json:"name,omitempty"`
 }
 
-func (c *tektonHubclient) GetAllCatalogs() CatalogResult {
+func (c *tektonHubClient) GetAllCatalogs() CatalogResult {
 	data, status, err := c.Get(tektonHubCatEndpoint)
 	if status == http.StatusNotFound {
 		err = nil
@@ -76,7 +76,7 @@ func (a *artifactHubClient) GetCatalogsList() ([]string, error) {
 	return cat, nil
 }
 
-func (t *tektonHubclient) GetCatalogsList() ([]string, error) {
+func (t *tektonHubClient) GetCatalogsList() ([]string, error) {
 	// Get all catalogs
 	c := t.GetAllCatalogs()
 

@@ -157,8 +157,14 @@ func (opts *options) run() error {
 
 	resourceInstaller := installer.New(opts.cs)
 
+	org, err := opts.hubRes.Org()
+	if err != nil {
+		return err
+	}
+	hubType := opts.cli.Hub().GetType()
+
 	var errors []error
-	opts.resource, errors = resourceInstaller.Install([]byte(manifest), opts.from, opts.cs.Namespace())
+	opts.resource, errors = resourceInstaller.Install([]byte(manifest), hubType, org, opts.from, opts.cs.Namespace())
 
 	if len(errors) != 0 {
 		resourcePipelineMinVersion, err := opts.hubRes.MinPipelinesVersion()

@@ -50,7 +50,7 @@ func (a *artifactHubClient) GetResourceVersions(opt ResourceOption) ResourceVers
 }
 
 // GetResourceVersions queries the data using Tekton Hub Endpoint
-func (t *tektonHubclient) GetResourceVersions(opt ResourceOption) ResourceVersionResult {
+func (t *tektonHubClient) GetResourceVersions(opt ResourceOption) ResourceVersionResult {
 
 	rvr := THResourceVersionResult{set: false}
 

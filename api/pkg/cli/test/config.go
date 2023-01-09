@@ -36,12 +36,12 @@ func NewCLI(hubType string) *cli {
 	var h hub.Client
 	switch hubType {
 	case hub.TektonHubType:
-		h = hub.NewTektonHubClient()
+		h = hub.NewtektonHubClient()
 	case hub.ArtifactHubType:
 		h = hub.NewArtifactHubClient()
 	default:
 		fmt.Printf("invalid hub type: %s, using default type: %s to continue", hubType, hub.TektonHubType)
-		h = hub.NewTektonHubClient()
+		h = hub.NewtektonHubClient()
 	}
 
 	if err := h.SetURL(API); err != nil {
@@ -68,7 +68,7 @@ func (c *cli) Hub() hub.Client {
 
 func (c *cli) SetHub(hubType string) error {
 	if hubType == hub.TektonHubType {
-		c.hub = hub.NewTektonHubClient()
+		c.hub = hub.NewtektonHubClient()
 		return nil
 	} else if hubType == hub.ArtifactHubType {
 		c.hub = hub.NewArtifactHubClient()

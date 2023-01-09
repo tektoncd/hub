@@ -7,7 +7,7 @@ import (
 )
 
 func TestSetURL_TektonHub(t *testing.T) {
-	tHub := &tektonHubclient{}
+	tHub := &tektonHubClient{}
 	err := tHub.SetURL("http://localhost:80000")
 	assert.NoError(t, err)
 
@@ -42,7 +42,7 @@ func TestSetURL_ArtifactHub(t *testing.T) {
 
 func TestSetURL_InvalidCase(t *testing.T) {
 
-	hub := &tektonHubclient{}
+	hub := &tektonHubClient{}
 	err := hub.SetURL("abc")
 	assert.Error(t, err)
 	assert.EqualError(t, err, "parse \"abc\": invalid URI for request")
