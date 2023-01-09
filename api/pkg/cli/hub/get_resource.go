@@ -34,6 +34,7 @@ type ResourceOption struct {
 	PipelineVersion string
 }
 
+// ResourceResult defines API response
 type ResourceResult interface {
 	RawURL() (string, error)
 	Manifest() ([]byte, error)
@@ -44,7 +45,6 @@ type ResourceResult interface {
 	UnmarshalData() error
 }
 
-// ResourceResult defines API response
 type THResourceResult struct {
 	data                    []byte
 	yaml                    []byte
@@ -90,10 +90,26 @@ type ResourceWithVersionData = rclient.ResourceVersionDataResponseBody
 
 type resourceYaml = rclient.ByCatalogKindNameVersionYamlResponseBody
 
+type ArtifactHubPkgResponse struct {
+	Name              string               `json:"name,omitempty"`
+	Data              ArtifactHubPkgData   `json:"data,omitempty"`
+	AvailableVersions []ArtifactHubVersion `json:"available_versions,omitempty"`
+}
+
+type ArtifactHubPkgData struct {
+	PipelineMinVer string   `json:"pipelines.minVersion"`
+	ManifestRaw    string   `json:"manifestRaw"`
+	Platforms      []string `json:"platforms"`
+}
+
+type ArtifactHubVersion struct {
+	Version string `json:"version"`
+	TS      int64  `json:"ts"`
+}
+
 // GetResource queries the data using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResource(opt ResourceOption) ResourceResult {
-	// Todo: implement GetResource for Artifact Hub
-	return nil
+	panic("GetResource() not implemented for artifact type")
 }
 
 // GetResource queries the data using Tekton Hub Endpoint
@@ -109,13 +125,20 @@ func (t *tektonHubclient) GetResource(opt ResourceOption) ResourceResult {
 	}
 }
 
-// GetResource queries the data using Artifact Hub Endpoint
+// GetResourceYaml queries the data using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResourceYaml(opt ResourceOption) ResourceResult {
-	// Todo: implement GetResourceYaml for Artifact Hub
-	return nil
+	data, status, err := a.Get(fmt.Sprintf("%s-%s/%s/%s/%s", artifactHubCatInfoEndpoint, opt.Kind, opt.Catalog, opt.Name, opt.Version))
+
+	return &AHResourceResult{
+		data:    data,
+		version: opt.Version,
+		status:  status,
+		err:     err,
+		set:     false,
+	}
 }
 
-// GetResource queries the data using Tekton Hub Endpoint
+// GetResourceYaml queries the data using Tekton Hub Endpoint
 func (t *tektonHubclient) GetResourceYaml(opt ResourceOption) ResourceResult {
 
 	yaml, yamlStatus, yamlErr := t.Get(fmt.Sprintf("/v1/resource/%s/%s/%s/%s/yaml", opt.Catalog, opt.Kind, opt.Name, opt.Version))
@@ -134,8 +157,7 @@ func (t *tektonHubclient) GetResourceYaml(opt ResourceOption) ResourceResult {
 }
 
 func (a *artifactHubClient) GetResourcesList(so SearchOption) ([]string, error) {
-	// Todo: implement GetResourcesList for Artifact Hub
-	return []string{}, nil
+	panic("GetResourcesList() not implemented for artifact type")
 }
 
 func (t *tektonHubclient) GetResourcesList(so SearchOption) ([]string, error) {
@@ -166,8 +188,17 @@ func (t *tektonHubclient) GetResourcesList(so SearchOption) ([]string, error) {
 }
 
 func (a *artifactHubClient) GetResourceVersionslist(r ResourceOption) ([]string, error) {
-	// Todo: implement GetResourceVersionslist for Artifact Hub
-	return []string{}, nil
+	data, _, err := a.Get(fmt.Sprintf("%s-%s/%s/%s", artifactHubCatInfoEndpoint, r.Kind, r.Catalog, r.Name))
+	if err != nil {
+		return nil, err
+	}
+
+	versions, err := findAHVerions(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return versions, nil
 }
 
 func (t *tektonHubclient) GetResourceVersionslist(r ResourceOption) ([]string, error) {
@@ -244,8 +275,7 @@ func (rr *THResourceResult) UnmarshalData() error {
 }
 
 func (rr *AHResourceResult) UnmarshalData() error {
-	// TODO
-	return nil
+	panic("UnmarshalData() not implemented for artifact type")
 }
 
 // RawURL returns the raw url of the resource yaml file
@@ -262,8 +292,7 @@ func (rr *THResourceResult) RawURL() (string, error) {
 
 // RawURL returns the raw url of the resource yaml file
 func (rr *AHResourceResult) RawURL() (string, error) {
-	// TODO
-	return "", nil
+	panic("RawURL() not implemented for artifact type")
 }
 
 // Manifest gets the resource from catalog
@@ -288,8 +317,7 @@ func (rr *THResourceResult) Manifest() ([]byte, error) {
 
 // Manifest gets the resource from catalog
 func (rr *AHResourceResult) Manifest() ([]byte, error) {
-	// TODO
-	return []byte{}, nil
+	panic("Manifest() not implemented for artifact type")
 }
 
 // Resource returns the resource found
@@ -306,8 +334,7 @@ func (rr *THResourceResult) Resource() (interface{}, error) {
 
 // Resource returns the resource found
 func (rr *AHResourceResult) Resource() (interface{}, error) {
-	// TODO
-	return "", nil
+	panic("Resource() not implemented for artifact type")
 }
 
 // Resource returns the resource found
@@ -321,7 +348,7 @@ func (rr *THResourceResult) ResourceYaml() (string, error) {
 	}
 
 	if rr.yamlStatus == http.StatusNotFound {
-		return "", fmt.Errorf("No Resource Found")
+		return "", fmt.Errorf("no Resource Found")
 	}
 
 	res := resourceYaml{}
@@ -335,8 +362,14 @@ func (rr *THResourceResult) ResourceYaml() (string, error) {
 
 // Resource returns the resource found
 func (rr *AHResourceResult) ResourceYaml() (string, error) {
-	// TODO
-	return "", nil
+	if err := rr.validateData(); err != nil {
+		return "", err
+	}
+	res := ArtifactHubPkgResponse{}
+	if err := json.Unmarshal(rr.data, &res); err != nil {
+		return "", err
+	}
+	return res.Data.ManifestRaw, nil
 }
 
 // ResourceVersion returns the resource version found
@@ -353,8 +386,17 @@ func (rr *THResourceResult) ResourceVersion() (string, error) {
 
 // ResourceVersion returns the resource version found
 func (rr *AHResourceResult) ResourceVersion() (string, error) {
-	//TODO
-	return "", nil
+	if err := rr.validateData(); err != nil {
+		return "", err
+	}
+	if rr.version == "" {
+		versions, err := findAHVerions(rr.data)
+		if err != nil {
+			return "", err
+		}
+		return versions[0], nil
+	}
+	return rr.version, nil
 }
 
 // MinPipelinesVersion returns the minimum pipeline version the resource is compatible
@@ -371,6 +413,48 @@ func (rr *THResourceResult) MinPipelinesVersion() (string, error) {
 
 // MinPipelinesVersion returns the minimum pipeline version the resource is compatible
 func (rr *AHResourceResult) MinPipelinesVersion() (string, error) {
-	//TODO
-	return "", nil
+	if err := rr.validateData(); err != nil {
+		return "", err
+	}
+	resp := ArtifactHubPkgResponse{}
+	if err := json.Unmarshal(rr.data, &resp); err != nil {
+		return "", err
+	}
+	if resp.Data.PipelineMinVer == "" {
+		return "", fmt.Errorf("min pipeline version is not specified in the resource")
+	}
+	return resp.Data.PipelineMinVer, nil
+}
+
+func (rr *AHResourceResult) validateData() error {
+	if rr.err != nil {
+		return rr.err
+	}
+	if rr.set {
+		return nil
+	}
+
+	if rr.status == http.StatusNotFound {
+		return fmt.Errorf("No Resource Found")
+	}
+
+	return nil
+}
+
+func findAHVerions(data []byte) ([]string, error) {
+	resp := ArtifactHubPkgResponse{}
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return nil, fmt.Errorf("error unmarshalling json response: %w", err)
+	}
+	if len(resp.AvailableVersions) == 0 {
+		return nil, fmt.Errorf("no available versions found in Artifact Hub")
+	}
+
+	var versions []string
+	for _, r := range resp.AvailableVersions {
+		versions = append(versions, r.Version)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(versions)))
+
+	return versions, nil
 }

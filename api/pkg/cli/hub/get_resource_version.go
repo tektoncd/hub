@@ -28,12 +28,12 @@ type resVersionsResponse = rclient.VersionsByIDResponseBody
 // ResVersions is the data in API response consisting of list of versions
 type ResVersions = rclient.VersionsResponseBody
 
+// ResourceVersionResult defines API response
 type ResourceVersionResult interface {
 	ResourceVersions() (*ResVersions, error)
 	UnmarshalData() error
 }
 
-// ResourceVersionResult defines API response
 type THResourceVersionResult struct {
 	rr       ResourceResult
 	data     []byte
@@ -43,13 +43,13 @@ type THResourceVersionResult struct {
 	versions *ResVersions
 }
 
-// GetResourceVersion queries the data using Artifact Hub Endpoint
+// GetResourceVersions queries the data using Artifact Hub Endpoint
 func (a *artifactHubClient) GetResourceVersions(opt ResourceOption) ResourceVersionResult {
 	// Todo: implement GetResourceVersions for Artifact Hub
 	return nil
 }
 
-// GetResourceVersion queries the data using Tekton Hub Endpoint
+// GetResourceVersions queries the data using Tekton Hub Endpoint
 func (t *tektonHubclient) GetResourceVersions(opt ResourceOption) ResourceVersionResult {
 
 	rvr := THResourceVersionResult{set: false}

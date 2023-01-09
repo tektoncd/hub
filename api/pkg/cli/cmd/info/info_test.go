@@ -20,8 +20,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	res "github.com/tektoncd/hub/api/v1/gen/resource"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
+	res "github.com/tektoncd/hub/api/v1/gen/resource"
 	"gopkg.in/h2non/gock.v1"
 	"gotest.tools/v3/golden"
 )
@@ -140,7 +141,7 @@ func mockApi(io InfoOptions, taskWithVersion *res.ResourceVersionData) {
 }
 
 func TestInfoTask_WithLatestVersion(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -170,7 +171,7 @@ func TestInfoTask_WithLatestVersion(t *testing.T) {
 }
 
 func TestInfoTask_WithOldVersion(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -200,7 +201,7 @@ func TestInfoTask_WithOldVersion(t *testing.T) {
 }
 
 func TestPipelineTask_MultiLineDescription(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 

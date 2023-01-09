@@ -113,7 +113,7 @@ func TestValidate_ErrorCase(t *testing.T) {
 }
 
 func TestGetResource_WithNewVersion(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -145,7 +145,7 @@ func TestGetResource_WithNewVersion(t *testing.T) {
 }
 
 func TestGetResource_WithOldVersion(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
@@ -176,7 +176,7 @@ func TestGetResource_WithOldVersion(t *testing.T) {
 }
 
 func TestGet_ResourceNotFound(t *testing.T) {
-	cli := test.NewCLI()
+	cli := test.NewCLI(hub.TektonHubType)
 
 	defer gock.Off()
 
