@@ -29,7 +29,7 @@ require (
 	go.uber.org/zap v1.24.0
 	goa.design/goa/v3 v3.10.2
 	goa.design/plugins/v3 v3.10.2
-	golang.org/x/term v0.3.0
+	golang.org/x/term v0.4.0
 	golang.org/x/text v0.6.0
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gorm.io/driver/postgres v1.4.5
@@ -150,7 +150,7 @@ require (
 	golang.org/x/net v0.3.0 // indirect
 	golang.org/x/oauth2 v0.3.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/time v0.2.0 // indirect
 	golang.org/x/tools v0.2.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.2.0 // indirect
