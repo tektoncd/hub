@@ -73,11 +73,26 @@ func (i *Initializer) Run(ctx context.Context) (*model.Config, error) {
 		return nil
 	}
 
+	// In order to map the existing resources with the updated config,
+	// catalog refresh needs to be done, hence deleting the sha will
+	// run the catalog refresh forcefully
+	logger.Info("Forcing Catalog Refresh by deleting the Catalog SHA")
+	updateCatalogSha := func(db *gorm.DB, log *log.Logger, data *app.Data) error {
+		for _, c := range data.Catalogs {
+			if err := db.Model(&model.Catalog{}).Where("name = ?", c.Name).Update("sha", "").Error; err != nil {
+				log.Error(err)
+				return err
+			}
+		}
+		return nil
+	}
+
 	if err := withTransaction(db, logger, data,
 		addCategories,
 		addCatalogs,
 		addUsers,
 		updateConfig,
+		updateCatalogSha,
 	); err != nil {
 		return nil, err
 	}
