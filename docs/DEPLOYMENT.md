@@ -390,7 +390,13 @@ data:
   API_VERSION: API VERSION  <<< Update this by API version (For e.g-"v1")
   AUTH_BASE_URL: AUTH URL << Update this by auth url
   REDIRECT_URI: UI URL << Update this by ui url
+  CUSTOM_LOGO_MEDIA_TYPE: << Update this by your logo media type
+  CUSTOM_LOGO_BASE64_DATA: << Update this by Base64 encode DATA of Custom Logo
 ```
+
+### Add Custom Logo
+
+Create the Base64 encode value of Custom logo and update the `CUSTOM_LOGO_BASE64_DATA` value in the `config/03-ui/30-ui-configmap.yaml` and also update media type of your logo in `CUSTOM_LOGO_MEDIA_TYPE`, default media type is `image/png` .
 
 ### Update UI Image
 
