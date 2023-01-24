@@ -26,7 +26,12 @@ import Icon from '../../components/Icon';
 import { Icons } from '../../common/icons';
 import UserProfile from '../UserProfile';
 import { useMst } from '../../store/root';
-import { AUTH_BASE_URL, REDIRECT_URI } from '../../config/constants';
+import {
+  AUTH_BASE_URL,
+  CUSTOM_LOGO_BASE64_DATA,
+  CUSTOM_LOGO_MEDIA_TYPE,
+  REDIRECT_URI
+} from '../../config/constants';
 import { IProvider } from '../../store/provider';
 import { titleCase } from '../../common/titlecase';
 import AlertDisplay from '../../components/AlertDisplay';
@@ -79,7 +84,19 @@ const Header: React.FC = observer(() => {
   return (
     <React.Fragment>
       <PageHeader
-        logo={<Brand src={logo} alt="Tekton Hub Logo" onClick={homePage} />}
+        logo={
+          <Brand
+            src={
+              CUSTOM_LOGO_BASE64_DATA != ''
+                ? `data:${
+                    CUSTOM_LOGO_MEDIA_TYPE != '' ? CUSTOM_LOGO_MEDIA_TYPE : 'image/png'
+                  }${CUSTOM_LOGO_MEDIA_TYPE};base64,${CUSTOM_LOGO_BASE64_DATA}`
+                : logo
+            }
+            alt="Tekton Hub Logo"
+            onClick={homePage}
+          />
+        }
         headerTools={headerTools}
       />
 
