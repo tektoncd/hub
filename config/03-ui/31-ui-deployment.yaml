@@ -57,6 +57,16 @@ spec:
                 configMapKeyRef:
                   name: tekton-hub-ui
                   key: REDIRECT_URI
+            - name: CUSTOM_LOGO_MEDIA_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: tekton-hub-ui
+                  key: CUSTOM_LOGO_MEDIA_TYPE
+            - name: CUSTOM_LOGO_BASE64_DATA
+              valueFrom:
+                configMapKeyRef:
+                  name: tekton-hub-ui
+                  key: CUSTOM_LOGO_BASE64_DATA
           ports:
             - containerPort: 8080
               protocol: TCP
