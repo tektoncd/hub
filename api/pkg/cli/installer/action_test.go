@@ -18,6 +18,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/tektoncd/hub/api/pkg/cli/hub"
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
@@ -43,12 +44,64 @@ spec:
 `
 
 func TestToUnstructuredAndAddLabel(t *testing.T) {
-	obj, err := toUnstructured([]byte(res))
-	assert.NoError(t, err)
-	assert.Equal(t, "foo", obj.GetName())
+	testCases := []struct {
+		name            string
+		data            string
+		hubType         string
+		org             string
+		catalog         string
+		wantSupportTier string
+		wantCatalog     string
+		wantOrg         string
+	}{
+		{
+			name:        "Install From Tekton Hub",
+			data:        res,
+			hubType:     hub.TektonHubType,
+			org:         "",
+			catalog:     "tekton",
+			wantCatalog: "tekton",
+		},
+		{
+			name:            "Install Verified Catalog From Artifact Hub",
+			data:            res,
+			hubType:         hub.ArtifactHubType,
+			org:             verifiedCatOrg,
+			catalog:         "golang-build",
+			wantSupportTier: verifiedSupportTier,
+			wantCatalog:     "golang-build",
+			wantOrg:         "tektoncd",
+		},
+		{
+			name:            "Install Community Catalog From Artifact Hub",
+			data:            res,
+			hubType:         hub.ArtifactHubType,
+			org:             "tekton-legacy",
+			catalog:         "tekton-catalog-tasks",
+			wantSupportTier: communitySupportTier,
+			wantCatalog:     "tekton-catalog-tasks",
+			wantOrg:         "tekton-legacy",
+		},
+	}
 
-	addCatalogLabel(obj, "tekton")
-	assert.Equal(t, "tekton", obj.GetLabels()[catalogLabel])
+	for _, tc := range testCases {
+		obj, err := toUnstructured([]byte(res))
+		assert.NoError(t, err)
+		assert.Equal(t, "foo", obj.GetName())
+
+		if err := addCatalogLabel(obj, tc.hubType, tc.org, tc.catalog); err != nil {
+			t.Errorf("%s", err.Error())
+		}
+
+		if tc.hubType == hub.ArtifactHubType {
+			assert.Equal(t, tc.wantSupportTier, obj.GetLabels()[artifactHubSupportTierLabel])
+			assert.Equal(t, tc.wantCatalog, obj.GetLabels()[artifactHubCatalogLabel])
+			assert.Equal(t, tc.wantOrg, obj.GetLabels()[artifactHubOrgLabel])
+			assert.Equal(t, "", obj.GetLabels()[tektonHubCatalogLabel])
+		} else {
+			assert.Equal(t, "tekton", obj.GetLabels()[tektonHubCatalogLabel])
+		}
+	}
 }
 
 func TestListInstalled(t *testing.T) {

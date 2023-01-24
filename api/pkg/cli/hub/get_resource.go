@@ -42,6 +42,7 @@ type ResourceResult interface {
 	ResourceYaml() (string, error)
 	ResourceVersion() (string, error)
 	MinPipelinesVersion() (string, error)
+	Org() (string, error)
 	UnmarshalData() error
 }
 
@@ -96,6 +97,11 @@ type ArtifactHubPkgResponse struct {
 	Name              string               `json:"name,omitempty"`
 	Data              ArtifactHubPkgData   `json:"data,omitempty"`
 	AvailableVersions []ArtifactHubVersion `json:"available_versions,omitempty"`
+	Repository        ArtifactHubRepo      `json:"repository,omitempty"`
+}
+
+type ArtifactHubRepo struct {
+	Org string `json:"organization_name,omitempty"`
 }
 
 type ArtifactHubPkgData struct {
@@ -114,7 +120,7 @@ func (a *artifactHubClient) GetResource(opt ResourceOption) ResourceResult {
 }
 
 // GetResource queries the data using Tekton Hub Endpoint
-func (t *tektonHubclient) GetResource(opt ResourceOption) ResourceResult {
+func (t *tektonHubClient) GetResource(opt ResourceOption) ResourceResult {
 	data, status, err := t.Get(opt.Endpoint())
 
 	return &TektonHubResourceResult{
@@ -140,7 +146,7 @@ func (a *artifactHubClient) GetResourceYaml(opt ResourceOption) ResourceResult {
 }
 
 // GetResourceYaml queries the resource yaml using Tekton Hub Endpoint
-func (t *tektonHubclient) GetResourceYaml(opt ResourceOption) ResourceResult {
+func (t *tektonHubClient) GetResourceYaml(opt ResourceOption) ResourceResult {
 
 	yaml, yamlStatus, yamlErr := t.Get(fmt.Sprintf("/v1/resource/%s/%s/%s/%s/yaml", opt.Catalog, opt.Kind, opt.Name, opt.Version))
 	data, status, err := t.Get(opt.Endpoint())
@@ -163,7 +169,7 @@ func (a *artifactHubClient) GetResourcesList(so SearchOption) ([]string, error) 
 }
 
 // GetResourcesList queries the resources in the catalog using Tekton Hub Endpoint
-func (t *tektonHubclient) GetResourcesList(so SearchOption) ([]string, error) {
+func (t *tektonHubClient) GetResourcesList(so SearchOption) ([]string, error) {
 	// Get all resources
 	result := t.Search(SearchOption{
 		Kinds:   so.Kinds,
@@ -206,7 +212,7 @@ func (a *artifactHubClient) GetResourceVersionslist(r ResourceOption) ([]string,
 }
 
 // GetResourceVersionslist queries the versions of a resource using Tekton Hub Endpoint
-func (t *tektonHubclient) GetResourceVersionslist(r ResourceOption) ([]string, error) {
+func (t *tektonHubClient) GetResourceVersionslist(r ResourceOption) ([]string, error) {
 	opts := &ResourceVersionOptions{}
 	// Get the resource versions
 	opts.hubResVersionsRes = t.GetResourceVersions(ResourceOption{
@@ -431,6 +437,24 @@ func (rr *ArtifactHubResourceResult) MinPipelinesVersion() (string, error) {
 		return "", fmt.Errorf("Minimum pipeline version is not specified in the resource")
 	}
 	return resp.Data.PipelineMinVer, nil
+}
+
+// Org returns the organization of the catalog from Artifact Hub
+func (rr *ArtifactHubResourceResult) Org() (string, error) {
+	if err := rr.validateData(); err != nil {
+		return "", err
+	}
+	res := ArtifactHubPkgResponse{}
+	if err := json.Unmarshal(rr.data, &res); err != nil {
+		return "", err
+	}
+	return res.Repository.Org, nil
+}
+
+// Org returns the organization of the catalog from Tekton Hub
+func (rr *TektonHubResourceResult) Org() (string, error) {
+	// TODO: implement org() for Tekton Hub
+	return "", nil
 }
 
 func (rr *ArtifactHubResourceResult) validateData() error {

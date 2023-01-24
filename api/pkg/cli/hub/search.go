@@ -56,7 +56,7 @@ func (a *artifactHubClient) Search(so SearchOption) SearchResult {
 }
 
 // Search queries the data using TektonHub Endpoint
-func (t *tektonHubclient) Search(so SearchOption) SearchResult {
+func (t *tektonHubClient) Search(so SearchOption) SearchResult {
 	data, status, err := t.Get(so.Endpoint())
 	if status == http.StatusNotFound {
 		err = nil
