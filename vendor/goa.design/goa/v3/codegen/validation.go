@@ -152,11 +152,7 @@ func recurseValidationCode(att *expr.AttributeExpr, put expr.UserType, attCtx *A
 		// validating a proto-generated type since the HTTP
 		// serialization transforms unions into objects.
 		u := expr.AsUnion(att.Type)
-		tref := Goify(put.Name(), true)
-		if attCtx.DefaultPkg != "" {
-			tref = attCtx.DefaultPkg + "." + tref
-		}
-		tref = "*" + tref
+		tref := attCtx.Scope.Ref(&expr.AttributeExpr{Type: put}, attCtx.DefaultPkg)
 		var vals []string
 		var types []string
 		for _, v := range u.Values {
@@ -187,7 +183,21 @@ func recurseValidationCode(att *expr.AttributeExpr, put expr.UserType, attCtx *A
 func validateAttribute(ctx *AttributeContext, att *expr.AttributeExpr, put expr.UserType, target, context string, req bool) string {
 	ut, isUT := att.Type.(expr.UserType)
 	if !isUT {
-		return recurseValidationCode(att, put, ctx, req, false, target, context, nil).String()
+		code := recurseValidationCode(att, put, ctx, req, false, target, context, nil).String()
+		if code == "" {
+			return ""
+		}
+		if expr.IsArray(att.Type) || expr.IsMap(att.Type) || expr.IsUnion(att.Type) {
+			return code
+		}
+		if !ctx.Pointer && (req || (att.DefaultValue != nil && ctx.UseDefault)) {
+			return code
+		}
+		cond := fmt.Sprintf("if %s != nil {\n", target)
+		if strings.HasPrefix(code, cond) {
+			return code
+		}
+		return fmt.Sprintf("%s%s\n}", cond, code)
 	}
 	if expr.IsAlias(ut) {
 		return recurseValidationCode(ut.Attribute(), put, ctx, req, true, target, context, nil).String()

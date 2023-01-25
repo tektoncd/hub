@@ -133,7 +133,7 @@ func buildPaths(h *expr.HTTPExpr, bodies map[string]map[string]*EndpointBodies, 
 					// Remove any wildcards that is defined in path as a workaround to
 					// https://github.com/OAI/OpenAPI-Specification/issues/291
 					key = expr.HTTPWildcardRegex.ReplaceAllString(key, "/{$1}")
-					operation := buildOperation(key, r, sbod[e.Name()], api.Random())
+					operation := buildOperation(key, r, sbod[e.Name()], api.ExampleGenerator)
 					path, ok := paths[key]
 					if !ok {
 						path = new(PathItem)
@@ -187,7 +187,7 @@ func buildPaths(h *expr.HTTPExpr, bodies map[string]map[string]*EndpointBodies, 
 }
 
 // buildOperation builds the OpenAPI Operation object for the given path.
-func buildOperation(key string, r *expr.RouteExpr, bodies *EndpointBodies, rand *expr.Random) *Operation {
+func buildOperation(key string, r *expr.RouteExpr, bodies *EndpointBodies, rand *expr.ExampleGenerator) *Operation {
 	e := r.Endpoint
 	m := e.MethodExpr
 	svc := e.Service
@@ -299,7 +299,7 @@ func buildOperation(key string, r *expr.RouteExpr, bodies *EndpointBodies, rand 
 	// tag names
 	var tagNames []string
 	{
-		tagNames = openapi.TagNamesFromExpr(svc.Meta, e.Meta)
+		tagNames = openapi.TagNamesFromExpr(e.Meta)
 		if len(tagNames) == 0 {
 			// By default tag with service name
 			tagNames = []string{r.Endpoint.Service.Name()}
@@ -405,7 +405,7 @@ func buildFileServerOperation(key string, fs *expr.HTTPFileServerExpr, api *expr
 	// tag names
 	var tagNames []string
 	{
-		tagNames = openapi.TagNamesFromExpr(svc.Meta, fs.Meta)
+		tagNames = openapi.TagNamesFromExpr(fs.Meta)
 		if len(tagNames) == 0 {
 			// By default tag with service name
 			tagNames = []string{svc.Name()}
@@ -608,25 +608,16 @@ func buildSecurityScheme(se *expr.SchemeExpr) *SecurityScheme {
 
 // buildTags builds the OpenAPI Tag object from the API expression.
 func buildTags(api *expr.APIExpr) []*openapi.Tag {
-	// if a tag with same name is defined in API, Service, and endpoint
-	// Meta expressions then the definition in endpoint Meta expression
-	// takes highest precedence followed by Service and API.
-
 	m := make(map[string]*openapi.Tag)
+	for _, t := range openapi.TagsFromExpr(api.Meta) {
+		m[t.Name] = t
+	}
 	for _, s := range api.HTTP.Services {
 		if !mustGenerate(s.Meta) || !mustGenerate(s.ServiceExpr.Meta) {
 			continue
 		}
 		for _, t := range openapi.TagsFromExpr(s.Meta) {
 			m[t.Name] = t
-		}
-		for _, e := range s.HTTPEndpoints {
-			if !mustGenerate(e.Meta) || !mustGenerate(e.MethodExpr.Meta) {
-				continue
-			}
-			for _, t := range openapi.TagsFromExpr(e.Meta) {
-				m[t.Name] = t
-			}
 		}
 	}
 
@@ -650,7 +641,10 @@ func buildTags(api *expr.APIExpr) []*openapi.Tag {
 				if !mustGenerate(s.Meta) || !mustGenerate(s.ServiceExpr.Meta) {
 					continue
 				}
-				tags = append(tags, &openapi.Tag{Name: s.Name(), Description: s.Description()})
+				tags = append(tags, &openapi.Tag{
+					Name:        s.Name(),
+					Description: s.Description(),
+				})
 			}
 		}
 	}
