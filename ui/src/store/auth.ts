@@ -28,10 +28,6 @@ export interface AuthCodeProps {
   code: string;
 }
 
-interface Refresh {
-  (): void;
-}
-
 type AxiosCustomError = {
   status: number;
   data: string;
@@ -47,7 +43,8 @@ export const AuthStore = types
     userRating: types.optional(types.number, 0),
     authErr: types.optional(Error, {}),
     ratingErr: types.optional(Error, {}),
-    isAuthModalOpen: false
+    isAuthModalOpen: false,
+    path: '/'
   })
   .actions((self) => ({
     addAccessTokenInfo(item: ITokenInfo) {
@@ -76,6 +73,9 @@ export const AuthStore = types
     },
     setIsAuthModalOpen(l: boolean) {
       self.isAuthModalOpen = l;
+    },
+    setPath(p: string) {
+      self.path = p;
     },
     setErrorMessage(error: IError) {
       switch (error.status) {
@@ -108,7 +108,7 @@ export const AuthStore = types
     }
   }))
   .actions((self) => ({
-    authenticate: flow(function* (authCode: AuthCodeProps, historyBack?: Refresh) {
+    authenticate: flow(function* (authCode: AuthCodeProps) {
       try {
         self.setLoading(true);
 
@@ -121,8 +121,9 @@ export const AuthStore = types
         self.addRefreshTokenInfo(userDetails.refresh);
 
         self.setIsAuthenticated(true);
-        if (historyBack) {
-          historyBack();
+        const path = localStorage.getItem('path');
+        if (path !== null) {
+          window.location.replace(path);
         }
       } catch (error) {
         const err = error as AxiosCustomError;
