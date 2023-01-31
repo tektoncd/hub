@@ -70,6 +70,12 @@ const Header: React.FC = observer(() => {
     scrollToTop();
   };
 
+  const disableButtonAndSetPath = () => {
+    user.setPath(window.location.pathname);
+    setDisable(true);
+    localStorage.setItem('path', window.location.pathname);
+  };
+
   return (
     <React.Fragment>
       <PageHeader
@@ -115,7 +121,7 @@ const Header: React.FC = observer(() => {
                 variant="tertiary"
                 component="a"
                 isDisabled={disable}
-                onClick={() => setDisable(true)}
+                onClick={() => disableButtonAndSetPath()}
                 isBlock
                 href={`${AUTH_BASE_URL}/auth/${provider.name}?redirect_uri=${REDIRECT_URI}`}
               >
