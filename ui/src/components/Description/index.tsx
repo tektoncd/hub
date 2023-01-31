@@ -1,10 +1,10 @@
 import React, { ReactText } from 'react';
 import { useObserver } from 'mobx-react';
 import ReactMarkDown from 'react-markdown';
-import gfm from 'remark-gfm';
 import { Grid, Card, Tabs, Tab, GridItem, CardHeader, Spinner } from '@patternfly/react-core';
+import { dark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { useMst } from '../../store/root';
-import Readme from '../Readme';
 import Yaml from '../Yaml';
 import { titleCase } from '../../common/titlecase';
 import './Description.css';
@@ -71,22 +71,37 @@ const Description: React.FC<Props> = (props) => {
                       <Tab eventKey={0} title="Description" id={props.name}>
                         <hr className="hub-horizontal-line"></hr>
                         <ReactMarkDown
-                          linkTarget={' '}
-                          transformLinkUri={(uri: string) => transformUri(uri)}
-                          plugins={[[gfm, { tablePipeAlign: false }]]}
-                          source={resource.readme}
-                          escapeHtml={true}
-                          renderers={{ code: Readme }}
                           className="hub-readme"
-                        />
+                          transformLinkUri={(uri: string) => transformUri(uri)}
+                          linkTarget={' '}
+                          components={{
+                            code({ inline, className, children, ...props }) {
+                              const match = /language-(\w+)/.exec(className || '');
+                              return !inline && match ? (
+                                <SyntaxHighlighter style={dark} language={match[1]} PreTag="div">
+                                  {String(children).replace(/\n$/, '')}
+                                </SyntaxHighlighter>
+                              ) : (
+                                <code className={className} {...props}>
+                                  {children}
+                                </code>
+                              );
+                            }
+                          }}
+                        >
+                          {resource.readme}
+                        </ReactMarkDown>
                       </Tab>
                       <Tab eventKey={1} title="YAML" id={props.name}>
                         <hr className="hub-horizontal-line"></hr>
                         <ReactMarkDown
-                          source={resource.yaml}
-                          escapeHtml={true}
-                          renderers={{ code: Yaml }}
-                        />
+                          skipHtml
+                          components={{
+                            code: ({ ...props }) => <Yaml value={props.children as string} />
+                          }}
+                        >
+                          {resource.yaml}
+                        </ReactMarkDown>
                       </Tab>
                     </Tabs>
                   </GridItem>
