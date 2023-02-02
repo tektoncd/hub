@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useMst } from '../../store/root';
 import { observer } from 'mobx-react';
@@ -71,11 +71,11 @@ const Search: React.FC = observer(() => {
     debounced(searchedData);
   };
 
-  const history = useHistory();
+  const history = useNavigate();
   const onSearchKeyPress = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (window.location.pathname !== '/') history.push('/');
+      if (window.location.pathname !== '/') history('/');
     }
     return;
   };

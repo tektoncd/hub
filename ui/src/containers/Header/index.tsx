@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   PageHeader,
   Brand,
@@ -35,7 +35,7 @@ import { apiDownError } from '../../common/errors';
 
 const Header: React.FC = observer(() => {
   const { user, resources, providers } = useMst();
-  const history = useHistory();
+  const history = useNavigate();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [disable, setDisable] = React.useState(false);
 
@@ -66,7 +66,7 @@ const Header: React.FC = observer(() => {
   );
 
   const homePage = () => {
-    if (!window.location.search) history.push('/');
+    if (!window.location.search) history('/');
     scrollToTop();
   };
 

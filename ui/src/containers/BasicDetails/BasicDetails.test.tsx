@@ -13,7 +13,7 @@ const { Provider, root } = createProviderAndStore(api);
 
 jest.mock('react-router-dom', () => {
   return {
-    useHistory: () => {
+    useNavigate: () => {
       return {
         history: ''
       };

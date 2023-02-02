@@ -24,7 +24,7 @@ import {
 
 import { IconSize } from '@patternfly/react-icons';
 import { useObserver } from 'mobx-react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useMst } from '../../store/root';
 import { IResource, IVersion } from '../../store/resource';
 import { ITag } from '../../store/tag';
@@ -40,14 +40,9 @@ import './BasicDetails.css';
 
 const BasicDetails: React.FC = () => {
   const { resources, catalogs } = useMst();
-  const {
-    catalog,
-    kind,
-    name,
-    version
-  }: { catalog: string; kind: string; name: string; version: string } = useParams();
+  const { catalog, kind, name, version } = useParams();
 
-  const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
+  const resourceKey = `${catalog as string}/${titleCase(kind as string)}/${name as string}`;
   const resource: IResource | undefined = resources.resources.get(resourceKey);
   assert(resource);
 
@@ -63,7 +58,7 @@ const BasicDetails: React.FC = () => {
     }
   }, [resources.isLoading, version]);
 
-  const history = useHistory();
+  const history = useNavigate();
 
   const catalogId = resource.catalog.id;
   let catalogProvider = 'Github';
@@ -87,7 +82,7 @@ const BasicDetails: React.FC = () => {
       key={value.id}
       onClick={(e) => {
         resources.setDisplayVersion(resourceKey, e.currentTarget.id);
-        history.push(`/${resourceKey}/${resource.displayVersion.version}`);
+        history(`/${resourceKey}/${resource.displayVersion.version}`);
       }}
     >
       {value.version === resource.latestVersion.version

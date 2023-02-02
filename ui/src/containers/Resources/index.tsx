@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { WarningTriangleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import CubesIcon from '@patternfly/react-icons/dist/js/icons/cubes-icon';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMst } from '../../store/root';
 import { IResource, IResourceStore } from '../../store/resource';
 import Cards from '../../components/Cards';
@@ -25,7 +25,7 @@ const Resources: React.FC = observer(() => {
 
   const icon = resources.err !== apiDownError ? WarningTriangleIcon : ExclamationCircleIcon;
 
-  const history = useHistory();
+  const history = useNavigate();
 
   React.useEffect(() => {
     const selectedcategories = categories.selectedByName.join(',');
@@ -42,7 +42,7 @@ const Resources: React.FC = observer(() => {
       selectedPlatforms,
       searchedTags
     );
-    if (!resources.isLoading) history.replace(`?${url}`);
+    if (!resources.isLoading) history(`?${url}`, { replace: true });
   }, [
     search,
     sortBy,
@@ -55,7 +55,7 @@ const Resources: React.FC = observer(() => {
 
   const clearFilter = () => {
     resources.clearAllFilters();
-    history.push('/');
+    history('/');
   };
 
   const checkResources = (items: IResource[]) => {

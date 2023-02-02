@@ -12,8 +12,8 @@ import { titleCase } from '../../common/titlecase';
 import './Rating.css';
 
 const Rating: React.FC = observer(() => {
-  const { name, kind, catalog }: { name: string; kind: string; catalog: string } = useParams();
-  const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
+  const { name, kind, catalog } = useParams();
+  const resourceKey = `${catalog}/${titleCase(kind as string)}/${name}`;
 
   const [star, setStar] = useState([false, false, false, false, false]);
   const [ratingError, setRatingError] = useState('');
