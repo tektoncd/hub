@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import '@patternfly/react-core/dist/styles/base.css';
 import { Grid, GridItem, Page, PageSection } from '@patternfly/react-core';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LeftPane from '../../components/LeftPane';
 import Background from '../../components/Background';
 import Header from '../../containers/Header';
@@ -21,19 +21,27 @@ const App: React.FC = observer(() => {
       <Router>
         <ParseUrl />
         <Page header={<Header />} className="hub-page">
-          <Route exact path="/login" render={() => <Redirect to="/" />} />
-          <Route exact path="/" component={Background} />
+          <Routes>
+            <Route path="/login" element={<Navigate to="/" replace />} />
+            <Route path="/" element={<Background />} />
+          </Routes>
+
           <PageSection>
             <Grid hasGutter>
               <GridItem span={12}>
-                <Route exact path="/:catalog/:kind/:name/:version?" component={Details}></Route>
+                <Routes>
+                  <Route path="/:catalog/:kind/:name/:version?" element={<Details />}></Route>
+                </Routes>
               </GridItem>
               <GridItem span={2}>
-                <Route exact path="/" component={LeftPane}></Route>
+                <Routes>
+                  <Route path="/" element={<LeftPane />}></Route>
+                </Routes>
               </GridItem>
-
               <GridItem span={10} rowSpan={1}>
-                <Route exact path="/" component={Resources}></Route>
+                <Routes>
+                  <Route path="/" element={<Resources />}></Route>
+                </Routes>
               </GridItem>
             </Grid>
           </PageSection>

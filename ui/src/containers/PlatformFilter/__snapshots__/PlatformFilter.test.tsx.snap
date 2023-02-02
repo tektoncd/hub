@@ -34,9 +34,9 @@ exports[`PlatformFilter finds the filter component and matches the count 1`] = `
             </GridItem>
             <GridItem span={12}>
               <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]}>
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"linux/amd64\\" name=\\"linux/amd64\\" isValid={true} isDisabled={false} ouiaSafe={true}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"linux/amd64\\" name=\\"linux/amd64\\" isValid={true} isDisabled={false} isRequired={false} ouiaSafe={true} component=\\"div\\">
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"linux/amd64\\" name=\\"linux/amd64\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-1\\" />
+                    <input id=\\"linux/amd64\\" name=\\"linux/amd64\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} required={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-1\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"linux/amd64\\">
                       <div>
                         Linux/amd64
@@ -44,9 +44,9 @@ exports[`PlatformFilter finds the filter component and matches the count 1`] = `
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"linux/arm64\\" name=\\"linux/arm64\\" isValid={true} isDisabled={false} ouiaSafe={true}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"linux/arm64\\" name=\\"linux/arm64\\" isValid={true} isDisabled={false} isRequired={false} ouiaSafe={true} component=\\"div\\">
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"linux/arm64\\" name=\\"linux/arm64\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-2\\" />
+                    <input id=\\"linux/arm64\\" name=\\"linux/arm64\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} required={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-2\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"linux/arm64\\">
                       <div>
                         Linux/arm64
@@ -54,9 +54,9 @@ exports[`PlatformFilter finds the filter component and matches the count 1`] = `
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"linux/ppc64le\\" name=\\"linux/ppc64le\\" isValid={true} isDisabled={false} ouiaSafe={true}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"linux/ppc64le\\" name=\\"linux/ppc64le\\" isValid={true} isDisabled={false} isRequired={false} ouiaSafe={true} component=\\"div\\">
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"linux/ppc64le\\" name=\\"linux/ppc64le\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-3\\" />
+                    <input id=\\"linux/ppc64le\\" name=\\"linux/ppc64le\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} required={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-3\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"linux/ppc64le\\">
                       <div>
                         Linux/ppc64le
@@ -64,9 +64,9 @@ exports[`PlatformFilter finds the filter component and matches the count 1`] = `
                     </label>
                   </div>
                 </Checkbox>
-                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"linux/s390x\\" name=\\"linux/s390x\\" isValid={true} isDisabled={false} ouiaSafe={true}>
+                <Checkbox className=\\"hub-filter-checkbox\\" label={{...}} isChecked={false} onChange={[Function: onChange]} aria-label=\\"controlled checkbox\\" id=\\"linux/s390x\\" name=\\"linux/s390x\\" isValid={true} isDisabled={false} isRequired={false} ouiaSafe={true} component=\\"div\\">
                   <div className=\\"pf-c-check hub-filter-checkbox\\">
-                    <input id=\\"linux/s390x\\" name=\\"linux/s390x\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-4\\" />
+                    <input id=\\"linux/s390x\\" name=\\"linux/s390x\\" className=\\"pf-c-check__input\\" type=\\"checkbox\\" onChange={[Function (anonymous)]} aria-invalid={false} aria-label=\\"controlled checkbox\\" disabled={false} required={false} checked={false} data-ouia-component-type=\\"PF4/Checkbox\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Checkbox-4\\" />
                     <label className=\\"pf-c-check__label\\" htmlFor=\\"linux/s390x\\">
                       <div>
                         Linux/s390x

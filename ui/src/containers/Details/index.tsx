@@ -13,21 +13,16 @@ import { IVersion } from '../../store/resource';
 
 const Details: React.FC = observer(() => {
   const { resources, user } = useMst();
-  const {
-    name,
-    catalog,
-    kind,
-    version
-  }: { name: string; catalog: string; kind: string; version: string } = useParams();
+  const { name, catalog, kind, version } = useParams();
 
   React.useEffect(() => {
     if (resources.isResourceLoading === false) {
-      const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
+      const resourceKey = `${catalog}/${titleCase(kind as string)}/${name}`;
       resources.versionInfo(resourceKey);
     }
   }, [resources.isResourceLoading]);
 
-  const resourceKey = `${catalog}/${titleCase(kind)}/${name}`;
+  const resourceKey = `${catalog}/${titleCase(kind as string)}/${name}`;
 
   const validateUrl = () => {
     const resource = resources.resources.get(resourceKey);
@@ -63,7 +58,7 @@ const Details: React.FC = observer(() => {
       {resourceDetails()}
       {scrollToTop()}
       <BasicDetails />
-      <Description name={name} catalog={catalog} kind={kind} />
+      <Description name={name as string} catalog={catalog as string} kind={kind as string} />
     </React.Fragment>
   );
 });

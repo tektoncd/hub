@@ -1,12 +1,12 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMst } from '../../store/root';
 import { Params } from '../../common/params';
 import { AuthCodeProps, IError } from '../../store/auth';
 
 const ParseUrl: React.FC = () => {
   const { resources, user } = useMst();
-  const history = useHistory();
+  const history = useNavigate();
 
   if (window.location.search) {
     const searchParams: URLSearchParams = new URLSearchParams(window.location.search);
@@ -20,7 +20,10 @@ const ParseUrl: React.FC = () => {
       };
       user.authenticate(codeFinal);
       if (user.isAuthenticated) {
-        history.goBack();
+        // Initially `history.goBack` was used to go to the previous
+        // page but with the update of `react-router-dom` version '-1'
+        // is added so that the page redirects back to the previous page
+        history('-1');
       }
     }
     // Display the alert message when status is not ok

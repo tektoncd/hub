@@ -4,7 +4,7 @@ import { PageNotFound } from './index';
 
 jest.mock('react-router-dom', () => {
   return {
-    useHistory: () => {
+    useNavigate: () => {
       return {
         history: ''
       };

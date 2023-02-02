@@ -13,7 +13,7 @@ const api = new FakeHub(TESTDATA_DIR);
 const { Provider, root } = createProviderAndStore(api);
 
 jest.mock('react-router-dom', () => ({
-  useHistory: () => ({
+  useNavigate: () => ({
     replace: jest.fn()
   })
 }));
