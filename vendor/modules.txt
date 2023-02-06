@@ -247,7 +247,7 @@ github.com/hashicorp/hcl/hcl/token
 github.com/hashicorp/hcl/json/parser
 github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
-# github.com/ikawaha/goahttpcheck v1.13.5
+# github.com/ikawaha/goahttpcheck v1.13.6
 ## explicit; go 1.19
 github.com/ikawaha/goahttpcheck
 # github.com/ikawaha/httpcheck v1.8.1
