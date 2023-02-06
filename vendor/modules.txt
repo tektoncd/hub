@@ -871,7 +871,7 @@ gopkg.in/yaml.v3
 # gorm.io/driver/postgres v1.4.6
 ## explicit; go 1.14
 gorm.io/driver/postgres
-# gorm.io/gorm v1.24.3
+# gorm.io/gorm v1.24.5
 ## explicit; go 1.16
 gorm.io/gorm
 gorm.io/gorm/callbacks
