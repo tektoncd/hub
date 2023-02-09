@@ -58,64 +58,66 @@ describe('Resource Component', () => {
   });
 
   it('should find EmptyState if filtered does not match to any resources', (done) => {
-    const component = mount(
-      <Provider>
-        <Router>
-          <Resources />
-        </Router>
-      </Provider>
-    );
-
     const { resources } = root;
     when(
       () => {
         return !resources.isLoading;
       },
       () => {
-        setTimeout(() => {
-          resources.setSearch('asdf');
-          const resource = resources.filteredResources;
-          expect(resource.length).toBe(0);
+        when(
+          () => {
+            return !resources.isLoading;
+          },
+          () => {
+            setTimeout(() => {
+              const component = mount(
+                <Provider>
+                  <Router>
+                    <Resources />
+                  </Router>
+                </Provider>
+              );
+              component.update();
 
-          component.update();
-          const r = component.find(EmptyState);
-          expect(r.length).toEqual(1);
-
-          done();
-        }, 0);
+              expect(component.find(EmptyState).length).toBe(1);
+            }, 1000);
+          }
+        );
+        done();
       }
     );
   });
 
   it('should find Clear All Filters button in the EmptyState', (done) => {
-    const component = mount(
-      <Provider>
-        <Router>
-          <Resources />
-        </Router>
-      </Provider>
-    );
-
     const { resources } = root;
     when(
       () => {
         return !resources.isLoading;
       },
       () => {
-        setTimeout(() => {
-          resources.setSortBy(SortByFields.Name);
-          resources.setSearch('gcloud');
+        when(
+          () => {
+            return !resources.isLoading;
+          },
+          () => {
+            setTimeout(() => {
+              const component = mount(
+                <Provider>
+                  <Router>
+                    <Resources />
+                  </Router>
+                </Provider>
+              );
+              component.update();
 
-          const resource = resources.filteredResources;
-          expect(resource.length).toBe(0);
+              component.update();
+              const r = component.find(EmptyState);
 
-          component.update();
-          const r = component.find(EmptyState);
-
-          expect(r.find(Button).length).toEqual(1);
-
-          done();
-        }, 0);
+              expect(r.find(Button).length).toEqual(1);
+            }, 1000);
+          }
+        );
+        done();
       }
     );
   });

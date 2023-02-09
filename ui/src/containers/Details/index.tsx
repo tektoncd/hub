@@ -55,10 +55,12 @@ const Details: React.FC = observer(() => {
     <PageNotFound />
   ) : (
     <React.Fragment>
-      {resourceDetails()}
-      {scrollToTop()}
-      <BasicDetails />
-      <Description name={name as string} catalog={catalog as string} kind={kind as string} />
+      <>
+        {resourceDetails()}
+        {scrollToTop()}
+        <BasicDetails />
+        <Description name={name as string} catalog={catalog as string} kind={kind as string} />
+      </>
     </React.Fragment>
   );
 });

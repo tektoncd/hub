@@ -1,4 +1,4 @@
-import React, { ReactChild, ReactChildren } from 'react';
+import React from 'react';
 import { types, getEnv, Instance } from 'mobx-state-tree';
 import { persist } from 'mst-persist';
 import { CategoryStore, ICategoryStore } from './category';
@@ -50,7 +50,7 @@ const initRootStore = (api: Api) => {
 };
 
 interface Props {
-  children: ReactChild | ReactChildren;
+  children: React.ReactNode;
 }
 
 let RootContext: React.Context<IRoot>;
@@ -61,7 +61,9 @@ export const createProviderAndStore = (api?: Api) => {
   RootContext = React.createContext(root);
 
   const Provider = ({ children }: Props) => (
-    <RootContext.Provider value={root}> {children} </RootContext.Provider>
+    <>
+      <RootContext.Provider value={root}> {children} </RootContext.Provider>
+    </>
   );
   return { Provider, root };
 };

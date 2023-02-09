@@ -1,9 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`search resources should render the search component 1`] = `
-"<ContextProvider value={{...}}>
-   
-  <Memo(observerComponent) />
-   
-</ContextProvider>"
+"<Fragment>
+  <ContextProvider value={{...}}>
+     
+    <Memo(observerComponent) />
+     
+  </ContextProvider>
+</Fragment>"
 `;
