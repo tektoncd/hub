@@ -30,7 +30,7 @@ require (
 	goa.design/goa/v3 v3.11.0
 	goa.design/plugins/v3 v3.11.0
 	golang.org/x/term v0.4.0
-	golang.org/x/text v0.6.0
+	golang.org/x/text v0.7.0
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gorm.io/driver/postgres v1.4.7
 	gorm.io/gorm v1.24.5
