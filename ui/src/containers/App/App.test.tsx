@@ -5,6 +5,7 @@ import { createProviderAndStore, createProvider } from '../../store/root';
 import LeftPane from '../../components/LeftPane';
 import App from '.';
 import { FakeDate, ActualDate } from '../../common/testutils';
+import Details from '../Details';
 
 const TESTDATA_DIR = `src/store/testdata`;
 const api = new FakeHub(TESTDATA_DIR);

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render the resource details page  component 1`] = `
+"<PageSection>
+  <Grid hasGutter={true}>
+    <GridItem span={12}>
+      <Memo(observerComponent) />
+    </GridItem>
+  </Grid>
+</PageSection>"
+`;

@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render the home page component 1`] = `
+"<Fragment>
+  <Background />
+  <PageSection>
+    <Grid hasGutter={true}>
+      <GridItem span={2}>
+        <Memo(observerComponent) />
+      </GridItem>
+      <GridItem span={10} rowSpan={1}>
+        <Memo(observerComponent) />
+      </GridItem>
+    </Grid>
+  </PageSection>
+</Fragment>"
+`;
