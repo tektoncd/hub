@@ -25,6 +25,7 @@ const esModules = [
 module.exports = {
   moduleNameMapper: {
     // ...
+    "^axios$": "axios/dist/axios.js"
   },
   testEnvironment: 'jest-environment-jsdom',
   transform: {
@@ -34,3 +35,4 @@ module.exports = {
     `[/\\\\]node_modules[/\\\\](?!${esModules}).+\\.(js|jsx|mjs|cjs|ts|tsx)$`,
   ],
 };
+
