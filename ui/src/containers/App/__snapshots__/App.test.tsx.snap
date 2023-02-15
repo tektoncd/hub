@@ -78,266 +78,255 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
               <main role={[undefined]} id={[undefined]} className=\\"pf-c-page__main\\" tabIndex={-1} aria-label={[undefined]}>
                 <Routes>
                   <RenderedRoute match={{...}} routeContext={{...}}>
-                    <Background>
-                      <div className=\\"hub-background-image\\" style={{...}}>
-                        <TextContent>
-                          <div className=\\"pf-c-content\\">
-                            <Text component=\\"h1\\" className=\\"hub-background-heading\\">
-                              <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-2\\" data-pf-content={true} className=\\"hub-background-heading\\">
-                                Welcome to Tekton Hub
-                              </h1>
-                            </Text>
-                            <Text component=\\"h3\\" className=\\"hub-tag-line\\">
-                              <h3 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-3\\" data-pf-content={true} className=\\"hub-tag-line\\">
-                                Discover, search and share reusable Tasks and Pipelines
-                              </h3>
-                            </Text>
-                          </div>
-                        </TextContent>
-                      </div>
-                    </Background>
+                    <HomePage>
+                      <Background>
+                        <div className=\\"hub-background-image\\" style={{...}}>
+                          <TextContent>
+                            <div className=\\"pf-c-content\\">
+                              <Text component=\\"h1\\" className=\\"hub-background-heading\\">
+                                <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-2\\" data-pf-content={true} className=\\"hub-background-heading\\">
+                                  Welcome to Tekton Hub
+                                </h1>
+                              </Text>
+                              <Text component=\\"h3\\" className=\\"hub-tag-line\\">
+                                <h3 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-3\\" data-pf-content={true} className=\\"hub-tag-line\\">
+                                  Discover, search and share reusable Tasks and Pipelines
+                                </h3>
+                              </Text>
+                            </div>
+                          </TextContent>
+                        </div>
+                      </Background>
+                      <PageSection>
+                        <section className=\\"pf-c-page__main-section\\" aria-label={[undefined]}>
+                          <Grid hasGutter={true}>
+                            <div className=\\"pf-l-grid pf-m-gutter\\" style={[undefined]}>
+                              <GridItem span={2}>
+                                <div className=\\"pf-l-grid__item pf-m-2-col\\" style={[undefined]}>
+                                  <Memo(observerComponent)>
+                                    <Grid hasGutter={true} className=\\"hub-leftpane\\">
+                                      <div className=\\"pf-l-grid pf-m-gutter hub-leftpane\\" style={[undefined]}>
+                                        <GridItem span={8}>
+                                          <div className=\\"pf-l-grid__item pf-m-8-col\\" style={[undefined]}>
+                                            <Memo(observerComponent)>
+                                              <div className=\\"hub-sort\\">
+                                                <Select variant=\\"single\\" isPlain={true} typeAheadAriaLabel=\\"Sort By\\" onToggle={[Function: onToggle]} onSelect={[Function: onSelect]} onClear={[Function: clearSelection]} isOpen={false} selections=\\"\\" placeholderText=\\"Sort By\\" className=\\"\\" position=\\"left\\" direction=\\"down\\" toggleId={{...}} isGrouped={false} isDisabled={false} hasPlaceholderStyle={false} isCreatable={false} isCreateOptionOnTop={false} validated=\\"default\\" aria-label=\\"\\" aria-labelledby=\\"\\" aria-describedby=\\"\\" aria-invalid={false} typeAheadAriaDescribedby=\\"\\" clearSelectionsAriaLabel=\\"Clear all\\" toggleAriaLabel=\\"Options menu\\" removeSelectionAriaLabel=\\"Remove\\" createText=\\"Create\\" noResultsFoundText=\\"No results found\\" width=\\"\\" onCreateOption={[Function: onCreateOption]} toggleIcon={{...}} toggleIndicator={{...}} onFilter={{...}} onTypeaheadInputChanged={{...}} customContent={{...}} hasInlineFilter={false} inlineFilterPlaceholderText={{...}} customBadgeText={{...}} inputIdPrefix=\\"\\" inputAutoComplete=\\"off\\" menuAppendTo=\\"inline\\" favorites={{...}} favoritesLabel=\\"Favorites\\" ouiaSafe={true} chipGroupComponent={{...}} isInputValuePersisted={false} isInputFilterPersisted={false} isCreateSelectOptionObject={false} shouldResetOnSelect={true} isFlipEnabled={true} removeFindDomNode={false} zIndex={9999}>
+                                                  <GenerateId prefix=\\"pf-random-id-\\">
+                                                    <div className=\\"pf-c-select\\" data-ouia-component-type=\\"PF4/Select\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Select-single-1\\">
+                                                      <ForwardRef id=\\"pf-select-toggle-id-0\\" parentRef={{...}} menuRef={{...}} isOpen={false} isPlain={true} hasPlaceholderStyle={false} onToggle={[Function (anonymous)]} onEnter={[Function (anonymous)]} onClose={[Function (anonymous)]} onBlur={[undefined]} variant=\\"single\\" toggleIndicator={{...}} aria-labelledby=\\" pf-select-toggle-id-0\\" aria-label=\\"Options menu\\" handleTypeaheadKeys={[Function (anonymous)]} moveFocusToLastMenuItem={[Function (anonymous)]} isDisabled={false} hasClearButton={true} hasFooter={false} onClickTypeaheadToggleButton={[Function (anonymous)]}>
+                                                        <SelectToggle innerRef={{...}} id=\\"pf-select-toggle-id-0\\" parentRef={{...}} menuRef={{...}} isOpen={false} isPlain={true} hasPlaceholderStyle={false} onToggle={[Function (anonymous)]} onEnter={[Function (anonymous)]} onClose={[Function (anonymous)]} onBlur={[undefined]} variant=\\"single\\" toggleIndicator={{...}} aria-labelledby=\\" pf-select-toggle-id-0\\" aria-label=\\"Options menu\\" handleTypeaheadKeys={[Function (anonymous)]} moveFocusToLastMenuItem={[Function (anonymous)]} isDisabled={false} hasClearButton={true} hasFooter={false} onClickTypeaheadToggleButton={[Function (anonymous)]} className=\\"\\" isActive={false} type=\\"button\\">
+                                                          <div className=\\"pf-c-select__toggle pf-m-plain pf-m-typeahead\\" onBlur={[undefined]} onClick={[Function: onClick]} onKeyDown={[Function (anonymous)]}>
+                                                            <div className=\\"pf-c-select__toggle-wrapper\\">
+                                                              <span className=\\"pf-c-select__toggle-text\\">
+                                                                Sort By
+                                                              </span>
+                                                            </div>
+                                                            <button id=\\"pf-select-toggle-id-0\\" aria-labelledby=\\" pf-select-toggle-id-0\\" aria-expanded={false} aria-haspopup=\\"listbox\\" type=\\"button\\" className=\\"pf-c-button pf-c-select__toggle-button pf-m-plain\\" aria-label=\\"Options menu\\" onClick={[Function: onClick]} disabled={false}>
+                                                              <CaretDownIcon className=\\"pf-c-select__toggle-arrow\\" color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 320 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"pf-c-select__toggle-arrow\\">
+                                                                  <path d=\\"M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z\\" />
+                                                                </svg>
+                                                              </CaretDownIcon>
+                                                            </button>
+                                                          </div>
+                                                        </SelectToggle>
+                                                      </ForwardRef>
+                                                    </div>
+                                                  </GenerateId>
+                                                </Select>
+                                              </div>
+                                            </Memo(observerComponent)>
+                                          </div>
+                                        </GridItem>
+                                        <GridItem>
+                                          <div className=\\"pf-l-grid__item\\" style={[undefined]}>
+                                            <Memo(observerComponent)>
+                                              <Memo(observerComponent) store={{...}} header=\\"Kind\\">
+                                                <div>
+                                                  <Grid>
+                                                    <div className=\\"pf-l-grid\\" style={[undefined]}>
+                                                      <GridItem span={6}>
+                                                        <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
+                                                          <Text component=\\"h1\\" className=\\"hub-filter-header\\">
+                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-4\\" data-pf-content={true} className=\\"hub-filter-header\\">
+                                                              Kind
+                                                            </h1>
+                                                          </Text>
+                                                        </div>
+                                                      </GridItem>
+                                                      <GridItem span={3}>
+                                                        <div className=\\"pf-l-grid__item pf-m-3-col\\" style={[undefined]}>
+                                                          <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
+                                                            <ButtonBase innerRef={{...}} variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
+                                                              <button onClick={[Function: res] { _isMSTAction: true }} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" role={{...}} data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Button-plain-1\\">
+                                                                <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                                  <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                                    <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" />
+                                                                  </svg>
+                                                                </TimesIcon>
+                                                              </button>
+                                                            </ButtonBase>
+                                                          </Button>
+                                                        </div>
+                                                      </GridItem>
+                                                      <GridItem span={12}>
+                                                        <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]} />
+                                                      </GridItem>
+                                                    </div>
+                                                  </Grid>
+                                                </div>
+                                              </Memo(observerComponent)>
+                                            </Memo(observerComponent)>
+                                          </div>
+                                        </GridItem>
+                                        <GridItem>
+                                          <div className=\\"pf-l-grid__item\\" style={[undefined]}>
+                                            <Memo(observerComponent)>
+                                              <Memo(observerComponent) store={{...}} header=\\"Platform\\">
+                                                <div>
+                                                  <Grid>
+                                                    <div className=\\"pf-l-grid\\" style={[undefined]}>
+                                                      <GridItem span={6}>
+                                                        <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
+                                                          <Text component=\\"h1\\" className=\\"hub-filter-header\\">
+                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-5\\" data-pf-content={true} className=\\"hub-filter-header\\">
+                                                              Platform
+                                                            </h1>
+                                                          </Text>
+                                                        </div>
+                                                      </GridItem>
+                                                      <GridItem span={3}>
+                                                        <div className=\\"pf-l-grid__item pf-m-3-col\\" style={[undefined]}>
+                                                          <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
+                                                            <ButtonBase innerRef={{...}} variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
+                                                              <button onClick={[Function: res] { _isMSTAction: true }} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" role={{...}} data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Button-plain-2\\">
+                                                                <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                                  <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                                    <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" />
+                                                                  </svg>
+                                                                </TimesIcon>
+                                                              </button>
+                                                            </ButtonBase>
+                                                          </Button>
+                                                        </div>
+                                                      </GridItem>
+                                                      <GridItem span={12}>
+                                                        <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]} />
+                                                      </GridItem>
+                                                    </div>
+                                                  </Grid>
+                                                </div>
+                                              </Memo(observerComponent)>
+                                            </Memo(observerComponent)>
+                                          </div>
+                                        </GridItem>
+                                        <GridItem>
+                                          <div className=\\"pf-l-grid__item\\" style={[undefined]}>
+                                            <Memo(observerComponent)>
+                                              <Memo(observerComponent) store={{...}} header=\\"Catalog\\">
+                                                <div>
+                                                  <Grid>
+                                                    <div className=\\"pf-l-grid\\" style={[undefined]}>
+                                                      <GridItem span={6}>
+                                                        <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
+                                                          <Text component=\\"h1\\" className=\\"hub-filter-header\\">
+                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-6\\" data-pf-content={true} className=\\"hub-filter-header\\">
+                                                              Catalog
+                                                            </h1>
+                                                          </Text>
+                                                        </div>
+                                                      </GridItem>
+                                                      <GridItem span={3}>
+                                                        <div className=\\"pf-l-grid__item pf-m-3-col\\" style={[undefined]}>
+                                                          <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
+                                                            <ButtonBase innerRef={{...}} variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
+                                                              <button onClick={[Function: res] { _isMSTAction: true }} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" role={{...}} data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Button-plain-3\\">
+                                                                <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                                  <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                                    <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" />
+                                                                  </svg>
+                                                                </TimesIcon>
+                                                              </button>
+                                                            </ButtonBase>
+                                                          </Button>
+                                                        </div>
+                                                      </GridItem>
+                                                      <GridItem span={12}>
+                                                        <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]} />
+                                                      </GridItem>
+                                                    </div>
+                                                  </Grid>
+                                                </div>
+                                              </Memo(observerComponent)>
+                                            </Memo(observerComponent)>
+                                          </div>
+                                        </GridItem>
+                                        <GridItem>
+                                          <div className=\\"pf-l-grid__item\\" style={[undefined]}>
+                                            <Memo(observerComponent)>
+                                              <Memo(observerComponent) store={{...}} header=\\"Category\\">
+                                                <div>
+                                                  <Grid>
+                                                    <div className=\\"pf-l-grid\\" style={[undefined]}>
+                                                      <GridItem span={6}>
+                                                        <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
+                                                          <Text component=\\"h1\\" className=\\"hub-filter-header\\">
+                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-7\\" data-pf-content={true} className=\\"hub-filter-header\\">
+                                                              Category
+                                                            </h1>
+                                                          </Text>
+                                                        </div>
+                                                      </GridItem>
+                                                      <GridItem span={3}>
+                                                        <div className=\\"pf-l-grid__item pf-m-3-col\\" style={[undefined]}>
+                                                          <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
+                                                            <ButtonBase innerRef={{...}} variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
+                                                              <button onClick={[Function: res] { _isMSTAction: true }} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" role={{...}} data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Button-plain-4\\">
+                                                                <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
+                                                                  <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
+                                                                    <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" />
+                                                                  </svg>
+                                                                </TimesIcon>
+                                                              </button>
+                                                            </ButtonBase>
+                                                          </Button>
+                                                        </div>
+                                                      </GridItem>
+                                                      <GridItem span={12}>
+                                                        <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]} />
+                                                      </GridItem>
+                                                    </div>
+                                                  </Grid>
+                                                </div>
+                                              </Memo(observerComponent)>
+                                            </Memo(observerComponent)>
+                                          </div>
+                                        </GridItem>
+                                      </div>
+                                    </Grid>
+                                  </Memo(observerComponent)>
+                                </div>
+                              </GridItem>
+                              <GridItem span={10} rowSpan={1}>
+                                <div className=\\"pf-l-grid__item pf-m-10-col pf-m-1-row\\" style={[undefined]}>
+                                  <Memo(observerComponent)>
+                                    <Spinner className=\\"hub-resources-spinner\\">
+                                      <span className=\\"pf-c-spinner pf-m-xl hub-resources-spinner\\" role=\\"progressbar\\" aria-valuetext=\\"Loading...\\" aria-label=\\"Contents\\">
+                                        <span className=\\"pf-c-spinner__clipper\\" />
+                                        <span className=\\"pf-c-spinner__lead-ball\\" />
+                                        <span className=\\"pf-c-spinner__tail-ball\\" />
+                                      </span>
+                                    </Spinner>
+                                  </Memo(observerComponent)>
+                                </div>
+                              </GridItem>
+                            </div>
+                          </Grid>
+                        </section>
+                      </PageSection>
+                    </HomePage>
                   </RenderedRoute>
                 </Routes>
-                <PageSection>
-                  <section className=\\"pf-c-page__main-section\\" aria-label={[undefined]}>
-                    <Grid hasGutter={true}>
-                      <div className=\\"pf-l-grid pf-m-gutter\\" style={[undefined]}>
-                        <GridItem span={12}>
-                          <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]}>
-                            <Routes />
-                          </div>
-                        </GridItem>
-                        <GridItem span={2}>
-                          <div className=\\"pf-l-grid__item pf-m-2-col\\" style={[undefined]}>
-                            <Routes>
-                              <RenderedRoute match={{...}} routeContext={{...}}>
-                                <LeftPane>
-                                  <Grid hasGutter={true} className=\\"hub-leftpane\\">
-                                    <div className=\\"pf-l-grid pf-m-gutter hub-leftpane\\" style={[undefined]}>
-                                      <GridItem span={8}>
-                                        <div className=\\"pf-l-grid__item pf-m-8-col\\" style={[undefined]}>
-                                          <Sort>
-                                            <div className=\\"hub-sort\\">
-                                              <Select variant=\\"single\\" isPlain={true} typeAheadAriaLabel=\\"Sort By\\" onToggle={[Function: onToggle]} onSelect={[Function: onSelect]} onClear={[Function: clearSelection]} isOpen={false} selections=\\"\\" placeholderText=\\"Sort By\\" className=\\"\\" position=\\"left\\" direction=\\"down\\" toggleId={{...}} isGrouped={false} isDisabled={false} hasPlaceholderStyle={false} isCreatable={false} isCreateOptionOnTop={false} validated=\\"default\\" aria-label=\\"\\" aria-labelledby=\\"\\" aria-describedby=\\"\\" aria-invalid={false} typeAheadAriaDescribedby=\\"\\" clearSelectionsAriaLabel=\\"Clear all\\" toggleAriaLabel=\\"Options menu\\" removeSelectionAriaLabel=\\"Remove\\" createText=\\"Create\\" noResultsFoundText=\\"No results found\\" width=\\"\\" onCreateOption={[Function: onCreateOption]} toggleIcon={{...}} toggleIndicator={{...}} onFilter={{...}} onTypeaheadInputChanged={{...}} customContent={{...}} hasInlineFilter={false} inlineFilterPlaceholderText={{...}} customBadgeText={{...}} inputIdPrefix=\\"\\" inputAutoComplete=\\"off\\" menuAppendTo=\\"inline\\" favorites={{...}} favoritesLabel=\\"Favorites\\" ouiaSafe={true} chipGroupComponent={{...}} isInputValuePersisted={false} isInputFilterPersisted={false} isCreateSelectOptionObject={false} shouldResetOnSelect={true} isFlipEnabled={true} removeFindDomNode={false} zIndex={9999}>
-                                                <GenerateId prefix=\\"pf-random-id-\\">
-                                                  <div className=\\"pf-c-select\\" data-ouia-component-type=\\"PF4/Select\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Select-single-1\\">
-                                                    <ForwardRef id=\\"pf-select-toggle-id-0\\" parentRef={{...}} menuRef={{...}} isOpen={false} isPlain={true} hasPlaceholderStyle={false} onToggle={[Function (anonymous)]} onEnter={[Function (anonymous)]} onClose={[Function (anonymous)]} onBlur={[undefined]} variant=\\"single\\" toggleIndicator={{...}} aria-labelledby=\\" pf-select-toggle-id-0\\" aria-label=\\"Options menu\\" handleTypeaheadKeys={[Function (anonymous)]} moveFocusToLastMenuItem={[Function (anonymous)]} isDisabled={false} hasClearButton={true} hasFooter={false} onClickTypeaheadToggleButton={[Function (anonymous)]}>
-                                                      <SelectToggle innerRef={{...}} id=\\"pf-select-toggle-id-0\\" parentRef={{...}} menuRef={{...}} isOpen={false} isPlain={true} hasPlaceholderStyle={false} onToggle={[Function (anonymous)]} onEnter={[Function (anonymous)]} onClose={[Function (anonymous)]} onBlur={[undefined]} variant=\\"single\\" toggleIndicator={{...}} aria-labelledby=\\" pf-select-toggle-id-0\\" aria-label=\\"Options menu\\" handleTypeaheadKeys={[Function (anonymous)]} moveFocusToLastMenuItem={[Function (anonymous)]} isDisabled={false} hasClearButton={true} hasFooter={false} onClickTypeaheadToggleButton={[Function (anonymous)]} className=\\"\\" isActive={false} type=\\"button\\">
-                                                        <div className=\\"pf-c-select__toggle pf-m-plain pf-m-typeahead\\" onBlur={[undefined]} onClick={[Function: onClick]} onKeyDown={[Function (anonymous)]}>
-                                                          <div className=\\"pf-c-select__toggle-wrapper\\">
-                                                            <span className=\\"pf-c-select__toggle-text\\">
-                                                              Sort By
-                                                            </span>
-                                                          </div>
-                                                          <button id=\\"pf-select-toggle-id-0\\" aria-labelledby=\\" pf-select-toggle-id-0\\" aria-expanded={false} aria-haspopup=\\"listbox\\" type=\\"button\\" className=\\"pf-c-button pf-c-select__toggle-button pf-m-plain\\" aria-label=\\"Options menu\\" onClick={[Function: onClick]} disabled={false}>
-                                                            <CaretDownIcon className=\\"pf-c-select__toggle-arrow\\" color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
-                                                              <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 320 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\" className=\\"pf-c-select__toggle-arrow\\">
-                                                                <path d=\\"M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z\\" />
-                                                              </svg>
-                                                            </CaretDownIcon>
-                                                          </button>
-                                                        </div>
-                                                      </SelectToggle>
-                                                    </ForwardRef>
-                                                  </div>
-                                                </GenerateId>
-                                              </Select>
-                                            </div>
-                                          </Sort>
-                                        </div>
-                                      </GridItem>
-                                      <GridItem>
-                                        <div className=\\"pf-l-grid__item\\" style={[undefined]}>
-                                          <KindFilter>
-                                            <Filter store={{...}} header=\\"Kind\\">
-                                              <div>
-                                                <Grid>
-                                                  <div className=\\"pf-l-grid\\" style={[undefined]}>
-                                                    <GridItem span={6}>
-                                                      <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
-                                                        <Text component=\\"h1\\" className=\\"hub-filter-header\\">
-                                                          <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-4\\" data-pf-content={true} className=\\"hub-filter-header\\">
-                                                            Kind
-                                                          </h1>
-                                                        </Text>
-                                                      </div>
-                                                    </GridItem>
-                                                    <GridItem span={3}>
-                                                      <div className=\\"pf-l-grid__item pf-m-3-col\\" style={[undefined]}>
-                                                        <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
-                                                          <ButtonBase innerRef={{...}} variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
-                                                            <button onClick={[Function: res] { _isMSTAction: true }} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" role={{...}} data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Button-plain-1\\">
-                                                              <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
-                                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
-                                                                  <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" />
-                                                                </svg>
-                                                              </TimesIcon>
-                                                            </button>
-                                                          </ButtonBase>
-                                                        </Button>
-                                                      </div>
-                                                    </GridItem>
-                                                    <GridItem span={12}>
-                                                      <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]} />
-                                                    </GridItem>
-                                                  </div>
-                                                </Grid>
-                                              </div>
-                                            </Filter>
-                                          </KindFilter>
-                                        </div>
-                                      </GridItem>
-                                      <GridItem>
-                                        <div className=\\"pf-l-grid__item\\" style={[undefined]}>
-                                          <PlatformFilter>
-                                            <Filter store={{...}} header=\\"Platform\\">
-                                              <div>
-                                                <Grid>
-                                                  <div className=\\"pf-l-grid\\" style={[undefined]}>
-                                                    <GridItem span={6}>
-                                                      <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
-                                                        <Text component=\\"h1\\" className=\\"hub-filter-header\\">
-                                                          <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-5\\" data-pf-content={true} className=\\"hub-filter-header\\">
-                                                            Platform
-                                                          </h1>
-                                                        </Text>
-                                                      </div>
-                                                    </GridItem>
-                                                    <GridItem span={3}>
-                                                      <div className=\\"pf-l-grid__item pf-m-3-col\\" style={[undefined]}>
-                                                        <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
-                                                          <ButtonBase innerRef={{...}} variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
-                                                            <button onClick={[Function: res] { _isMSTAction: true }} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" role={{...}} data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Button-plain-2\\">
-                                                              <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
-                                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
-                                                                  <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" />
-                                                                </svg>
-                                                              </TimesIcon>
-                                                            </button>
-                                                          </ButtonBase>
-                                                        </Button>
-                                                      </div>
-                                                    </GridItem>
-                                                    <GridItem span={12}>
-                                                      <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]} />
-                                                    </GridItem>
-                                                  </div>
-                                                </Grid>
-                                              </div>
-                                            </Filter>
-                                          </PlatformFilter>
-                                        </div>
-                                      </GridItem>
-                                      <GridItem>
-                                        <div className=\\"pf-l-grid__item\\" style={[undefined]}>
-                                          <CatalogFilter>
-                                            <Filter store={{...}} header=\\"Catalog\\">
-                                              <div>
-                                                <Grid>
-                                                  <div className=\\"pf-l-grid\\" style={[undefined]}>
-                                                    <GridItem span={6}>
-                                                      <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
-                                                        <Text component=\\"h1\\" className=\\"hub-filter-header\\">
-                                                          <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-6\\" data-pf-content={true} className=\\"hub-filter-header\\">
-                                                            Catalog
-                                                          </h1>
-                                                        </Text>
-                                                      </div>
-                                                    </GridItem>
-                                                    <GridItem span={3}>
-                                                      <div className=\\"pf-l-grid__item pf-m-3-col\\" style={[undefined]}>
-                                                        <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
-                                                          <ButtonBase innerRef={{...}} variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
-                                                            <button onClick={[Function: res] { _isMSTAction: true }} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" role={{...}} data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Button-plain-3\\">
-                                                              <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
-                                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
-                                                                  <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" />
-                                                                </svg>
-                                                              </TimesIcon>
-                                                            </button>
-                                                          </ButtonBase>
-                                                        </Button>
-                                                      </div>
-                                                    </GridItem>
-                                                    <GridItem span={12}>
-                                                      <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]} />
-                                                    </GridItem>
-                                                  </div>
-                                                </Grid>
-                                              </div>
-                                            </Filter>
-                                          </CatalogFilter>
-                                        </div>
-                                      </GridItem>
-                                      <GridItem>
-                                        <div className=\\"pf-l-grid__item\\" style={[undefined]}>
-                                          <CategoryFilter>
-                                            <Filter store={{...}} header=\\"Category\\">
-                                              <div>
-                                                <Grid>
-                                                  <div className=\\"pf-l-grid\\" style={[undefined]}>
-                                                    <GridItem span={6}>
-                                                      <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
-                                                        <Text component=\\"h1\\" className=\\"hub-filter-header\\">
-                                                          <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-7\\" data-pf-content={true} className=\\"hub-filter-header\\">
-                                                            Category
-                                                          </h1>
-                                                        </Text>
-                                                      </div>
-                                                    </GridItem>
-                                                    <GridItem span={3}>
-                                                      <div className=\\"pf-l-grid__item pf-m-3-col\\" style={[undefined]}>
-                                                        <Button variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
-                                                          <ButtonBase innerRef={{...}} variant=\\"plain\\" aria-label=\\"Clear\\" onClick={[Function: res] { _isMSTAction: true }}>
-                                                            <button onClick={[Function: res] { _isMSTAction: true }} aria-disabled={false} aria-label=\\"Clear\\" className=\\"pf-c-button pf-m-plain\\" disabled={false} tabIndex={[undefined]} type=\\"button\\" role={{...}} data-ouia-component-type=\\"PF4/Button\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Button-plain-4\\">
-                                                              <TimesIcon color=\\"currentColor\\" size=\\"sm\\" noVerticalAlign={false}>
-                                                                <svg style={{...}} fill=\\"currentColor\\" height=\\"1em\\" width=\\"1em\\" viewBox=\\"0 0 352 512\\" aria-labelledby={{...}} aria-hidden={true} role=\\"img\\">
-                                                                  <path d=\\"M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z\\" />
-                                                                </svg>
-                                                              </TimesIcon>
-                                                            </button>
-                                                          </ButtonBase>
-                                                        </Button>
-                                                      </div>
-                                                    </GridItem>
-                                                    <GridItem span={12}>
-                                                      <div className=\\"pf-l-grid__item pf-m-12-col\\" style={[undefined]} />
-                                                    </GridItem>
-                                                  </div>
-                                                </Grid>
-                                              </div>
-                                            </Filter>
-                                          </CategoryFilter>
-                                        </div>
-                                      </GridItem>
-                                    </div>
-                                  </Grid>
-                                </LeftPane>
-                              </RenderedRoute>
-                            </Routes>
-                          </div>
-                        </GridItem>
-                        <GridItem span={10} rowSpan={1}>
-                          <div className=\\"pf-l-grid__item pf-m-10-col pf-m-1-row\\" style={[undefined]}>
-                            <Routes>
-                              <RenderedRoute match={{...}} routeContext={{...}}>
-                                <Memo(observerComponent)>
-                                  <Spinner className=\\"hub-resources-spinner\\">
-                                    <span className=\\"pf-c-spinner pf-m-xl hub-resources-spinner\\" role=\\"progressbar\\" aria-valuetext=\\"Loading...\\" aria-label=\\"Contents\\">
-                                      <span className=\\"pf-c-spinner__clipper\\" />
-                                      <span className=\\"pf-c-spinner__lead-ball\\" />
-                                      <span className=\\"pf-c-spinner__tail-ball\\" />
-                                    </span>
-                                  </Spinner>
-                                </Memo(observerComponent)>
-                              </RenderedRoute>
-                            </Routes>
-                          </div>
-                        </GridItem>
-                      </div>
-                    </Grid>
-                  </section>
-                </PageSection>
                 <Footer>
                   <Card className=\\"hub-footer-card\\">
                     <article id=\\"\\" className=\\"pf-c-card hub-footer-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-1\\">

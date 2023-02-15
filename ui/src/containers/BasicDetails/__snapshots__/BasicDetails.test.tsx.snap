@@ -3,7 +3,7 @@
 exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
 "<Provider>
    
-  <BasicDetails>
+  <Memo(observerComponent)>
     <Card className=\\"hub-header-card\\">
       <article id=\\"\\" className=\\"pf-c-card hub-header-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-2\\">
         <Grid className=\\"hub-header-card__margin\\">
@@ -257,9 +257,9 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
                                 <Dropdown toggle={{...}} dropdownItems={{...}} onSelect={[Function: onSelect]} isOpen={false}>
                                   <DropdownWithContext menuAppendTo=\\"inline\\" isFlipEnabled={true} removeFindDomNode={false} zIndex={9999} toggle={{...}} dropdownItems={{...}} isOpen={false} className=\\"\\" isPlain={false} isText={false} isGrouped={false} position=\\"left\\" direction=\\"down\\" onSelect={[Function: onSelect]} autoFocus={true}>
                                     <div className=\\"pf-c-dropdown\\" data-ouia-component-type=\\"PF4/Dropdown\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Dropdown-2\\">
-                                      <DropdownToggle onToggle={[Function: onToggle]} className=\\"hub-details-dropdown-item\\" parentRef={{...}} getMenuRef={[Function (anonymous)]} isOpen={false} id=\\"pf-dropdown-toggle-id-2\\" isPlain={false} isText={false} aria-haspopup={true} onEnter={[Function: onEnter]}>
-                                        <Toggle onEnter={[Function: onEnter]} id=\\"pf-dropdown-toggle-id-2\\" className=\\"hub-details-dropdown-item\\" isOpen={false} parentRef={{...}} getMenuRef={[Function (anonymous)]} isActive={false} isDisabled={false} isPlain={false} isText={false} isPrimary={false} toggleVariant=\\"default\\" onToggle={[Function: onToggle]} aria-haspopup={true} data-ouia-component-type=\\"PF4/DropdownToggle\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-DropdownToggle-2\\" isSplitButton={false} bubbleEvent={false}>
-                                          <button data-ouia-component-type=\\"PF4/DropdownToggle\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-DropdownToggle-2\\" id=\\"pf-dropdown-toggle-id-2\\" className=\\"pf-c-dropdown__toggle hub-details-dropdown-item\\" type=\\"button\\" onClick={[Function: onClick]} aria-expanded={false} aria-haspopup={true} onKeyDown={[Function: onKeyDown]} disabled={false}>
+                                      <DropdownToggle onToggle={[Function: onToggle]} className=\\"hub-details-dropdown-item\\" parentRef={{...}} getMenuRef={[Function (anonymous)]} isOpen={false} id=\\"pf-dropdown-toggle-id-4\\" isPlain={false} isText={false} aria-haspopup={true} onEnter={[Function: onEnter]}>
+                                        <Toggle onEnter={[Function: onEnter]} id=\\"pf-dropdown-toggle-id-4\\" className=\\"hub-details-dropdown-item\\" isOpen={false} parentRef={{...}} getMenuRef={[Function (anonymous)]} isActive={false} isDisabled={false} isPlain={false} isText={false} isPrimary={false} toggleVariant=\\"default\\" onToggle={[Function: onToggle]} aria-haspopup={true} data-ouia-component-type=\\"PF4/DropdownToggle\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-DropdownToggle-2\\" isSplitButton={false} bubbleEvent={false}>
+                                          <button data-ouia-component-type=\\"PF4/DropdownToggle\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-DropdownToggle-2\\" id=\\"pf-dropdown-toggle-id-4\\" className=\\"pf-c-dropdown__toggle hub-details-dropdown-item\\" type=\\"button\\" onClick={[Function: onClick]} aria-expanded={false} aria-haspopup={true} onKeyDown={[Function: onKeyDown]} disabled={false}>
                                             <span className=\\"pf-c-dropdown__toggle-text\\">
                                               0.2 (latest)
                                             </span>
@@ -295,7 +295,7 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
         </Grid>
       </article>
     </Card>
-  </BasicDetails>
+  </Memo(observerComponent)>
    
 </Provider>"
 `;
@@ -303,7 +303,7 @@ exports[`length of DropdownItems should be 2 in case of buildah 1`] = `
 exports[`should render the BasicDetails component 1`] = `
 "<Provider>
    
-  <BasicDetails>
+  <Memo(observerComponent)>
     <Card className=\\"hub-header-card\\">
       <article id=\\"\\" className=\\"pf-c-card hub-header-card\\" tabIndex={[undefined]} data-ouia-component-type=\\"PF4/Card\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Card-1\\">
         <Grid className=\\"hub-header-card__margin\\">
@@ -546,9 +546,9 @@ exports[`should render the BasicDetails component 1`] = `
                                 <Dropdown toggle={{...}} dropdownItems={{...}} onSelect={[Function: onSelect]} isOpen={false}>
                                   <DropdownWithContext menuAppendTo=\\"inline\\" isFlipEnabled={true} removeFindDomNode={false} zIndex={9999} toggle={{...}} dropdownItems={{...}} isOpen={false} className=\\"\\" isPlain={false} isText={false} isGrouped={false} position=\\"left\\" direction=\\"down\\" onSelect={[Function: onSelect]} autoFocus={true}>
                                     <div className=\\"pf-c-dropdown\\" data-ouia-component-type=\\"PF4/Dropdown\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Dropdown-1\\">
-                                      <DropdownToggle onToggle={[Function: onToggle]} className=\\"hub-details-dropdown-item\\" parentRef={{...}} getMenuRef={[Function (anonymous)]} isOpen={false} id=\\"pf-dropdown-toggle-id-0\\" isPlain={false} isText={false} aria-haspopup={true} onEnter={[Function: onEnter]}>
-                                        <Toggle onEnter={[Function: onEnter]} id=\\"pf-dropdown-toggle-id-0\\" className=\\"hub-details-dropdown-item\\" isOpen={false} parentRef={{...}} getMenuRef={[Function (anonymous)]} isActive={false} isDisabled={false} isPlain={false} isText={false} isPrimary={false} toggleVariant=\\"default\\" onToggle={[Function: onToggle]} aria-haspopup={true} data-ouia-component-type=\\"PF4/DropdownToggle\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-DropdownToggle-1\\" isSplitButton={false} bubbleEvent={false}>
-                                          <button data-ouia-component-type=\\"PF4/DropdownToggle\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-DropdownToggle-1\\" id=\\"pf-dropdown-toggle-id-0\\" className=\\"pf-c-dropdown__toggle hub-details-dropdown-item\\" type=\\"button\\" onClick={[Function: onClick]} aria-expanded={false} aria-haspopup={true} onKeyDown={[Function: onKeyDown]} disabled={false}>
+                                      <DropdownToggle onToggle={[Function: onToggle]} className=\\"hub-details-dropdown-item\\" parentRef={{...}} getMenuRef={[Function (anonymous)]} isOpen={false} id=\\"pf-dropdown-toggle-id-1\\" isPlain={false} isText={false} aria-haspopup={true} onEnter={[Function: onEnter]}>
+                                        <Toggle onEnter={[Function: onEnter]} id=\\"pf-dropdown-toggle-id-1\\" className=\\"hub-details-dropdown-item\\" isOpen={false} parentRef={{...}} getMenuRef={[Function (anonymous)]} isActive={false} isDisabled={false} isPlain={false} isText={false} isPrimary={false} toggleVariant=\\"default\\" onToggle={[Function: onToggle]} aria-haspopup={true} data-ouia-component-type=\\"PF4/DropdownToggle\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-DropdownToggle-1\\" isSplitButton={false} bubbleEvent={false}>
+                                          <button data-ouia-component-type=\\"PF4/DropdownToggle\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-DropdownToggle-1\\" id=\\"pf-dropdown-toggle-id-1\\" className=\\"pf-c-dropdown__toggle hub-details-dropdown-item\\" type=\\"button\\" onClick={[Function: onClick]} aria-expanded={false} aria-haspopup={true} onKeyDown={[Function: onKeyDown]} disabled={false}>
                                             <span className=\\"pf-c-dropdown__toggle-text\\">
                                               0.2 (latest)
                                             </span>
@@ -584,7 +584,7 @@ exports[`should render the BasicDetails component 1`] = `
         </Grid>
       </article>
     </Card>
-  </BasicDetails>
+  </Memo(observerComponent)>
    
 </Provider>"
 `;

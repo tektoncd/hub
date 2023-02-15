@@ -1,5 +1,5 @@
 import React from 'react';
-import { useObserver } from 'mobx-react';
+import { observer } from 'mobx-react';
 
 import { Button, Checkbox, Text, TextVariants, Grid, GridItem } from '@patternfly/react-core';
 import { IconSize, TimesIcon } from '@patternfly/react-icons';
@@ -50,8 +50,8 @@ const checkboxes = (values: Filterable[]) => {
   ));
 };
 
-const Filter: React.FC<Props> = ({ store, header }) => {
-  return useObserver(() => (
+const Filter: React.FC<Props> = observer(({ store, header }) => {
+  return (
     <div>
       <Grid>
         <GridItem span={6}>
@@ -68,7 +68,7 @@ const Filter: React.FC<Props> = ({ store, header }) => {
         <GridItem span={12}>{checkboxes(store.values)}</GridItem>
       </Grid>
     </div>
-  ));
-};
+  );
+});
 
 export default Filter;

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Select, SelectVariant, SelectOption, SelectOptionObject } from '@patternfly/react-core';
-import { useObserver } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { useMst } from '../../store/root';
 import { SortByFields } from '../../store/resource';
 import './SortDropDown.css';
 
-const Sort: React.FC = () => {
+const Sort: React.FC = observer(() => {
   const { resources } = useMst();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +46,7 @@ const Sort: React.FC = () => {
     }
   };
 
-  return useObserver(() => (
+  return (
     <div className="hub-sort">
       <Select
         variant={SelectVariant.single}
@@ -62,6 +62,6 @@ const Sort: React.FC = () => {
         {keys}
       </Select>
     </div>
-  ));
-};
+  );
+});
 export default Sort;

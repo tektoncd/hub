@@ -1,11 +1,11 @@
 import React from 'react';
-import { useObserver } from 'mobx-react';
+import { observer } from 'mobx-react';
 import Filter from '../../components/Filter';
 import { useMst } from '../../store/root';
 
-const PlatformFilter: React.FC = () => {
+const PlatformFilter: React.FC = observer(() => {
   const { resources } = useMst();
-  return useObserver(() => <Filter store={resources.platforms} header="Platform" />);
-};
+  return <Filter store={resources.platforms} header="Platform" />;
+});
 
 export default PlatformFilter;
