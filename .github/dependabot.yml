@@ -3,26 +3,44 @@ updates:
   - package-ecosystem: "gomod" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "daily"
     labels:
     - "ok-to-test"
     - "dependencies"
     - "go"
+    - "release-note-none"
+    - "kind/misc"
 
   - package-ecosystem: 'npm'
     directory: '/ui'
     schedule:
-      interval: 'weekly'
+      interval: 'daily'
     labels:
     - "ok-to-test"
     - "dependencies"
-    - "npm"
+    - "javascript"
+    - "release-note-none"
+    - "kind/misc"
+
+  - package-ecosystem: 'npm'
+    directory: '/swagger'
+    schedule:
+      interval: 'daily'
+    labels:
+    - "ok-to-test"
+    - "dependencies"
+    - "javascript"
+    - "release-note-none"
+    - "kind/misc"
+
 
   - package-ecosystem: "docker"
     directory: "/images"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     labels:
     - "ok-to-test"
     - "dependencies"
     - "docker"
+    - "release-note-none"
+    - "kind/misc"
