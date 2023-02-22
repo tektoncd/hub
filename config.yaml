@@ -33,6 +33,7 @@ categories:
   - Security
   - Storage
   - Testing
+  - Virtual Machines
 
 catalogs:
   - name: tekton

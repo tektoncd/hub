@@ -40,6 +40,7 @@ data:
     - Security
     - Storage
     - Testing
+    - Virtual Machines
   CATALOGS: |
     - name: tekton
       org: tektoncd
