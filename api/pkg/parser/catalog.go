@@ -19,7 +19,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -107,7 +106,7 @@ func (c CatalogParser) findResourcesByKind(kind string) ([]Resource, Result) {
 	// search for resources under catalog/<contextPath>/<kind>
 	kindPath := filepath.Join(c.repo.Path(), c.contextPath, strings.ToLower(kind))
 
-	resourceDirs, err := ioutil.ReadDir(kindPath)
+	resourceDirs, err := os.ReadDir(kindPath)
 	if err != nil && ignoreNotExists(err) != nil {
 		log.Warnf("failed to find %s: %s", kind, err)
 		// NOTE: returns empty task list; upto caller to check for error
@@ -121,7 +120,12 @@ func (c CatalogParser) findResourcesByKind(kind string) ([]Resource, Result) {
 			continue
 		}
 
-		res, r := c.parseResource(kind, kindPath, res)
+		resDirInfo, err := res.Info()
+		if err != nil {
+			log.Infof("Failing to read dir info for %s", res.Name())
+			continue
+		}
+		res, r := c.parseResource(kind, kindPath, resDirInfo)
 		result.Combine(r)
 		if r.Errors != nil {
 			log.Warn(r.Error())
@@ -141,7 +145,7 @@ func (c CatalogParser) findResourcesByKind(kind string) ([]Resource, Result) {
 
 func dirCount(path string) int {
 	count := 0
-	dirs, _ := ioutil.ReadDir(path)
+	dirs, _ := os.ReadDir(path)
 	for _, d := range dirs {
 		if d.IsDir() {
 			count++
@@ -332,7 +336,7 @@ func decodeResource(reader io.Reader, kind string) (*TektonResource, error) {
 	// to read from readers
 	var dup bytes.Buffer
 	r := io.TeeReader(reader, &dup)
-	contents, err := ioutil.ReadAll(r)
+	contents, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}

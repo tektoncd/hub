@@ -16,8 +16,9 @@ package app
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -75,13 +76,12 @@ func httpRead(url string) ([]byte, error) {
 		return nil, fmt.Errorf(resp.Status)
 	}
 
-	return ioutil.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
 }
 
 // readLocalFile reads data from a local file using file path
 func readLocalFile(path string) ([]byte, error) {
-
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

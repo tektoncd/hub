@@ -17,7 +17,7 @@ package catalog
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -51,7 +51,7 @@ func TestRefresh_Http(t *testing.T) {
 	RefreshChecker(tc).Test(t, http.MethodPost, "/catalog/catalog-official/refresh").
 		WithHeader("Authorization", token).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -93,7 +93,7 @@ func TestRefreshAll_Http(t *testing.T) {
 	RefreshAllChecker(tc).Test(t, http.MethodPost, "/catalog/refresh").
 		WithHeader("Authorization", token).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -117,7 +117,7 @@ func TestCatalogError_Http(t *testing.T) {
 	CatalogErrorChecker(tc).Test(t, http.MethodGet, "/catalog/catalog-official/error").
 		WithHeader("Authorization", token).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -141,7 +141,7 @@ func TestCatalogError_HttpHavingNoError(t *testing.T) {
 	CatalogErrorChecker(tc).Test(t, http.MethodGet, "/catalog/catalog-community/error").
 		WithHeader("Authorization", token).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 

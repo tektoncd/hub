@@ -16,7 +16,7 @@ package catalog
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -40,7 +40,7 @@ func TestCatalog_List_Http(t *testing.T) {
 
 	checker.Test(t, http.MethodGet, "/v1/catalogs").Check().
 		HasStatus(http.StatusOK).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 

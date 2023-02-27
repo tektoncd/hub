@@ -16,7 +16,7 @@ package rating
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -47,7 +47,7 @@ func TestGet_Http_InvalidToken(t *testing.T) {
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
 		WithHeader("Authorization", "invalidToken").Check().
 		HasStatus(401).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -75,7 +75,7 @@ func TestGet_Http_ExpiredToken(t *testing.T) {
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
 		WithHeader("Authorization", accessToken).Check().
 		HasStatus(401).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -102,7 +102,7 @@ func TestGet_Http_InvalidScopes(t *testing.T) {
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
 		WithHeader("Authorization", accessToken).Check().
 		HasStatus(403).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -129,7 +129,7 @@ func TestGet_Http(t *testing.T) {
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/1/rating").
 		WithHeader("Authorization", accessToken).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -156,7 +156,7 @@ func TestGet_Http_RatingNotFound(t *testing.T) {
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/3/rating").
 		WithHeader("Authorization", accessToken).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -183,7 +183,7 @@ func TestGet_Http_ResourceNotFound(t *testing.T) {
 	GetChecker(tc).Test(t, http.MethodGet, "/resource/99/rating").
 		WithHeader("Authorization", accessToken).Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -273,7 +273,7 @@ func TestUpdate_Http_ResourceNotFound(t *testing.T) {
 		WithHeader("Authorization", accessToken).
 		WithBody(data).Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 

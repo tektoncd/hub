@@ -18,8 +18,9 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/golang-jwt/jwt"
@@ -62,7 +63,7 @@ func TestUpdateAgent_Http_NewAgent(t *testing.T) {
 		WithHeader("Authorization", accessToken).WithBody(data).
 		Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -97,7 +98,7 @@ func TestUpdateAgent_Http_NormalUserExistWithName(t *testing.T) {
 		WithHeader("Authorization", accessToken).WithBody(data).
 		Check().
 		HasStatus(400).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -127,7 +128,7 @@ func TestUpdateAgent_Http_InvalidScopeCase(t *testing.T) {
 		WithHeader("Authorization", accessToken).WithBody(data).
 		Check().
 		HasStatus(400).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -159,7 +160,7 @@ func TestUpdateAgent_Http_UpdateCase(t *testing.T) {
 		WithHeader("Authorization", accessToken).WithBody(data).
 		Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -205,7 +206,7 @@ func TestRefreshConfig_Http(t *testing.T) {
 	RefreshConfigChecker(tc).Test(t, http.MethodPost, "/system/config/refresh").
 		WithHeader("Authorization", token).Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -230,7 +231,7 @@ func TestRefreshConfig_Http(t *testing.T) {
 }
 
 func computeChecksum() (string, error) {
-	data, err := ioutil.ReadFile("../../../test/config/config.yaml")
+	data, err := os.ReadFile("../../../test/config/config.yaml")
 	if err != nil {
 		return "", err
 	}

@@ -1,5 +1,4 @@
-import { ReactComponent } from '*.svg';
-import { FormSelectOption, TextInput } from '@patternfly/react-core';
+import { TextInput } from '@patternfly/react-core';
 import { mount, shallow } from 'enzyme';
 import { when } from 'mobx';
 import React from 'react';
