@@ -31,9 +31,9 @@ func NewClient(refresh, refreshAll, catalogError goa.Endpoint) *Client {
 
 // Refresh calls the "Refresh" endpoint of the "catalog" service.
 // Refresh may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - error: internal error
 func (c *Client) Refresh(ctx context.Context, p *RefreshPayload) (res *Job, err error) {
 	var ires interface{}
 	ires, err = c.RefreshEndpoint(ctx, p)
@@ -45,9 +45,9 @@ func (c *Client) Refresh(ctx context.Context, p *RefreshPayload) (res *Job, err 
 
 // RefreshAll calls the "RefreshAll" endpoint of the "catalog" service.
 // RefreshAll may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - error: internal error
 func (c *Client) RefreshAll(ctx context.Context, p *RefreshAllPayload) (res []*Job, err error) {
 	var ires interface{}
 	ires, err = c.RefreshAllEndpoint(ctx, p)
@@ -59,9 +59,9 @@ func (c *Client) RefreshAll(ctx context.Context, p *RefreshAllPayload) (res []*J
 
 // CatalogError calls the "CatalogError" endpoint of the "catalog" service.
 // CatalogError may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - error: internal error
 func (c *Client) CatalogError(ctx context.Context, p *CatalogErrorPayload) (res *CatalogErrorResult, err error) {
 	var ires interface{}
 	ires, err = c.CatalogErrorEndpoint(ctx, p)

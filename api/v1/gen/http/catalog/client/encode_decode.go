@@ -37,8 +37,8 @@ func (c *Client) BuildListRequest(ctx context.Context, v interface{}) (*http.Req
 // List endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
 // DecodeListResponse may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//   - error: internal error
 func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {

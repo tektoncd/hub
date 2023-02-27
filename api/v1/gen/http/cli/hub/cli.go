@@ -21,8 +21,7 @@ import (
 
 // UsageCommands returns the set of commands and sub-commands using the format
 //
-//    command (subcommand1|subcommand2|...)
-//
+//	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
 	return `catalog list
 resource (query|list|versions-by-id|by-catalog-kind-name-version|by-catalog-kind-name-version-readme|by-catalog-kind-name-version-yaml|by-version-id|by-catalog-kind-name|by-id|get-raw-yaml-by-catalog-kind-name-version)

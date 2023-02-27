@@ -25,8 +25,7 @@ import (
 
 // UsageCommands returns the set of commands and sub-commands using the format
 //
-//    command (subcommand1|subcommand2|...)
-//
+//	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
 	return `admin (update-agent|refresh-config)
 catalog (refresh|refresh-all|catalog-error)

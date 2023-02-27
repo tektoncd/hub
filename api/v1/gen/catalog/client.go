@@ -27,8 +27,8 @@ func NewClient(list goa.Endpoint) *Client {
 
 // List calls the "List" endpoint of the "catalog" service.
 // List may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - error: internal error
 func (c *Client) List(ctx context.Context) (res *ListResult, err error) {
 	var ires interface{}
 	ires, err = c.ListEndpoint(ctx, nil)

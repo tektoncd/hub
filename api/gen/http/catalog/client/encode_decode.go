@@ -70,9 +70,9 @@ func EncodeRefreshRequest(encoder func(*http.Request) goahttp.Encoder) func(*htt
 // catalog Refresh endpoint. restoreBody controls whether the response body
 // should be restored after having been read.
 // DecodeRefreshResponse may return the following errors:
-//	- "not-found" (type *goa.ServiceError): http.StatusNotFound
-//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
-//	- error: internal error
+//   - "not-found" (type *goa.ServiceError): http.StatusNotFound
+//   - "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//   - error: internal error
 func DecodeRefreshResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
@@ -179,8 +179,8 @@ func EncodeRefreshAllRequest(encoder func(*http.Request) goahttp.Encoder) func(*
 // catalog RefreshAll endpoint. restoreBody controls whether the response body
 // should be restored after having been read.
 // DecodeRefreshAllResponse may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//   - error: internal error
 func DecodeRefreshAllResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
@@ -287,8 +287,8 @@ func EncodeCatalogErrorRequest(encoder func(*http.Request) goahttp.Encoder) func
 // catalog CatalogError endpoint. restoreBody controls whether the response
 // body should be restored after having been read.
 // DecodeCatalogErrorResponse may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//   - error: internal error
 func DecodeCatalogErrorResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {

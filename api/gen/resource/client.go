@@ -39,9 +39,9 @@ func NewClient(query, list, versionsByID, byCatalogKindNameVersion, byVersionID,
 
 // Query calls the "Query" endpoint of the "resource" service.
 // Query may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - error: internal error
 func (c *Client) Query(ctx context.Context, p *QueryPayload) (res *QueryResult, err error) {
 	var ires interface{}
 	ires, err = c.QueryEndpoint(ctx, p)
@@ -53,9 +53,9 @@ func (c *Client) Query(ctx context.Context, p *QueryPayload) (res *QueryResult, 
 
 // List calls the "List" endpoint of the "resource" service.
 // List may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - error: internal error
 func (c *Client) List(ctx context.Context) (res *Resources, err error) {
 	var ires interface{}
 	ires, err = c.ListEndpoint(ctx, nil)
@@ -67,9 +67,9 @@ func (c *Client) List(ctx context.Context) (res *Resources, err error) {
 
 // VersionsByID calls the "VersionsByID" endpoint of the "resource" service.
 // VersionsByID may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - error: internal error
 func (c *Client) VersionsByID(ctx context.Context, p *VersionsByIDPayload) (res *VersionsByIDResult, err error) {
 	var ires interface{}
 	ires, err = c.VersionsByIDEndpoint(ctx, p)
@@ -82,9 +82,9 @@ func (c *Client) VersionsByID(ctx context.Context, p *VersionsByIDPayload) (res 
 // ByCatalogKindNameVersion calls the "ByCatalogKindNameVersion" endpoint of
 // the "resource" service.
 // ByCatalogKindNameVersion may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - error: internal error
 func (c *Client) ByCatalogKindNameVersion(ctx context.Context, p *ByCatalogKindNameVersionPayload) (res *ByCatalogKindNameVersionResult, err error) {
 	var ires interface{}
 	ires, err = c.ByCatalogKindNameVersionEndpoint(ctx, p)
@@ -96,9 +96,9 @@ func (c *Client) ByCatalogKindNameVersion(ctx context.Context, p *ByCatalogKindN
 
 // ByVersionID calls the "ByVersionId" endpoint of the "resource" service.
 // ByVersionID may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - error: internal error
 func (c *Client) ByVersionID(ctx context.Context, p *ByVersionIDPayload) (res *ByVersionIDResult, err error) {
 	var ires interface{}
 	ires, err = c.ByVersionIDEndpoint(ctx, p)
@@ -111,9 +111,9 @@ func (c *Client) ByVersionID(ctx context.Context, p *ByVersionIDPayload) (res *B
 // ByCatalogKindName calls the "ByCatalogKindName" endpoint of the "resource"
 // service.
 // ByCatalogKindName may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - error: internal error
 func (c *Client) ByCatalogKindName(ctx context.Context, p *ByCatalogKindNamePayload) (res *ByCatalogKindNameResult, err error) {
 	var ires interface{}
 	ires, err = c.ByCatalogKindNameEndpoint(ctx, p)
@@ -125,9 +125,9 @@ func (c *Client) ByCatalogKindName(ctx context.Context, p *ByCatalogKindNamePayl
 
 // ByID calls the "ById" endpoint of the "resource" service.
 // ByID may return the following errors:
-//	- "internal-error" (type *goa.ServiceError): Internal Server Error
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- error: internal error
+//   - "internal-error" (type *goa.ServiceError): Internal Server Error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - error: internal error
 func (c *Client) ByID(ctx context.Context, p *ByIDPayload) (res *ByIDResult, err error) {
 	var ires interface{}
 	ires, err = c.ByIDEndpoint(ctx, p)

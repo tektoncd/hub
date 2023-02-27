@@ -29,11 +29,11 @@ func NewClient(get, update goa.Endpoint) *Client {
 
 // Get calls the "Get" endpoint of the "rating" service.
 // Get may return the following errors:
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- "internal-error" (type *goa.ServiceError): Internal server error
-//	- "invalid-token" (type *goa.ServiceError): Invalid User token
-//	- "invalid-scopes" (type *goa.ServiceError): Invalid User scope
-//	- error: internal error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - "internal-error" (type *goa.ServiceError): Internal server error
+//   - "invalid-token" (type *goa.ServiceError): Invalid User token
+//   - "invalid-scopes" (type *goa.ServiceError): Invalid User scope
+//   - error: internal error
 func (c *Client) Get(ctx context.Context, p *GetPayload) (res *GetResult, err error) {
 	var ires interface{}
 	ires, err = c.GetEndpoint(ctx, p)
@@ -45,11 +45,11 @@ func (c *Client) Get(ctx context.Context, p *GetPayload) (res *GetResult, err er
 
 // Update calls the "Update" endpoint of the "rating" service.
 // Update may return the following errors:
-//	- "not-found" (type *goa.ServiceError): Resource Not Found Error
-//	- "internal-error" (type *goa.ServiceError): Internal server error
-//	- "invalid-token" (type *goa.ServiceError): Invalid User token
-//	- "invalid-scopes" (type *goa.ServiceError): Invalid User scope
-//	- error: internal error
+//   - "not-found" (type *goa.ServiceError): Resource Not Found Error
+//   - "internal-error" (type *goa.ServiceError): Internal server error
+//   - "invalid-token" (type *goa.ServiceError): Invalid User token
+//   - "invalid-scopes" (type *goa.ServiceError): Invalid User scope
+//   - error: internal error
 func (c *Client) Update(ctx context.Context, p *UpdatePayload) (err error) {
 	_, err = c.UpdateEndpoint(ctx, p)
 	return
