@@ -68,11 +68,11 @@ func EncodeGetRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Re
 // endpoint. restoreBody controls whether the response body should be restored
 // after having been read.
 // DecodeGetResponse may return the following errors:
-//	- "not-found" (type *goa.ServiceError): http.StatusNotFound
-//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
-//	- "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
-//	- "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
-//	- error: internal error
+//   - "not-found" (type *goa.ServiceError): http.StatusNotFound
+//   - "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//   - "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
+//   - "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
+//   - error: internal error
 func DecodeGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
@@ -219,11 +219,11 @@ func EncodeUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http
 // Update endpoint. restoreBody controls whether the response body should be
 // restored after having been read.
 // DecodeUpdateResponse may return the following errors:
-//	- "not-found" (type *goa.ServiceError): http.StatusNotFound
-//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
-//	- "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
-//	- "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
-//	- error: internal error
+//   - "not-found" (type *goa.ServiceError): http.StatusNotFound
+//   - "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//   - "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
+//   - "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
+//   - error: internal error
 func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {

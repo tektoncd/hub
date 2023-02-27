@@ -29,11 +29,11 @@ func NewClient(updateAgent, refreshConfig goa.Endpoint) *Client {
 
 // UpdateAgent calls the "UpdateAgent" endpoint of the "admin" service.
 // UpdateAgent may return the following errors:
-//	- "invalid-payload" (type *goa.ServiceError): Invalid request body
-//	- "invalid-token" (type *goa.ServiceError): Invalid User token
-//	- "invalid-scopes" (type *goa.ServiceError): Invalid Token scopes
-//	- "internal-error" (type *goa.ServiceError): Internal server error
-//	- error: internal error
+//   - "invalid-payload" (type *goa.ServiceError): Invalid request body
+//   - "invalid-token" (type *goa.ServiceError): Invalid User token
+//   - "invalid-scopes" (type *goa.ServiceError): Invalid Token scopes
+//   - "internal-error" (type *goa.ServiceError): Internal server error
+//   - error: internal error
 func (c *Client) UpdateAgent(ctx context.Context, p *UpdateAgentPayload) (res *UpdateAgentResult, err error) {
 	var ires interface{}
 	ires, err = c.UpdateAgentEndpoint(ctx, p)
@@ -45,11 +45,11 @@ func (c *Client) UpdateAgent(ctx context.Context, p *UpdateAgentPayload) (res *U
 
 // RefreshConfig calls the "RefreshConfig" endpoint of the "admin" service.
 // RefreshConfig may return the following errors:
-//	- "invalid-payload" (type *goa.ServiceError): Invalid request body
-//	- "invalid-token" (type *goa.ServiceError): Invalid User token
-//	- "invalid-scopes" (type *goa.ServiceError): Invalid Token scopes
-//	- "internal-error" (type *goa.ServiceError): Internal server error
-//	- error: internal error
+//   - "invalid-payload" (type *goa.ServiceError): Invalid request body
+//   - "invalid-token" (type *goa.ServiceError): Invalid User token
+//   - "invalid-scopes" (type *goa.ServiceError): Invalid Token scopes
+//   - "internal-error" (type *goa.ServiceError): Internal server error
+//   - error: internal error
 func (c *Client) RefreshConfig(ctx context.Context, p *RefreshConfigPayload) (res *RefreshConfigResult, err error) {
 	var ires interface{}
 	ires, err = c.RefreshConfigEndpoint(ctx, p)

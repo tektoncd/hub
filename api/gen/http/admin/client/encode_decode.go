@@ -62,11 +62,11 @@ func EncodeUpdateAgentRequest(encoder func(*http.Request) goahttp.Encoder) func(
 // admin UpdateAgent endpoint. restoreBody controls whether the response body
 // should be restored after having been read.
 // DecodeUpdateAgentResponse may return the following errors:
-//	- "invalid-payload" (type *goa.ServiceError): http.StatusBadRequest
-//	- "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
-//	- "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
-//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
-//	- error: internal error
+//   - "invalid-payload" (type *goa.ServiceError): http.StatusBadRequest
+//   - "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
+//   - "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
+//   - "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//   - error: internal error
 func DecodeUpdateAgentResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
@@ -199,10 +199,10 @@ func EncodeRefreshConfigRequest(encoder func(*http.Request) goahttp.Encoder) fun
 // admin RefreshConfig endpoint. restoreBody controls whether the response body
 // should be restored after having been read.
 // DecodeRefreshConfigResponse may return the following errors:
-//	- "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
-//	- "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
-//	- "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
-//	- error: internal error
+//   - "invalid-token" (type *goa.ServiceError): http.StatusUnauthorized
+//   - "invalid-scopes" (type *goa.ServiceError): http.StatusForbidden
+//   - "internal-error" (type *goa.ServiceError): http.StatusInternalServerError
+//   - error: internal error
 func DecodeRefreshConfigResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
