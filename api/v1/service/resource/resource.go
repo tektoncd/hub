@@ -19,8 +19,8 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -185,7 +185,7 @@ func (s *service) ByCatalogKindNameVersionReadme(ctx context.Context,
 
 	readmePath := fmt.Sprintf("%s/%s/%s/%s/%s/README.md", s.CatalogClonePath(), strings.ToLower(p.Catalog), strings.ToLower(p.Kind), p.Name, p.Version)
 	s.Logger(ctx).Info(fmt.Sprintf("Fetching README for resource %s", p.Name))
-	content, err := ioutil.ReadFile(readmePath)
+	content, err := os.ReadFile(readmePath)
 	if err != nil {
 		return nil, resource.MakeNotFound(fmt.Errorf("resource not found"))
 	}
@@ -207,7 +207,7 @@ func (s *service) ByCatalogKindNameVersionYaml(ctx context.Context,
 	yamlPath := fmt.Sprintf("%s/%s/%s/%s/%s", s.CatalogClonePath(), strings.ToLower(p.Catalog), strings.ToLower(p.Kind), p.Name, p.Version)
 	yamlPath = fmt.Sprintf("%s/%s.yaml", yamlPath, p.Name)
 	s.Logger(ctx).Info(fmt.Sprintf("Fetching YAML for resource %s", p.Name))
-	content, err := ioutil.ReadFile(yamlPath)
+	content, err := os.ReadFile(yamlPath)
 	if err != nil {
 		return nil, resource.MakeNotFound(fmt.Errorf("resource not found"))
 	}
@@ -511,10 +511,10 @@ func (s *service) GetRawYamlByCatalogKindNameVersion(ctx context.Context, p *res
 	yamlPath := fmt.Sprintf("%s/%s/%s/%s/%s", s.CatalogClonePath(), strings.ToLower(p.Catalog), strings.ToLower(p.Kind), p.Name, p.Version)
 	yamlPath = fmt.Sprintf("%s/%s.yaml", yamlPath, p.Name)
 
-	content, err := ioutil.ReadFile(yamlPath)
+	content, err := os.ReadFile(yamlPath)
 	if err != nil {
 		return nil, resource.MakeNotFound(fmt.Errorf("resource not found"))
 	}
 
-	return ioutil.NopCloser(bytes.NewBuffer(content)), nil
+	return io.NopCloser(bytes.NewBuffer(content)), nil
 }

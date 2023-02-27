@@ -17,7 +17,7 @@ package resource
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"testing"
@@ -46,7 +46,7 @@ func TestQuery_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?name=build&kinds=pipeline&limit=1").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -63,7 +63,7 @@ func TestQueryWithKinds_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?kinds=pipeline").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -80,7 +80,7 @@ func TestQueryWithInvalidKind_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?kinds=task&kinds=abc").Check().
 		HasStatus(400).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -99,7 +99,7 @@ func TestQueryWithTags_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?tags=ztag&tags=Atag").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -116,7 +116,7 @@ func TestQueryWithPlatforms_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?platforms=linux/s390x&platforms=linux/amd64").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -133,7 +133,7 @@ func TestQueryWithExactName_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?name=buildah&exact=true").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -150,7 +150,7 @@ func TestQueryWithNameAndKinds_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?name=build&kinds=task&kinds=pipeline").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -167,7 +167,7 @@ func TestQueryWithNameAndTags_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?name=build&tags=atag&tags=ztag").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -184,7 +184,7 @@ func TestQueryWithKindsAndTags_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?name=build&kinds=task&kinds=pipeline").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -201,7 +201,7 @@ func TestQueryWithAllParams_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?name=build&kinds=task&kinds=Pipeline&categories=abc&tags=ztag&tags=Atag&exact=false").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -218,7 +218,7 @@ func TestQueryWithCategories_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?categories=abc").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -235,7 +235,7 @@ func TestQueryWithCategoriesAndName_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?name=build&categories=abc").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -252,7 +252,7 @@ func TestQueryWithCategoriesAndTags_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?categories=abc&tags=ztag&tags=Atag").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -269,7 +269,7 @@ func TestQueryWithCategoriesAndKinds_Http(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?categories=abc&kinds=Pipeline").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -286,7 +286,7 @@ func TestQuery_Http_ErrorCase(t *testing.T) {
 
 	QueryChecker(tc).Test(t, http.MethodGet, "/v1/query?name=foo").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -312,7 +312,7 @@ func TestList_Http_WithLimit(t *testing.T) {
 
 	ListChecker(tc).Test(t, http.MethodGet, "/v1/resources?limit=2").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -330,7 +330,7 @@ func TestList_Http_NoLimit(t *testing.T) {
 
 	ListChecker(tc).Test(t, http.MethodGet, "/v1/resources").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -356,7 +356,7 @@ func TestVersionsByID_Http(t *testing.T) {
 
 	VersionsByIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/1/versions").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -373,7 +373,7 @@ func TestVersionsByID_Http_ErrorCase(t *testing.T) {
 
 	VersionsByIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/111/versions").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -400,7 +400,7 @@ func TestByCatalogKindNameVersion_Http(t *testing.T) {
 
 	ByCatalogKindNameVersionChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tkn/0.1").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -417,7 +417,7 @@ func TestByCatalogKindNameVersion_Http_ErrorCase(t *testing.T) {
 
 	ByCatalogKindNameVersionChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/foo/0.1.1").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -447,7 +447,7 @@ func TestByCatalogKindNameVersionReadme_Http(t *testing.T) {
 
 	ByCatalogKindNameVersionReadmeChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tkn/0.1/readme").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -464,7 +464,7 @@ func TestByCatalogKindNameVersionReadme_Http_ErrorCase(t *testing.T) {
 
 	ByCatalogKindNameVersionReadmeChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/foo/0.1.1/readme").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -494,7 +494,7 @@ func TestByCatalogKindNameVersionYaml_Http(t *testing.T) {
 
 	ByCatalogKindNameVersionYamlChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tkn/0.1/yaml").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -511,7 +511,7 @@ func TestByCatalogKindNameVersionYaml_Http_ErrorCase(t *testing.T) {
 
 	ByCatalogKindNameVersionYamlChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/foo/0.1.1/yaml").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -538,7 +538,7 @@ func TestByVersionID_Http(t *testing.T) {
 
 	ByVersionIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/version/4").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -555,7 +555,7 @@ func TestByVersionID_Http_ErrorCase(t *testing.T) {
 
 	ByVersionIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/version/43").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -582,7 +582,7 @@ func TestByCatalogKindName_Http(t *testing.T) {
 
 	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tekton").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -599,7 +599,7 @@ func TestByEnterpriseCatalogKindName_Http(t *testing.T) {
 
 	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-enterprise/task/tkn-enterprise").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -616,7 +616,7 @@ func TestByCatalogKindName_CompatibleVersion_Http(t *testing.T) {
 
 	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tekton?pipelinesversion=0.12.3").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -633,7 +633,7 @@ func TestByCatalogKindName_InvalidPipelinesVersion_Http(t *testing.T) {
 
 	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tekton?pipelinesversion=asd").Check().
 		HasStatus(400).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -651,7 +651,7 @@ func TestByCatalogKindName_InvalidPipelinesVersion_Error_Http(t *testing.T) {
 
 	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tekton?pipelinesversion=v0.12.3").Check().
 		HasStatus(400).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -669,7 +669,7 @@ func TestByCatalogKindName_ValidPipelinesVersion_Http(t *testing.T) {
 
 	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tekton?pipelinesversion=0.13").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		_, readErr := ioutil.ReadAll(r.Body)
+		_, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 	})
@@ -681,7 +681,7 @@ func TestByCatalogKindName_NoCompatibleVersion_Http_ErrorCase(t *testing.T) {
 
 	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tekton?pipelinesversion=0.11.0").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -699,7 +699,7 @@ func TestByCatalogKindName_Http_ErrorCase(t *testing.T) {
 
 	ByCatalogKindNameChecker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/foo").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -726,7 +726,7 @@ func TestByID_Http(t *testing.T) {
 
 	ByIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/1").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -743,7 +743,7 @@ func TestByID_Http_ErrorCase(t *testing.T) {
 
 	ByIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/77").Check().
 		HasStatus(404).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -761,7 +761,7 @@ func TestDeprecationByVersionID_Http(t *testing.T) {
 
 	ByVersionIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/version/10").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -778,7 +778,7 @@ func TestLatestVersionDeprecationByID_Http(t *testing.T) {
 
 	ByIDChecker(tc).Test(t, http.MethodGet, "/v1/resource/7").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -798,7 +798,7 @@ func TestGetYamlByCatalogKindNameVersion_Http(t *testing.T) {
 
 	GetYamlByCatalogKindNameVersion_Checker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tkn/0.1/raw").Check().
 		HasStatus(200).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 

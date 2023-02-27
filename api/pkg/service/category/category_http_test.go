@@ -16,7 +16,7 @@ package category
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -40,7 +40,7 @@ func TestCategories_List_Http(t *testing.T) {
 
 	checker.Test(t, http.MethodGet, "/categories").Check().
 		HasStatus(http.StatusOK).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -63,7 +63,7 @@ func TestCategories_List_Http_V1(t *testing.T) {
 
 	checker.Test(t, http.MethodGet, "/v1/categories").Check().
 		HasStatus(http.StatusOK).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 

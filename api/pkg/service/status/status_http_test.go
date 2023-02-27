@@ -17,7 +17,7 @@ package status
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"testing"
@@ -92,7 +92,7 @@ func TestOk_http(t *testing.T) {
 
 	checker.Test(t, http.MethodGet, "/").Check().
 		HasStatus(http.StatusOK).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
@@ -120,7 +120,7 @@ func TestDB_NotOK(t *testing.T) {
 
 	checker.Test(t, http.MethodGet, "/").Check().
 		HasStatus(http.StatusOK).Cb(func(r *http.Response) {
-		b, readErr := ioutil.ReadAll(r.Body)
+		b, readErr := io.ReadAll(r.Body)
 		assert.NoError(t, readErr)
 		defer r.Body.Close()
 
