@@ -1,9 +1,9 @@
-FROM node:12-alpine as BUILD
+FROM node:18-alpine3.16 as BUILD
 WORKDIR /app
 
 # install deps and the copy the src to speed up docker build
 COPY package-lock.json package.json /app/
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 COPY tsconfig.json /app/
 COPY public /app/public/
