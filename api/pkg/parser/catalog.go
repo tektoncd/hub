@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"github.com/tektoncd/hub/api/pkg/git"
+	v1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	"go.uber.org/zap"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -428,5 +429,5 @@ func typeForKind(kind string) (tektonKind, error) {
 
 func isTektonKind(gvk *schema.GroupVersionKind) bool {
 	id := gvk.GroupVersion().Identifier()
-	return id == v1beta1.SchemeGroupVersion.Identifier()
+	return id == v1beta1.SchemeGroupVersion.Identifier() || id == v1.SchemeGroupVersion.Identifier()
 }
