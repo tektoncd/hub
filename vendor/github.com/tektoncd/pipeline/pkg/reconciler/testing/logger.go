@@ -5,20 +5,19 @@ import (
 	"testing"
 
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/record"
-	filteredinformerfactory "knative.dev/pkg/client/injection/kube/informers/factory/filtered"
-	"knative.dev/pkg/injection"
-	logtesting "knative.dev/pkg/logging/testing"
-
 	"github.com/tektoncd/pipeline/pkg/reconciler/events/cloudevent"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
-	"knative.dev/pkg/controller"
-	"knative.dev/pkg/logging"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/record"
+	filteredinformerfactory "knative.dev/pkg/client/injection/kube/informers/factory/filtered"
 
 	// Import for creating fake filtered factory in the test
 	_ "knative.dev/pkg/client/injection/kube/informers/factory/filtered/fake"
+	"knative.dev/pkg/controller"
+	"knative.dev/pkg/injection"
+	"knative.dev/pkg/logging"
+	logtesting "knative.dev/pkg/logging/testing"
 )
 
 // SetupFakeContext sets up the Context and the fake filtered informers for the tests.
@@ -33,7 +32,7 @@ func SetupFakeCloudClientContext(ctx context.Context, expectedEventCount int) co
 	cloudEventClientBehaviour := cloudevent.FakeClientBehaviour{
 		SendSuccessfully: true,
 	}
-	return cloudevent.WithClient(ctx, &cloudEventClientBehaviour, expectedEventCount)
+	return cloudevent.WithFakeClient(ctx, &cloudEventClientBehaviour, expectedEventCount)
 }
 
 // SetupDefaultContext sets up the Context and the default filtered informers for the tests.
