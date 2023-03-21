@@ -114,6 +114,7 @@ func removeMeta(att *expr.AttributeExpr) {
 	_ = codegen.Walk(att, func(a *expr.AttributeExpr) error {
 		delete(a.Meta, "struct:field:name")
 		delete(a.Meta, "struct:field:external")
+		delete(a.Meta, "struct.field.external") // Deprecated syntax. Only present for backward compatibility.
 		return nil
 	})
 }
@@ -431,8 +432,14 @@ func transformArray(source, target *expr.Array, sourceVar, targetVar string, new
 			return "", err
 		}
 	}
+	valVar := "val"
+	if obj := expr.AsObject(src.Type); obj != nil {
+		if len(*obj) == 0 {
+			valVar = ""
+		}
+	}
 
-	data := map[string]interface{}{
+	data := map[string]any{
 		"ElemTypeRef":    targetRef,
 		"SourceElem":     src,
 		"TargetElem":     tgt,
@@ -441,6 +448,7 @@ func transformArray(source, target *expr.Array, sourceVar, targetVar string, new
 		"NewVar":         newVar,
 		"TransformAttrs": ta,
 		"LoopVar":        string(rune(105 + strings.Count(targetVar, "["))),
+		"ValVar":         valVar,
 	}
 	var buf bytes.Buffer
 	if err := transformGoArrayT.Execute(&buf, data); err != nil {
@@ -508,7 +516,7 @@ func transformMap(source, target *expr.Map, sourceVar, targetVar string, newVar 
 			return "", err
 		}
 	}
-	data := map[string]interface{}{
+	data := map[string]any{
 		"KeyTypeRef":     targetKeyRef,
 		"ElemTypeRef":    targetElemRef,
 		"SourceKey":      source.KeyType,
@@ -547,7 +555,7 @@ func transformUnionToProto(source, target *expr.AttributeExpr, sourceVar, target
 		targetValueTypeNames[i] = ta.message + "_" + fieldName
 	}
 
-	data := map[string]interface{}{
+	data := map[string]any{
 		"SourceVar":            sourceVar,
 		"TargetVar":            targetVar,
 		"SourceValueTypeRefs":  tdata.SourceValueTypeRefs,
@@ -578,7 +586,7 @@ func transformUnionFromProto(source, target *expr.AttributeExpr, sourceVar, targ
 		sourceFieldNames[i] = fieldName
 	}
 
-	data := map[string]interface{}{
+	data := map[string]any{
 		"SourceVar":           sourceVar,
 		"TargetVar":           targetVar,
 		"SourceValueTypeRefs": tdata.SourceValueTypeRefs,
@@ -943,7 +951,7 @@ func dupTransformAttrs(ta *transformAttrs) *transformAttrs {
 
 const (
 	transformGoArrayTmpl = `{{ .TargetVar }} {{ if .NewVar }}:={{ else }}={{ end }} make([]{{ .ElemTypeRef }}, len({{ .SourceVar }})) 
-for {{ .LoopVar }}, val := range {{ .SourceVar }} {
+for {{ .LoopVar }}{{ if .ValVar }}, {{ .ValVar }}{{ end }} := range {{ .SourceVar }} {
   {{ transformAttribute .SourceElem .TargetElem "val" (printf "%s[%s]" .TargetVar .LoopVar) false .TransformAttrs -}}
 }
 `
