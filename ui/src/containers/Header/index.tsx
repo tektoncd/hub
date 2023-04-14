@@ -90,7 +90,7 @@ const Header: React.FC = observer(() => {
               CUSTOM_LOGO_BASE64_DATA != ''
                 ? `data:${
                     CUSTOM_LOGO_MEDIA_TYPE != '' ? CUSTOM_LOGO_MEDIA_TYPE : 'image/png'
-                  }${CUSTOM_LOGO_MEDIA_TYPE};base64,${CUSTOM_LOGO_BASE64_DATA}`
+                  };base64,${CUSTOM_LOGO_BASE64_DATA}`
                 : logo
             }
             alt="Tekton Hub Logo"

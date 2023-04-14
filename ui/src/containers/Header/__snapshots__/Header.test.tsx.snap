@@ -10,8 +10,8 @@ exports[`Header should render the header component and find Search component 1`]
           <header role={[undefined]} className=\\"pf-c-page__header\\">
             <div className=\\"pf-c-page__header-brand\\">
               <a className=\\"pf-c-page__header-brand-link\\">
-                <Brand src=\\"data:no CUSTOM_LOGO_MEDIA_TYPE setno CUSTOM_LOGO_MEDIA_TYPE set;base64,no CUSTOM_LOGO_BASE64_URI set\\" alt=\\"Tekton Hub Logo\\" onClick={[Function: homePage]}>
-                  <img onClick={[Function: homePage]} className=\\"pf-c-brand\\" src=\\"data:no CUSTOM_LOGO_MEDIA_TYPE setno CUSTOM_LOGO_MEDIA_TYPE set;base64,no CUSTOM_LOGO_BASE64_URI set\\" alt=\\"Tekton Hub Logo\\" />
+                <Brand src=\\"data:no CUSTOM_LOGO_MEDIA_TYPE set;base64,no CUSTOM_LOGO_BASE64_URI set\\" alt=\\"Tekton Hub Logo\\" onClick={[Function: homePage]}>
+                  <img onClick={[Function: homePage]} className=\\"pf-c-brand\\" src=\\"data:no CUSTOM_LOGO_MEDIA_TYPE set;base64,no CUSTOM_LOGO_BASE64_URI set\\" alt=\\"Tekton Hub Logo\\" />
                 </Brand>
               </a>
             </div>
