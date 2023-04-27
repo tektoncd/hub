@@ -211,7 +211,7 @@ github.com/gorilla/sessions
 # github.com/gorilla/websocket v1.5.0
 ## explicit; go 1.12
 github.com/gorilla/websocket
-# github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3
+# github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.0
 ## explicit; go 1.17
 github.com/grpc-ecosystem/grpc-gateway/v2/internal/httprule
 github.com/grpc-ecosystem/grpc-gateway/v2/runtime
@@ -293,6 +293,8 @@ github.com/josharian/intern
 # github.com/json-iterator/go v1.1.12
 ## explicit; go 1.12
 github.com/json-iterator/go
+# github.com/jstemmer/go-junit-report v1.0.0
+## explicit; go 1.2
 # github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
 ## explicit
 github.com/kballard/go-shellquote
@@ -392,7 +394,7 @@ github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.0
 ## explicit
 github.com/pmezard/go-difflib/difflib
-# github.com/prometheus/client_golang v1.13.0
+# github.com/prometheus/client_golang v1.14.0
 ## explicit; go 1.17
 github.com/prometheus/client_golang/prometheus
 github.com/prometheus/client_golang/prometheus/internal
@@ -400,13 +402,13 @@ github.com/prometheus/client_golang/prometheus/promhttp
 # github.com/prometheus/client_model v0.3.0
 ## explicit; go 1.9
 github.com/prometheus/client_model/go
-# github.com/prometheus/common v0.37.0
-## explicit; go 1.16
+# github.com/prometheus/common v0.39.0
+## explicit; go 1.17
 github.com/prometheus/common/expfmt
 github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
 github.com/prometheus/common/model
-# github.com/prometheus/procfs v0.8.0
-## explicit; go 1.17
+# github.com/prometheus/procfs v0.9.0
+## explicit; go 1.18
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
@@ -417,6 +419,8 @@ github.com/prometheus/statsd_exporter/pkg/mapper/fsm
 # github.com/robfig/cron/v3 v3.0.1
 ## explicit; go 1.12
 github.com/robfig/cron/v3
+# github.com/rogpeppe/go-internal v1.9.0
+## explicit; go 1.17
 # github.com/sergi/go-diff v1.3.1
 ## explicit; go 1.12
 github.com/sergi/go-diff/diffmatchpatch
@@ -672,7 +676,6 @@ golang.org/x/mod/semver
 # golang.org/x/net v0.7.0
 ## explicit; go 1.17
 golang.org/x/net/context
-golang.org/x/net/context/ctxhttp
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
 golang.org/x/net/http2/h2c
@@ -680,7 +683,7 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/oauth2 v0.4.0
+# golang.org/x/oauth2 v0.5.0
 ## explicit; go 1.17
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
@@ -742,7 +745,7 @@ golang.org/x/tools/internal/typesinternal
 # gomodules.xyz/jsonpatch/v2 v2.2.0
 ## explicit; go 1.12
 gomodules.xyz/jsonpatch/v2
-# google.golang.org/api v0.107.0
+# google.golang.org/api v0.110.0
 ## explicit; go 1.19
 google.golang.org/api/support/bundler
 # google.golang.org/appengine v1.6.7
