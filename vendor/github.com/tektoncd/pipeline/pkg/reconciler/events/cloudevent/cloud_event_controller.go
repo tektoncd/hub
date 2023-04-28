@@ -22,8 +22,8 @@ import (
 	"time"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
+	lru "github.com/hashicorp/golang-lru"
 	"github.com/tektoncd/pipeline/pkg/apis/config"
-	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	"github.com/tektoncd/pipeline/pkg/reconciler/events/cache"
 	corev1 "k8s.io/api/core/v1"
@@ -78,25 +78,27 @@ func EmitCloudEventsWhenConditionChange(ctx context.Context, beforeCondition *ap
 // it's only used within the events/cloudevents packages.
 func SendCloudEventWithRetries(ctx context.Context, object runtime.Object) error {
 	var (
-		o  objectWithCondition
-		ok bool
+		o           objectWithCondition
+		ok          bool
+		cacheClient *lru.Cache
 	)
 	if o, ok = object.(objectWithCondition); !ok {
-		return errors.New("Input object does not satisfy objectWithCondition")
+		return errors.New("input object does not satisfy objectWithCondition")
 	}
 	logger := logging.FromContext(ctx)
 	ceClient := Get(ctx)
 	if ceClient == nil {
-		return errors.New("No cloud events client found in the context")
+		return errors.New("no cloud events client found in the context")
 	}
 	event, err := eventForObjectWithCondition(o)
 	if err != nil {
 		return err
 	}
-	// Events for Runs require a cache of events that have been sent
-	cacheClient := cache.Get(ctx)
-	_, isRun := object.(*v1alpha1.Run)
+	// Events for CustomRuns require a cache of events that have been sent
 	_, isCustomRun := object.(*v1beta1.CustomRun)
+	if isCustomRun {
+		cacheClient = cache.Get(ctx)
+	}
 
 	wasIn := make(chan error)
 
@@ -106,7 +108,7 @@ func SendCloudEventWithRetries(ctx context.Context, object runtime.Object) error
 		wasIn <- nil
 		logger.Debugf("Sending cloudevent of type %q", event.Type())
 		// In case of Run event, check cache if cloudevent is already sent
-		if isRun || isCustomRun {
+		if isCustomRun {
 			cloudEventSent, err := cache.ContainsOrAddCloudEvent(cacheClient, event)
 			if err != nil {
 				logger.Errorf("error while checking cache: %s", err)
