@@ -8,6 +8,7 @@
 		"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/build/0.2/build.yaml",
 		"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/build/0.2/build.yaml",
 		"hubURLPath": "catalog-official/pipeline/build-pipeline/0.2",
+		"hubRawURLPath": "resource/catalog-official/pipeline/build-pipeline/0.2/raw",
 		"updatedAt": "2013-01-01T00:00:01Z",
 		"resource": {
 			"id": 2,

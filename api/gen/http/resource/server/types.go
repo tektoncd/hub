@@ -37,6 +37,8 @@ type ResourceDataResponseBodyWithoutVersion struct {
 	Kind string `form:"kind" json:"kind" xml:"kind"`
 	// Url path of the resource in hub
 	HubURLPath string `form:"hubURLPath" json:"hubURLPath" xml:"hubURLPath"`
+	// Path of the api to get the raw yaml of resource from hub apiserver
+	HubRawURLPath string `form:"hubRawURLPath" json:"hubRawURLPath" xml:"hubRawURLPath"`
 	// Latest version of resource
 	LatestVersion *ResourceVersionDataResponseBodyWithoutResource `form:"latestVersion" json:"latestVersion" xml:"latestVersion"`
 	// Tags related to resource
@@ -84,6 +86,8 @@ type ResourceVersionDataResponseBodyWithoutResource struct {
 	RawURL string `form:"rawURL" json:"rawURL" xml:"rawURL"`
 	// Web URL of resource's yaml file of the version
 	WebURL string `form:"webURL" json:"webURL" xml:"webURL"`
+	// Path of the api to get the raw yaml of resource from hub apiserver
+	HubRawURLPath string `form:"hubRawURLPath" json:"hubRawURLPath" xml:"hubRawURLPath"`
 	// Url path of the resource in hub
 	HubURLPath string `form:"hubURLPath" json:"hubURLPath" xml:"hubURLPath"`
 	// Timestamp when version was last updated

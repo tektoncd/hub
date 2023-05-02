@@ -16,6 +16,7 @@
 			],
 			"kind": "task",
 			"hubURLPath": "catalog-official/task/tekton",
+			"hubRawURLPath": "resource/catalog-official/task/tekton/raw",
 			"latestVersion": {
 				"id": 5,
 				"version": "0.2",
@@ -24,6 +25,7 @@
 				"minPipelinesVersion": "0.15.0",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.2/tekton.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml",
+				"hubRawURLPath": "resource/catalog-official/task/0.2/tekton/raw",
 				"hubURLPath": "catalog-official/task/tekton/0.2",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [
@@ -63,6 +65,7 @@
 			],
 			"kind": "task",
 			"hubURLPath": "catalog-official/task/tkn",
+			"hubRawURLPath": "resource/catalog-official/task/tkn/raw",
 			"latestVersion": {
 				"id": 8,
 				"version": "0.1",
@@ -71,6 +74,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tkn/0.1/tkn.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tkn/0.1/tkn.yaml",
+				"hubRawURLPath": "resource/catalog-official/task/0.1/tkn/raw",
 				"hubURLPath": "catalog-official/task/tkn/0.1",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [

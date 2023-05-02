@@ -1812,6 +1812,10 @@ definitions:
                 example:
                     - id: 1
                       name: image-build
+            hubRawURLPath:
+                type: string
+                description: Path of the api to get the raw yaml of resource from hub apiserver
+                example: /tekton/task/buildah/raw
             hubURLPath:
                 type: string
                 description: Url path of the resource in hub
@@ -1861,12 +1865,14 @@ definitions:
             categories:
                 - id: 1
                   name: image-build
+            hubRawURLPath: /tekton/task/buildah/raw
             hubURLPath: tekton/task/buildah
             id: 1
             kind: task
             latestVersion:
                 description: Buildah task builds source into a container image and then pushes it to a container registry.
                 displayName: Buildah
+                hubRawURLPath: /tekton/task/buildah/latest/raw
                 id: 1
                 minPipelinesVersion: 0.12.1
                 platforms:
@@ -1895,6 +1901,7 @@ definitions:
             - tags
             - platforms
             - rating
+            - hubRawURLPath
     ResourceDataResponseBodyWithoutVersionCollection:
         title: 'Mediatype identifier: application/vnd.hub.resource.data; type=collection; view=default'
         type: array
@@ -1909,12 +1916,14 @@ definitions:
               categories:
                 - id: 1
                   name: image-build
+              hubRawURLPath: /tekton/task/buildah/raw
               hubURLPath: tekton/task/buildah
               id: 1
               kind: task
               latestVersion:
                 description: Buildah task builds source into a container image and then pushes it to a container registry.
                 displayName: Buildah
+                hubRawURLPath: /tekton/task/buildah/latest/raw
                 id: 1
                 minPipelinesVersion: 0.12.1
                 platforms:
@@ -1939,12 +1948,14 @@ definitions:
               categories:
                 - id: 1
                   name: image-build
+              hubRawURLPath: /tekton/task/buildah/raw
               hubURLPath: tekton/task/buildah
               id: 1
               kind: task
               latestVersion:
                 description: Buildah task builds source into a container image and then pushes it to a container registry.
                 displayName: Buildah
+                hubRawURLPath: /tekton/task/buildah/latest/raw
                 id: 1
                 minPipelinesVersion: 0.12.1
                 platforms:
@@ -1969,12 +1980,14 @@ definitions:
               categories:
                 - id: 1
                   name: image-build
+              hubRawURLPath: /tekton/task/buildah/raw
               hubURLPath: tekton/task/buildah
               id: 1
               kind: task
               latestVersion:
                 description: Buildah task builds source into a container image and then pushes it to a container registry.
                 displayName: Buildah
+                hubRawURLPath: /tekton/task/buildah/latest/raw
                 id: 1
                 minPipelinesVersion: 0.12.1
                 platforms:
@@ -2008,12 +2021,14 @@ definitions:
                   categories:
                     - id: 1
                       name: image-build
+                  hubRawURLPath: /tekton/task/buildah/raw
                   hubURLPath: tekton/task/buildah
                   id: 1
                   kind: task
                   latestVersion:
                     description: Buildah task builds source into a container image and then pushes it to a container registry.
                     displayName: Buildah
+                    hubRawURLPath: /tekton/task/buildah/latest/raw
                     id: 1
                     minPipelinesVersion: 0.12.1
                     platforms:
@@ -2038,12 +2053,14 @@ definitions:
                   categories:
                     - id: 1
                       name: image-build
+                  hubRawURLPath: /tekton/task/buildah/raw
                   hubURLPath: tekton/task/buildah
                   id: 1
                   kind: task
                   latestVersion:
                     description: Buildah task builds source into a container image and then pushes it to a container registry.
                     displayName: Buildah
+                    hubRawURLPath: /tekton/task/buildah/latest/raw
                     id: 1
                     minPipelinesVersion: 0.12.1
                     platforms:
@@ -2068,12 +2085,14 @@ definitions:
                   categories:
                     - id: 1
                       name: image-build
+                  hubRawURLPath: /tekton/task/buildah/raw
                   hubURLPath: tekton/task/buildah
                   id: 1
                   kind: task
                   latestVersion:
                     description: Buildah task builds source into a container image and then pushes it to a container registry.
                     displayName: Buildah
+                    hubRawURLPath: /tekton/task/buildah/latest/raw
                     id: 1
                     minPipelinesVersion: 0.12.1
                     platforms:
@@ -2109,6 +2128,10 @@ definitions:
                 type: string
                 description: Display name of version
                 example: Buildah
+            hubRawURLPath:
+                type: string
+                description: Path of the api to get the raw yaml of resource from hub apiserver
+                example: /tekton/task/buildah/raw
             hubURLPath:
                 type: string
                 description: Url path of the resource in hub
@@ -2154,6 +2177,7 @@ definitions:
             deprecated: true
             description: Buildah task builds source into a container image and then pushes it to a container registry.
             displayName: Buildah
+            hubRawURLPath: /tekton/task/buildah/raw
             hubURLPath: tekton/task/buildah
             id: 1
             minPipelinesVersion: 0.12.1
@@ -2175,6 +2199,7 @@ definitions:
             - updatedAt
             - platforms
             - hubURLPath
+            - hubRawURLPath
     StatusStatusResponseBody:
         title: StatusStatusResponseBody
         type: object

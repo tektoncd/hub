@@ -529,11 +529,12 @@ func DecodeByIDResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 // *ResourceDataResponseBody.
 func unmarshalResourceDataResponseBodyToResourceviewsResourceDataView(v *ResourceDataResponseBody) *resourceviews.ResourceDataView {
 	res := &resourceviews.ResourceDataView{
-		ID:         v.ID,
-		Name:       v.Name,
-		Kind:       v.Kind,
-		HubURLPath: v.HubURLPath,
-		Rating:     v.Rating,
+		ID:            v.ID,
+		Name:          v.Name,
+		Kind:          v.Kind,
+		HubURLPath:    v.HubURLPath,
+		HubRawURLPath: v.HubRawURLPath,
+		Rating:        v.Rating,
 	}
 	res.Catalog = unmarshalCatalogResponseBodyToResourceviewsCatalogView(v.Catalog)
 	res.Categories = make([]*resourceviews.CategoryView, len(v.Categories))
@@ -595,6 +596,7 @@ func unmarshalResourceVersionDataResponseBodyToResourceviewsResourceVersionDataV
 		MinPipelinesVersion: v.MinPipelinesVersion,
 		RawURL:              v.RawURL,
 		WebURL:              v.WebURL,
+		HubRawURLPath:       v.HubRawURLPath,
 		UpdatedAt:           v.UpdatedAt,
 		HubURLPath:          v.HubURLPath,
 	}

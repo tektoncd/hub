@@ -140,6 +140,9 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Format(FormatURI)
 		Example("webURL", "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml")
 	})
+	Attribute("hubRawURLPath", String, "Path of the api to get the raw yaml of resource from hub apiserver", func() {
+		Example("hubRawURLPath", "/tekton/task/buildah/raw")
+	})
 	Attribute("updatedAt", String, "Timestamp when version was last updated", func() {
 		Format(FormatDateTime)
 		Example("updatedAt", "2020-01-01 12:00:00 +0000 UTC")
@@ -180,6 +183,7 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("version")
 		Attribute("rawURL")
 		Attribute("webURL")
+		Attribute("hubRawURLPath")
 		Attribute("hubURLPath")
 		Attribute("platforms")
 	})
@@ -193,6 +197,7 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("minPipelinesVersion")
 		Attribute("rawURL")
 		Attribute("webURL")
+		Attribute("hubRawURLPath")
 		Attribute("hubURLPath")
 		Attribute("updatedAt")
 		Attribute("platforms")
@@ -208,12 +213,13 @@ var ResourceVersionData = ResultType("application/vnd.hub.resource.version.data"
 		Attribute("rawURL")
 		Attribute("webURL")
 		Attribute("hubURLPath")
+		Attribute("hubRawURLPath")
 		Attribute("updatedAt")
 		Attribute("resource")
 		Attribute("platforms")
 	})
 
-	Required("id", "version", "displayName", "description", "minPipelinesVersion", "rawURL", "webURL", "updatedAt", "platforms", "resource", "hubURLPath")
+	Required("id", "version", "displayName", "description", "minPipelinesVersion", "rawURL", "webURL", "updatedAt", "platforms", "resource", "hubURLPath", "hubRawURLPath")
 })
 
 var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData", func() {
@@ -244,6 +250,9 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 	Attribute("hubURLPath", String, "Url path of the resource in hub", func() {
 		Example("hubURLPath", "tekton/task/buildah")
 	})
+	Attribute("hubRawURLPath", String, "Path of the api to get the raw yaml of resource from hub apiserver", func() {
+		Example("hubRawURLPath", "/tekton/task/buildah/raw")
+	})
 	Attribute("latestVersion", "ResourceVersionData", "Latest version of resource", func() {
 		View("withoutResource")
 		Example("latestVersion", func() {
@@ -255,6 +264,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 				"minPipelinesVersion": "0.12.1",
 				"rawURL":              "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml",
 				"webURL":              "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml",
+				"hubRawURLPath":       "/tekton/task/buildah/latest/raw",
 				"updatedAt":           "2020-01-01 12:00:00 +0000 UTC",
 				"platforms":           []Val{{"id": 1, "name": "linux/amd64"}},
 			})
@@ -311,6 +321,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Attribute("categories")
 		Attribute("kind")
 		Attribute("hubURLPath")
+		Attribute("hubRawURLPath")
 		Attribute("latestVersion")
 		Attribute("tags")
 		Attribute("platforms")
@@ -324,6 +335,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		Attribute("categories")
 		Attribute("kind")
 		Attribute("hubURLPath")
+		Attribute("hubRawURLPath")
 		Attribute("latestVersion")
 		Attribute("tags")
 		Attribute("platforms")
@@ -333,7 +345,7 @@ var ResourceData = ResultType("application/vnd.hub.resource.data", "ResourceData
 		})
 	})
 
-	Required("id", "name", "catalog", "categories", "kind", "hubURLPath", "latestVersion", "tags", "platforms", "rating", "versions")
+	Required("id", "name", "catalog", "categories", "kind", "hubURLPath", "latestVersion", "tags", "platforms", "rating", "versions", "hubRawURLPath")
 })
 
 var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {
@@ -342,25 +354,28 @@ var Versions = ResultType("application/vnd.hub.versions", "Versions", func() {
 	Attribute("latest", ResourceVersionData, "Latest Version of resource", func() {
 		Example("latest", func() {
 			Value(Val{
-				"id":      2,
-				"version": "0.2",
-				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml",
-				"webURL":  "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml",
+				"id":            2,
+				"version":       "0.2",
+				"rawURL":        "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml",
+				"webURL":        "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml",
+				"hubRawURLPath": "/resource/tektoncd/task/buildah/raw",
 			})
 		})
 	})
 	Attribute("versions", ArrayOf(ResourceVersionData), "List of all versions of resource", func() {
 		Example("versions", func() {
 			Value([]Val{{
-				"id":      1,
-				"version": "0.1",
-				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml",
-				"webURL":  "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml",
+				"id":            1,
+				"version":       "0.1",
+				"rawURL":        "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml",
+				"webURL":        "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml",
+				"hubRawURLPath": "/resource/tektoncd/task/buildah/0.1/raw",
 			}, {
-				"id":      2,
-				"version": "0.2",
-				"rawURL":  "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml",
-				"webURL":  "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml",
+				"id":            2,
+				"version":       "0.2",
+				"rawURL":        "https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml",
+				"webURL":        "https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml",
+				"hubRawURLPath": "/resource/tektoncd/task/buildah/0.2/raw",
 			}})
 		})
 	})

@@ -15,6 +15,7 @@
 		],
 		"kind": "task",
 		"hubURLPath": "catalog-official/task/tkn-hub",
+		"hubRawURLPath": "resource/catalog-official/task/tkn-hub/raw",
 		"latestVersion": {
 			"id": 10,
 			"version": "0.1",
@@ -24,6 +25,7 @@
 			"minPipelinesVersion": "0.12.1",
 			"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog-community/master/task/tkn-hub/0.1/tkn-hub.yaml",
 			"webURL": "https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-hub/0.1/tkn-hub.yaml",
+			"hubRawURLPath": "resource/catalog-official/task/0.1/tkn-hub/raw",
 			"hubURLPath": "catalog-official/task/tkn-hub/0.1",
 			"updatedAt": "2013-01-01T00:00:01Z",
 			"platforms": [

@@ -10,6 +10,7 @@
 		"categories": [],
 		"kind": "task",
 		"hubURLPath": "catalog-enterprise/task/tkn-enterprise",
+		"hubRawURLPath": "resource/catalog-enterprise/task/tkn-enterprise/raw",
 		"latestVersion": {
 			"id": 11,
 			"version": "0.1",
@@ -18,6 +19,7 @@
 			"minPipelinesVersion": "0.12.1",
 			"rawURL": "https://raw.myghe.com/Pipelines-Marketplace/catalog-community/master/task/tkn-enterprise/0.1/tkn-enterprise.yaml",
 			"webURL": "https://myghe.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-enterprise/0.1/tkn-enterprise.yaml",
+			"hubRawURLPath": "resource/catalog-enterprise/task/0.1/tkn-enterprise/raw",
 			"hubURLPath": "catalog-enterprise/task/tkn-enterprise/0.1",
 			"updatedAt": "2013-01-01T00:00:01Z",
 			"platforms": [

@@ -16,6 +16,7 @@
 			],
 			"kind": "task",
 			"hubURLPath": "catalog-official/task/tekton",
+			"hubRawURLPath": "resource/catalog-official/task/tekton/raw",
 			"latestVersion": {
 				"id": 5,
 				"version": "0.2",
@@ -24,6 +25,7 @@
 				"minPipelinesVersion": "0.15.0",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tekton/0.2/tekton.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tekton/0.2/tekton.yaml",
+				"hubRawURLPath": "resource/catalog-official/task/0.2/tekton/raw",
 				"hubURLPath": "catalog-official/task/tekton/0.2",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [
@@ -63,6 +65,7 @@
 			],
 			"kind": "task",
 			"hubURLPath": "catalog-official/task/tkn",
+			"hubRawURLPath": "resource/catalog-official/task/tkn/raw",
 			"latestVersion": {
 				"id": 8,
 				"version": "0.1",
@@ -71,6 +74,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/tkn/0.1/tkn.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/tkn/0.1/tkn.yaml",
+				"hubRawURLPath": "resource/catalog-official/task/0.1/tkn/raw",
 				"hubURLPath": "catalog-official/task/tkn/0.1",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [
@@ -105,6 +109,7 @@
 			"categories": [],
 			"kind": "task",
 			"hubURLPath": "catalog-enterprise/task/tkn-enterprise",
+			"hubRawURLPath": "resource/catalog-enterprise/task/tkn-enterprise/raw",
 			"latestVersion": {
 				"id": 11,
 				"version": "0.1",
@@ -113,6 +118,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.myghe.com/Pipelines-Marketplace/catalog-community/master/task/tkn-enterprise/0.1/tkn-enterprise.yaml",
 				"webURL": "https://myghe.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-enterprise/0.1/tkn-enterprise.yaml",
+				"hubRawURLPath": "resource/catalog-enterprise/task/0.1/tkn-enterprise/raw",
 				"hubURLPath": "catalog-enterprise/task/tkn-enterprise/0.1",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [
@@ -152,6 +158,7 @@
 			],
 			"kind": "task",
 			"hubURLPath": "catalog-official/task/tkn-hub",
+			"hubRawURLPath": "resource/catalog-official/task/tkn-hub/raw",
 			"latestVersion": {
 				"id": 10,
 				"version": "0.1",
@@ -161,6 +168,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog-community/master/task/tkn-hub/0.1/tkn-hub.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/tkn-hub/0.1/tkn-hub.yaml",
+				"hubRawURLPath": "resource/catalog-official/task/0.1/tkn-hub/raw",
 				"hubURLPath": "catalog-official/task/tkn-hub/0.1",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [
@@ -200,6 +208,7 @@
 			],
 			"kind": "pipeline",
 			"hubURLPath": "catalog-official/pipeline/build-pipeline",
+			"hubRawURLPath": "resource/catalog-official/pipeline/build-pipeline/raw",
 			"latestVersion": {
 				"id": 4,
 				"version": "0.2",
@@ -208,6 +217,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/build/0.2/build.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/build/0.2/build.yaml",
+				"hubRawURLPath": "resource/catalog-official/pipeline/0.2/build-pipeline/raw",
 				"hubURLPath": "catalog-official/pipeline/build-pipeline/0.2",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [
@@ -250,6 +260,7 @@
 			"categories": [],
 			"kind": "task",
 			"hubURLPath": "catalog-community/task/img",
+			"hubRawURLPath": "resource/catalog-community/task/img/raw",
 			"latestVersion": {
 				"id": 9,
 				"version": "0.1",
@@ -258,6 +269,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog-community/master/task/img/0.1/img.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog-community/tree/master/task/img/0.1/img.yaml",
+				"hubRawURLPath": "resource/catalog-community/task/0.1/img/raw",
 				"hubURLPath": "catalog-community/task/img/0.1",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [
@@ -287,6 +299,7 @@
 			],
 			"kind": "task",
 			"hubURLPath": "catalog-official/task/img",
+			"hubRawURLPath": "resource/catalog-official/task/img/raw",
 			"latestVersion": {
 				"id": 3,
 				"version": "0.1",
@@ -295,6 +308,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/img/0.1/img.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/img/0.1/img.yaml",
+				"hubRawURLPath": "resource/catalog-official/task/0.1/img/raw",
 				"hubURLPath": "catalog-official/task/img/0.1",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [
@@ -334,6 +348,7 @@
 			],
 			"kind": "task",
 			"hubURLPath": "catalog-official/task/buildah",
+			"hubRawURLPath": "resource/catalog-official/task/buildah/raw",
 			"latestVersion": {
 				"id": 7,
 				"version": "0.1",
@@ -342,6 +357,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/buildah/0.1/buildah.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/buildah/0.1/buildah.yaml",
+				"hubRawURLPath": "resource/catalog-official/task/0.1/buildah/raw",
 				"hubURLPath": "catalog-official/task/buildah/0.1",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [
