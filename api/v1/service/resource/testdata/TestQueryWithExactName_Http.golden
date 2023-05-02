@@ -16,6 +16,7 @@
 			],
 			"kind": "task",
 			"hubURLPath": "catalog-official/task/buildah",
+			"hubRawURLPath": "resource/catalog-official/task/buildah/raw",
 			"latestVersion": {
 				"id": 7,
 				"version": "0.1",
@@ -24,6 +25,7 @@
 				"minPipelinesVersion": "0.12.1",
 				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/buildah/0.1/buildah.yaml",
 				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/buildah/0.1/buildah.yaml",
+				"hubRawURLPath": "resource/catalog-official/task/0.1/buildah/raw",
 				"hubURLPath": "catalog-official/task/buildah/0.1",
 				"updatedAt": "2013-01-01T00:00:01Z",
 				"platforms": [

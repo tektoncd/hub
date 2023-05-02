@@ -42,6 +42,8 @@ type ResourceDataView struct {
 	Kind *string
 	// Url path of the resource in hub
 	HubURLPath *string
+	// Path of the api to get the raw yaml of resource from hub apiserver
+	HubRawURLPath *string
 	// Latest version of resource
 	LatestVersion *ResourceVersionDataView
 	// Tags related to resource
@@ -94,6 +96,8 @@ type ResourceVersionDataView struct {
 	RawURL *string
 	// Web URL of resource's yaml file of the version
 	WebURL *string
+	// Path of the api to get the raw yaml of resource from hub apiserver
+	HubRawURLPath *string
 	// Timestamp when version was last updated
 	UpdatedAt *string
 	// Platforms related to resource version
@@ -148,6 +152,7 @@ var (
 			"categories",
 			"kind",
 			"hubURLPath",
+			"hubRawURLPath",
 			"latestVersion",
 			"tags",
 			"platforms",
@@ -160,6 +165,7 @@ var (
 			"categories",
 			"kind",
 			"hubURLPath",
+			"hubRawURLPath",
 			"latestVersion",
 			"tags",
 			"platforms",
@@ -188,6 +194,7 @@ var (
 			"categories",
 			"kind",
 			"hubURLPath",
+			"hubRawURLPath",
 			"latestVersion",
 			"tags",
 			"platforms",
@@ -200,6 +207,7 @@ var (
 			"categories",
 			"kind",
 			"hubURLPath",
+			"hubRawURLPath",
 			"latestVersion",
 			"tags",
 			"platforms",
@@ -234,6 +242,7 @@ var (
 			"version",
 			"rawURL",
 			"webURL",
+			"hubRawURLPath",
 			"hubURLPath",
 			"platforms",
 		},
@@ -246,6 +255,7 @@ var (
 			"minPipelinesVersion",
 			"rawURL",
 			"webURL",
+			"hubRawURLPath",
 			"hubURLPath",
 			"updatedAt",
 			"platforms",
@@ -260,6 +270,7 @@ var (
 			"rawURL",
 			"webURL",
 			"hubURLPath",
+			"hubRawURLPath",
 			"updatedAt",
 			"resource",
 			"platforms",
@@ -407,6 +418,9 @@ func ValidateResourceDataViewWithoutVersion(result *ResourceDataView) (err error
 	if result.Rating == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("rating", "result"))
 	}
+	if result.HubRawURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubRawURLPath", "result"))
+	}
 	for _, e := range result.Categories {
 		if e != nil {
 			if err2 := ValidateCategoryView(e); err2 != nil {
@@ -470,6 +484,9 @@ func ValidateResourceDataView(result *ResourceDataView) (err error) {
 	}
 	if result.Versions == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("versions", "result"))
+	}
+	if result.HubRawURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubRawURLPath", "result"))
 	}
 	for _, e := range result.Categories {
 		if e != nil {
@@ -602,6 +619,9 @@ func ValidateResourceVersionDataViewMin(result *ResourceVersionDataView) (err er
 	if result.HubURLPath == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "result"))
 	}
+	if result.HubRawURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubRawURLPath", "result"))
+	}
 	if result.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))
 	}
@@ -650,6 +670,9 @@ func ValidateResourceVersionDataViewWithoutResource(result *ResourceVersionDataV
 	}
 	if result.HubURLPath == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "result"))
+	}
+	if result.HubRawURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubRawURLPath", "result"))
 	}
 	if result.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))
@@ -702,6 +725,9 @@ func ValidateResourceVersionDataView(result *ResourceVersionDataView) (err error
 	}
 	if result.HubURLPath == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "result"))
+	}
+	if result.HubRawURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubRawURLPath", "result"))
 	}
 	if result.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.rawURL", *result.RawURL, goa.FormatURI))

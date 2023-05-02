@@ -13,6 +13,7 @@
 			"Categories": [],
 			"Kind": "Pipeline",
 			"HubURLPath": "foo/Pipeline/foo-bar",
+			"HubRawURLPath": "",
 			"LatestVersion": {
 				"ID": 12,
 				"Version": "0.2",
@@ -22,6 +23,7 @@
 				"MinPipelinesVersion": "0.12",
 				"RawURL": "http://raw.github.url/foo-bar/",
 				"WebURL": "http://web.github.com/foo-bar/",
+				"HubRawURLPath": "",
 				"UpdatedAt": "2020-01-01 12:00:00 +0000 UTC",
 				"Platforms": null,
 				"HubURLPath": "foo/Pipeline/foo-bar/0.2",

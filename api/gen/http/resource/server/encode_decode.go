@@ -288,11 +288,12 @@ func DecodeByIDRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 // of type *resourceviews.ResourceDataView.
 func marshalResourceviewsResourceDataViewToResourceDataResponseBodyWithoutVersion(v *resourceviews.ResourceDataView) *ResourceDataResponseBodyWithoutVersion {
 	res := &ResourceDataResponseBodyWithoutVersion{
-		ID:         *v.ID,
-		Name:       *v.Name,
-		Kind:       *v.Kind,
-		HubURLPath: *v.HubURLPath,
-		Rating:     *v.Rating,
+		ID:            *v.ID,
+		Name:          *v.Name,
+		Kind:          *v.Kind,
+		HubURLPath:    *v.HubURLPath,
+		HubRawURLPath: *v.HubRawURLPath,
+		Rating:        *v.Rating,
 	}
 	if v.Catalog != nil {
 		res.Catalog = marshalResourceviewsCatalogViewToCatalogResponseBodyMin(v.Catalog)
@@ -358,6 +359,7 @@ func marshalResourceviewsResourceVersionDataViewToResourceVersionDataResponseBod
 		MinPipelinesVersion: *v.MinPipelinesVersion,
 		RawURL:              *v.RawURL,
 		WebURL:              *v.WebURL,
+		HubRawURLPath:       *v.HubRawURLPath,
 		UpdatedAt:           *v.UpdatedAt,
 		HubURLPath:          *v.HubURLPath,
 	}

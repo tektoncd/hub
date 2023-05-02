@@ -471,6 +471,8 @@ type ResourceDataResponseBody struct {
 	Kind *string `form:"kind,omitempty" json:"kind,omitempty" xml:"kind,omitempty"`
 	// Url path of the resource in hub
 	HubURLPath *string `form:"hubURLPath,omitempty" json:"hubURLPath,omitempty" xml:"hubURLPath,omitempty"`
+	// Path of the api to get the raw yaml of resource from hub apiserver
+	HubRawURLPath *string `form:"hubRawURLPath,omitempty" json:"hubRawURLPath,omitempty" xml:"hubRawURLPath,omitempty"`
 	// Latest version of resource
 	LatestVersion *ResourceVersionDataResponseBody `form:"latestVersion,omitempty" json:"latestVersion,omitempty" xml:"latestVersion,omitempty"`
 	// Tags related to resource
@@ -524,6 +526,8 @@ type ResourceVersionDataResponseBody struct {
 	RawURL *string `form:"rawURL,omitempty" json:"rawURL,omitempty" xml:"rawURL,omitempty"`
 	// Web URL of resource's yaml file of the version
 	WebURL *string `form:"webURL,omitempty" json:"webURL,omitempty" xml:"webURL,omitempty"`
+	// Path of the api to get the raw yaml of resource from hub apiserver
+	HubRawURLPath *string `form:"hubRawURLPath,omitempty" json:"hubRawURLPath,omitempty" xml:"hubRawURLPath,omitempty"`
 	// Timestamp when version was last updated
 	UpdatedAt *string `form:"updatedAt,omitempty" json:"updatedAt,omitempty" xml:"updatedAt,omitempty"`
 	// Platforms related to resource version
@@ -1524,6 +1528,9 @@ func ValidateResourceDataResponseBody(body *ResourceDataResponseBody) (err error
 	if body.Versions == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("versions", "body"))
 	}
+	if body.HubRawURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubRawURLPath", "body"))
+	}
 	if body.Catalog != nil {
 		if err2 := ValidateCatalogResponseBody(body.Catalog); err2 != nil {
 			err = goa.MergeErrors(err, err2)
@@ -1638,6 +1645,9 @@ func ValidateResourceVersionDataResponseBody(body *ResourceVersionDataResponseBo
 	}
 	if body.HubURLPath == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("hubURLPath", "body"))
+	}
+	if body.HubRawURLPath == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("hubRawURLPath", "body"))
 	}
 	if body.RawURL != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.rawURL", *body.RawURL, goa.FormatURI))
