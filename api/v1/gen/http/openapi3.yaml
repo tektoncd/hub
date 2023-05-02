@@ -32,6 +32,11 @@ paths:
                                       provider: github
                                       type: community
                                       url: https://github.com/tektoncd/hub
+                                    - id: 1
+                                      name: Tekton
+                                      provider: github
+                                      type: community
+                                      url: https://github.com/tektoncd/hub
                 "500":
                     description: 'internal-error: Internal Server Error'
                     content:
@@ -64,7 +69,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Exercitationem molestias id eum illum rerum.
+                        example: Et velit ipsam magnam tempore nobis.
                     description: Catalogs of resource to filter by
                     example:
                         - tekton
@@ -80,7 +85,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Nihil sit officia harum sint beatae sit.
+                        example: Id suscipit est voluptatem.
                     description: Category associated with a resource to filter by
                     example:
                         - build
@@ -96,7 +101,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Et velit ipsam magnam tempore nobis.
+                        example: Occaecati maxime quia.
                     description: Kinds of resource to filter by
                     example:
                         - task
@@ -112,7 +117,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Id suscipit est voluptatem.
+                        example: Explicabo dolor qui eveniet ad qui id.
                     description: Tags associated with a resource to filter by
                     example:
                         - image
@@ -128,7 +133,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Occaecati maxime quia.
+                        example: Voluptatem cupiditate rerum ut provident.
                     description: Platforms associated with a resource to filter by
                     example:
                         - linux/s390x
@@ -154,7 +159,7 @@ paths:
                     type: string
                     description: Strategy used to find matching resources
                     default: contains
-                    example: contains
+                    example: exact
                     enum:
                         - exact
                         - contains
@@ -298,7 +303,7 @@ paths:
                     enum:
                         - task
                         - pipeline
-                  example: task
+                  example: pipeline
                 - name: name
                   in: path
                   description: Name of resource
@@ -390,7 +395,7 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: task
+                    example: pipeline
                     enum:
                         - task
                         - pipeline
@@ -493,7 +498,7 @@ paths:
                     enum:
                         - task
                         - pipeline
-                  example: task
+                  example: pipeline
                 - name: name
                   in: path
                   description: name of resource
@@ -625,11 +630,11 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: pipeline
+                    example: task
                     enum:
                         - task
                         - pipeline
-                  example: pipeline
+                  example: task
                 - name: name
                   in: path
                   description: name of resource
@@ -663,6 +668,59 @@ paths:
                                     yaml: |-
                                         #YAML
                                          Sample yaml content
+                "404":
+                    description: 'not-found: Resource Not Found Error'
+                    content:
+                        application/vnd.goa.error:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                "500":
+                    description: 'internal-error: Internal Server Error'
+                    content:
+                        application/vnd.goa.error:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+    /v1/resource/{catalog}/{kind}/{name}/raw:
+        get:
+            tags:
+                - resource
+            summary: GetLatestRawYamlByCatalogKindName resource
+            description: Fetch a raw latest resource yaml file using the name of catalog, resource name, and kind
+            operationId: resource#GetLatestRawYamlByCatalogKindName
+            parameters:
+                - name: catalog
+                  in: path
+                  description: name of catalog
+                  required: true
+                  schema:
+                    type: string
+                    description: name of catalog
+                    example: tekton
+                  example: tekton
+                - name: kind
+                  in: path
+                  description: kind of resource
+                  required: true
+                  schema:
+                    type: string
+                    description: kind of resource
+                    example: task
+                    enum:
+                        - task
+                        - pipeline
+                  example: pipeline
+                - name: name
+                  in: path
+                  description: name of resource
+                  required: true
+                  schema:
+                    type: string
+                    description: name of resource
+                    example: buildah
+                  example: buildah
+            responses:
+                "200":
+                    description: OK response.
                 "404":
                     description: 'not-found: Resource Not Found Error'
                     content:
@@ -1076,7 +1134,7 @@ components:
                 temporary:
                     type: boolean
                     description: Is the error temporary?
-                    example: true
+                    example: false
                 timeout:
                     type: boolean
                     description: Is the error a timeout?
@@ -1111,8 +1169,23 @@ components:
                           provider: github
                           type: community
                           url: https://github.com/tektoncd/hub
+                        - id: 1
+                          name: Tekton
+                          provider: github
+                          type: community
+                          url: https://github.com/tektoncd/hub
+                        - id: 1
+                          name: Tekton
+                          provider: github
+                          type: community
+                          url: https://github.com/tektoncd/hub
             example:
                 data:
+                    - id: 1
+                      name: Tekton
+                      provider: github
+                      type: community
+                      url: https://github.com/tektoncd/hub
                     - id: 1
                       name: Tekton
                       provider: github

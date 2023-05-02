@@ -301,22 +301,17 @@
 			"hubURLPath": "catalog-official/task/img",
 			"hubRawURLPath": "resource/catalog-official/task/img/raw",
 			"latestVersion": {
-				"id": 3,
-				"version": "0.1",
+				"id": 12,
+				"version": "0.2",
 				"displayName": "Image",
 				"description": "Desc3",
 				"minPipelinesVersion": "0.12.1",
-				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/img/0.1/img.yaml",
-				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/img/0.1/img.yaml",
-				"hubRawURLPath": "resource/catalog-official/task/0.1/img/raw",
-				"hubURLPath": "catalog-official/task/img/0.1",
+				"rawURL": "https://raw.githubusercontent.com/Pipelines-Marketplace/catalog/master/task/img/0.2/img.yaml",
+				"webURL": "https://github.com/Pipelines-Marketplace/catalog/tree/master/task/img/0.2/img.yaml",
+				"hubRawURLPath": "resource/catalog-official/task/0.2/img/raw",
+				"hubURLPath": "catalog-official/task/img/0.2",
 				"updatedAt": "2013-01-01T00:00:01Z",
-				"platforms": [
-					{
-						"id": 3,
-						"name": "linux/arm64"
-					}
-				]
+				"platforms": []
 			},
 			"tags": [
 				{

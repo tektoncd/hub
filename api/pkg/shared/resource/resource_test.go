@@ -525,3 +525,36 @@ func TestByID_NotFoundError(t *testing.T) {
 	assert.Error(t, err)
 	assert.EqualError(t, err, "resource not found")
 }
+
+func TestGetLatestVersion(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	req := Request{
+		Db:      tc.DB(),
+		Log:     tc.Logger("resource"),
+		Catalog: "catalog-official",
+		Kind:    "task",
+		Name:    "img",
+	}
+
+	res, err := req.GetLatestVersion()
+	assert.NoError(t, err)
+	assert.Equal(t, "0.2", res)
+}
+
+func TestGetLatestVersion_NotFoundError(t *testing.T) {
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	req := Request{
+		Db:      tc.DB(),
+		Log:     tc.Logger("resource"),
+		Catalog: "foo",
+		Kind:    "task",
+		Name:    "bar",
+	}
+
+	_, err := req.GetLatestVersion()
+	assert.Equal(t, err.Error(), "record not found")
+}

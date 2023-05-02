@@ -454,6 +454,44 @@ type GetRawYamlByCatalogKindNameVersionNotFoundResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// GetLatestRawYamlByCatalogKindNameInternalErrorResponseBody is the type of
+// the "resource" service "GetLatestRawYamlByCatalogKindName" endpoint HTTP
+// response body for the "internal-error" error.
+type GetLatestRawYamlByCatalogKindNameInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// GetLatestRawYamlByCatalogKindNameNotFoundResponseBody is the type of the
+// "resource" service "GetLatestRawYamlByCatalogKindName" endpoint HTTP
+// response body for the "not-found" error.
+type GetLatestRawYamlByCatalogKindNameNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
 // ResourceDataResponseBodyWithoutVersionCollection is used to define fields on
 // response body types.
 type ResourceDataResponseBodyWithoutVersionCollection []*ResourceDataResponseBodyWithoutVersion
@@ -1081,6 +1119,36 @@ func NewGetRawYamlByCatalogKindNameVersionNotFoundResponseBody(res *goa.ServiceE
 	return body
 }
 
+// NewGetLatestRawYamlByCatalogKindNameInternalErrorResponseBody builds the
+// HTTP response body from the result of the
+// "GetLatestRawYamlByCatalogKindName" endpoint of the "resource" service.
+func NewGetLatestRawYamlByCatalogKindNameInternalErrorResponseBody(res *goa.ServiceError) *GetLatestRawYamlByCatalogKindNameInternalErrorResponseBody {
+	body := &GetLatestRawYamlByCatalogKindNameInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewGetLatestRawYamlByCatalogKindNameNotFoundResponseBody builds the HTTP
+// response body from the result of the "GetLatestRawYamlByCatalogKindName"
+// endpoint of the "resource" service.
+func NewGetLatestRawYamlByCatalogKindNameNotFoundResponseBody(res *goa.ServiceError) *GetLatestRawYamlByCatalogKindNameNotFoundResponseBody {
+	body := &GetLatestRawYamlByCatalogKindNameNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewQueryPayload builds a resource service Query endpoint payload.
 func NewQueryPayload(name string, catalogs []string, categories []string, kinds []string, tags []string, platforms []string, limit uint, match string) *resource.QueryPayload {
 	v := &resource.QueryPayload{}
@@ -1185,6 +1253,17 @@ func NewGetRawYamlByCatalogKindNameVersionPayload(catalog string, kind string, n
 	v.Kind = kind
 	v.Name = name
 	v.Version = version
+
+	return v
+}
+
+// NewGetLatestRawYamlByCatalogKindNamePayload builds a resource service
+// GetLatestRawYamlByCatalogKindName endpoint payload.
+func NewGetLatestRawYamlByCatalogKindNamePayload(catalog string, kind string, name string) *resource.GetLatestRawYamlByCatalogKindNamePayload {
+	v := &resource.GetLatestRawYamlByCatalogKindNamePayload{}
+	v.Catalog = catalog
+	v.Kind = kind
+	v.Name = name
 
 	return v
 }

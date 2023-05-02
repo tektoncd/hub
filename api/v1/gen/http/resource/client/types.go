@@ -453,6 +453,44 @@ type GetRawYamlByCatalogKindNameVersionNotFoundResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
+// GetLatestRawYamlByCatalogKindNameInternalErrorResponseBody is the type of
+// the "resource" service "GetLatestRawYamlByCatalogKindName" endpoint HTTP
+// response body for the "internal-error" error.
+type GetLatestRawYamlByCatalogKindNameInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
+// GetLatestRawYamlByCatalogKindNameNotFoundResponseBody is the type of the
+// "resource" service "GetLatestRawYamlByCatalogKindName" endpoint HTTP
+// response body for the "not-found" error.
+type GetLatestRawYamlByCatalogKindNameNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
 // ResourceDataCollectionResponseBody is used to define fields on response body
 // types.
 type ResourceDataCollectionResponseBody []*ResourceDataResponseBody
@@ -971,6 +1009,36 @@ func NewGetRawYamlByCatalogKindNameVersionNotFound(body *GetRawYamlByCatalogKind
 	return v
 }
 
+// NewGetLatestRawYamlByCatalogKindNameInternalError builds a resource service
+// GetLatestRawYamlByCatalogKindName endpoint internal-error error.
+func NewGetLatestRawYamlByCatalogKindNameInternalError(body *GetLatestRawYamlByCatalogKindNameInternalErrorResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
+// NewGetLatestRawYamlByCatalogKindNameNotFound builds a resource service
+// GetLatestRawYamlByCatalogKindName endpoint not-found error.
+func NewGetLatestRawYamlByCatalogKindNameNotFound(body *GetLatestRawYamlByCatalogKindNameNotFoundResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
 // ValidateQueryInternalErrorResponseBody runs the validations defined on
 // Query_internal-error_Response_Body
 func ValidateQueryInternalErrorResponseBody(body *QueryInternalErrorResponseBody) (err error) {
@@ -1458,6 +1526,56 @@ func ValidateGetRawYamlByCatalogKindNameVersionInternalErrorResponseBody(body *G
 // validations defined on
 // GetRawYamlByCatalogKindNameVersion_not-found_Response_Body
 func ValidateGetRawYamlByCatalogKindNameVersionNotFoundResponseBody(body *GetRawYamlByCatalogKindNameVersionNotFoundResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateGetLatestRawYamlByCatalogKindNameInternalErrorResponseBody runs the
+// validations defined on
+// GetLatestRawYamlByCatalogKindName_internal-error_Response_Body
+func ValidateGetLatestRawYamlByCatalogKindNameInternalErrorResponseBody(body *GetLatestRawYamlByCatalogKindNameInternalErrorResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateGetLatestRawYamlByCatalogKindNameNotFoundResponseBody runs the
+// validations defined on
+// GetLatestRawYamlByCatalogKindName_not-found_Response_Body
+func ValidateGetLatestRawYamlByCatalogKindNameNotFoundResponseBody(body *GetLatestRawYamlByCatalogKindNameNotFoundResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}

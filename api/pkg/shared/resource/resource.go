@@ -401,3 +401,26 @@ func invalidKindError(kind string) error {
 	return fmt.Errorf("resource kind '%s' not supported. Supported kinds are %v",
 		kind, parser.SupportedKinds())
 }
+
+// Fetch the latest verion of a resource
+func (r *Request) GetLatestVersion() (string, error) {
+
+	var catalogInfo *model.Catalog
+	if err := r.Db.Where(&model.Catalog{Name: r.Catalog}).First(&catalogInfo).Error; err != nil {
+		return "", err
+	}
+
+	fmt.Println(catalogInfo.Name)
+
+	var resInfo *model.Resource
+	if err := r.Db.Where(&model.Resource{Name: r.Name, Kind: strings.Title(r.Kind), CatalogID: catalogInfo.ID}).Find(&resInfo).Error; err != nil {
+		return "", err
+	}
+
+	var allVersions []string
+
+	if err := r.Db.Model(&model.ResourceVersion{}).Select("version").Where(&model.ResourceVersion{ResourceID: resInfo.ID}).Find(&allVersions).Error; err != nil {
+		return "", err
+	}
+	return allVersions[len(allVersions)-1], nil
+}

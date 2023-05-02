@@ -808,11 +808,39 @@ func TestGetYamlByCatalogKindNameVersion_Http(t *testing.T) {
 	})
 }
 
+func TestGetLatestRawYamlByCatalogKindName_Http(t *testing.T) {
+	os.Setenv("CLONE_BASE_PATH", "testdata/catalog")
+	defer os.Unsetenv("CLONE_BASE_PATH")
+
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	GetYamlByCatalogKindName_Checker(tc).Test(t, http.MethodGet, "/v1/resource/catalog-official/task/tkn/raw").Check().
+		HasStatus(200).Cb(func(r *http.Response) {
+		b, readErr := io.ReadAll(r.Body)
+		assert.NoError(t, readErr)
+		defer r.Body.Close()
+
+		// Check if the yaml is valid
+		err := yaml.Unmarshal(b, &map[string]interface{}{})
+		assert.NoError(t, err)
+	})
+}
+
 func GetYamlByCatalogKindNameVersion_Checker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
 	checker := goahttpcheck.New()
 	checker.Mount(
 		server.NewGetRawYamlByCatalogKindNameVersionHandler,
 		server.MountGetRawYamlByCatalogKindNameVersionHandler,
 		resource.NewGetRawYamlByCatalogKindNameVersionEndpoint(New(tc)))
+	return checker
+}
+
+func GetYamlByCatalogKindName_Checker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
+	checker := goahttpcheck.New()
+	checker.Mount(
+		server.NewGetLatestRawYamlByCatalogKindNameHandler,
+		server.MountGetLatestRawYamlByCatalogKindNameHandler,
+		resource.NewGetLatestRawYamlByCatalogKindNameEndpoint(New(tc)))
 	return checker
 }

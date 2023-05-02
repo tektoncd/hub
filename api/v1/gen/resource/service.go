@@ -40,6 +40,9 @@ type Service interface {
 	// Fetch a raw resource yaml file using the name of catalog, resource name,
 	// kind, and version
 	GetRawYamlByCatalogKindNameVersion(context.Context, *GetRawYamlByCatalogKindNameVersionPayload) (body io.ReadCloser, err error)
+	// Fetch a raw latest resource yaml file using the name of catalog, resource
+	// name, and kind
+	GetLatestRawYamlByCatalogKindName(context.Context, *GetLatestRawYamlByCatalogKindNamePayload) (body io.ReadCloser, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -50,7 +53,7 @@ const ServiceName = "resource"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [10]string{"Query", "List", "VersionsByID", "ByCatalogKindNameVersion", "ByCatalogKindNameVersionReadme", "ByCatalogKindNameVersionYaml", "ByVersionId", "ByCatalogKindName", "ById", "GetRawYamlByCatalogKindNameVersion"}
+var MethodNames = [11]string{"Query", "List", "VersionsByID", "ByCatalogKindNameVersion", "ByCatalogKindNameVersionReadme", "ByCatalogKindNameVersionYaml", "ByVersionId", "ByCatalogKindName", "ById", "GetRawYamlByCatalogKindNameVersion", "GetLatestRawYamlByCatalogKindName"}
 
 // ByCatalogKindNamePayload is the payload type of the resource service
 // ByCatalogKindName method.
@@ -134,6 +137,17 @@ type Category struct {
 	// ID is the unique id of the category
 	ID uint
 	// Name of category
+	Name string
+}
+
+// GetLatestRawYamlByCatalogKindNamePayload is the payload type of the resource
+// service GetLatestRawYamlByCatalogKindName method.
+type GetLatestRawYamlByCatalogKindNamePayload struct {
+	// name of catalog
+	Catalog string
+	// kind of resource
+	Kind string
+	// name of resource
 	Name string
 }
 
