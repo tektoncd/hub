@@ -24,7 +24,7 @@ import (
 //	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
 	return `catalog list
-resource (query|list|versions-by-id|by-catalog-kind-name-version|by-catalog-kind-name-version-readme|by-catalog-kind-name-version-yaml|by-version-id|by-catalog-kind-name|by-id|get-raw-yaml-by-catalog-kind-name-version)
+resource (query|list|versions-by-id|by-catalog-kind-name-version|by-catalog-kind-name-version-readme|by-catalog-kind-name-version-yaml|by-version-id|by-catalog-kind-name|by-id|get-raw-yaml-by-catalog-kind-name-version|get-latest-raw-yaml-by-catalog-kind-name)
 `
 }
 
@@ -117,6 +117,11 @@ func ParseEndpoint(
 		resourceGetRawYamlByCatalogKindNameVersionKindFlag    = resourceGetRawYamlByCatalogKindNameVersionFlags.String("kind", "REQUIRED", "kind of resource")
 		resourceGetRawYamlByCatalogKindNameVersionNameFlag    = resourceGetRawYamlByCatalogKindNameVersionFlags.String("name", "REQUIRED", "name of resource")
 		resourceGetRawYamlByCatalogKindNameVersionVersionFlag = resourceGetRawYamlByCatalogKindNameVersionFlags.String("version", "REQUIRED", "version of resource")
+
+		resourceGetLatestRawYamlByCatalogKindNameFlags       = flag.NewFlagSet("get-latest-raw-yaml-by-catalog-kind-name", flag.ExitOnError)
+		resourceGetLatestRawYamlByCatalogKindNameCatalogFlag = resourceGetLatestRawYamlByCatalogKindNameFlags.String("catalog", "REQUIRED", "name of catalog")
+		resourceGetLatestRawYamlByCatalogKindNameKindFlag    = resourceGetLatestRawYamlByCatalogKindNameFlags.String("kind", "REQUIRED", "kind of resource")
+		resourceGetLatestRawYamlByCatalogKindNameNameFlag    = resourceGetLatestRawYamlByCatalogKindNameFlags.String("name", "REQUIRED", "name of resource")
 	)
 	catalogFlags.Usage = catalogUsage
 	catalogListFlags.Usage = catalogListUsage
@@ -132,6 +137,7 @@ func ParseEndpoint(
 	resourceByCatalogKindNameFlags.Usage = resourceByCatalogKindNameUsage
 	resourceByIDFlags.Usage = resourceByIDUsage
 	resourceGetRawYamlByCatalogKindNameVersionFlags.Usage = resourceGetRawYamlByCatalogKindNameVersionUsage
+	resourceGetLatestRawYamlByCatalogKindNameFlags.Usage = resourceGetLatestRawYamlByCatalogKindNameUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -206,6 +212,9 @@ func ParseEndpoint(
 			case "get-raw-yaml-by-catalog-kind-name-version":
 				epf = resourceGetRawYamlByCatalogKindNameVersionFlags
 
+			case "get-latest-raw-yaml-by-catalog-kind-name":
+				epf = resourceGetLatestRawYamlByCatalogKindNameFlags
+
 			}
 
 		}
@@ -268,6 +277,9 @@ func ParseEndpoint(
 			case "get-raw-yaml-by-catalog-kind-name-version":
 				endpoint = c.GetRawYamlByCatalogKindNameVersion()
 				data, err = resourcec.BuildGetRawYamlByCatalogKindNameVersionPayload(*resourceGetRawYamlByCatalogKindNameVersionCatalogFlag, *resourceGetRawYamlByCatalogKindNameVersionKindFlag, *resourceGetRawYamlByCatalogKindNameVersionNameFlag, *resourceGetRawYamlByCatalogKindNameVersionVersionFlag)
+			case "get-latest-raw-yaml-by-catalog-kind-name":
+				endpoint = c.GetLatestRawYamlByCatalogKindName()
+				data, err = resourcec.BuildGetLatestRawYamlByCatalogKindNamePayload(*resourceGetLatestRawYamlByCatalogKindNameCatalogFlag, *resourceGetLatestRawYamlByCatalogKindNameKindFlag, *resourceGetLatestRawYamlByCatalogKindNameNameFlag)
 			}
 		}
 	}
@@ -318,6 +330,7 @@ COMMAND:
     by-catalog-kind-name: Find resources using name of catalog, resource name and kind of resource
     by-id: Find a resource using it's id
     get-raw-yaml-by-catalog-kind-name-version: Fetch a raw resource yaml file using the name of catalog, resource name, kind, and version
+    get-latest-raw-yaml-by-catalog-kind-name: Fetch a raw latest resource yaml file using the name of catalog, resource name, and kind
 
 Additional help:
     %[1]s resource COMMAND --help
@@ -402,7 +415,7 @@ Find resource README using name of catalog & name, kind and version of resource
     -version STRING: version of resource
 
 Example:
-    %[1]s resource by-catalog-kind-name-version-readme --catalog "tekton" --kind "task" --name "buildah" --version "0.1"
+    %[1]s resource by-catalog-kind-name-version-readme --catalog "tekton" --kind "pipeline" --name "buildah" --version "0.1"
 `, os.Args[0])
 }
 
@@ -466,6 +479,19 @@ Fetch a raw resource yaml file using the name of catalog, resource name, kind, a
     -version STRING: version of resource
 
 Example:
-    %[1]s resource get-raw-yaml-by-catalog-kind-name-version --catalog "tekton" --kind "task" --name "buildah" --version "0.1"
+    %[1]s resource get-raw-yaml-by-catalog-kind-name-version --catalog "tekton" --kind "pipeline" --name "buildah" --version "0.1"
+`, os.Args[0])
+}
+
+func resourceGetLatestRawYamlByCatalogKindNameUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] resource get-latest-raw-yaml-by-catalog-kind-name -catalog STRING -kind STRING -name STRING
+
+Fetch a raw latest resource yaml file using the name of catalog, resource name, and kind
+    -catalog STRING: name of catalog
+    -kind STRING: kind of resource
+    -name STRING: name of resource
+
+Example:
+    %[1]s resource get-latest-raw-yaml-by-catalog-kind-name --catalog "tekton" --kind "task" --name "buildah"
 `, os.Args[0])
 }

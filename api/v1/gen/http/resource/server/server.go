@@ -31,6 +31,7 @@ type Server struct {
 	ByCatalogKindName                  http.Handler
 	ByID                               http.Handler
 	GetRawYamlByCatalogKindNameVersion http.Handler
+	GetLatestRawYamlByCatalogKindName  http.Handler
 	CORS                               http.Handler
 }
 
@@ -71,6 +72,7 @@ func New(
 			{"ByCatalogKindName", "GET", "/v1/resource/{catalog}/{kind}/{name}"},
 			{"ByID", "GET", "/v1/resource/{id}"},
 			{"GetRawYamlByCatalogKindNameVersion", "GET", "/v1/resource/{catalog}/{kind}/{name}/{version}/raw"},
+			{"GetLatestRawYamlByCatalogKindName", "GET", "/v1/resource/{catalog}/{kind}/{name}/raw"},
 			{"CORS", "OPTIONS", "/v1/query"},
 			{"CORS", "OPTIONS", "/v1/resources"},
 			{"CORS", "OPTIONS", "/v1/resource/{id}/versions"},
@@ -81,6 +83,7 @@ func New(
 			{"CORS", "OPTIONS", "/v1/resource/{catalog}/{kind}/{name}"},
 			{"CORS", "OPTIONS", "/v1/resource/{id}"},
 			{"CORS", "OPTIONS", "/v1/resource/{catalog}/{kind}/{name}/{version}/raw"},
+			{"CORS", "OPTIONS", "/v1/resource/{catalog}/{kind}/{name}/raw"},
 		},
 		Query:                              NewQueryHandler(e.Query, mux, decoder, encoder, errhandler, formatter),
 		List:                               NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
@@ -92,6 +95,7 @@ func New(
 		ByCatalogKindName:                  NewByCatalogKindNameHandler(e.ByCatalogKindName, mux, decoder, encoder, errhandler, formatter),
 		ByID:                               NewByIDHandler(e.ByID, mux, decoder, encoder, errhandler, formatter),
 		GetRawYamlByCatalogKindNameVersion: NewGetRawYamlByCatalogKindNameVersionHandler(e.GetRawYamlByCatalogKindNameVersion, mux, decoder, encoder, errhandler, formatter),
+		GetLatestRawYamlByCatalogKindName:  NewGetLatestRawYamlByCatalogKindNameHandler(e.GetLatestRawYamlByCatalogKindName, mux, decoder, encoder, errhandler, formatter),
 		CORS:                               NewCORSHandler(),
 	}
 }
@@ -111,6 +115,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.ByCatalogKindName = m(s.ByCatalogKindName)
 	s.ByID = m(s.ByID)
 	s.GetRawYamlByCatalogKindNameVersion = m(s.GetRawYamlByCatalogKindNameVersion)
+	s.GetLatestRawYamlByCatalogKindName = m(s.GetLatestRawYamlByCatalogKindName)
 	s.CORS = m(s.CORS)
 }
 
@@ -129,6 +134,7 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountByCatalogKindNameHandler(mux, h.ByCatalogKindName)
 	MountByIDHandler(mux, h.ByID)
 	MountGetRawYamlByCatalogKindNameVersionHandler(mux, h.GetRawYamlByCatalogKindNameVersion)
+	MountGetLatestRawYamlByCatalogKindNameHandler(mux, h.GetLatestRawYamlByCatalogKindName)
 	MountCORSHandler(mux, h.CORS)
 }
 
@@ -659,6 +665,66 @@ func NewGetRawYamlByCatalogKindNameVersionHandler(
 	})
 }
 
+// MountGetLatestRawYamlByCatalogKindNameHandler configures the mux to serve
+// the "resource" service "GetLatestRawYamlByCatalogKindName" endpoint.
+func MountGetLatestRawYamlByCatalogKindNameHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := HandleResourceOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/v1/resource/{catalog}/{kind}/{name}/raw", f)
+}
+
+// NewGetLatestRawYamlByCatalogKindNameHandler creates a HTTP handler which
+// loads the HTTP request and calls the "resource" service
+// "GetLatestRawYamlByCatalogKindName" endpoint.
+func NewGetLatestRawYamlByCatalogKindNameHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(ctx context.Context, err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeGetLatestRawYamlByCatalogKindNameRequest(mux, decoder)
+		encodeResponse = EncodeGetLatestRawYamlByCatalogKindNameResponse(encoder)
+		encodeError    = EncodeGetLatestRawYamlByCatalogKindNameError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "GetLatestRawYamlByCatalogKindName")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "resource")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		o := res.(*resource.GetLatestRawYamlByCatalogKindNameResponseData)
+		defer o.Body.Close()
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+			return
+		}
+		if _, err := io.Copy(w, o.Body); err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+		}
+	})
+}
+
 // MountCORSHandler configures the mux to serve the CORS endpoints for the
 // service resource.
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
@@ -673,6 +739,7 @@ func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	mux.Handle("OPTIONS", "/v1/resource/{catalog}/{kind}/{name}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/resource/{id}", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/v1/resource/{catalog}/{kind}/{name}/{version}/raw", h.ServeHTTP)
+	mux.Handle("OPTIONS", "/v1/resource/{catalog}/{kind}/{name}/raw", h.ServeHTTP)
 }
 
 // NewCORSHandler creates a HTTP handler which returns a simple 200 response.

@@ -521,3 +521,36 @@ func (s *service) GetRawYamlByCatalogKindNameVersion(ctx context.Context, p *res
 
 	return io.NopCloser(bytes.NewBuffer(content)), nil
 }
+
+// Fetch a raw resource yaml file using the name of catalog, resource name, and kind
+func (s *service) GetLatestRawYamlByCatalogKindName(ctx context.Context, p *resource.GetLatestRawYamlByCatalogKindNamePayload) (io.ReadCloser, error) {
+	s.Logger(ctx).Info(fmt.Sprintf("Fetching Latest YAML for resource %s", p.Name))
+
+	req := res.Request{
+		Db:      s.DB(ctx),
+		Log:     s.Logger(ctx),
+		Kind:    p.Kind,
+		Catalog: p.Catalog,
+		Name:    p.Name,
+	}
+
+	version, err := req.GetLatestVersion()
+	if err != nil {
+		if err == res.NotFoundError {
+			return nil, resource.MakeNotFound(err)
+		}
+		if err == res.FetchError {
+			return nil, resource.MakeInternalError(err)
+		}
+	}
+
+	yamlPath := fmt.Sprintf("%s/%s/%s/%s/%s", s.CatalogClonePath(), strings.ToLower(p.Catalog), strings.ToLower(p.Kind), p.Name, version)
+	yamlPath = fmt.Sprintf("%s/%s.yaml", yamlPath, p.Name)
+
+	content, err := os.ReadFile(yamlPath)
+	if err != nil {
+		return nil, resource.MakeNotFound(fmt.Errorf("resource not found"))
+	}
+
+	return io.NopCloser(bytes.NewBuffer(content)), nil
+}

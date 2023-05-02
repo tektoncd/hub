@@ -338,3 +338,18 @@ func TestGetYamlByCatalogKindNameVersion(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, yamlFile)
 }
+
+func TestGetLatestRawYamlByCatalogKindName(t *testing.T) {
+	os.Setenv("CLONE_BASE_PATH", "testdata/catalog")
+	defer os.Unsetenv("CLONE_BASE_PATH")
+
+	tc := testutils.Setup(t)
+	testutils.LoadFixtures(t, tc.FixturePath())
+
+	resourceService := New(tc)
+	payload := &resource.GetLatestRawYamlByCatalogKindNamePayload{Catalog: "catalog-official", Kind: "task", Name: "tkn"}
+	yamlFile, err := resourceService.GetLatestRawYamlByCatalogKindName(context.Background(), payload)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, yamlFile)
+}

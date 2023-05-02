@@ -303,7 +303,32 @@ var _ = Service("resource", func() {
 
 		HTTP(func() {
 			GET("/resource/{catalog}/{kind}/{name}/{version}/raw")
+			Response(StatusOK)
+			Response("internal-error", StatusInternalServerError)
+			Response("not-found", StatusNotFound)
+			SkipResponseBodyEncodeDecode()
+		})
+	})
 
+	Method("GetLatestRawYamlByCatalogKindName", func() {
+		Description("Fetch a raw latest resource yaml file using the name of catalog, resource name, and kind")
+
+		Payload(func() {
+			Attribute("catalog", String, "name of catalog", func() {
+				Example("catalog", "tekton")
+			})
+			Attribute("kind", String, "kind of resource", func() {
+				Enum("task", "pipeline")
+			})
+			Attribute("name", String, "name of resource", func() {
+				Example("name", "buildah")
+			})
+
+			Required("catalog", "kind", "name")
+		})
+
+		HTTP(func() {
+			GET("/resource/{catalog}/{kind}/{name}/raw")
 			Response(StatusOK)
 			Response("internal-error", StatusInternalServerError)
 			Response("not-found", StatusNotFound)
