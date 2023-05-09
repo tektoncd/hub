@@ -35,8 +35,8 @@ require (
 	gorm.io/driver/postgres v1.4.8
 	gorm.io/gorm v1.24.6
 	gotest.tools/v3 v3.4.0
-	k8s.io/apimachinery v0.26.4
-	k8s.io/client-go v0.25.9
+	k8s.io/apimachinery v0.27.1
+	k8s.io/client-go v0.27.1
 	knative.dev/pkg v0.0.0-20230221145627-8efb3485adcf
 )
 
@@ -125,7 +125,6 @@ require (
 	github.com/prometheus/procfs v0.9.0 // indirect
 	github.com/prometheus/statsd_exporter v0.21.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
-	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/sigstore/sigstore v1.6.2 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
@@ -161,7 +160,7 @@ require (
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.25.9 // indirect
+	k8s.io/api v0.27.1 // indirect
 	k8s.io/klog/v2 v2.90.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230308215209-15aac26d736a // indirect
 	k8s.io/utils v0.0.0-20230209194617-a36077c30491 // indirect
