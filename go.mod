@@ -7,7 +7,6 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
 	github.com/fatih/color v1.15.0
-	github.com/ghodss/yaml v1.0.0
 	github.com/go-co-op/gocron v1.18.1
 	github.com/go-gormigrate/gormigrate/v2 v2.0.2
 	github.com/go-testfixtures/testfixtures/v3 v3.8.1
@@ -38,6 +37,7 @@ require (
 	k8s.io/apimachinery v0.26.4
 	k8s.io/client-go v0.25.9
 	knative.dev/pkg v0.0.0-20230221145627-8efb3485adcf
+	sigs.k8s.io/yaml v1.3.0
 )
 
 require (
@@ -167,5 +167,4 @@ require (
 	k8s.io/utils v0.0.0-20230209194617-a36077c30491 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
-	sigs.k8s.io/yaml v1.3.0 // indirect
 )
