@@ -22,7 +22,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ghodss/yaml"
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/pkg/testutils"
@@ -30,6 +29,7 @@ import (
 	"github.com/tektoncd/hub/api/v1/gen/resource"
 	goa "goa.design/goa/v3/pkg"
 	"gotest.tools/v3/golden"
+	"sigs.k8s.io/yaml"
 )
 
 func QueryChecker(tc *testutils.TestConfig) *goahttpcheck.APIChecker {
