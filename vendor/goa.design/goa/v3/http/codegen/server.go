@@ -34,7 +34,7 @@ func serverFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File {
 	svcName := data.Service.PathName
 	path := filepath.Join(codegen.Gendir, "http", svcName, "server", "server.go")
 	title := fmt.Sprintf("%s HTTP server", svc.Name())
-	funcs := map[string]interface{}{
+	funcs := map[string]any{
 		"join":                    func(ss []string, s string) string { return strings.Join(ss, s) },
 		"hasWebSocket":            hasWebSocket,
 		"isWebSocketEndpoint":     isWebSocketEndpoint,
@@ -171,8 +171,8 @@ func serverEncodeDecodeFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.F
 	return &codegen.File{Path: path, SectionTemplates: sections}
 }
 
-func transTmplFuncs(s *expr.HTTPServiceExpr) map[string]interface{} {
-	return map[string]interface{}{
+func transTmplFuncs(s *expr.HTTPServiceExpr) map[string]any {
+	return map[string]any{
 		"goTypeRef": func(dt expr.DataType) string {
 			return service.Services.Get(s.Name()).Scope.GoTypeRef(&expr.AttributeExpr{Type: dt})
 		},
@@ -194,8 +194,8 @@ func mustDecodeRequest(e *EndpointData) bool {
 
 // conversionData creates a template context suitable for executing the
 // "type_conversion" template.
-func conversionData(varName, name string, dt expr.DataType) map[string]interface{} {
-	return map[string]interface{}{
+func conversionData(varName, name string, dt expr.DataType) map[string]any {
+	return map[string]any{
 		"VarName": varName,
 		"Name":    name,
 		"Type":    dt,
@@ -204,8 +204,8 @@ func conversionData(varName, name string, dt expr.DataType) map[string]interface
 
 // headerConversionData produces the template data suitable for executing the
 // "header_conversion" template.
-func headerConversionData(dt expr.DataType, varName string, required bool, target string) map[string]interface{} {
-	return map[string]interface{}{
+func headerConversionData(dt expr.DataType, varName string, required bool, target string) map[string]any {
+	return map[string]any{
 		"Type":     dt,
 		"VarName":  varName,
 		"Required": required,
@@ -215,7 +215,7 @@ func headerConversionData(dt expr.DataType, varName string, required bool, targe
 
 // printValue generates the Go code for a literal string containing the given
 // value. printValue panics if the data type is not a primitive or an array.
-func printValue(dt expr.DataType, v interface{}) string {
+func printValue(dt expr.DataType, v any) string {
 	switch actual := dt.(type) {
 	case *expr.Array:
 		val := reflect.ValueOf(v)
@@ -256,8 +256,8 @@ func removeTrailingIndexHTML(s string) string {
 	return s
 }
 
-func mapQueryDecodeData(dt expr.DataType, varName string, inc int) map[string]interface{} {
-	return map[string]interface{}{
+func mapQueryDecodeData(dt expr.DataType, varName string, inc int) map[string]any {
+	return map[string]any{
 		"Type":      dt,
 		"VarName":   varName,
 		"Loop":      string(rune(97 + inc)),
@@ -541,8 +541,8 @@ func {{ .Name }}(v {{ .ParamTypeRef }}) {{ .ResultTypeRef }} {
 
 // input: EndpointData
 const requestDecoderT = `{{ printf "%s returns a decoder for requests sent to the %s %s endpoint." .RequestDecoder .ServiceName .Method.Name | comment }}
-func {{ .RequestDecoder }}(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
-	return func(r *http.Request) (interface{}, error) {
+func {{ .RequestDecoder }}(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (any, error) {
+	return func(r *http.Request) (any, error) {
 {{- if .MultipartRequestDecoder }}
 		var payload {{ .Payload.Ref }}
 		if err := decoder(r).Decode(&payload); err != nil {
@@ -652,11 +652,11 @@ const requestElementsT = `{{- define "request_elements" }}
 
 {{- range .PathParams }}
 	{{- if and (or (eq .Type.Name "string") (eq .Type.Name "any")) }}
-		{{ .VarName }} = params["{{ .Name }}"]
+		{{ .VarName }} = params["{{ .HTTPName }}"]
 
 	{{- else }}{{/* not string and not any */}}
 		{
-			{{ .VarName }}Raw := params["{{ .Name }}"]
+			{{ .VarName }}Raw := params["{{ .HTTPName }}"]
 			{{- template "path_conversion" . }}
 		}
 
@@ -668,13 +668,13 @@ const requestElementsT = `{{- define "request_elements" }}
 
 {{- range .QueryParams }}
 	{{- if and (or (eq .Type.Name "string") (eq .Type.Name "any")) .Required }}
-		{{ .VarName }} = r.URL.Query().Get("{{ .Name }}")
+		{{ .VarName }} = r.URL.Query().Get("{{ .HTTPName }}")
 		if {{ .VarName }} == "" {
 			err = goa.MergeErrors(err, goa.MissingFieldError("{{ .Name }}", "query string"))
 		}
 
 	{{- else if (or (eq .Type.Name "string") (eq .Type.Name "any")) }}
-		{{ .VarName }}Raw := r.URL.Query().Get("{{ .Name }}")
+		{{ .VarName }}Raw := r.URL.Query().Get("{{ .HTTPName }}")
 		if {{ .VarName }}Raw != "" {
 			{{ .VarName }} = {{ if and (eq .Type.Name "string") .Pointer }}&{{ end }}{{ .VarName }}Raw
 		}
@@ -684,7 +684,7 @@ const requestElementsT = `{{- define "request_elements" }}
 		{{- end }}
 
 	{{- else if .StringSlice }}
-		{{ .VarName }} = r.URL.Query()["{{ .Name }}"]
+		{{ .VarName }} = r.URL.Query()["{{ .HTTPName }}"]
 		{{- if .Required }}
 		if {{ .VarName }} == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("{{ .Name }}", "query string"))
@@ -701,10 +701,10 @@ const requestElementsT = `{{- define "request_elements" }}
 
 	{{- else if .Slice }}
 	{
-		{{ .VarName }}Raw := r.URL.Query()["{{ .Name }}"]
+		{{ .VarName }}Raw := r.URL.Query()["{{ .HTTPName }}"]
 		{{- if .Required }}
 		if {{ .VarName }}Raw == nil {
-			return nil, goa.MergeErrors(err, goa.MissingFieldError("{{ .Name }}", "query string"))
+			err = goa.MergeErrors(err, goa.MissingFieldError("{{ .Name }}", "query string"))
 		}
 		{{- else if .DefaultValue }}
 		if {{ .VarName }}Raw == nil {
@@ -740,7 +740,7 @@ const requestElementsT = `{{- define "request_elements" }}
 		if len({{ .VarName }}Raw) != 0 {
 		{{- end }}
 		for keyRaw, valRaw := range {{ .VarName }}Raw {
-			if strings.HasPrefix(keyRaw, "{{ .Name }}[") {
+			if strings.HasPrefix(keyRaw, "{{ .HTTPName }}[") {
 				{{- template "map_conversion" (mapQueryDecodeData .Type .VarName 0) }}
 			}
 		}
@@ -767,7 +767,7 @@ const requestElementsT = `{{- define "request_elements" }}
 		if len({{ .VarName }}Raw) != 0 {
 		{{- end }}
 		for keyRaw, valRaw := range {{ .VarName }}Raw {
-			if strings.HasPrefix(keyRaw, "{{ .Name }}[") {
+			if strings.HasPrefix(keyRaw, "{{ .HTTPName }}[") {
 				{{- template "map_conversion" (mapQueryDecodeData .Type .VarName 0) }}
 			}
 		}
@@ -778,7 +778,7 @@ const requestElementsT = `{{- define "request_elements" }}
 
 	{{- else }}{{/* not string, not any, not slice and not map */}}
 	{
-		{{ .VarName }}Raw := r.URL.Query().Get("{{ .Name }}")
+		{{ .VarName }}Raw := r.URL.Query().Get("{{ .HTTPName }}")
 		{{- if .Required }}
 		if {{ .VarName }}Raw == "" {
 			err = goa.MergeErrors(err, goa.MissingFieldError("{{ .Name }}", "query string"))
@@ -807,13 +807,13 @@ const requestElementsT = `{{- define "request_elements" }}
 
 {{- range .Headers }}
 	{{- if and (or (eq .Type.Name "string") (eq .Type.Name "any")) .Required }}
-		{{ .VarName }} = r.Header.Get("{{ .Name }}")
+		{{ .VarName }} = r.Header.Get("{{ .HTTPName }}")
 		if {{ .VarName }} == "" {
 			err = goa.MergeErrors(err, goa.MissingFieldError("{{ .Name }}", "header"))
 		}
 
 	{{- else if (or (eq .Type.Name "string") (eq .Type.Name "any")) }}
-		{{ .VarName }}Raw := r.Header.Get("{{ .Name }}")
+		{{ .VarName }}Raw := r.Header.Get("{{ .HTTPName }}")
 		if {{ .VarName }}Raw != "" {
 			{{ .VarName }} = {{ if and (eq .Type.Name "string") .Pointer }}&{{ end }}{{ .VarName }}Raw
 		}
@@ -858,7 +858,7 @@ const requestElementsT = `{{- define "request_elements" }}
 
 	{{- else }}{{/* not string, not any and not slice */}}
 	{
-		{{ .VarName }}Raw := r.Header.Get("{{ .Name }}")
+		{{ .VarName }}Raw := r.Header.Get("{{ .HTTPName }}")
 		{{- if .Required }}
 		if {{ .VarName }}Raw == "" {
 			err = goa.MergeErrors(err, goa.MissingFieldError("{{ .Name }}", "header"))
@@ -885,7 +885,7 @@ const requestElementsT = `{{- define "request_elements" }}
 {{- end }}
 
 {{- range .Cookies }}
-	c, {{ if not .Required }}_{{ else }}err{{ end }} = r.Cookie("{{ .Name }}")
+	c, {{ if not .Required }}_{{ else }}err{{ end }} = r.Cookie("{{ .HTTPName }}")
 	{{- if and (or (eq .Type.Name "string") (eq .Type.Name "any")) .Required }}
 		if err == http.ErrNoCookie {
 			err = goa.MergeErrors(err, goa.MissingFieldError("{{ .Name }}", "cookie"))
@@ -963,7 +963,7 @@ const requestElementsT = `{{- define "request_elements" }}
 		key{{ .Loop }} = keyRaw[openIdx+1 : closeIdx]
 	{{- else }}
 		key{{ .Loop }}Raw := keyRaw[openIdx+1 : closeIdx]
-		{{- template "type_conversion" (conversionData (printf "key%s" .Loop) (printf "%q" "query") .Type.KeyType.Type) }}
+		{{- template "type_conversion" (conversionData (printf "key%s" .Loop) "query" .Type.KeyType.Type) }}
 	{{- end }}
 		{{- if gt .Depth 0 }}
 			keyRaw = keyRaw[closeIdx+1:]
@@ -977,7 +977,7 @@ const requestElementsT = `{{- define "request_elements" }}
 		{{- else }}
 			var val {{ goTypeRef .Type.ElemType.Type }}
 			{
-				{{- template "slice_conversion" (conversionData "val" (printf "%q" "query") .Type.ElemType.Type) }}
+				{{- template "slice_conversion" (conversionData "val" "query" .Type.ElemType.Type) }}
 			}
 			{{ .VarName }}[key{{ .Loop }}] = val
 		{{- end }}
@@ -987,7 +987,7 @@ const requestElementsT = `{{- define "request_elements" }}
 		var val{{ .Loop }} {{ goTypeRef .Type.ElemType.Type }}
 		{
 			val{{ .Loop }}Raw := valRaw[0]
-			{{- template "type_conversion" (conversionData (printf "val%s" .Loop)  (printf "%q" "query") .Type.ElemType.Type) }}
+			{{- template "type_conversion" (conversionData (printf "val%s" .Loop) "query" .Type.ElemType.Type) }}
 		}
 		{{ .VarName }}[key{{ .Loop }}] = val{{ .Loop }}
 	{{- end }}
@@ -1007,7 +1007,7 @@ const typeConversionT = `{{- define "slice_conversion" }}
 	{{- else if eq .Type.Name "int" }}
 		v, err2 := strconv.ParseInt({{ .VarName }}Raw, 10, strconv.IntSize)
 		if err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "integer"))
+			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "integer"))
 		}
 		{{- if .Pointer }}
 		pv := int(v)
@@ -1018,7 +1018,7 @@ const typeConversionT = `{{- define "slice_conversion" }}
 	{{- else if eq .Type.Name "int32" }}
 		v, err2 := strconv.ParseInt({{ .VarName }}Raw, 10, 32)
 		if err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "integer"))
+			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "integer"))
 		}
 		{{- if .Pointer }}
 		pv := int32(v)
@@ -1029,13 +1029,13 @@ const typeConversionT = `{{- define "slice_conversion" }}
 	{{- else if eq .Type.Name "int64" }}
 		v, err2 := strconv.ParseInt({{ .VarName }}Raw, 10, 64)
 		if err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "integer"))
+			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "integer"))
 		}
 		{{ .VarName }} = {{ if .Pointer}}&{{ end }}v
 	{{- else if eq .Type.Name "uint" }}
 		v, err2 := strconv.ParseUint({{ .VarName }}Raw, 10, strconv.IntSize)
 		if err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "unsigned integer"))
+			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "unsigned integer"))
 		}
 		{{- if .Pointer }}
 		pv := uint(v)
@@ -1046,7 +1046,7 @@ const typeConversionT = `{{- define "slice_conversion" }}
 	{{- else if eq .Type.Name "uint32" }}
 		v, err2 := strconv.ParseUint({{ .VarName }}Raw, 10, 32)
 		if err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "unsigned integer"))
+			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "unsigned integer"))
 		}
 		{{- if .Pointer }}
 		pv := uint32(v)
@@ -1057,13 +1057,13 @@ const typeConversionT = `{{- define "slice_conversion" }}
 	{{- else if eq .Type.Name "uint64" }}
 		v, err2 := strconv.ParseUint({{ .VarName }}Raw, 10, 64)
 		if err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "unsigned integer"))
+			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "unsigned integer"))
 		}
 		{{ .VarName }} = {{ if .Pointer }}&{{ end }}v
 	{{- else if eq .Type.Name "float32" }}
 		v, err2 := strconv.ParseFloat({{ .VarName }}Raw, 32)
 		if err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "float"))
+			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "float"))
 		}
 		{{- if .Pointer }}
 		pv := float32(v)
@@ -1074,13 +1074,13 @@ const typeConversionT = `{{- define "slice_conversion" }}
 	{{- else if eq .Type.Name "float64" }}
 		v, err2 := strconv.ParseFloat({{ .VarName }}Raw, 64)
 		if err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "float"))
+			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "float"))
 		}
 		{{ .VarName }} = {{ if .Pointer }}&{{ end }}v
 	{{- else if eq .Type.Name "boolean" }}
 		v, err2 := strconv.ParseBool({{ .VarName }}Raw)
 		if err2 != nil {
-			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "boolean"))
+			err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "boolean"))
 		}
 		{{ .VarName }} = {{ if .Pointer }}&{{ end }}v
 	{{- else }}
@@ -1095,55 +1095,55 @@ const typeConversionT = `{{- define "slice_conversion" }}
 		{{- else if eq .Type.ElemType.Type.Name "int" }}
 			v, err2 := strconv.ParseInt(rv, 10, strconv.IntSize)
 			if err2 != nil {
-				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "array of integers"))
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "array of integers"))
 			}
 			{{ .VarName }}[i] = int(v)
 		{{- else if eq .Type.ElemType.Type.Name "int32" }}
 			v, err2 := strconv.ParseInt(rv, 10, 32)
 			if err2 != nil {
-				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "array of integers"))
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "array of integers"))
 			}
 			{{ .VarName }}[i] = int32(v)
 		{{- else if eq .Type.ElemType.Type.Name "int64" }}
 			v, err2 := strconv.ParseInt(rv, 10, 64)
 			if err2 != nil {
-				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "array of integers"))
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "array of integers"))
 			}
 			{{ .VarName }}[i] = v
 		{{- else if eq .Type.ElemType.Type.Name "uint" }}
 			v, err2 := strconv.ParseUint(rv, 10, strconv.IntSize)
 			if err2 != nil {
-				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "array of unsigned integers"))
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "array of unsigned integers"))
 			}
 			{{ .VarName }}[i] = uint(v)
 		{{- else if eq .Type.ElemType.Type.Name "uint32" }}
 			v, err2 := strconv.ParseUint(rv, 10, 32)
 			if err2 != nil {
-				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "array of unsigned integers"))
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "array of unsigned integers"))
 			}
 			{{ .VarName }}[i] = uint32(v)
 		{{- else if eq .Type.ElemType.Type.Name "uint64" }}
 			v, err2 := strconv.ParseUint(rv, 10, 64)
 			if err2 != nil {
-				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "array of unsigned integers"))
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "array of unsigned integers"))
 			}
 			{{ .VarName }}[i] = v
 		{{- else if eq .Type.ElemType.Type.Name "float32" }}
 			v, err2 := strconv.ParseFloat(rv, 32)
 			if err2 != nil {
-				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "array of floats"))
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "array of floats"))
 			}
 			{{ .VarName }}[i] = float32(v)
 		{{- else if eq .Type.ElemType.Type.Name "float64" }}
 			v, err2 := strconv.ParseFloat(rv, 64)
 			if err2 != nil {
-				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "array of floats"))
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "array of floats"))
 			}
 			{{ .VarName }}[i] = v
 		{{- else if eq .Type.ElemType.Type.Name "boolean" }}
 			v, err2 := strconv.ParseBool(rv)
 			if err2 != nil {
-				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .VarName }}, {{ .VarName}}Raw, "array of booleans"))
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError({{ printf "%q" .Name }}, {{ .VarName}}Raw, "array of booleans"))
 			}
 			{{ .VarName }}[i] = v
 		{{- else if eq .Type.ElemType.Type.Name "any" }}
@@ -1156,8 +1156,8 @@ const typeConversionT = `{{- define "slice_conversion" }}
 
 // input: EndpointData
 const responseEncoderT = `{{ printf "%s returns an encoder for responses returned by the %s %s endpoint." .ResponseEncoder .ServiceName .Method.Name | comment }}
-func {{ .ResponseEncoder }}(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
-	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+func {{ .ResponseEncoder }}(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, any) error {
+	return func(ctx context.Context, w http.ResponseWriter, v any) error {
 	{{- if .Result.MustInit }}
 		{{- if .Method.ViewedResult }}
 			res := v.({{ .Method.ViewedResult.FullRef }})
@@ -1241,7 +1241,7 @@ const responseT = `{{ define "response" -}}
 	{{- end }}
 	{{- if gt $servBodyLen 0 }}
 		{{- if and (gt $servBodyLen 1) $.ViewedResult }}
-	var body interface{}
+	var body any
 	switch res.View	{
 			{{- range $.ViewedResult.Views }}
 	case {{ printf "%q" .Name }}{{ if eq .Name "default" }}, ""{{ end }}:
@@ -1251,7 +1251,7 @@ const responseT = `{{ define "response" -}}
 	}
 		{{- else if (index .ServerBody 0).Init }}
 			{{- if .ErrorHeader }}
-	var body interface{}
+	var body any
 	if formatter != nil {
 		body = formatter(ctx, {{ (index (index .ServerBody 0).Init.ServerArgs 0).Ref }})
 	} else {
@@ -1406,7 +1406,7 @@ type {{ .FuncName }} func(*multipart.Reader, *{{ .Payload.Ref }}) error
 const multipartRequestDecoderT = `{{ printf "%s returns a decoder to decode the multipart request for the %q service %q endpoint." .InitName .ServiceName .MethodName | comment }}
 func {{ .InitName }}(mux goahttp.Muxer, {{ .VarName }} {{ .FuncName }}) func(r *http.Request) goahttp.Decoder {
 	return func(r *http.Request) goahttp.Decoder {
-		return goahttp.EncodingFunc(func(v interface{}) error {
+		return goahttp.EncodingFunc(func(v any) error {
 			mr, merr := r.MultipartReader()
 			if merr != nil {
 				return merr
