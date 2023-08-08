@@ -276,6 +276,18 @@ testfixtures.New(
 )
 ```
 
+## Disable cleanup
+
+If you want to disable cleanup, you can also do like below.
+This is usually not recommended, and should be used mostly for debugging.
+
+```go
+testfixtures.New(
+        ...
+        testfixtures.DangerousSkipCleanupFixtureTables(),
+)
+```
+
 ## Sequences
 
 For PostgreSQL and MySQL/MariaDB, this package also resets all
@@ -296,6 +308,19 @@ Or, if you want to skip the reset of sequences entirely:
 testfixtures.New(
         ...
         testfixtures.SkipResetSequences(),
+)
+```
+
+## Force `DELETE FROM ...` on ClickHouse
+
+By default, when using ClickHouse, this library will use `TRUNCATE ...` to
+clean the database. If you want to force the use of `DELETE FROM ...` you can
+do it by doing:
+
+```go
+testfixtures.New(
+        ...
+        testfixtures.ClickhouseUseDeleteFrom(),
 )
 ```
 
@@ -403,6 +428,15 @@ testfixtures.New(
 
 Tested using the `mssql` and `sqlserver` drivers from the
 [github.com/denisenkom/go-mssqldb](https://github.com/denisenkom/go-mssqldb) lib.
+
+### ClickHouse
+
+```go
+testfixtures.New(
+        ...
+        testfixtures.Dialect("clickhouse"),
+)
+```
 
 ## Templating
 
@@ -514,7 +548,7 @@ Use `testfixtures --help` for all flags.
 
 ## Contributing
 
-We recommend you to [install Task](https://taskfile.dev/#/installation) and
+We recommend you to [install Task](https://taskfile.dev/installation/) and
 Docker before contributing to this package, since some stuff is automated
 using these tools.
 
