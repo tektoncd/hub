@@ -24,7 +24,7 @@ require (
 	github.com/stretchr/testify v1.8.2
 	github.com/tektoncd/pipeline v0.47.0
 	github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
-	go.uber.org/automaxprocs v1.5.1
+	go.uber.org/automaxprocs v1.5.3
 	go.uber.org/zap v1.24.0
 	goa.design/goa/v3 v3.11.1
 	goa.design/plugins/v3 v3.11.1
