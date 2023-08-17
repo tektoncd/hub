@@ -252,7 +252,12 @@ func transformObject(source, target *expr.AttributeExpr, sourceVar, targetVar st
 			checkNil = isRef || marshalNonPrimitive
 		}
 		if code != "" && checkNil {
-			code = fmt.Sprintf("if %s != nil {\n\t%s}\n", srcVar, code)
+			code = fmt.Sprintf("if %s != nil {\n\t%s}", srcVar, code)
+			if expr.IsArray(srcc.Type) && srcMatt.IsRequired(n) {
+				code += fmt.Sprintf("else {\n\t%s = []%s{}\n}\n", tgtVar, ta.TargetCtx.Scope.Ref(expr.AsArray(tgtc.Type).ElemType, ta.TargetCtx.Pkg(expr.AsArray(tgtc.Type).ElemType)))
+			} else {
+				code += "\n"
+			}
 		}
 
 		// Default value handling. We need to handle default values if the target
@@ -274,14 +279,21 @@ func transformObject(source, target *expr.AttributeExpr, sourceVar, targetVar st
 				// (the field is not a pointer in this case)
 				code += "{\n\t"
 				if typeName, _ := GetMetaType(tgtc); typeName != "" {
-					code += fmt.Sprintf("var zero %s\n\t", typeName)
+					if !typeStringIsNilable(typeName) {
+						code += fmt.Sprintf("var zero %s\n\t", typeName)
+					}
 				} else if _, ok := tgtc.Type.(expr.UserType); ok {
 					// aliased primitive
 					code += fmt.Sprintf("var zero %s\n\t", ta.TargetCtx.Scope.Ref(tgtc, ta.TargetCtx.Pkg(tgtc)))
 				} else {
 					code += fmt.Sprintf("var zero %s\n\t", GoNativeTypeName(tgtc.Type))
 				}
-				code += fmt.Sprintf("if %s == zero {\n\t%s = %#v\n}\n", tgtVar, tgtVar, tdef)
+				if typeName, _ := GetMetaType(tgtc); typeName != "" && typeStringIsNilable(typeName) {
+					code += fmt.Sprintf("if %s == nil ", tgtVar)
+				} else {
+					code += fmt.Sprintf("if %s == zero ", tgtVar)
+				}
+				code += fmt.Sprintf("{\n\t%s = %#v\n}\n", tgtVar, tdef)
 				code += "}\n"
 			}
 		}
@@ -294,12 +306,18 @@ func transformObject(source, target *expr.AttributeExpr, sourceVar, targetVar st
 	return buffer.String(), nil
 }
 
+// typeStringIsNilable takes a go type as a string and checks for a '[]' or
+// 'map[' prefix to see if it's a nilable primitive type.
+func typeStringIsNilable(typeName string) bool {
+	return strings.HasPrefix(typeName, "[]") || strings.HasPrefix(typeName, "map[")
+}
+
 // transformArray generates Go code to transform source array to target array.
 func transformArray(source, target *expr.Array, sourceVar, targetVar string, newVar bool, ta *TransformAttrs) (string, error) {
 	if err := IsCompatible(source.ElemType.Type, target.ElemType.Type, sourceVar+"[0]", targetVar+"[0]"); err != nil {
 		return "", err
 	}
-	data := map[string]interface{}{
+	data := map[string]any{
 		"ElemTypeRef":    ta.TargetCtx.Scope.Ref(target.ElemType, ta.TargetCtx.Pkg(target.ElemType)),
 		"SourceElem":     source.ElemType,
 		"TargetElem":     target.ElemType,
@@ -325,7 +343,7 @@ func transformMap(source, target *expr.Map, sourceVar, targetVar string, newVar 
 	if err := IsCompatible(source.ElemType.Type, target.ElemType.Type, sourceVar+"[*]", targetVar+"[*]"); err != nil {
 		return "", err
 	}
-	data := map[string]interface{}{
+	data := map[string]any{
 		"KeyTypeRef":     ta.TargetCtx.Scope.Ref(target.KeyType, ta.TargetCtx.Pkg(target.KeyType)),
 		"ElemTypeRef":    ta.TargetCtx.Scope.Ref(target.ElemType, ta.TargetCtx.Pkg(target.ElemType)),
 		"SourceKey":      source.KeyType,
@@ -382,7 +400,7 @@ func transformUnion(source, target *expr.AttributeExpr, sourceVar, targetVar str
 	// Need to type assert targetVar before assigning field values.
 	ta.TargetCtx.IsInterface = true
 
-	data := map[string]interface{}{
+	data := map[string]any{
 		"SourceTypeRefs": sourceTypeRefs,
 		"SourceTypes":    srcUnion.Values,
 		"TargetTypes":    tgtUnion.Values,
@@ -415,7 +433,7 @@ func transformUnionToObject(source, target *expr.AttributeExpr, sourceVar, targe
 		sourceTypeRefs[i] = ta.SourceCtx.Scope.Ref(st.Attribute, ta.SourceCtx.Pkg(st.Attribute))
 		sourceTypeNames[i] = st.Name
 	}
-	data := map[string]interface{}{
+	data := map[string]any{
 		"NewVar":          newVar,
 		"TargetVar":       targetVar,
 		"TypeRef":         ta.TargetCtx.Scope.Ref(target, ta.TargetCtx.Pkg(target)),
@@ -451,7 +469,7 @@ func transformObjectToUnion(source, target *expr.AttributeExpr, sourceVar, targe
 		unionTypes[i] = tt.Name
 		targetTypeRefs[i] = ta.TargetCtx.Scope.Ref(tt.Attribute, ta.TargetCtx.Pkg(tt.Attribute))
 	}
-	data := map[string]interface{}{
+	data := map[string]any{
 		"NewVar":         newVar,
 		"TargetVar":      targetVar,
 		"TypeRef":        ta.TargetCtx.Scope.Ref(target, ta.TargetCtx.Pkg(target)),

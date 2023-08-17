@@ -122,23 +122,15 @@ func buildBodyTypes(api *expr.APIExpr) (map[string]map[string]*EndpointBodies, m
 				}
 				body := resp.Body
 				if view != "" {
-					// Static view
-					rt, err := expr.Project(body.Type.(*expr.ResultTypeExpr), view)
-					if err != nil { // bug
+					// Static view, dup and project
+					rt := expr.Dup(body.Type).(*expr.ResultTypeExpr)
+					rt, err := expr.Project(rt, view)
+					if err != nil {
 						panic(fmt.Sprintf("failed to project %q to view %q", body.Type.Name(), view))
 					}
 					body.Type = rt
 				}
 				js := sf.schemafy(body)
-				if rt, ok := resp.Body.Type.(*expr.ResultTypeExpr); ok && js != nil {
-					if view == "" && rt.HasMultipleViews() {
-						// Dynamic views
-						if len(js.Description) > 0 {
-							js.Description += "\n"
-						}
-						js.Description += sf.viewsNote(rt)
-					}
-				}
 				res[resp.StatusCode] = append(res[resp.StatusCode], js)
 			}
 			sbodies[e.Name()] = &EndpointBodies{req, res}
@@ -243,6 +235,7 @@ func (sf *schemafier) schemafy(attr *expr.AttributeExpr, noref ...bool) *openapi
 			} else if n, ok := t.Attribute().Meta["name:original"]; ok {
 				name = n[0]
 			}
+
 			typeName := sf.uniquify(codegen.Goify(name, true))
 			s.Ref = toRef(typeName)
 			sf.hashes[h] = append(sf.hashes[h], s.Ref)
@@ -319,49 +312,24 @@ func (sf *schemafier) uniquify(n string) string {
 	return n
 }
 
-// viewsNote returns a human friendly description of the different possible
-// response body shapes for the different views supported by the attribute type
-// which must be a ResultType.
-func (sf *schemafier) viewsNote(rt *expr.ResultTypeExpr) string {
-	var alts []string
-	for _, v := range rt.Views {
-		if v.Name != expr.DefaultView {
-			pr, err := expr.Project(rt, v.Name)
-			if err != nil {
-				panic(fmt.Sprintf("failed to project %q with view %q", rt.Name(), v.Name)) // bug, DSL should have performed validations
-			}
-			js := sf.schemafy(&expr.AttributeExpr{Type: pr})
-			alts = append(alts, js.Ref)
-		}
-	}
-	oneof := ""
-	last := ""
-	if len(alts) > 1 {
-		oneof = "one of "
-		last = " or " + alts[len(alts)-1]
-		alts = alts[:len(alts)-1]
-	}
-	return "Response body may alternatively be " + oneof + strings.Join(alts, ", ") + last
-}
-
 // toRef creates a relative JSON Schema reference from a type name that points
 // to the corresponding definition in the OpenAPI "components" field.
 func toRef(n string) string {
 	return fmt.Sprintf("#/components/schemas/%s", n)
 }
 
-// toStringMap converts map[interface{}]interface{} to a map[string]interface{}
+// toStringMap converts map[any]any to a map[string]any
 // when possible.
-func toStringMap(val interface{}) interface{} {
+func toStringMap(val any) any {
 	switch actual := val.(type) {
-	case map[interface{}]interface{}:
-		m := make(map[string]interface{})
+	case map[any]any:
+		m := make(map[string]any)
 		for k, v := range actual {
 			m[toString(k)] = toStringMap(v)
 		}
 		return m
-	case []interface{}:
-		mapSlice := make([]interface{}, len(actual))
+	case []any:
+		mapSlice := make([]any, len(actual))
 		for i, e := range actual {
 			mapSlice[i] = toStringMap(e)
 		}
@@ -372,7 +340,7 @@ func toStringMap(val interface{}) interface{} {
 }
 
 // toString returns the string representation of the given type.
-func toString(val interface{}) string {
+func toString(val any) string {
 	switch actual := val.(type) {
 	case string:
 		return actual
