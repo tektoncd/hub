@@ -157,9 +157,9 @@ type (
 		// Validate contains the validation code if any.
 		Validate string
 		// DefaultValue contains the default value if any.
-		DefaultValue interface{}
+		DefaultValue any
 		// Example is an example value.
-		Example interface{}
+		Example any
 	}
 
 	// ErrorData contains the error information required to generate the
@@ -307,12 +307,12 @@ type (
 		// Required is true if the arg is required to build the payload.
 		Required bool
 		// DefaultValue is the default value of the arg.
-		DefaultValue interface{}
+		DefaultValue any
 		// Validate contains the validation code for the argument
 		// value if any.
 		Validate string
 		// Example is a example value
-		Example interface{}
+		Example any
 	}
 
 	// StreamData contains data to render the stream struct type that implements
@@ -766,7 +766,7 @@ func addValidation(att *expr.AttributeExpr, attName string, sd *ServiceData, req
 // req if true indicates that the validations are generated for validating
 // request messages.
 func collectValidations(att *expr.AttributeExpr, attName string, ctx *codegen.AttributeContext, req bool, sd *ServiceData) {
-	attName = codegen.Goify(attName, false)
+	gattName := codegen.Goify(attName, false)
 	switch dt := att.Type.(type) {
 	case expr.UserType:
 		if expr.IsPrimitive(dt) {
@@ -774,7 +774,7 @@ func collectValidations(att *expr.AttributeExpr, attName string, ctx *codegen.At
 			return
 		}
 		vtx := protoBufTypeContext(sd.PkgName, sd.Scope, false)
-		def := codegen.ValidationCode(att, dt, vtx, true, false, attName)
+		def := codegen.AttributeValidationCode(att, dt, vtx, true, false, gattName, attName)
 		name := protoBufMessageName(att, sd.Scope)
 		kind := validateClient
 		if req {
@@ -793,7 +793,7 @@ func collectValidations(att *expr.AttributeExpr, attName string, ctx *codegen.At
 			sd.validations = append(sd.validations, &ValidationData{
 				Name:    "Validate" + name,
 				Def:     def,
-				ArgName: attName,
+				ArgName: gattName,
 				SrcName: name,
 				SrcRef:  protoBufGoFullTypeRef(att, sd.PkgName, sd.Scope),
 				Kind:    kind,
@@ -1299,7 +1299,7 @@ func extractMetadata(a *expr.MappedAttributeExpr, service *expr.AttributeExpr, s
 				mp.KeyType.Type.Kind() == expr.StringKind &&
 				mp.ElemType.Type.Kind() == expr.ArrayKind &&
 				expr.AsArray(mp.ElemType.Type).ElemType.Type.Kind() == expr.StringKind,
-			Validate:     codegen.ValidationCode(c, nil, ctx, required, false, varn),
+			Validate:     codegen.AttributeValidationCode(c, nil, ctx, required, false, varn, name),
 			DefaultValue: c.DefaultValue,
 			Example:      c.Example(expr.Root.API.ExampleGenerator),
 		})

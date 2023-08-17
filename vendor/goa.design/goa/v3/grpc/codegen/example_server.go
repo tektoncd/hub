@@ -54,7 +54,6 @@ func exampleServer(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *co
 			codegen.GoaNamedImport("grpc/middleware", "grpcmdlwr"),
 			{Path: "google.golang.org/grpc"},
 			{Path: "google.golang.org/grpc/reflection"},
-			{Path: "github.com/grpc-ecosystem/go-grpc-middleware", Name: "grpcmiddleware"},
 		}
 		for _, svc := range root.API.GRPC.Services {
 			sd := GRPCServices.Get(svc.Name())
@@ -104,7 +103,7 @@ func exampleServer(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *co
 			{
 				Name:   "server-grpc-start",
 				Source: grpcSvrStartT,
-				Data: map[string]interface{}{
+				Data: map[string]any{
 					"Services": svcdata,
 				},
 			}, {
@@ -113,23 +112,23 @@ func exampleServer(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *co
 			}, {
 				Name:   "server-grpc-init",
 				Source: grpcSvrInitT,
-				Data: map[string]interface{}{
+				Data: map[string]any{
 					"Services": svcdata,
 				},
 			}, {
 				Name:   "server-grpc-register",
 				Source: grpcRegisterSvrT,
-				Data: map[string]interface{}{
+				Data: map[string]any{
 					"Services": svcdata,
 				},
-				FuncMap: map[string]interface{}{
+				FuncMap: map[string]any{
 					"goify":      codegen.Goify,
 					"needStream": needStream,
 				},
 			}, {
 				Name:   "server-grpc-end",
 				Source: grpcSvrEndT,
-				Data: map[string]interface{}{
+				Data: map[string]any{
 					"Services": svcdata,
 				},
 			},
@@ -152,7 +151,7 @@ func needStream(data []*ServiceData) bool {
 }
 
 const (
-	// input: map[string]interface{}{"Services":[]*ServiceData}
+	// input: map[string]any{"Services":[]*ServiceData}
 	grpcSvrStartT = `{{ comment "handleGRPCServer starts configures and starts a gRPC server on the given URL. It shuts down the server if any error is received in the error channel." }}
 func handleGRPCServer(ctx context.Context, u *url.URL{{ range $.Services }}{{ if .Service.Methods }}, {{ .Service.VarName }}Endpoints *{{ .Service.PkgName }}.Endpoints{{ end }}{{ end }}, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 `
@@ -167,7 +166,7 @@ func handleGRPCServer(ctx context.Context, u *url.URL{{ range $.Services }}{{ if
   }
 	`
 
-	// input: map[string]interface{}{"Services":[]*ServiceData}
+	// input: map[string]any{"Services":[]*ServiceData}
 	grpcSvrInitT = `
 	// Wrap the endpoints with the transport specific layers. The generated
 	// server packages contains code generated from the design which maps
@@ -189,16 +188,16 @@ func handleGRPCServer(ctx context.Context, u *url.URL{{ range $.Services }}{{ if
 	}
 `
 
-	// input: map[string]interface{}{"Services":[]*ServiceData}
+	// input: map[string]any{"Services":[]*ServiceData}
 	grpcRegisterSvrT = `
 	// Initialize gRPC server with the middleware.
 	srv := grpc.NewServer(
-		grpcmiddleware.WithUnaryServerChain(
+		grpc.ChainUnaryInterceptor(
 			grpcmdlwr.UnaryRequestID(),
 			grpcmdlwr.UnaryServerLog(adapter),
 		),
 	{{- if needStream .Services }}
-		grpcmiddleware.WithStreamServerChain(
+		grpc.ChainStreamInterceptor(
 			grpcmdlwr.StreamRequestID(),
 			grpcmdlwr.StreamServerLog(adapter),
 		),
@@ -221,7 +220,7 @@ func handleGRPCServer(ctx context.Context, u *url.URL{{ range $.Services }}{{ if
 	reflection.Register(srv)
 `
 
-	// input: map[string]interface{}{"Services":[]*ServiceData}
+	// input: map[string]any{"Services":[]*ServiceData}
 	grpcSvrEndT = `
 	(*wg).Add(1)
 	go func() {
