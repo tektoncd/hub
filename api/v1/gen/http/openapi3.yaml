@@ -69,7 +69,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Et velit ipsam magnam tempore nobis.
+                        example: Ut accusantium ea.
                     description: Catalogs of resource to filter by
                     example:
                         - tekton
@@ -85,7 +85,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Id suscipit est voluptatem.
+                        example: Mollitia qui est deleniti aperiam.
                     description: Category associated with a resource to filter by
                     example:
                         - build
@@ -101,7 +101,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Occaecati maxime quia.
+                        example: Possimus enim rem facere.
                     description: Kinds of resource to filter by
                     example:
                         - task
@@ -117,7 +117,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Explicabo dolor qui eveniet ad qui id.
+                        example: Natus magnam ea voluptas ipsam molestias assumenda.
                     description: Tags associated with a resource to filter by
                     example:
                         - image
@@ -133,7 +133,7 @@ paths:
                     type: array
                     items:
                         type: string
-                        example: Voluptatem cupiditate rerum ut provident.
+                        example: Dolores dolorem sint nihil in.
                     description: Platforms associated with a resource to filter by
                     example:
                         - linux/s390x
@@ -159,7 +159,7 @@ paths:
                     type: string
                     description: Strategy used to find matching resources
                     default: contains
-                    example: exact
+                    example: contains
                     enum:
                         - exact
                         - contains
@@ -399,7 +399,7 @@ paths:
                     enum:
                         - task
                         - pipeline
-                  example: task
+                  example: pipeline
                 - name: name
                   in: path
                   description: name of resource
@@ -494,7 +494,7 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: task
+                    example: pipeline
                     enum:
                         - task
                         - pipeline
@@ -520,6 +520,11 @@ paths:
             responses:
                 "200":
                     description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                format: binary
                 "404":
                     description: 'not-found: Resource Not Found Error'
                     content:
@@ -556,11 +561,11 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: task
+                    example: pipeline
                     enum:
                         - task
                         - pipeline
-                  example: pipeline
+                  example: task
                 - name: name
                   in: path
                   description: name of resource
@@ -630,7 +635,7 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: task
+                    example: pipeline
                     enum:
                         - task
                         - pipeline
@@ -704,11 +709,11 @@ paths:
                   schema:
                     type: string
                     description: kind of resource
-                    example: task
+                    example: pipeline
                     enum:
                         - task
                         - pipeline
-                  example: pipeline
+                  example: task
                 - name: name
                   in: path
                   description: name of resource
@@ -721,6 +726,11 @@ paths:
             responses:
                 "200":
                     description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                format: binary
                 "404":
                     description: 'not-found: Resource Not Found Error'
                     content:
@@ -1134,16 +1144,19 @@ components:
                 temporary:
                     type: boolean
                     description: Is the error temporary?
-                    example: false
+                    example: true
                 timeout:
                     type: boolean
                     description: Is the error a timeout?
-                    example: false
+                    example: true
             description: Internal Server Error
             example:
-                id: 3F1FKVRR
-                message: Value of ID must be an integer
+                fault: true
+                id: 123abc
+                message: parameter 'p' must be an integer
                 name: bad_request
+                temporary: true
+                timeout: false
             required:
                 - name
                 - id
@@ -1159,16 +1172,6 @@ components:
                     items:
                         $ref: '#/components/schemas/Catalog'
                     example:
-                        - id: 1
-                          name: Tekton
-                          provider: github
-                          type: community
-                          url: https://github.com/tektoncd/hub
-                        - id: 1
-                          name: Tekton
-                          provider: github
-                          type: community
-                          url: https://github.com/tektoncd/hub
                         - id: 1
                           name: Tekton
                           provider: github
@@ -1387,6 +1390,43 @@ components:
             items:
                 $ref: '#/components/schemas/ResourceData'
             example:
+                - catalog:
+                    id: 1
+                    name: tekton
+                    type: community
+                  categories:
+                    - id: 1
+                      name: image-build
+                  hubRawURLPath: /tekton/task/buildah/raw
+                  hubURLPath: tekton/task/buildah
+                  id: 1
+                  kind: task
+                  latestVersion:
+                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    displayName: Buildah
+                    hubRawURLPath: /tekton/task/buildah/latest/raw
+                    id: 1
+                    minPipelinesVersion: 0.12.1
+                    platforms:
+                        - id: 1
+                          name: linux/amd64
+                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
+                    version: "0.1"
+                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                  name: buildah
+                  platforms:
+                    - id: 1
+                      name: linux/amd64
+                  rating: 4.3
+                  tags:
+                    - id: 1
+                      name: image-build
+                  versions:
+                    - id: 1
+                      version: "0.1"
+                    - id: 2
+                      version: "0.2"
                 - catalog:
                     id: 1
                     name: tekton
