@@ -25,12 +25,12 @@
 				"WebURL": "http://web.github.com/foo-bar/",
 				"HubRawURLPath": "",
 				"UpdatedAt": "2020-01-01 12:00:00 +0000 UTC",
-				"Platforms": null,
+				"Platforms": [],
 				"HubURLPath": "foo/Pipeline/foo-bar/0.2",
 				"Resource": null
 			},
 			"Tags": [],
-			"Platforms": null,
+			"Platforms": [],
 			"Rating": 4,
 			"Versions": null
 		}
