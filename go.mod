@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/ActiveState/vt10x v1.3.1
-	github.com/AlecAivazis/survey/v2 v2.3.6
+	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
 	github.com/fatih/color v1.15.0
 	github.com/go-co-op/gocron v1.31.2
