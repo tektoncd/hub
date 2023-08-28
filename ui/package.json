@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@patternfly/patternfly": "^5.0.2",
-    "@patternfly/react-core": "^4.276.6",
+    "@patternfly/react-core": "^5.0.0",
     "@seiboston/react-ghe-login": "^1.0.1",
     "@testing-library/jest-dom": "^6.0.1",
     "@testing-library/react": "^14.0.0",
