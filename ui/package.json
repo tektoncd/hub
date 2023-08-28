@@ -32,7 +32,7 @@
     "react-scripts": "5.0.1",
     "react-syntax-highlighter": "^15.5.0",
     "remark-gfm": "^3.0.1",
-    "typescript": "^5.1.6",
+    "typescript": "^5.2.2",
     "use-debounce": "^9.0.3"
   },
   "scripts": {
