@@ -7,7 +7,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
 	github.com/fatih/color v1.15.0
-	github.com/go-co-op/gocron v1.32.1
+	github.com/go-co-op/gocron v1.33.0
 	github.com/go-gormigrate/gormigrate/v2 v2.1.0
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
@@ -82,7 +82,7 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/go-containerregistry v0.14.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.3.1 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.0 // indirect
