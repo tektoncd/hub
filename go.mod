@@ -7,7 +7,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
 	github.com/fatih/color v1.15.0
-	github.com/go-co-op/gocron v1.33.0
+	github.com/go-co-op/gocron v1.33.1
 	github.com/go-gormigrate/gormigrate/v2 v2.1.0
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
