@@ -15,12 +15,22 @@
 package builder
 
 import (
+	v1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
 func UnstructuredV1beta1T(task *v1beta1.Task, version string) *unstructured.Unstructured {
+	task.APIVersion = "tekton.dev/" + version
+	task.Kind = "task"
+	object, _ := runtime.DefaultUnstructuredConverter.ToUnstructured(task)
+	return &unstructured.Unstructured{
+		Object: object,
+	}
+}
+
+func UnstructuredV1(task *v1.Task, version string) *unstructured.Unstructured {
 	task.APIVersion = "tekton.dev/" + version
 	task.Kind = "task"
 	object, _ := runtime.DefaultUnstructuredConverter.ToUnstructured(task)

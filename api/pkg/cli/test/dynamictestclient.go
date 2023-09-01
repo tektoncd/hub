@@ -24,6 +24,7 @@ func DynamicClient(objects ...runtime.Object) *fake.FakeDynamicClient {
 	dynamicClient := fake.NewSimpleDynamicClientWithCustomListKinds(
 		runtime.NewScheme(),
 		map[schema.GroupVersionResource]string{
+			{Group: "tekton.dev", Version: "v1", Resource: "tasks"}:       "TaskList",
 			{Group: "tekton.dev", Version: "v1alpha1", Resource: "tasks"}: "TaskList",
 			{Group: "tekton.dev", Version: "v1beta1", Resource: "tasks"}:  "TaskList",
 			{Group: "apps", Version: "v1", Resource: "deployments"}:       "DeploymentList",
