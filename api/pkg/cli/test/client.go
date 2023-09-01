@@ -15,6 +15,7 @@
 package test
 
 import (
+	"github.com/tektoncd/hub/api/pkg/cli/gvr"
 	"github.com/tektoncd/hub/api/pkg/cli/kube"
 	"github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	"k8s.io/client-go/dynamic"
@@ -40,6 +41,12 @@ func (p *fakeClients) Namespace() string {
 }
 
 func FakeClientSet(tekton versioned.Interface, dynamic dynamic.Interface, namespace string) *fakeClients {
+	if tekton != nil {
+		if err := gvr.InitializeAPIGroupRes(tekton.Discovery()); err != nil {
+			return nil
+		}
+	}
+
 	return &fakeClients{
 		tekton:    tekton,
 		dynamic:   dynamic,

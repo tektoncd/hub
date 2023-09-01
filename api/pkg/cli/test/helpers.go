@@ -19,17 +19,29 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	ttesting "github.com/tektoncd/pipeline/pkg/reconciler/testing"
-	pipelinev1beta1test "github.com/tektoncd/pipeline/test"
+	pipelinetest "github.com/tektoncd/pipeline/test"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 )
 
-func SeedV1beta1TestData(t *testing.T, d pipelinev1beta1test.Data) (pipelinev1beta1test.Clients, pipelinev1beta1test.Informers) {
+type Data struct {
+	Pipelines    []*v1beta1.Pipeline
+	Tasks        []*v1beta1.Task
+	ClusterTasks []*v1beta1.ClusterTask
+}
+
+func SeedTestData(t *testing.T, d pipelinetest.Data) (pipelinetest.Clients, pipelinetest.Informers) {
 	ctx, _ := ttesting.SetupFakeContext(t)
-	return pipelinev1beta1test.SeedTestData(t, ctx, d)
+	return pipelinetest.SeedTestData(t, ctx, d)
+}
+
+func SeedV1beta1TestData(t *testing.T, d Data) (Clients, Informers) {
+	ctx, _ := ttesting.SetupFakeContext(t)
+	return seedTestData(t, ctx, d)
 }
 
 func GetDeploymentData(name, version string) *unstructured.Unstructured {

@@ -22,7 +22,6 @@ import (
 	"github.com/tektoncd/hub/api/pkg/cli/test"
 	cb "github.com/tektoncd/hub/api/pkg/cli/test/builder"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
-	pipelinev1beta1test "github.com/tektoncd/pipeline/test"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -30,16 +29,16 @@ const res = `---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: foo
+  name: gvr
   labels:
     app.kubernetes.io/version: '0.3'
   annotations:
     tekton.dev/pipelines.minVersion: '0.13.1'
     tekton.dev/tags: cli
-    tekton.dev/displayName: 'foo-bar'
+    tekton.dev/displayName: 'gvr-bar'
 spec:
   description: >-
-    v0.3 Task to run foo
+    v0.3 Task to run gvr
 
 `
 
@@ -87,7 +86,7 @@ func TestToUnstructuredAndAddLabel(t *testing.T) {
 	for _, tc := range testCases {
 		obj, err := toUnstructured([]byte(res))
 		assert.NoError(t, err)
-		assert.Equal(t, "foo", obj.GetName())
+		assert.Equal(t, "gvr", obj.GetName())
 
 		if err := addCatalogLabel(obj, tc.hubType, tc.org, tc.catalog); err != nil {
 			t.Errorf("%s", err.Error())
@@ -107,7 +106,7 @@ func TestToUnstructuredAndAddLabel(t *testing.T) {
 func TestListInstalled(t *testing.T) {
 	existingTask := &v1beta1.Task{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "foo",
+			Name:      "gvr",
 			Namespace: "hub",
 			Labels: map[string]string{
 				"hub.tekton.dev/catalog":    "tekton",
@@ -118,7 +117,7 @@ func TestListInstalled(t *testing.T) {
 	version := "v1beta1"
 	dynamic := test.DynamicClient(cb.UnstructuredV1beta1T(existingTask, version))
 
-	cs, _ := test.SeedV1beta1TestData(t, pipelinev1beta1test.Data{Tasks: []*v1beta1.Task{existingTask}})
+	cs, _ := test.SeedV1beta1TestData(t, test.Data{Tasks: []*v1beta1.Task{existingTask}})
 	cs.Pipeline.Resources = cb.APIResourceList(version, []string{"task"})
 
 	clientSet := test.FakeClientSet(cs.Pipeline, dynamic, "hub")
