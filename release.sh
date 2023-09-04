@@ -132,6 +132,16 @@ ui-openshift(){
   echo "------------------------------------------"
 }
 
+hub-info(){
+	info Creating Hub-Info Release Yaml
+
+  ko resolve -f config/07-hub-info > ${RELEASE_DIR}/hub-info.yaml || {
+    err 'hub-info release build failed'
+    return 1
+  }
+  echo "------------------------------------------"
+}
+
 replaceImageName() {
   info Changing Image Name
 
@@ -148,6 +158,8 @@ replaceImageName() {
   sed -i "s@image: quay.io/tekton-hub/ui@image: ${REGISTRY_BASE_URL}/ui:$RELEASE_VERSION@g" ${RELEASE_DIR}/ui-kubernetes.yaml
 
   sed -i "s@image: quay.io/tekton-hub/ui@image: ${REGISTRY_BASE_URL}/ui:$RELEASE_VERSION@g" ${RELEASE_DIR}/ui-openshift.yaml
+
+  sed -i 's/version: .*/version: '"${RELEASE_VERSION}"'/' ${RELEASE_DIR}/hub-info.yaml
 }
 
 createNewPreRelease() {
@@ -157,7 +169,7 @@ createNewPreRelease() {
 
   gh release create --draft --prerelease -t ${RELEASE_VERSION} ${RELEASE_VERSION}
 
-  gh release upload ${RELEASE_VERSION} db.yaml db-migration.yaml api-kubernetes.yaml api-openshift.yaml ui-kubernetes.yaml ui-openshift.yaml
+  gh release upload ${RELEASE_VERSION} db.yaml db-migration.yaml api-kubernetes.yaml api-openshift.yaml ui-kubernetes.yaml ui-openshift.yaml hub-info.yaml
 }
 
 createNewBranchAndPush() {
@@ -194,6 +206,7 @@ main() {
   api-openshift
   ui-k8s
   ui-openshift
+  hub-info
 
   # Change the image name with the release version specified
   echo "********************************************"
