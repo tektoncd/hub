@@ -19,7 +19,7 @@
     "axios": "^1.5.0",
     "core-js-compat": "^3.32.1",
     "fuzzysort": "^2.0.4",
-    "mobx": "^6.10.0",
+    "mobx": "^6.10.2",
     "mobx-react": "^7.6.0",
     "mobx-state-tree": "^5.1.8",
     "moment": "^2.29.4",
