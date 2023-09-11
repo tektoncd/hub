@@ -26,6 +26,10 @@ func (a *AttributeExpr) Example(r *ExampleGenerator) any {
 		return ex[len(ex)-1].Value
 	}
 
+	if r.Randomizer == nil {
+		return nil
+	}
+
 	value, ok := a.Meta.Last("openapi:example")
 	if !ok {
 		value, ok = a.Meta.Last("swagger:example")
@@ -240,7 +244,7 @@ func byMinMax(a *AttributeExpr, r *ExampleGenerator) any {
 		return nil
 	}
 	var (
-		min  = math.Inf(-1)
+		min  float64
 		max  = math.Inf(1)
 		sign = 1
 	)

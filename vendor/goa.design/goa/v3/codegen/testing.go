@@ -20,8 +20,12 @@ func RunDSL(t *testing.T, dsl func()) *expr.RootExpr {
 	eval.Reset()
 	expr.Root = new(expr.RootExpr)
 	expr.Root.GeneratedTypes = &expr.GeneratedRoot{}
-	eval.Register(expr.Root)
-	eval.Register(expr.Root.GeneratedTypes)
+	if err := eval.Register(expr.Root); err != nil {
+		t.Fatal(err)
+	}
+	if err := eval.Register(expr.Root.GeneratedTypes); err != nil {
+		t.Fatal(err)
+	}
 	expr.Root.API = expr.NewAPIExpr("test api", func() {})
 	expr.Root.API.Servers = []*expr.ServerExpr{expr.Root.API.DefaultServer()}
 	if !eval.Execute(dsl, nil) {
@@ -105,7 +109,7 @@ func Diff(t *testing.T, s1, s2 string) string {
 	defer os.Remove(right)
 	cmd := exec.Command("diff", left, right)
 	diffb, _ := cmd.CombinedOutput()
-	return strings.Replace(string(diffb), "\t", " ␉ ", -1)
+	return strings.ReplaceAll(string(diffb), "\t", " ␉ ")
 }
 
 // CreateTempFile creates a temporary file and writes the given content.
