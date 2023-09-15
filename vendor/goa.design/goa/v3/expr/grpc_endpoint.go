@@ -215,10 +215,8 @@ func (e *GRPCEndpointExpr) Validate() error {
 				verr.Merge(validateRPCTags(msgFields, e))
 			}
 		}
-	} else {
-		if hasMessage && hasMetadata {
-			verr.Add(e, "Both request message and metadata are defined, but payload is not an object. Define either metadata or message or make payload an object type.")
-		}
+	} else if hasMessage && hasMetadata {
+		verr.Add(e, "Both request message and metadata are defined, but payload is not an object. Define either metadata or message or make payload an object type.")
 	}
 
 	// Validate response
@@ -489,7 +487,8 @@ func validateMetadata(metAtt *MappedAttributeExpr, serviceAtt *AttributeExpr, e 
 // getSecurityAttributes returns the attributes that describes a security
 // scheme from a method expression.
 func getSecurityAttributes(m *MethodExpr) []string {
-	secAttrs := []string{}
+	var secAttrs []string
+
 	for _, req := range m.Requirements {
 		for _, sch := range req.Schemes {
 			switch sch.Kind {
