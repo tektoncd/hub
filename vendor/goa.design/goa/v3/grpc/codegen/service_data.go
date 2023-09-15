@@ -426,7 +426,7 @@ func (sd *ServiceData) HasStreamingEndpoint() bool {
 }
 
 // analyze creates the data necessary to render the code of the given service.
-func (d ServicesData) analyze(gs *expr.GRPCServiceExpr) *ServiceData {
+func (ServicesData) analyze(gs *expr.GRPCServiceExpr) *ServiceData {
 	var (
 		sd             *ServiceData
 		seen, imported map[string]struct{}
@@ -1000,7 +1000,7 @@ func buildResponseConvertData(response, result *expr.AttributeExpr, svcCtx *code
 // svcCtx is the attribute context for service type
 // proto if true indicates the target type is a protocol buffer type
 // svr if true indicates the code is generated for conversion server side
-func buildInitData(source, target *expr.AttributeExpr, sourceVar, targetVar string, svcCtx *codegen.AttributeContext, proto, svr, usesrc bool, sd *ServiceData) *InitData {
+func buildInitData(source, target *expr.AttributeExpr, sourceVar, targetVar string, svcCtx *codegen.AttributeContext, proto, _, usesrc bool, sd *ServiceData) *InitData {
 	var (
 		name     string
 		isStruct bool
@@ -1256,7 +1256,7 @@ func buildStreamData(e *expr.GRPCEndpointExpr, sd *ServiceData, svr bool) *Strea
 func extractMetadata(a *expr.MappedAttributeExpr, service *expr.AttributeExpr, scope *codegen.NameScope) []*MetadataData {
 	var metadata []*MetadataData
 	ctx := serviceTypeContext("", scope)
-	codegen.WalkMappedAttr(a, func(name, elem string, required bool, c *expr.AttributeExpr) error {
+	codegen.WalkMappedAttr(a, func(name, elem string, required bool, c *expr.AttributeExpr) error { // nolint: errcheck
 		var (
 			varn      string
 			fieldName string

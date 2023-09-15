@@ -446,7 +446,7 @@ func jsonExample(v any) string {
 		ex = string(b)
 	}
 	if strings.Contains(ex, "\n") {
-		ex = "'" + strings.Replace(ex, "'", "\\'", -1) + "'"
+		ex = "'" + strings.ReplaceAll(ex, "'", "\\'") + "'"
 	}
 	return ex
 }
@@ -556,8 +556,8 @@ func goifyTerms(terms ...string) string {
 }
 
 func printDescription(desc string) string {
-	res := strings.Replace(desc, "`", "`+\"`\"+`", -1)
-	res = strings.Replace(res, "\n", "\n\t", -1)
+	res := strings.ReplaceAll(desc, "`", "`+\"`\"+`")
+	res = strings.ReplaceAll(res, "\n", "\n\t")
 	return res
 }
 
@@ -580,7 +580,7 @@ func fieldCode(init *PayloadInitData) string {
 	// because the args cannot be user types.
 	c, _, err := codegen.InitStructFields(init.Args, varn, "", init.ReturnTypePkg)
 	if err != nil {
-		panic(err) //bug
+		panic(err) // bug
 	}
 	return c
 }

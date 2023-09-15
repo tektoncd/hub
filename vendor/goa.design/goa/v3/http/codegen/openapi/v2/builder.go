@@ -131,7 +131,8 @@ func mustGenerate(meta expr.MetaExpr) bool {
 // addScopeDescription generates and adds required scopes to the scheme's description.
 func addScopeDescription(scopes []*expr.ScopeExpr, sd *SecurityDefinition) {
 	// Generate scopes to add to description
-	lines := []string{}
+	var lines []string
+
 	for _, scope := range scopes {
 		lines = append(lines, fmt.Sprintf("  * `%s`: %s", scope.Name, scope.Description))
 	}
@@ -274,7 +275,7 @@ func paramsFromExpr(params *expr.MappedAttributeExpr, path string) []*Parameter 
 		res       []*Parameter
 		wildcards = expr.ExtractHTTPWildcards(path)
 	)
-	codegen.WalkMappedAttr(params, func(n, pn string, required bool, at *expr.AttributeExpr) error {
+	codegen.WalkMappedAttr(params, func(n, pn string, required bool, at *expr.AttributeExpr) error { // nolint: errcheck
 		in := "query"
 		for _, w := range wildcards {
 			if n == w {
@@ -291,7 +292,8 @@ func paramsFromExpr(params *expr.MappedAttributeExpr, path string) []*Parameter 
 }
 
 func paramsFromHeaders(endpoint *expr.HTTPEndpointExpr) []*Parameter {
-	params := []*Parameter{}
+	var params []*Parameter
+
 	var (
 		rma = endpoint.Service.Params
 		ma  = endpoint.Headers
@@ -372,9 +374,9 @@ func paramFor(at *expr.AttributeExpr, name, in string, required bool) *Parameter
 
 func itemsFromExpr(at *expr.AttributeExpr) *Items {
 	items := &Items{Type: at.Type.Name()}
-	switch actual := at.Type.(type) {
-	case expr.Primitive:
-		switch actual.Kind() {
+	p, ok := at.Type.(expr.Primitive)
+	if ok {
+		switch p.Kind() {
 		case expr.IntKind, expr.Int64Kind, expr.UIntKind, expr.UInt64Kind, expr.Int32Kind, expr.UInt32Kind:
 			items.Type = "integer"
 		case expr.Float32Kind, expr.Float64Kind:
@@ -390,7 +392,7 @@ func itemsFromExpr(at *expr.AttributeExpr) *Items {
 	return items
 }
 
-func responseSpecFromExpr(s *V2, root *expr.RootExpr, r *expr.HTTPResponseExpr, typeNamePrefix string) *Response {
+func responseSpecFromExpr(_ *V2, root *expr.RootExpr, r *expr.HTTPResponseExpr, typeNamePrefix string) *Response {
 	var schema *openapi.Schema
 	if mt, ok := r.Body.Type.(*expr.ResultTypeExpr); ok {
 		view := expr.DefaultView
@@ -423,7 +425,7 @@ func headersFromExpr(headers *expr.MappedAttributeExpr) map[string]*Header {
 		return nil
 	}
 	res := make(map[string]*Header)
-	codegen.WalkMappedAttr(headers, func(_, n string, required bool, at *expr.AttributeExpr) error {
+	codegen.WalkMappedAttr(headers, func(_, n string, _ bool, at *expr.AttributeExpr) error { // nolint: errcheck
 		header := &Header{
 			Default:     at.DefaultValue,
 			Description: at.Description,
@@ -521,7 +523,8 @@ func buildPathFromExpr(s *V2, root *expr.RootExpr, h *expr.HostExpr, route *expr
 		key = expr.HTTPWildcardRegex.ReplaceAllString(key, "/{$1}")
 		params := paramsFromExpr(endpoint.Params, key)
 		params = append(params, paramsFromHeaders(endpoint)...)
-		produces := []string{}
+		var produces []string
+
 		responses := make(map[string]*Response, len(endpoint.Responses))
 		for _, r := range endpoint.Responses {
 			if endpoint.MethodExpr.IsStreaming() {
