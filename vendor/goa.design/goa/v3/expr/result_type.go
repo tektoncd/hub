@@ -126,7 +126,7 @@ func CanonicalIdentifier(identifier string) string {
 }
 
 // Kind implements DataKind.
-func (m *ResultTypeExpr) Kind() Kind { return ResultTypeKind }
+func (*ResultTypeExpr) Kind() Kind { return ResultTypeKind }
 
 // Dup creates a deep copy of the result type given a deep copy of its attribute.
 func (m *ResultTypeExpr) Dup(att *AttributeExpr) UserType {
@@ -178,7 +178,7 @@ func (m *ResultTypeExpr) Finalize() {
 	}
 	m.UserTypeExpr.Finalize()
 	seen := make(map[string]struct{})
-	walkAttribute(m.AttributeExpr, func(_ string, att *AttributeExpr) error {
+	walkAttribute(m.AttributeExpr, func(_ string, att *AttributeExpr) error { // nolint: errcheck
 		if rt, ok := att.Type.(*ResultTypeExpr); ok {
 			if _, ok := seen[rt.Identifier]; !ok {
 				seen[rt.Identifier] = struct{}{}

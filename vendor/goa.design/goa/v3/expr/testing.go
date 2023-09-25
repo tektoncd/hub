@@ -68,7 +68,7 @@ func Diff(t *testing.T, s1, s2 string) string {
 	defer os.Remove(right)
 	cmd := exec.Command("diff", left, right)
 	diffb, _ := cmd.CombinedOutput()
-	return strings.Replace(string(diffb), "\t", " ␉ ", -1)
+	return strings.ReplaceAll(string(diffb), "\t", " ␉ ")
 }
 
 // CreateTempFile creates a temporary file and writes the given content.
@@ -95,8 +95,12 @@ func setupDSLRun() {
 	eval.Reset()
 	Root = new(RootExpr)
 	Root.GeneratedTypes = &GeneratedRoot{}
-	eval.Register(Root)
-	eval.Register(Root.GeneratedTypes)
+	if err := eval.Register(Root); err != nil {
+		panic(err)
+	}
+	if err := eval.Register(Root.GeneratedTypes); err != nil {
+		panic(err)
+	}
 	Root.API = NewAPIExpr("test api", func() {})
 	Root.API.Servers = []*ServerExpr{Root.API.DefaultServer()}
 }

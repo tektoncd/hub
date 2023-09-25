@@ -580,7 +580,7 @@ func (svc *ServiceData) Endpoint(name string) *EndpointData {
 
 // analyze creates the data necessary to render the code of the given service.
 // It records the user types needed by the service definition in userTypes.
-func (d ServicesData) analyze(hs *expr.HTTPServiceExpr) *ServiceData {
+func (ServicesData) analyze(hs *expr.HTTPServiceExpr) *ServiceData {
 	svc := service.Services.Get(hs.ServiceExpr.Name)
 	scope := codegen.NewNameScope()
 	scope.Unique("c") // 'c' is reserved as the client's receiver name.
@@ -2314,7 +2314,7 @@ func buildResponseBodyType(body, att *expr.AttributeExpr, loc *codegen.Location,
 
 func extractPathParams(a *expr.MappedAttributeExpr, service *expr.AttributeExpr, scope *codegen.NameScope) []*ParamData {
 	var params []*ParamData
-	codegen.WalkMappedAttr(a, func(name, elem string, _ bool, c *expr.AttributeExpr) error {
+	codegen.WalkMappedAttr(a, func(name, elem string, _ bool, c *expr.AttributeExpr) error { // nolint: errcheck
 		// The StringSlice field of ParamData must be false for aliased primitive types
 		var stringSlice bool
 		if arr := expr.AsArray(c.Type); arr != nil {
@@ -2371,7 +2371,7 @@ func extractPathParams(a *expr.MappedAttributeExpr, service *expr.AttributeExpr,
 
 func extractQueryParams(a *expr.MappedAttributeExpr, service *expr.AttributeExpr, scope *codegen.NameScope) []*ParamData {
 	var params []*ParamData
-	codegen.WalkMappedAttr(a, func(name, elem string, required bool, c *expr.AttributeExpr) error {
+	codegen.WalkMappedAttr(a, func(name, elem string, required bool, c *expr.AttributeExpr) error { // nolint: errcheck
 		// The StringSlice field of ParamData must be false for aliased primitive types
 		var stringSlice bool
 		if arr := expr.AsArray(c.Type); arr != nil {
@@ -2390,7 +2390,8 @@ func extractQueryParams(a *expr.MappedAttributeExpr, service *expr.AttributeExpr
 			pointer bool
 			fptr    bool
 		)
-		if pointer = a.IsPrimitivePointer(name, true); pointer {
+		pointer = a.IsPrimitivePointer(name, true)
+		if pointer {
 			typeRef = "*" + typeRef
 		}
 		fieldName := codegen.Goify(name, true)
@@ -2437,7 +2438,7 @@ func extractQueryParams(a *expr.MappedAttributeExpr, service *expr.AttributeExpr
 
 func extractHeaders(a *expr.MappedAttributeExpr, svcAtt *expr.AttributeExpr, svcCtx *codegen.AttributeContext, scope *codegen.NameScope) []*HeaderData {
 	var headers []*HeaderData
-	codegen.WalkMappedAttr(a, func(name, elem string, required bool, _ *expr.AttributeExpr) error {
+	codegen.WalkMappedAttr(a, func(name, elem string, required bool, _ *expr.AttributeExpr) error { // nolint: errcheck
 		var attr *expr.AttributeExpr
 		if attr = svcAtt.Find(name); attr == nil {
 			attr = svcAtt
@@ -2504,7 +2505,7 @@ func extractHeaders(a *expr.MappedAttributeExpr, svcAtt *expr.AttributeExpr, svc
 
 func extractCookies(a *expr.MappedAttributeExpr, svcAtt *expr.AttributeExpr, svcCtx *codegen.AttributeContext, scope *codegen.NameScope) []*CookieData {
 	var cookies []*CookieData
-	codegen.WalkMappedAttr(a, func(name, elem string, required bool, _ *expr.AttributeExpr) error {
+	codegen.WalkMappedAttr(a, func(name, elem string, required bool, _ *expr.AttributeExpr) error { // nolint: errcheck
 		var hattr *expr.AttributeExpr
 		{
 			if hattr = svcAtt.Find(name); hattr == nil {
