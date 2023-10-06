@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.20.7-alpine3.18 AS builder
+FROM --platform=$BUILDPLATFORM golang:1.21.2-alpine3.18 AS builder
 
 WORKDIR /go/src/github.com/tektoncd/hub
 COPY . .
