@@ -57,10 +57,13 @@ err() {
 install-node() {
   info Installing node
 
-  curl -sL https://deb.nodesource.com/setup_17.x | bash -
+  curl -sL https://deb.nodesource.com/setup_18.x | bash -
   apt-get install -y nodejs
 
   node --version
+
+  apt-get install -y npm
+  npm --version
 }
 
 ui-unittest() {
@@ -78,9 +81,9 @@ install-postgres() {
   wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
   sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
   apt-get update
-  apt-get -y install postgresql-13
+  apt-get -y install postgresql-15
   service postgresql start
-  pg_ctlcluster 13 main start
+  pg_ctlcluster 15 main start
 }
 
 set-pg-passwd() {
