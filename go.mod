@@ -25,7 +25,7 @@ require (
 	github.com/tektoncd/pipeline v0.50.2
 	github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
 	go.uber.org/automaxprocs v1.5.3
-	go.uber.org/zap v1.25.0
+	go.uber.org/zap v1.26.0
 	goa.design/goa/v3 v3.12.4
 	goa.design/plugins/v3 v3.12.4
 	golang.org/x/term v0.13.0
@@ -47,7 +47,6 @@ require (
 	github.com/ClickHouse/ch-go v0.55.0 // indirect
 	github.com/ClickHouse/clickhouse-go/v2 v2.9.1 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
-	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blendle/zapdriver v1.3.1 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.4.1 // indirect
