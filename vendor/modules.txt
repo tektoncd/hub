@@ -191,7 +191,7 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
-# github.com/google/go-containerregistry v0.15.2
+# github.com/google/go-containerregistry v0.16.1
 ## explicit; go 1.18
 github.com/google/go-containerregistry/internal/and
 github.com/google/go-containerregistry/internal/compression
@@ -255,7 +255,7 @@ github.com/hashicorp/errwrap
 # github.com/hashicorp/go-multierror v1.1.1
 ## explicit; go 1.13
 github.com/hashicorp/go-multierror
-# github.com/hashicorp/golang-lru v0.5.4
+# github.com/hashicorp/golang-lru v1.0.2
 ## explicit; go 1.12
 github.com/hashicorp/golang-lru
 github.com/hashicorp/golang-lru/simplelru
@@ -472,13 +472,13 @@ github.com/sergi/go-diff/diffmatchpatch
 # github.com/shopspring/decimal v1.3.1
 ## explicit; go 1.13
 github.com/shopspring/decimal
-# github.com/sigstore/sigstore v1.7.1
+# github.com/sigstore/sigstore v1.7.3
 ## explicit; go 1.19
 github.com/sigstore/sigstore/pkg/cryptoutils
 github.com/sigstore/sigstore/pkg/signature
 github.com/sigstore/sigstore/pkg/signature/options
 github.com/sigstore/sigstore/pkg/signature/payload
-# github.com/sirupsen/logrus v1.9.1
+# github.com/sirupsen/logrus v1.9.3
 ## explicit; go 1.13
 github.com/sirupsen/logrus
 # github.com/sourcegraph/conc v0.3.0
@@ -519,11 +519,12 @@ github.com/stretchr/testify/require
 # github.com/subosito/gotenv v1.6.0
 ## explicit; go 1.18
 github.com/subosito/gotenv
-# github.com/tektoncd/pipeline v0.50.2
+# github.com/tektoncd/pipeline v0.52.1
 ## explicit; go 1.19
 github.com/tektoncd/pipeline/pkg/apis/config
 github.com/tektoncd/pipeline/pkg/apis/config/resolver
 github.com/tektoncd/pipeline/pkg/apis/pipeline
+github.com/tektoncd/pipeline/pkg/apis/pipeline/internal/checksum
 github.com/tektoncd/pipeline/pkg/apis/pipeline/pod
 github.com/tektoncd/pipeline/pkg/apis/pipeline/v1
 github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1
@@ -1004,7 +1005,7 @@ k8s.io/api/scheduling/v1beta1
 k8s.io/api/storage/v1
 k8s.io/api/storage/v1alpha1
 k8s.io/api/storage/v1beta1
-# k8s.io/apimachinery v0.27.1 => k8s.io/apimachinery v0.26.6
+# k8s.io/apimachinery v0.27.3 => k8s.io/apimachinery v0.26.6
 ## explicit; go 1.19
 k8s.io/apimachinery/pkg/api/equality
 k8s.io/apimachinery/pkg/api/errors
