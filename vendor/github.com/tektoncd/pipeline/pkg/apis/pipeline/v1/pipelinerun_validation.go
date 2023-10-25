@@ -114,6 +114,10 @@ func (ps *PipelineRunSpec) Validate(ctx context.Context) (errs *apis.FieldError)
 		errs = errs.Also(validateTaskRunSpec(ctx, trs).ViaIndex(idx).ViaField("taskRunSpecs"))
 	}
 
+	if ps.TaskRunTemplate.PodTemplate != nil {
+		errs = errs.Also(validatePodTemplateEnv(ctx, *ps.TaskRunTemplate.PodTemplate).ViaField("taskRunTemplate"))
+	}
+
 	return errs
 }
 
@@ -127,7 +131,7 @@ func (ps *PipelineRunSpec) validatePipelineRunParameters(ctx context.Context) (e
 
 	// Validate that task results aren't used in param values
 	for _, param := range ps.Params {
-		expressions, ok := GetVarSubstitutionExpressionsForParam(param)
+		expressions, ok := param.GetVarSubstitutionExpressions()
 		if ok {
 			if LooksLikeContainsResultRefs(expressions) {
 				expressions = filter(expressions, looksLikeResultRef)
