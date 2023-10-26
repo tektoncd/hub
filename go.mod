@@ -37,7 +37,7 @@ require (
 	k8s.io/apimachinery v0.27.3
 	k8s.io/client-go v0.27.1
 	knative.dev/pkg v0.0.0-20231011201526-df28feae6d34
-	sigs.k8s.io/yaml v1.3.0
+	sigs.k8s.io/yaml v1.4.0
 )
 
 require (
