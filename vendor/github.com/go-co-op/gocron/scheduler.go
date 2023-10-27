@@ -104,11 +104,13 @@ func (s *Scheduler) StartAsync() {
 func (s *Scheduler) start() {
 	s.executor.start()
 	s.setRunning(true)
-	s.runJobs(s.jobsMap())
+	s.runJobs()
 }
 
-func (s *Scheduler) runJobs(jobs map[uuid.UUID]*Job) {
-	for _, job := range jobs {
+func (s *Scheduler) runJobs() {
+	s.jobsMutex.RLock()
+	defer s.jobsMutex.RUnlock()
+	for _, job := range s.jobs {
 		ctx, cancel := context.WithCancel(context.Background())
 		job.mu.Lock()
 		job.ctx = ctx
@@ -142,13 +144,13 @@ func (s *Scheduler) Jobs() []*Job {
 
 // JobsMap returns a map of job uuid to job
 func (s *Scheduler) JobsMap() map[uuid.UUID]*Job {
-	return s.jobsMap()
-}
-
-func (s *Scheduler) jobsMap() map[uuid.UUID]*Job {
 	s.jobsMutex.RLock()
 	defer s.jobsMutex.RUnlock()
-	return s.jobs
+	jobs := make(map[uuid.UUID]*Job, len(s.jobs))
+	for id, job := range s.jobs {
+		jobs[id] = job
+	}
+	return jobs
 }
 
 // Name sets the name of the current job.
@@ -159,12 +161,6 @@ func (s *Scheduler) Name(name string) *Scheduler {
 	job := s.getCurrentJob()
 	job.jobName = name
 	return s
-}
-
-func (s *Scheduler) setJobs(jobs map[uuid.UUID]*Job) {
-	s.jobsMutex.Lock()
-	defer s.jobsMutex.Unlock()
-	s.jobs = jobs
 }
 
 // Len returns the number of Jobs in the Scheduler
@@ -225,7 +221,7 @@ func (s *Scheduler) scheduleNextRun(job *Job) (bool, nextRun) {
 	}
 
 	if !job.shouldRun() {
-		s.RemoveByReference(job)
+		_ = s.RemoveByID(job)
 		return false, nextRun{}
 	}
 
@@ -508,21 +504,23 @@ func (s *Scheduler) roundToMidnightAndAddDSTAware(t time.Time, d time.Duration) 
 
 // NextRun datetime when the next Job should run.
 func (s *Scheduler) NextRun() (*Job, time.Time) {
-	if len(s.jobsMap()) <= 0 {
+	s.jobsMutex.RLock()
+	defer s.jobsMutex.RUnlock()
+	if len(s.jobs) <= 0 {
 		return nil, time.Time{}
 	}
 
 	var jobID uuid.UUID
 	var nearestRun time.Time
-	for _, job := range s.jobsMap() {
+	for _, job := range s.jobs {
 		nr := job.NextRun()
-		if nr.Before(nearestRun) && s.now().Before(nr) {
+		if (nr.Before(nearestRun) || nearestRun.IsZero()) && s.now().Before(nr) {
 			nearestRun = nr
 			jobID = job.id
 		}
 	}
 
-	return s.jobsMap()[jobID], nearestRun
+	return s.jobs[jobID], nearestRun
 }
 
 // EveryRandom schedules a new period Job that runs at random intervals
@@ -648,7 +646,9 @@ func (s *Scheduler) RunAll() {
 
 // RunAllWithDelay runs all Jobs with the provided delay in between each Job
 func (s *Scheduler) RunAllWithDelay(d time.Duration) {
-	for _, job := range s.jobsMap() {
+	s.jobsMutex.RLock()
+	defer s.jobsMutex.RUnlock()
+	for _, job := range s.jobs {
 		s.run(job)
 		s.time.Sleep(d)
 	}
@@ -696,16 +696,13 @@ func (s *Scheduler) Remove(job interface{}) {
 
 // RemoveByReference removes specific Job by reference
 func (s *Scheduler) RemoveByReference(job *Job) {
-	s.removeJobsUniqueTags(job)
-	s.removeByCondition(func(someJob *Job) bool {
-		job.mu.RLock()
-		defer job.mu.RUnlock()
-		return someJob == job
-	})
+	_ = s.RemoveByID(job)
 }
 
 func (s *Scheduler) findJobByTaskName(name string) *Job {
-	for _, job := range s.jobsMap() {
+	s.jobsMutex.RLock()
+	defer s.jobsMutex.RUnlock()
+	for _, job := range s.jobs {
 		if job.funcName == name {
 			return job
 		}
@@ -725,15 +722,23 @@ func (s *Scheduler) removeJobsUniqueTags(job *Job) {
 }
 
 func (s *Scheduler) removeByCondition(shouldRemove func(*Job) bool) {
-	retainedJobs := make(map[uuid.UUID]*Job, 0)
-	for _, job := range s.jobsMap() {
-		if !shouldRemove(job) {
-			retainedJobs[job.id] = job
-		} else {
-			job.stop()
+	s.jobsMutex.Lock()
+	defer s.jobsMutex.Unlock()
+	for _, job := range s.jobs {
+		if shouldRemove(job) {
+			s.stopJob(job)
+			delete(s.jobs, job.id)
 		}
 	}
-	s.setJobs(retainedJobs)
+}
+
+func (s *Scheduler) stopJob(job *Job) {
+	job.mu.Lock()
+	if job.runConfig.mode == singletonMode {
+		s.executor.singletonWgs.Delete(job.singletonWg)
+	}
+	job.mu.Unlock()
+	job.stop()
 }
 
 // RemoveByTag will remove jobs that match the given tag.
@@ -749,7 +754,7 @@ func (s *Scheduler) RemoveByTags(tags ...string) error {
 	}
 
 	for _, job := range jobs {
-		s.RemoveByReference(job)
+		_ = s.RemoveByID(job)
 	}
 	return nil
 }
@@ -769,7 +774,7 @@ func (s *Scheduler) RemoveByTagsAny(tags ...string) error {
 	}
 
 	for job := range mJob {
-		s.RemoveByReference(job)
+		_ = s.RemoveByID(job)
 	}
 
 	return errs
@@ -777,8 +782,12 @@ func (s *Scheduler) RemoveByTagsAny(tags ...string) error {
 
 // RemoveByID removes the job from the scheduler looking up by id
 func (s *Scheduler) RemoveByID(job *Job) error {
-	if _, ok := s.jobsMap()[job.id]; ok {
-		delete(s.jobsMap(), job.id)
+	s.jobsMutex.Lock()
+	defer s.jobsMutex.Unlock()
+	if _, ok := s.jobs[job.id]; ok {
+		s.removeJobsUniqueTags(job)
+		s.stopJob(job)
+		delete(s.jobs, job.id)
 		return nil
 	}
 	return ErrJobNotFound
@@ -788,8 +797,10 @@ func (s *Scheduler) RemoveByID(job *Job) error {
 func (s *Scheduler) FindJobsByTag(tags ...string) ([]*Job, error) {
 	var jobs []*Job
 
+	s.jobsMutex.RLock()
+	defer s.jobsMutex.RUnlock()
 Jobs:
-	for _, job := range s.jobsMap() {
+	for _, job := range s.jobs {
 		if job.hasTags(tags...) {
 			jobs = append(jobs, job)
 			continue Jobs
@@ -860,7 +871,9 @@ func (s *Scheduler) SingletonModeAll() {
 
 // TaskPresent checks if specific job's function was added to the scheduler.
 func (s *Scheduler) TaskPresent(j interface{}) bool {
-	for _, job := range s.jobsMap() {
+	s.jobsMutex.RLock()
+	defer s.jobsMutex.RUnlock()
+	for _, job := range s.jobs {
 		if job.funcName == getFunctionName(j) {
 			return true
 		}
@@ -868,25 +881,21 @@ func (s *Scheduler) TaskPresent(j interface{}) bool {
 	return false
 }
 
-// To avoid the recursive read lock on s.jobsMap() and this function,
-// creating this new function and distributing the lock between jobPresent, _jobPresent
-func (s *Scheduler) _jobPresent(j *Job, jobs map[uuid.UUID]*Job) bool {
+func (s *Scheduler) jobPresent(j *Job) bool {
 	s.jobsMutex.RLock()
 	defer s.jobsMutex.RUnlock()
-	if _, ok := jobs[j.id]; ok {
+	if _, ok := s.jobs[j.id]; ok {
 		return true
 	}
 	return false
 }
 
-func (s *Scheduler) jobPresent(j *Job) bool {
-	return s._jobPresent(j, s.jobsMap())
-}
-
 // Clear clears all Jobs from this scheduler
 func (s *Scheduler) Clear() {
 	s.stopJobs()
-	s.setJobs(make(map[uuid.UUID]*Job, 0))
+	s.jobsMutex.Lock()
+	defer s.jobsMutex.Unlock()
+	s.jobs = make(map[uuid.UUID]*Job)
 	// If unique tags was enabled, delete all the tags loaded in the tags sync.Map
 	if s.tagsUnique {
 		s.tags.Range(func(key interface{}, value interface{}) bool {
@@ -942,7 +951,7 @@ func (s *Scheduler) doCommon(jobFun interface{}, params ...interface{}) (*Job, e
 	if job.error != nil {
 		// delete the job from the scheduler as this job
 		// cannot be executed
-		s.RemoveByReference(job)
+		_ = s.RemoveByID(job)
 		return nil, job.error
 	}
 
@@ -953,7 +962,7 @@ func (s *Scheduler) doCommon(jobFun interface{}, params ...interface{}) (*Job, e
 
 	if val.Kind() != reflect.Func {
 		// delete the job for the same reason as above
-		s.RemoveByReference(job)
+		_ = s.RemoveByID(job)
 		return nil, ErrNotAFunction
 	}
 
@@ -980,13 +989,13 @@ func (s *Scheduler) doCommon(jobFun interface{}, params ...interface{}) (*Job, e
 	}
 
 	if len(params) != expectedParamLength {
-		s.RemoveByReference(job)
+		_ = s.RemoveByID(job)
 		job.error = wrapOrError(job.error, ErrWrongParams)
 		return nil, job.error
 	}
 
 	if job.runWithDetails && val.Type().In(len(params)).Kind() != reflect.ValueOf(*job).Kind() {
-		s.RemoveByReference(job)
+		_ = s.RemoveByID(job)
 		job.error = wrapOrError(job.error, ErrDoWithJobDetails)
 		return nil, job.error
 	}
@@ -1066,7 +1075,9 @@ func (s *Scheduler) Tag(t ...string) *Scheduler {
 // GetAllTags returns all tags.
 func (s *Scheduler) GetAllTags() []string {
 	var tags []string
-	for _, job := range s.jobsMap() {
+	s.jobsMutex.RLock()
+	defer s.jobsMutex.RUnlock()
+	for _, job := range s.jobs {
 		tags = append(tags, job.Tags()...)
 	}
 	return tags
@@ -1092,12 +1103,12 @@ func (s *Scheduler) setUnit(unit schedulingUnit) {
 	job.setUnit(unit)
 }
 
-// Millisecond sets the unit with seconds
+// Millisecond sets the unit with milliseconds
 func (s *Scheduler) Millisecond() *Scheduler {
 	return s.Milliseconds()
 }
 
-// Milliseconds sets the unit with seconds
+// Milliseconds sets the unit with milliseconds
 func (s *Scheduler) Milliseconds() *Scheduler {
 	s.setUnit(milliseconds)
 	return s
@@ -1465,9 +1476,6 @@ func (s *Scheduler) StopBlockingChan() {
 // WithDistributedLocker prevents the same job from being run more than once
 // when multiple schedulers are trying to schedule the same job.
 //
-// NOTE - This is currently in BETA. Please provide any feedback on your usage
-// and open bugs with any issues.
-//
 // One strategy to reduce splay in the job execution times when using
 // intervals (e.g. 1s, 1m, 1h), on each scheduler instance, is to use
 // StartAt with time.Now().Round(interval) to start the job at the
@@ -1487,13 +1495,27 @@ func (s *Scheduler) WithDistributedLocker(l Locker) {
 	s.executor.distributedLocker = l
 }
 
+// WithDistributedElector prevents the same job from being run more than once
+// when multiple schedulers are trying to schedule the same job, by allowing only
+// the leader to run jobs. Non-leaders wait until the leader instance goes down
+// and then a new leader is elected.
+//
+// Compared with the distributed lock, the election is the same as leader/follower framework.
+// All jobs are only scheduled and execute on the leader scheduler instance. Only when the leader scheduler goes down
+// and one of the scheduler instances is successfully elected, then the new leader scheduler instance can schedule jobs.
+func (s *Scheduler) WithDistributedElector(e Elector) {
+	s.executor.distributedElector = e
+}
+
 // RegisterEventListeners accepts EventListeners and registers them for all jobs
 // in the scheduler at the time this function is called.
 // The event listeners are then called at the times described by each listener.
 // If a new job is added, an additional call to this method, or the job specific
 // version must be executed in order for the new job to trigger event listeners.
 func (s *Scheduler) RegisterEventListeners(eventListeners ...EventListener) {
-	for _, job := range s.jobsMap() {
+	s.jobsMutex.RLock()
+	defer s.jobsMutex.RUnlock()
+	for _, job := range s.jobs {
 		job.RegisterEventListeners(eventListeners...)
 	}
 }
