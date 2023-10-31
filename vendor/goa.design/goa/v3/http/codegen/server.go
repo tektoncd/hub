@@ -415,7 +415,7 @@ func {{ .MountHandler }}(mux goahttp.Muxer, h http.Handler) {
 	{{- if .IsDir }}
 		{{- range .RequestPaths }}
 	mux.Handle("GET", "{{ . }}{{if ne . "/"}}/{{end}}", h.ServeHTTP)
-	mux.Handle("GET", "{{ . }}{{if ne . "/"}}/{{end}}*{{ $.PathParam }}", h.ServeHTTP)
+	mux.Handle("GET", "{{ . }}{{if ne . "/"}}/{{end}}{*{{ $.PathParam }}}", h.ServeHTTP)
 		{{- end }}
 	{{- else }}
 		{{- range .RequestPaths }}
@@ -1335,7 +1335,7 @@ const responseT = `{{ define "response" -}}
 		{{ .VarName }} := "{{ printValue .Type .DefaultValue }}"
 		{{- end }}
 		http.SetCookie(w, &http.Cookie{
-			Name: {{ printf "%q" .Name }},
+			Name: {{ printf "%q" .HTTPName }},
 			Value: {{ .VarName }},
 			{{- if .MaxAge }}
 			MaxAge: {{ .MaxAge }},
