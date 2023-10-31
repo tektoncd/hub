@@ -272,7 +272,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -329,7 +328,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -385,7 +383,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -413,7 +410,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -550,7 +546,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -578,7 +573,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
