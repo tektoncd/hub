@@ -177,6 +177,15 @@ func (j *Job) Name(name string) {
 	j.jobName = name
 }
 
+// GetName returns the name of the current job.
+// The name is either the name set using Job.Name() / Scheduler.Name() or
+// the name of the funcion as Go sees it, for example `main.func1`
+func (j *Job) GetName() string {
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	return j.jobFunction.getName()
+}
+
 func (j *Job) setRandomInterval(a, b int) {
 	j.random.rand = rand.New(rand.NewSource(time.Now().UnixNano())) // nolint
 
@@ -473,6 +482,9 @@ func (j *Job) Weekdays() []time.Weekday {
 	if len(j.scheduledWeekdays) == 0 {
 		return []time.Weekday{time.Sunday}
 	}
+	sort.Slice(j.scheduledWeekdays, func(i, k int) bool {
+		return j.scheduledWeekdays[i] < j.scheduledWeekdays[k]
+	})
 
 	return j.scheduledWeekdays
 }
