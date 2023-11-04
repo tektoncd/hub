@@ -261,6 +261,23 @@ func buildOperation(key string, r *expr.RouteExpr, bodies *EndpointBodies, rand 
 	{
 		ps := paramsFromPath(e.Params, key, rand)
 		ps = append(ps, paramsFromHeadersAndCookies(e, rand)...)
+		if e.MapQueryParams != nil {
+			name := *e.MapQueryParams
+			if name == "" {
+				name = "payload"
+			}
+			ps = append(ps, &Parameter{
+				Name:        name,
+				Description: "Query parameters",
+				In:          "query",
+				Required:    name == "payload" || e.MethodExpr.Payload.IsRequired(name),
+				Schema: &openapi.Schema{
+					Type:                 "object",
+					AdditionalProperties: true,
+				},
+				Style: "deepObject",
+			})
+		}
 		params = make([]*ParameterRef, len(ps))
 		for i, p := range ps {
 			params[i] = &ParameterRef{Value: p}
@@ -468,8 +485,15 @@ func parseOperationIDTemplate(template, service, method string, routeIndex int) 
 func buildServers(servers []*expr.ServerExpr) []*Server {
 	var svrs []*Server
 	for _, svr := range servers {
+		if !mustGenerate(svr.Meta) {
+			continue
+		}
 		var server *Server
 		for _, host := range svr.Hosts {
+			if !mustGenerate(host.Meta) {
+				continue
+			}
+
 			var (
 				serverVariable   = make(map[string]*ServerVariable)
 				defaultValue     any
@@ -532,11 +556,7 @@ func buildSecurityRequirements(reqs []*expr.SecurityExpr) []map[string][]string 
 			case expr.BasicAuthKind, expr.APIKeyKind:
 				sr[sch.Hash()] = []string{}
 			case expr.OAuth2Kind, expr.JWTKind:
-				scopes := make([]string, len(sch.Scopes))
-				for i, scope := range sch.Scopes {
-					scopes[i] = scope.Name
-				}
-				sr[sch.Hash()] = scopes
+				sr[sch.Hash()] = req.Scopes
 			}
 		}
 		srs[i] = sr

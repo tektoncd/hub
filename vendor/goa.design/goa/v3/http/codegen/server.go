@@ -43,22 +43,24 @@ func serverFile(genpkg string, svc *expr.HTTPServiceExpr) *codegen.File {
 		"addLeadingSlash":         addLeadingSlash,
 		"removeTrailingIndexHTML": removeTrailingIndexHTML,
 	}
+	imports := []*codegen.ImportSpec{
+		{Path: "bufio"},
+		{Path: "context"},
+		{Path: "fmt"},
+		{Path: "io"},
+		{Path: "mime/multipart"},
+		{Path: "net/http"},
+		{Path: "path"},
+		{Path: "strings"},
+		{Path: "github.com/gorilla/websocket"},
+		codegen.GoaImport(""),
+		codegen.GoaNamedImport("http", "goahttp"),
+		{Path: genpkg + "/" + svcName, Name: data.Service.PkgName},
+		{Path: genpkg + "/" + svcName + "/" + "views", Name: data.Service.ViewsPkg},
+	}
+	imports = append(imports, data.Service.UserTypeImports...)
 	sections := []*codegen.SectionTemplate{
-		codegen.Header(title, "server", []*codegen.ImportSpec{
-			{Path: "bufio"},
-			{Path: "context"},
-			{Path: "fmt"},
-			{Path: "io"},
-			{Path: "mime/multipart"},
-			{Path: "net/http"},
-			{Path: "path"},
-			{Path: "strings"},
-			{Path: "github.com/gorilla/websocket"},
-			codegen.GoaImport(""),
-			codegen.GoaNamedImport("http", "goahttp"),
-			{Path: genpkg + "/" + svcName, Name: data.Service.PkgName},
-			{Path: genpkg + "/" + svcName + "/" + "views", Name: data.Service.ViewsPkg},
-		}),
+		codegen.Header(title, "server", imports),
 	}
 
 	sections = append(sections, &codegen.SectionTemplate{Name: "server-struct", Source: serverStructT, Data: data})
@@ -415,7 +417,7 @@ func {{ .MountHandler }}(mux goahttp.Muxer, h http.Handler) {
 	{{- if .IsDir }}
 		{{- range .RequestPaths }}
 	mux.Handle("GET", "{{ . }}{{if ne . "/"}}/{{end}}", h.ServeHTTP)
-	mux.Handle("GET", "{{ . }}{{if ne . "/"}}/{{end}}*{{ $.PathParam }}", h.ServeHTTP)
+	mux.Handle("GET", "{{ . }}{{if ne . "/"}}/{{end}}{*{{ $.PathParam }}}", h.ServeHTTP)
 		{{- end }}
 	{{- else }}
 		{{- range .RequestPaths }}
@@ -1335,7 +1337,7 @@ const responseT = `{{ define "response" -}}
 		{{ .VarName }} := "{{ printValue .Type .DefaultValue }}"
 		{{- end }}
 		http.SetCookie(w, &http.Cookie{
-			Name: {{ printf "%q" .Name }},
+			Name: {{ printf "%q" .HTTPName }},
 			Value: {{ .VarName }},
 			{{- if .MaxAge }}
 			MaxAge: {{ .MaxAge }},
@@ -1351,6 +1353,9 @@ const responseT = `{{ define "response" -}}
 			{{- end }}
 			{{- if .HTTPOnly }}
 			HttpOnly: true,
+			{{- end }}
+			{{- if .SameSite }}
+			SameSite: {{ .SameSite }},
 			{{- end }}
 		})
 		{{- if or $checkNil $initDef }}
