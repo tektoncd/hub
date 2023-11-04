@@ -52,12 +52,7 @@ paths:
                                 $ref: '#/components/schemas/Error'
             security:
                 - jwt_header_Authorization:
-                    - rating:read
-                    - rating:write
-                    - agent:create
                     - catalog:refresh
-                    - config:refresh
-                    - refresh:token
     /catalog/{catalogName}/refresh:
         post:
             tags:
@@ -96,12 +91,7 @@ paths:
                                 $ref: '#/components/schemas/Error'
             security:
                 - jwt_header_Authorization:
-                    - rating:read
-                    - rating:write
-                    - agent:create
                     - catalog:refresh
-                    - config:refresh
-                    - refresh:token
     /catalog/refresh:
         post:
             tags:
@@ -126,12 +116,7 @@ paths:
                                 $ref: '#/components/schemas/Error'
             security:
                 - jwt_header_Authorization:
-                    - rating:read
-                    - rating:write
-                    - agent:create
                     - catalog:refresh
-                    - config:refresh
-                    - refresh:token
     /categories:
         get:
             tags:
@@ -272,7 +257,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -329,7 +313,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -385,7 +368,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -413,7 +395,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -467,11 +448,6 @@ paths:
             security:
                 - jwt_header_Authorization:
                     - rating:read
-                    - rating:write
-                    - agent:create
-                    - catalog:refresh
-                    - config:refresh
-                    - refresh:token
         put:
             tags:
                 - rating
@@ -521,12 +497,7 @@ paths:
                                 $ref: '#/components/schemas/Error'
             security:
                 - jwt_header_Authorization:
-                    - rating:read
                     - rating:write
-                    - agent:create
-                    - catalog:refresh
-                    - config:refresh
-                    - refresh:token
     /resource/{id}/versions:
         get:
             tags:
@@ -550,7 +521,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -578,7 +548,6 @@ paths:
                     headers:
                         location:
                             description: Redirect URL
-                            required: true
                             schema:
                                 type: string
                                 description: Redirect URL
@@ -641,12 +610,7 @@ paths:
                                 $ref: '#/components/schemas/Error'
             security:
                 - jwt_header_Authorization:
-                    - rating:read
-                    - rating:write
-                    - agent:create
-                    - catalog:refresh
                     - config:refresh
-                    - refresh:token
     /system/user/agent:
         put:
             tags:
@@ -693,12 +657,7 @@ paths:
                                 $ref: '#/components/schemas/Error'
             security:
                 - jwt_header_Authorization:
-                    - rating:read
-                    - rating:write
                     - agent:create
-                    - catalog:refresh
-                    - config:refresh
-                    - refresh:token
     /v1:
         get:
             tags:
