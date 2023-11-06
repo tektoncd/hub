@@ -506,6 +506,8 @@ type (
 		Secure bool
 		// HTTPOnly sets the cookie "http-only" attribute to "HttpOnly" if true.
 		HTTPOnly bool
+		// SameSite sets the cookie "same-site" attribute to the given value.
+		SameSite string
 	}
 
 	// TypeData contains the data needed to render a type definition.
@@ -964,40 +966,7 @@ func makeHTTPTypeRecursive(att *expr.AttributeExpr, seen map[string]struct{}) *e
 		}
 		att.Type = &obj
 	case *expr.Union:
-		values := expr.AsUnion(dt).Values
-		names := make([]any, len(values))
-		vals := make([]string, len(values))
-		bases := make([]expr.DataType, len(values))
-		for i, nat := range values {
-			names[i] = nat.Name
-			vals[i] = fmt.Sprintf("- %q", nat.Name)
-			bases[i] = nat.Attribute.Type
-		}
-		obj := expr.Object([]*expr.NamedAttributeExpr{
-			{Name: "Type", Attribute: &expr.AttributeExpr{
-				Type:        expr.String,
-				Description: "Union type name, one of:\n" + strings.Join(vals, "\n"),
-				Validation:  &expr.ValidationExpr{Values: names},
-				Meta: expr.MetaExpr{
-					"struct:tag:form": {"Type"},
-					"struct:tag:json": {"Type"},
-					"struct:tag:xml":  {"Type"},
-				},
-			}},
-			{Name: "Value", Attribute: &expr.AttributeExpr{
-				Type:         expr.String,
-				Description:  "JSON formatted union value",
-				UserExamples: []*expr.ExampleExpr{{Value: `"JSON"`}},
-				Bases:        bases, // For OpenAPI generation
-				Meta: expr.MetaExpr{
-					"struct:tag:form": {"Value"},
-					"struct:tag:json": {"Value"},
-					"struct:tag:xml":  {"Value"},
-				},
-			}},
-		})
-		att.Type = &obj
-		att.Validation = &expr.ValidationExpr{Required: []string{"Type", "Value"}}
+		att = expr.UnionToObject(att)
 	}
 	return att
 }
@@ -2330,7 +2299,7 @@ func extractPathParams(a *expr.MappedAttributeExpr, service *expr.AttributeExpr,
 
 			fptr bool
 		)
-		fieldName := codegen.Goify(name, true)
+		fieldName := codegen.GoifyAtt(c, name, true)
 		if !expr.IsObject(service.Type) {
 			fieldName = ""
 		} else {
@@ -2394,7 +2363,7 @@ func extractQueryParams(a *expr.MappedAttributeExpr, service *expr.AttributeExpr
 		if pointer {
 			typeRef = "*" + typeRef
 		}
-		fieldName := codegen.Goify(name, true)
+		fieldName := codegen.GoifyAtt(c, name, true)
 		if !expr.IsObject(service.Type) {
 			fieldName = ""
 		} else {
@@ -2466,7 +2435,7 @@ func extractHeaders(a *expr.MappedAttributeExpr, svcAtt *expr.AttributeExpr, svc
 		{
 			pointer = a.IsPrimitivePointer(name, true)
 			if expr.IsObject(svcAtt.Type) {
-				fieldName = codegen.Goify(name, true)
+				fieldName = codegen.GoifyAtt(attr, name, true)
 				fptr = svcCtx.IsPrimitivePointer(name, svcAtt)
 			}
 			if pointer {
@@ -2525,7 +2494,7 @@ func extractCookies(a *expr.MappedAttributeExpr, svcAtt *expr.AttributeExpr, svc
 		{
 			pointer = a.IsPrimitivePointer(name, true)
 			if expr.IsObject(svcAtt.Type) {
-				fieldName = codegen.Goify(name, true)
+				fieldName = codegen.GoifyAtt(hattr, name, true)
 				fptr = svcCtx.IsPrimitivePointer(name, svcAtt)
 				ft = svcAtt.Find(name).Type
 			}
@@ -2567,6 +2536,17 @@ func extractCookies(a *expr.MappedAttributeExpr, svcAtt *expr.AttributeExpr, svc
 				c.Secure = v[0] == "Secure"
 			case "cookie:http-only":
 				c.HTTPOnly = v[0] == "HttpOnly"
+			case "cookie:same-site":
+				switch v[0] {
+				case string(expr.CookieSameSiteLax):
+					c.SameSite = "http.SameSiteLaxMode"
+				case string(expr.CookieSameSiteStrict):
+					c.SameSite = "http.SameSiteStrictMode"
+				case string(expr.CookieSameSiteNone):
+					c.SameSite = "http.SameSiteNoneMode"
+				case string(expr.CookieSameSiteDefault):
+					c.SameSite = "http.SameSiteDefaultMode"
+				}
 			}
 		}
 		cookies = append(cookies, c)
