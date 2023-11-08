@@ -27,7 +27,7 @@ require (
 	go.uber.org/automaxprocs v1.5.3
 	go.uber.org/zap v1.26.0
 	goa.design/goa/v3 v3.14.0
-	goa.design/plugins/v3 v3.12.4
+	goa.design/plugins/v3 v3.14.0
 	golang.org/x/term v0.13.0
 	golang.org/x/text v0.14.0
 	gopkg.in/h2non/gock.v1 v1.1.2
