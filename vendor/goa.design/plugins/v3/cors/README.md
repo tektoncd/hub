@@ -59,9 +59,9 @@ var _ = Service("calc", func() {
 
   // Sets CORS response headers for requests with Origin header matching strings ending with ".domain.com" (e.g. "my.domain.com")
   cors.Origin("*.domain.com", func() {
-    Headers("X-Shared-Secret", "X-Api-Version")
-    MaxAge(100)
-    Credentials()
+    cors.Headers("X-Shared-Secret", "X-Api-Version")
+    cors.MaxAge(100)
+    cors.Credentials()
   })
 
   // Sets CORS response headers for requests with any Origin header
@@ -69,9 +69,9 @@ var _ = Service("calc", func() {
 
   // Sets CORS response headers for requests with Origin header matching the regular expression ".*domain.*"
   cors.Origin("/.*domain.*/", func() {
-    Headers("*")
-    Methods("GET", "POST")
-    Expose("X-Time")
+    cors.Headers("*")
+    cors.Methods("GET", "POST")
+    cors.Expose("X-Time")
   })
 })
 ```

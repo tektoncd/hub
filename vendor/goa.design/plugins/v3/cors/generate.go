@@ -166,10 +166,10 @@ func serverCORS(f *codegen.File) {
 }
 
 // Data: ServiceData
-var corsHandlerInitT = `{{ printf "%s creates a HTTP handler which returns a simple 200 response." .Endpoint.HandlerInit | comment }}
+var corsHandlerInitT = `{{ printf "%s creates a HTTP handler which returns a simple 204 response." .Endpoint.HandlerInit | comment }}
 func {{ .Endpoint.HandlerInit }}() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(200)
+		w.WriteHeader(204)
 	})
 }
 `
@@ -234,6 +234,8 @@ func {{ .OriginHandler }}(h http.Handler) http.Handler {
 				{{- if $policy.Headers }}
 			w.Header().Set("Access-Control-Allow-Headers", "{{ join $policy.Headers ", " }}")
 				{{- end }}
+			w.WriteHeader(204)
+			return
 		}
 		h.ServeHTTP(w, r)
 		return
