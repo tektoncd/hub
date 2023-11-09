@@ -1,4 +1,5 @@
 [![Go](https://github.com/ikawaha/goahttpcheck/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ikawaha/goahttpcheck/actions/workflows/test.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ikawaha/goahttpcheck.svg)](https://pkg.go.dev/github.com/ikawaha/goahttpcheck)
 
 goahttpcheck
 ---
