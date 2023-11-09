@@ -150,16 +150,14 @@ replaceImageName() {
   sed -i "s@image: quay.io/tekton-hub/ui@image: ${REGISTRY_BASE_URL}/ui:$RELEASE_VERSION@g" ${RELEASE_DIR}/ui-openshift.yaml
 }
 
-createGitTag() {
-  echo; echo 'Creating tag for new release:'
+createNewPreRelease() {
+  echo; echo 'Creating New Tekton Hub Pre-Release :'
 
-  hub release create --draft --prerelease -a db.yaml \
-   -a db-migration.yaml \
-   -a  api-kubernetes.yaml \
-   -a api-openshift.yaml \
-   -a  ui-kubernetes.yaml \
-   -a ui-openshift.yaml \
-   -m "${RELEASE_VERSION}" "${RELEASE_VERSION}"
+  gh repo set-default git@github.com:tektoncd/hub.git
+
+  gh release create --draft --prerelease -t ${RELEASE_VERSION} ${RELEASE_VERSION}
+
+  gh release upload ${RELEASE_VERSION} db.yaml db-migration.yaml api-kubernetes.yaml api-openshift.yaml ui-kubernetes.yaml ui-openshift.yaml
 }
 
 createNewBranchAndPush() {
@@ -206,7 +204,7 @@ main() {
   echo "********************************************"
   info            Create Git Tag
   echo "********************************************"
-  createGitTag
+  createNewPreRelease
 
   echo "********************************************"
   info            Create New Branch And Push
