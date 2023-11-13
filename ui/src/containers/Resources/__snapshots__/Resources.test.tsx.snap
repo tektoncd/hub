@@ -5,7 +5,7 @@ exports[`Resource Component should render the resources component 1`] = `
    
   <BrowserRouter>
     <Router basename={[undefined]} location={{...}} navigationType=\\"REPLACE\\" navigator={{...}}>
-      <Memo(observerComponent)>
+      <Memo()>
         <Gallery hasGutter={true} className=\\"hub-resource\\">
           <div className=\\"pf-l-gallery pf-m-gutter hub-resource\\">
             <Cards items={{...}}>
@@ -726,7 +726,7 @@ exports[`Resource Component should render the resources component 1`] = `
             </Cards>
           </div>
         </Gallery>
-      </Memo(observerComponent)>
+      </Memo()>
     </Router>
   </BrowserRouter>
    

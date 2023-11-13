@@ -6,10 +6,10 @@ exports[`should render the home page component 1`] = `
   <PageSection>
     <Grid hasGutter={true}>
       <GridItem span={2}>
-        <Memo(observerComponent) />
+        <Memo() />
       </GridItem>
       <GridItem span={10} rowSpan={1}>
-        <Memo(observerComponent) />
+        <Memo() />
       </GridItem>
     </Grid>
   </PageSection>

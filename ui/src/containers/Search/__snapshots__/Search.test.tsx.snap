@@ -3,7 +3,7 @@
 exports[`search resources should render the search component 1`] = `
 "<ContextProvider value={{...}}>
    
-  <Memo(observerComponent) />
+  <Memo() />
    
 </ContextProvider>"
 `;

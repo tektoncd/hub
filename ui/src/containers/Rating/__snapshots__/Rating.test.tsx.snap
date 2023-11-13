@@ -3,7 +3,7 @@
 exports[`Rating  should render Ratings component 1`] = `
 "<Provider>
    
-  <Memo(observerComponent)>
+  <Memo()>
     <div className=\\"hub-details-rating\\">
       <form onClick={[Function: rateResource]}>
         <ul className=\\"hub-rate-area\\">
@@ -60,7 +60,7 @@ exports[`Rating  should render Ratings component 1`] = `
         </ul>
       </form>
     </div>
-  </Memo(observerComponent)>
+  </Memo()>
    
 </Provider>"
 `;
