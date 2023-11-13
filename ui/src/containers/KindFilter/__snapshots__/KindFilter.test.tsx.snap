@@ -3,8 +3,8 @@
 exports[`KindFilter finds the filter component and matches the count 1`] = `
 "<Provider>
    
-  <Memo(observerComponent)>
-    <Memo(observerComponent) store={{...}} header=\\"Kind\\">
+  <Memo()>
+    <Memo() store={{...}} header=\\"Kind\\">
       <div>
         <Grid>
           <div className=\\"pf-l-grid\\" style={[undefined]}>
@@ -73,8 +73,8 @@ exports[`KindFilter finds the filter component and matches the count 1`] = `
           </div>
         </Grid>
       </div>
-    </Memo(observerComponent)>
-  </Memo(observerComponent)>
+    </Memo()>
+  </Memo()>
    
 </Provider>"
 `;

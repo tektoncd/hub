@@ -3,7 +3,7 @@
 exports[`Details component should render the details component 1`] = `
 "<Provider>
    
-  <Memo(observerComponent)>
+  <Memo()>
     <Spinner className=\\"hub-details-spinner\\">
       <span className=\\"pf-c-spinner pf-m-xl hub-details-spinner\\" role=\\"progressbar\\" aria-valuetext=\\"Loading...\\" aria-label=\\"Contents\\">
         <span className=\\"pf-c-spinner__clipper\\" />
@@ -11,7 +11,7 @@ exports[`Details component should render the details component 1`] = `
         <span className=\\"pf-c-spinner__tail-ball\\" />
       </span>
     </Spinner>
-  </Memo(observerComponent)>
+  </Memo()>
    
 </Provider>"
 `;

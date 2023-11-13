@@ -28,7 +28,7 @@ exports[`should render the footer component 1`] = `
       <GridItem span={12} className=\\"hub-footer-description\\">
         <Text>
           © 
-          2023
+          2024
            The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
            
           <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\">

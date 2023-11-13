@@ -3,12 +3,12 @@
 exports[`LeftPane should find the components and match the count 1`] = `
 "<Provider>
    
-  <Memo(observerComponent)>
+  <Memo()>
     <Grid hasGutter={true} className=\\"hub-leftpane\\">
       <div className=\\"pf-l-grid pf-m-gutter hub-leftpane\\" style={[undefined]}>
         <GridItem span={8}>
           <div className=\\"pf-l-grid__item pf-m-8-col\\" style={[undefined]}>
-            <Memo(observerComponent)>
+            <Memo()>
               <div className=\\"hub-sort\\">
                 <Select variant=\\"single\\" isPlain={true} typeAheadAriaLabel=\\"Sort By\\" onToggle={[Function: onToggle]} onSelect={[Function: onSelect]} onClear={[Function: clearSelection]} isOpen={false} selections=\\"\\" placeholderText=\\"Sort By\\" className=\\"\\" position=\\"left\\" direction=\\"down\\" toggleId={{...}} isGrouped={false} isDisabled={false} hasPlaceholderStyle={false} isCreatable={false} isCreateOptionOnTop={false} validated=\\"default\\" aria-label=\\"\\" aria-labelledby=\\"\\" aria-describedby=\\"\\" aria-invalid={false} typeAheadAriaDescribedby=\\"\\" clearSelectionsAriaLabel=\\"Clear all\\" toggleAriaLabel=\\"Options menu\\" removeSelectionAriaLabel=\\"Remove\\" createText=\\"Create\\" noResultsFoundText=\\"No results found\\" width=\\"\\" onCreateOption={[Function: onCreateOption]} toggleIcon={{...}} toggleIndicator={{...}} onFilter={{...}} onTypeaheadInputChanged={{...}} customContent={{...}} hasInlineFilter={false} inlineFilterPlaceholderText={{...}} customBadgeText={{...}} inputIdPrefix=\\"\\" inputAutoComplete=\\"off\\" menuAppendTo=\\"inline\\" favorites={{...}} favoritesLabel=\\"Favorites\\" ouiaSafe={true} chipGroupComponent={{...}} isInputValuePersisted={false} isInputFilterPersisted={false} isCreateSelectOptionObject={false} shouldResetOnSelect={true} isFlipEnabled={true} removeFindDomNode={false} zIndex={9999}>
                   <GenerateId prefix=\\"pf-random-id-\\">
@@ -35,13 +35,13 @@ exports[`LeftPane should find the components and match the count 1`] = `
                   </GenerateId>
                 </Select>
               </div>
-            </Memo(observerComponent)>
+            </Memo()>
           </div>
         </GridItem>
         <GridItem>
           <div className=\\"pf-l-grid__item\\" style={[undefined]}>
-            <Memo(observerComponent)>
-              <Memo(observerComponent) store={{...}} header=\\"Kind\\">
+            <Memo()>
+              <Memo() store={{...}} header=\\"Kind\\">
                 <div>
                   <Grid>
                     <div className=\\"pf-l-grid\\" style={[undefined]}>
@@ -75,14 +75,14 @@ exports[`LeftPane should find the components and match the count 1`] = `
                     </div>
                   </Grid>
                 </div>
-              </Memo(observerComponent)>
-            </Memo(observerComponent)>
+              </Memo()>
+            </Memo()>
           </div>
         </GridItem>
         <GridItem>
           <div className=\\"pf-l-grid__item\\" style={[undefined]}>
-            <Memo(observerComponent)>
-              <Memo(observerComponent) store={{...}} header=\\"Platform\\">
+            <Memo()>
+              <Memo() store={{...}} header=\\"Platform\\">
                 <div>
                   <Grid>
                     <div className=\\"pf-l-grid\\" style={[undefined]}>
@@ -116,14 +116,14 @@ exports[`LeftPane should find the components and match the count 1`] = `
                     </div>
                   </Grid>
                 </div>
-              </Memo(observerComponent)>
-            </Memo(observerComponent)>
+              </Memo()>
+            </Memo()>
           </div>
         </GridItem>
         <GridItem>
           <div className=\\"pf-l-grid__item\\" style={[undefined]}>
-            <Memo(observerComponent)>
-              <Memo(observerComponent) store={{...}} header=\\"Catalog\\">
+            <Memo()>
+              <Memo() store={{...}} header=\\"Catalog\\">
                 <div>
                   <Grid>
                     <div className=\\"pf-l-grid\\" style={[undefined]}>
@@ -157,14 +157,14 @@ exports[`LeftPane should find the components and match the count 1`] = `
                     </div>
                   </Grid>
                 </div>
-              </Memo(observerComponent)>
-            </Memo(observerComponent)>
+              </Memo()>
+            </Memo()>
           </div>
         </GridItem>
         <GridItem>
           <div className=\\"pf-l-grid__item\\" style={[undefined]}>
-            <Memo(observerComponent)>
-              <Memo(observerComponent) store={{...}} header=\\"Category\\">
+            <Memo()>
+              <Memo() store={{...}} header=\\"Category\\">
                 <div>
                   <Grid>
                     <div className=\\"pf-l-grid\\" style={[undefined]}>
@@ -198,13 +198,13 @@ exports[`LeftPane should find the components and match the count 1`] = `
                     </div>
                   </Grid>
                 </div>
-              </Memo(observerComponent)>
-            </Memo(observerComponent)>
+              </Memo()>
+            </Memo()>
           </div>
         </GridItem>
       </div>
     </Grid>
-  </Memo(observerComponent)>
+  </Memo()>
    
 </Provider>"
 `;
