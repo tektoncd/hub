@@ -15,6 +15,8 @@
 package auth
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"net/http"
 	"os"
 	"strings"
@@ -31,11 +33,25 @@ import (
 	auth "github.com/tektoncd/hub/api/pkg/auth/service"
 )
 
+// generateRandomKey return a random generated key
+func generateRandomKey(length int) (string, error) {
+	key := make([]byte, length)
+	_, err := rand.Read(key)
+	if err != nil {
+		return "", err
+	}
+	return base64.StdEncoding.EncodeToString(key), nil
+}
+
 // Auth Provider provides routes for authentication
 // and also defines git providers using goth
 func AuthProvider(r *mux.Router, api app.Config) {
 
-	key := ""            // Replace with your SESSION_SECRET or similar
+	key, err := generateRandomKey(32)
+	if err != nil {
+		panic(err)
+	}
+
 	maxAge := 86400 * 30 // 30 days
 	isProd := true       // Set to false when not serving over https
 	if api.Environment() != app.EnvMode("production") {
