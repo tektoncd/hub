@@ -699,8 +699,8 @@ github.com/honeycombio/libhoney-go v1.16.0 h1:kPpqoz6vbOzgp7jC6SR7SkNj7rua7rgxvz
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
-github.com/ikawaha/goahttpcheck v1.15.2 h1:ZLQH7AN3iOcQoWMZBbedJIRaf/pENhF+JYCUKFMd2xs=
-github.com/ikawaha/goahttpcheck v1.15.2/go.mod h1:28WvcuH2IbUMn7FhWJ/lRRDnnTGahkzvmx8keKGQg6Q=
+github.com/ikawaha/goahttpcheck v1.15.3 h1:Gp5WeEGrghf375wCT4u5tH75UjBdUqwAIIPkeJKSo90=
+github.com/ikawaha/goahttpcheck v1.15.3/go.mod h1:W7JDBKO5LzLY2/coIoVYLbHGSozCpIno1PmXeRU1iwA=
 github.com/ikawaha/httpcheck v1.10.0 h1:3lSrYzgBydfn7sczWBAkVA1gTwxPKxdMkYi2wtEIZUU=
 github.com/ikawaha/httpcheck v1.10.0/go.mod h1:mICgpunMfsAjsSX6AocPp+ctplen5/lmh8yXJ+fbeac=
 github.com/imdario/mergo v0.3.6/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
