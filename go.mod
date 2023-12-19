@@ -20,7 +20,7 @@ require (
 	github.com/markbates/goth v1.78.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.8.0
-	github.com/spf13/viper v1.18.1
+	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
 	github.com/tektoncd/pipeline v0.54.0
 	github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
