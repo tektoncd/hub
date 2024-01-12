@@ -4,7 +4,7 @@ exports[`Resource Component should render the resources component 1`] = `
 "<Provider>
    
   <BrowserRouter>
-    <Router basename={[undefined]} location={{...}} navigationType=\\"REPLACE\\" navigator={{...}}>
+    <Router basename={[undefined]} location={{...}} navigationType=\\"REPLACE\\" navigator={{...}} future={[undefined]}>
       <Memo()>
         <Gallery hasGutter={true} className=\\"hub-resource\\">
           <div className=\\"pf-l-gallery pf-m-gutter hub-resource\\">

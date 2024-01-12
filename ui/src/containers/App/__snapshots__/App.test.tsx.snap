@@ -7,7 +7,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
     <Provider>
        
       <BrowserRouter>
-        <Router basename={[undefined]} location={{...}} navigationType=\\"POP\\" navigator={{...}}>
+        <Router basename={[undefined]} location={{...}} navigationType=\\"POP\\" navigator={{...}} future={[undefined]}>
           <ParseUrl>
              
           </ParseUrl>
