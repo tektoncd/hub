@@ -63,7 +63,7 @@
     "@types/react": "^16.14.28",
     "@typescript-eslint/eslint-plugin": "6.9.0",
     "@typescript-eslint/parser": "6.18.1",
-    "assert": "^2.0.0",
+    "assert": "^2.1.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "enzyme": "^3.11.0",
