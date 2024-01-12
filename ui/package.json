@@ -33,7 +33,7 @@
     "react-syntax-highlighter": "^15.5.0",
     "remark-gfm": "^4.0.0",
     "typescript": "^5.3.3",
-    "use-debounce": "^9.0.3"
+    "use-debounce": "^10.0.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
