@@ -40,8 +40,8 @@ const Sort: React.FC = observer(() => {
       value.toString() === SortByFields.Name
         ? resources.setSortBy(SortByFields.Name)
         : value.toString() === SortByFields.Rating
-        ? resources.setSortBy(SortByFields.Rating)
-        : resources.setSortBy(SortByFields.RecentlyUpdated);
+          ? resources.setSortBy(SortByFields.Rating)
+          : resources.setSortBy(SortByFields.RecentlyUpdated);
       setIsOpen(false);
     }
   };

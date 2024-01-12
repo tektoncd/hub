@@ -95,8 +95,8 @@ const Resources: React.FC = observer(() => {
           {resources.networkErr == true
             ? apiDownError
             : catalogs.err === catalogConfigureError && resources.err !== apiDownError
-            ? catalogs.err
-            : resources.err}
+              ? catalogs.err
+              : resources.err}
         </Title>
       </EmptyState>
     );
