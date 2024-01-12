@@ -4,7 +4,7 @@ exports[`Header should render the header component and find Search component 1`]
 "<Provider>
    
   <BrowserRouter>
-    <Router basename={[undefined]} location={{...}} navigationType=\\"POP\\" navigator={{...}}>
+    <Router basename={[undefined]} location={{...}} navigationType=\\"POP\\" navigator={{...}} future={[undefined]}>
       <Memo()>
         <PageHeader logo={{...}} headerTools={{...}}>
           <header role={[undefined]} className=\\"pf-c-page__header\\">
