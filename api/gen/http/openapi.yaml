@@ -1792,6 +1792,7 @@ definitions:
                 type: integer
                 description: User rating for resource
                 example: 4
+                format: int64
                 minimum: 0
                 maximum: 5
         example:

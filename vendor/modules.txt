@@ -713,7 +713,7 @@ go.uber.org/zap/internal/stacktrace
 go.uber.org/zap/internal/ztest
 go.uber.org/zap/zapcore
 go.uber.org/zap/zaptest
-# goa.design/goa/v3 v3.14.5
+# goa.design/goa/v3 v3.14.6
 ## explicit; go 1.20
 goa.design/goa/v3/codegen
 goa.design/goa/v3/codegen/cli
@@ -733,7 +733,7 @@ goa.design/goa/v3/http/middleware
 goa.design/goa/v3/middleware
 goa.design/goa/v3/pkg
 goa.design/goa/v3/security
-# goa.design/plugins/v3 v3.14.5
+# goa.design/plugins/v3 v3.14.6
 ## explicit; go 1.21
 goa.design/plugins/v3/cors
 goa.design/plugins/v3/cors/dsl
