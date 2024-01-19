@@ -4,6 +4,7 @@ import ReactMarkDown from 'react-markdown';
 import { Grid, Card, Tabs, Tab, GridItem, CardHeader, Spinner } from '@patternfly/react-core';
 import { dark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import RehypeExternalLinks from 'rehype-external-links';
 import { useMst } from '../../store/root';
 import Yaml from '../Yaml';
 import { titleCase } from '../../common/titlecase';
@@ -71,12 +72,12 @@ const Description: React.FC<Props> = observer((props) => {
                       <hr className="hub-horizontal-line"></hr>
                       <ReactMarkDown
                         className="hub-readme"
-                        transformLinkUri={(uri: string) => transformUri(uri)}
-                        linkTarget={' '}
+                        urlTransform={(uri: string) => transformUri(uri)}
+                        rehypePlugins={[[RehypeExternalLinks, { target: ['_blank'] }]]}
                         components={{
-                          code({ inline, className, children, ...props }) {
+                          code({ node, className, children, ...props }) {
                             const match = /language-(\w+)/.exec(className || '');
-                            return !inline && match ? (
+                            return !node?.properties.inline && match ? (
                               <SyntaxHighlighter style={dark} language={match[1]} PreTag="div">
                                 {String(children).replace(/\n$/, '')}
                               </SyntaxHighlighter>
