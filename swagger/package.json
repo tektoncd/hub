@@ -15,7 +15,7 @@
     "react-scripts": "5.0.1",
     "swagger-ui-react": "^5.11.0",
     "typescript": "^5.3.3",
-    "web-vitals": "^3.5.1"
+    "web-vitals": "^3.5.2"
   },
   "scripts": {
     "start": "GENERATE_SOURCEMAP=false react-scripts start",
