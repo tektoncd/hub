@@ -10,7 +10,7 @@ and the individual `CONTRIBUTING.md` files in each respective project.
 [the code of conduct](./code-of-conduct.md).**
 
 PRs are welcome, and will follow
-[the tektoncd pull request process](https://github.com/tektoncd/community/blob/main/process.md#pull-request-process).
+[the tektoncd pull request process](https://github.com/tektoncd/community/tree/main/process#pull-request-process).
 
 ## How to Contribute to the Hub
 
