@@ -75,6 +75,13 @@ ui-build: ## generate the UI binary
 	@echo "----------------------------"
 	cd ui && npm clean-install && CI=true npm run build
 
+.PHONY: swagger-build
+swagger-build: ## generate the UI binary
+	@echo "----------------------------"
+	@echo "-- Running Swagger Build... --"
+	@echo "----------------------------"
+	cd swagger && npm install --legacy-peer-deps && CI=true npm run build
+
 .PHONY: yaml-lint
 yaml-lint: ## run YAML Lint
 	@echo "----------------------------"

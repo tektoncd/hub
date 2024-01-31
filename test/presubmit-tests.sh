@@ -166,6 +166,15 @@ ui-build() {
   }
 }
 
+swagger-build() {
+  install-node
+
+  make swagger-build || {
+    err 'Swagger UI build failed'
+    return 1
+  }
+}
+
 api-e2e() {
   info Runnning Hub CLI E2E tests
 
@@ -203,6 +212,14 @@ build_tests() {
       set -eu -o pipefail
 
       ui-build
+    ) || exit 1
+  } || echo "No changes detected related to UI"
+
+    [[ ! -z ${TEST_RUN_ALL_TESTS} ]] || [[ ! -z $(detect_changes "swagger") ]] && {
+    (
+      set -eu -o pipefail
+
+      swagger-build
     ) || exit 1
   } || echo "No changes detected related to UI"
 }
