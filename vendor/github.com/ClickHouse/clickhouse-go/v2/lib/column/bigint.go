@@ -18,6 +18,7 @@
 package column
 
 import (
+	"database/sql/driver"
 	"encoding/binary"
 	"fmt"
 	"github.com/ClickHouse/ch-go/proto"
@@ -53,7 +54,7 @@ func (col *BigInt) Rows() int {
 	return col.col.Rows()
 }
 
-func (col *BigInt) Row(i int, ptr bool) interface{} {
+func (col *BigInt) Row(i int, ptr bool) any {
 	value := col.row(i)
 	if ptr {
 		return value
@@ -61,7 +62,7 @@ func (col *BigInt) Row(i int, ptr bool) interface{} {
 	return *value
 }
 
-func (col *BigInt) ScanRow(dest interface{}, row int) error {
+func (col *BigInt) ScanRow(dest any, row int) error {
 	switch d := dest.(type) {
 	case *big.Int:
 		*d = *col.row(row)
@@ -78,7 +79,7 @@ func (col *BigInt) ScanRow(dest interface{}, row int) error {
 	return nil
 }
 
-func (col *BigInt) Append(v interface{}) (nulls []uint8, err error) {
+func (col *BigInt) Append(v any) (nulls []uint8, err error) {
 	switch v := v.(type) {
 	case []big.Int:
 		nulls = make([]uint8, len(v))
@@ -97,6 +98,18 @@ func (col *BigInt) Append(v interface{}) (nulls []uint8, err error) {
 			}
 		}
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return nil, &ColumnConverterError{
+					Op:   "Append",
+					To:   string(col.chType),
+					From: fmt.Sprintf("%T", v),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.Append(val)
+		}
 		return nil, &ColumnConverterError{
 			Op:   "Append",
 			To:   string(col.chType),
@@ -106,7 +119,7 @@ func (col *BigInt) Append(v interface{}) (nulls []uint8, err error) {
 	return
 }
 
-func (col *BigInt) AppendRow(v interface{}) error {
+func (col *BigInt) AppendRow(v any) error {
 	switch v := v.(type) {
 	case big.Int:
 		col.append(&v)
@@ -120,6 +133,18 @@ func (col *BigInt) AppendRow(v interface{}) error {
 	case nil:
 		col.append(big.NewInt(0))
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return &ColumnConverterError{
+					Op:   "AppendRow",
+					To:   string(col.chType),
+					From: fmt.Sprintf("%T", v),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.AppendRow(val)
+		}
 		return &ColumnConverterError{
 			Op:   "AppendRow",
 			To:   string(col.chType),

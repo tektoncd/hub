@@ -50,7 +50,7 @@ func (b *Block) AddColumn(name string, ct column.Type) error {
 	return nil
 }
 
-func (b *Block) Append(v ...interface{}) (err error) {
+func (b *Block) Append(v ...any) (err error) {
 	columns := b.Columns
 	if len(columns) != len(v) {
 		return &BlockError{
@@ -227,7 +227,7 @@ func (b *Block) Decode(reader *proto.Reader, revision uint64) (err error) {
 			if hasCustom {
 				return &BlockError{
 					Op:  "Decode",
-					Err: errors.New(fmt.Sprintf("custom serialization for column %s. not supported", columnName)),
+					Err: errors.New(fmt.Sprintf("custom serialization for column %s. not supported by clickhouse-go driver", columnName)),
 				}
 			}
 		}
