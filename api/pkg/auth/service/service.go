@@ -113,11 +113,9 @@ func (r *request) insertData(gitUser goth.User, code, provider string) error {
 	var acc model.Account
 	var user model.User
 
-	userQuery := r.db.Model(&model.User{}).
-		Where("email = ?", gitUser.Email)
-
 	// Check if user exist
-	err := userQuery.First(&user).Error
+	err := r.db.Model(&model.User{}).
+		Where("email = ?", gitUser.Email).First(&user).Error
 
 	// If email doesn't exists in users table
 	if err != nil {
@@ -153,8 +151,8 @@ func (r *request) insertData(gitUser goth.User, code, provider string) error {
 		}
 	} else { // when the email of user already exists
 		// Update the users table with the auth code
-		if err := userQuery.Update("code", code).Error; err != nil {
-			r.log.Error(err)
+		if err := r.db.Model(&model.User{}).
+			Where("email = ?", gitUser.Email).Update("code", code).Error; err != nil {
 			return err
 		}
 
