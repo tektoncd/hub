@@ -60,7 +60,7 @@ func (col *FixedString) Rows() int {
 	return col.col.Rows()
 }
 
-func (col *FixedString) Row(i int, ptr bool) interface{} {
+func (col *FixedString) Row(i int, ptr bool) any {
 	value := col.row(i)
 	if ptr {
 		return &value
@@ -68,7 +68,7 @@ func (col *FixedString) Row(i int, ptr bool) interface{} {
 	return value
 }
 
-func (col *FixedString) ScanRow(dest interface{}, row int) error {
+func (col *FixedString) ScanRow(dest any, row int) error {
 	switch d := dest.(type) {
 	case *string:
 		*d = col.row(row)
@@ -90,7 +90,7 @@ func (col *FixedString) ScanRow(dest interface{}, row int) error {
 	return nil
 }
 
-func (col *FixedString) Append(v interface{}) (nulls []uint8, err error) {
+func (col *FixedString) Append(v any) (nulls []uint8, err error) {
 	switch v := v.(type) {
 	case []string:
 		nulls = make([]uint8, len(v))
@@ -126,6 +126,18 @@ func (col *FixedString) Append(v interface{}) (nulls []uint8, err error) {
 		col.col.Append(data)
 		nulls = make([]uint8, len(data)/col.col.Size)
 	default:
+		if s, ok := v.(driver.Valuer); ok {
+			val, err := s.Value()
+			if err != nil {
+				return nil, &ColumnConverterError{
+					Op:   "Append",
+					To:   "FixedString",
+					From: fmt.Sprintf("%T", s),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.Append(val)
+		}
 		return nil, &ColumnConverterError{
 			Op:   "Append",
 			To:   "FixedString",
@@ -135,7 +147,7 @@ func (col *FixedString) Append(v interface{}) (nulls []uint8, err error) {
 	return
 }
 
-func (col *FixedString) AppendRow(v interface{}) (err error) {
+func (col *FixedString) AppendRow(v any) (err error) {
 	data := make([]byte, col.col.Size)
 	switch v := v.(type) {
 	case string:
@@ -159,22 +171,12 @@ func (col *FixedString) AppendRow(v interface{}) (err error) {
 			if err != nil {
 				return &ColumnConverterError{
 					Op:   "AppendRow",
-					To:   "String",
+					To:   "FixedString",
 					From: fmt.Sprintf("%T", s),
 					Hint: "could not get driver.Valuer value",
 				}
 			}
-
-			if s, ok := val.(string); ok {
-				return col.AppendRow(s)
-			}
-
-			return &ColumnConverterError{
-				Op:   "AppendRow",
-				To:   "String",
-				From: fmt.Sprintf("%T", v),
-				Hint: "driver.Valuer value is not a string",
-			}
+			return col.AppendRow(val)
 		}
 
 		if s, ok := v.(fmt.Stringer); ok {
@@ -183,7 +185,7 @@ func (col *FixedString) AppendRow(v interface{}) (err error) {
 
 		return &ColumnConverterError{
 			Op:   "AppendRow",
-			To:   "String",
+			To:   "FixedString",
 			From: fmt.Sprintf("%T", v),
 		}
 	}

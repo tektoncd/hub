@@ -19,6 +19,7 @@ package column
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"fmt"
 	"github.com/ClickHouse/ch-go/proto"
 	"reflect"
@@ -66,7 +67,7 @@ func (col *Date) Rows() int {
 	return col.col.Rows()
 }
 
-func (col *Date) Row(i int, ptr bool) interface{} {
+func (col *Date) Row(i int, ptr bool) any {
 	value := col.row(i)
 	if ptr {
 		return &value
@@ -74,7 +75,7 @@ func (col *Date) Row(i int, ptr bool) interface{} {
 	return value
 }
 
-func (col *Date) ScanRow(dest interface{}, row int) error {
+func (col *Date) ScanRow(dest any, row int) error {
 	switch d := dest.(type) {
 	case *time.Time:
 		*d = col.row(row)
@@ -96,7 +97,7 @@ func (col *Date) ScanRow(dest interface{}, row int) error {
 	return nil
 }
 
-func (col *Date) Append(v interface{}) (nulls []uint8, err error) {
+func (col *Date) Append(v any) (nulls []uint8, err error) {
 	switch v := v.(type) {
 	case []time.Time:
 		for _, t := range v {
@@ -156,6 +157,18 @@ func (col *Date) Append(v interface{}) (nulls []uint8, err error) {
 			}
 		}
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return nil, &ColumnConverterError{
+					Op:   "Append",
+					To:   "Date",
+					From: fmt.Sprintf("%T", v),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.Append(val)
+		}
 		return nil, &ColumnConverterError{
 			Op:   "Append",
 			To:   "Date",
@@ -165,7 +178,7 @@ func (col *Date) Append(v interface{}) (nulls []uint8, err error) {
 	return
 }
 
-func (col *Date) AppendRow(v interface{}) error {
+func (col *Date) AppendRow(v any) error {
 	switch v := v.(type) {
 	case time.Time:
 		if err := dateOverflow(minDate, maxDate, v, defaultDateFormatNoZone); err != nil {
@@ -215,6 +228,18 @@ func (col *Date) AppendRow(v interface{}) error {
 			col.col.Append(datetime)
 		}
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return &ColumnConverterError{
+					Op:   "AppendRow",
+					To:   "Date",
+					From: fmt.Sprintf("%T", v),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.AppendRow(val)
+		}
 		s, ok := v.(fmt.Stringer)
 		if ok {
 			return col.AppendRow(s.String())

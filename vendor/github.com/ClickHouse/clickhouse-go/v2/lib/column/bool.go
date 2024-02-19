@@ -19,6 +19,7 @@ package column
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"fmt"
 	"github.com/ClickHouse/ch-go/proto"
 	"reflect"
@@ -49,7 +50,7 @@ func (col *Bool) Rows() int {
 	return col.col.Rows()
 }
 
-func (col *Bool) Row(i int, ptr bool) interface{} {
+func (col *Bool) Row(i int, ptr bool) any {
 	val := col.row(i)
 	if ptr {
 		return &val
@@ -57,14 +58,14 @@ func (col *Bool) Row(i int, ptr bool) interface{} {
 	return val
 }
 
-func (col *Bool) ScanRow(dest interface{}, row int) error {
+func (col *Bool) ScanRow(dest any, row int) error {
 	switch d := dest.(type) {
 	case *bool:
 		*d = col.row(row)
 	case **bool:
 		*d = new(bool)
 		**d = col.row(row)
-	case *sql.NullBool:
+	case sql.Scanner:
 		return d.Scan(col.row(row))
 	default:
 		return &ColumnConverterError{
@@ -76,7 +77,7 @@ func (col *Bool) ScanRow(dest interface{}, row int) error {
 	return nil
 }
 
-func (col *Bool) Append(v interface{}) (nulls []uint8, err error) {
+func (col *Bool) Append(v any) (nulls []uint8, err error) {
 	switch v := v.(type) {
 	case []bool:
 		for _, v := range v {
@@ -110,6 +111,18 @@ func (col *Bool) Append(v interface{}) (nulls []uint8, err error) {
 			col.Append(v[i])
 		}
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return nil, &ColumnConverterError{
+					Op:   "Append",
+					To:   "Bool",
+					From: fmt.Sprintf("%T", v),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.Append(val)
+		}
 		return nil, &ColumnConverterError{
 			Op:   "Append",
 			To:   "Bool",
@@ -119,7 +132,7 @@ func (col *Bool) Append(v interface{}) (nulls []uint8, err error) {
 	return
 }
 
-func (col *Bool) AppendRow(v interface{}) error {
+func (col *Bool) AppendRow(v any) error {
 	var value bool
 	switch v := v.(type) {
 	case bool:
@@ -140,6 +153,18 @@ func (col *Bool) AppendRow(v interface{}) error {
 		}
 	case nil:
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return &ColumnConverterError{
+					Op:   "AppendRow",
+					To:   "Bool",
+					From: fmt.Sprintf("%T", v),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.AppendRow(val)
+		}
 		return &ColumnConverterError{
 			Op:   "AppendRow",
 			To:   "Bool",

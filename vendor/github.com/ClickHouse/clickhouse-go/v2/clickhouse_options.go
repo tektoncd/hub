@@ -130,7 +130,7 @@ type Options struct {
 	DialContext          func(ctx context.Context, addr string) (net.Conn, error)
 	DialStrategy         func(ctx context.Context, connID int, options *Options, dial Dial) (DialResult, error)
 	Debug                bool
-	Debugf               func(format string, v ...interface{}) // only works when Debug is true
+	Debugf               func(format string, v ...any) // only works when Debug is true
 	Settings             Settings
 	Compression          *Compression
 	DialTimeout          time.Duration // default 30 second
@@ -138,6 +138,7 @@ type Options struct {
 	MaxIdleConns         int           // default 5
 	ConnMaxLifetime      time.Duration // default 1 hour
 	ConnOpenStrategy     ConnOpenStrategy
+	FreeBufOnConnRelease bool              // drop preserved memory buffer after each query
 	HttpHeaders          map[string]string // set additional headers on HTTP requests
 	HttpUrlPath          string            // set additional URL path for HTTP requests
 	BlockBufferSize      uint8             // default 2 - can be overwritten on query
@@ -265,6 +266,24 @@ func (o *Options) fromDSN(in string) error {
 			case "round_robin":
 				o.ConnOpenStrategy = ConnOpenRoundRobin
 			}
+		case "max_open_conns":
+			maxOpenConns, err := strconv.Atoi(params.Get(v))
+			if err != nil {
+				return errors.Wrap(err, "max_open_conns invalid value")
+			}
+			o.MaxOpenConns = maxOpenConns
+		case "max_idle_conns":
+			maxIdleConns, err := strconv.Atoi(params.Get(v))
+			if err != nil {
+				return errors.Wrap(err, "max_idle_conns invalid value")
+			}
+			o.MaxIdleConns = maxIdleConns
+		case "conn_max_lifetime":
+			connMaxLifetime, err := time.ParseDuration(params.Get(v))
+			if err != nil {
+				return errors.Wrap(err, "conn_max_lifetime invalid value")
+			}
+			o.ConnMaxLifetime = connMaxLifetime
 		case "username":
 			o.Auth.Username = params.Get(v)
 		case "password":

@@ -18,6 +18,7 @@
 package column
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"github.com/ClickHouse/ch-go/proto"
 	"reflect"
@@ -50,7 +51,7 @@ func (col *Polygon) Rows() int {
 	return col.set.Rows()
 }
 
-func (col *Polygon) Row(i int, ptr bool) interface{} {
+func (col *Polygon) Row(i int, ptr bool) any {
 	value := col.row(i)
 	if ptr {
 		return &value
@@ -58,7 +59,7 @@ func (col *Polygon) Row(i int, ptr bool) interface{} {
 	return value
 }
 
-func (col *Polygon) ScanRow(dest interface{}, row int) error {
+func (col *Polygon) ScanRow(dest any, row int) error {
 	switch d := dest.(type) {
 	case *orb.Polygon:
 		*d = col.row(row)
@@ -76,7 +77,7 @@ func (col *Polygon) ScanRow(dest interface{}, row int) error {
 	return nil
 }
 
-func (col *Polygon) Append(v interface{}) (nulls []uint8, err error) {
+func (col *Polygon) Append(v any) (nulls []uint8, err error) {
 	switch v := v.(type) {
 	case []orb.Polygon:
 		values := make([][]orb.Ring, 0, len(v))
@@ -91,6 +92,18 @@ func (col *Polygon) Append(v interface{}) (nulls []uint8, err error) {
 		}
 		return col.set.Append(values)
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return nil, &ColumnConverterError{
+					Op:   "Append",
+					To:   "Polygon",
+					From: fmt.Sprintf("%T", v),
+					Hint: fmt.Sprintf("could not get driver.Valuer value, try using %s", col.Type()),
+				}
+			}
+			return col.Append(val)
+		}
 		return nil, &ColumnConverterError{
 			Op:   "Append",
 			To:   "Polygon",
@@ -99,13 +112,25 @@ func (col *Polygon) Append(v interface{}) (nulls []uint8, err error) {
 	}
 }
 
-func (col *Polygon) AppendRow(v interface{}) error {
+func (col *Polygon) AppendRow(v any) error {
 	switch v := v.(type) {
 	case orb.Polygon:
 		return col.set.AppendRow([]orb.Ring(v))
 	case *orb.Polygon:
 		return col.set.AppendRow([]orb.Ring(*v))
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return &ColumnConverterError{
+					Op:   "AppendRow",
+					To:   "Polygon",
+					From: fmt.Sprintf("%T", v),
+					Hint: fmt.Sprintf("could not get driver.Valuer value, try using %s", col.Type()),
+				}
+			}
+			return col.AppendRow(val)
+		}
 		return &ColumnConverterError{
 			Op:   "AppendRow",
 			To:   "Polygon",

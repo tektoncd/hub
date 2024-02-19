@@ -19,6 +19,7 @@ package column
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"fmt"
 	"github.com/ClickHouse/ch-go/proto"
 	"reflect"
@@ -52,7 +53,7 @@ func (col *Enum8) Rows() int {
 	return col.col.Rows()
 }
 
-func (col *Enum8) Row(i int, ptr bool) interface{} {
+func (col *Enum8) Row(i int, ptr bool) any {
 	value := col.vi[col.col.Row(i)]
 	if ptr {
 		return &value
@@ -60,7 +61,7 @@ func (col *Enum8) Row(i int, ptr bool) interface{} {
 	return value
 }
 
-func (col *Enum8) ScanRow(dest interface{}, row int) error {
+func (col *Enum8) ScanRow(dest any, row int) error {
 	v := col.col.Row(row)
 	switch d := dest.(type) {
 	case *string:
@@ -81,7 +82,7 @@ func (col *Enum8) ScanRow(dest interface{}, row int) error {
 	return nil
 }
 
-func (col *Enum8) Append(v interface{}) (nulls []uint8, err error) {
+func (col *Enum8) Append(v any) (nulls []uint8, err error) {
 	switch v := v.(type) {
 	case []int8:
 		nulls = make([]uint8, len(v))
@@ -154,6 +155,18 @@ func (col *Enum8) Append(v interface{}) (nulls []uint8, err error) {
 			}
 		}
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return nil, &ColumnConverterError{
+					Op:   "Append",
+					To:   "Enum8",
+					From: fmt.Sprintf("%T", v),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.Append(val)
+		}
 		return nil, &ColumnConverterError{
 			Op:   "Append",
 			To:   "Enum8",
@@ -163,7 +176,7 @@ func (col *Enum8) Append(v interface{}) (nulls []uint8, err error) {
 	return
 }
 
-func (col *Enum8) AppendRow(elem interface{}) error {
+func (col *Enum8) AppendRow(elem any) error {
 	switch elem := elem.(type) {
 	case int8:
 		return col.AppendRow(int(elem))
@@ -220,6 +233,19 @@ func (col *Enum8) AppendRow(elem interface{}) error {
 	case nil:
 		col.col.Append(0)
 	default:
+		if valuer, ok := elem.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return &ColumnConverterError{
+					Op:   "AppendRow",
+					To:   "Enum8",
+					From: fmt.Sprintf("%T", elem),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.AppendRow(val)
+		}
+
 		if s, ok := elem.(fmt.Stringer); ok {
 			return col.AppendRow(s.String())
 		} else {

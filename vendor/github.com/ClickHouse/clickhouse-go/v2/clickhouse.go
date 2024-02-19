@@ -24,11 +24,13 @@ import (
 	"sync/atomic"
 	"time"
 
+	_ "time/tzdata"
+
+	chproto "github.com/ClickHouse/ch-go/proto"
 	"github.com/ClickHouse/clickhouse-go/v2/contributors"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/column"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/proto"
-	_ "time/tzdata"
 )
 
 type Conn = driver.Conn
@@ -43,10 +45,12 @@ type (
 var (
 	ErrBatchInvalid              = errors.New("clickhouse: batch is invalid. check appended data is correct")
 	ErrBatchAlreadySent          = errors.New("clickhouse: batch has already been sent")
+	ErrBatchNotSent              = errors.New("clickhouse: invalid retry, batch not sent yet")
 	ErrAcquireConnTimeout        = errors.New("clickhouse: acquire conn timeout. you can increase the number of max open conn or the dial timeout")
 	ErrUnsupportedServerRevision = errors.New("clickhouse: unsupported server revision")
 	ErrBindMixedParamsFormats    = errors.New("clickhouse [bind]: mixed named, numeric or positional parameters")
 	ErrAcquireConnNoAddress      = errors.New("clickhouse: no valid address supplied")
+	ErrServerUnexpectedData      = errors.New("code: 101, message: Unexpected packet Data received from client")
 )
 
 type OpError struct {
@@ -78,17 +82,21 @@ func Open(opt *Options) (driver.Conn, error) {
 		opt = &Options{}
 	}
 	o := opt.setDefaults()
-	return &clickhouse{
+	conn := &clickhouse{
 		opt:  o,
 		idle: make(chan *connect, o.MaxIdleConns),
 		open: make(chan struct{}, o.MaxOpenConns),
-	}, nil
+		exit: make(chan struct{}),
+	}
+	go conn.startAutoCloseIdleConnections()
+	return conn, nil
 }
 
 type clickhouse struct {
 	opt    *Options
 	idle   chan *connect
 	open   chan struct{}
+	exit   chan struct{}
 	connID int64
 }
 
@@ -113,7 +121,7 @@ func (ch *clickhouse) ServerVersion() (*driver.ServerVersion, error) {
 	return &conn.server, nil
 }
 
-func (ch *clickhouse) Query(ctx context.Context, query string, args ...interface{}) (rows driver.Rows, err error) {
+func (ch *clickhouse) Query(ctx context.Context, query string, args ...any) (rows driver.Rows, err error) {
 	conn, err := ch.acquire(ctx)
 	if err != nil {
 		return nil, err
@@ -122,7 +130,7 @@ func (ch *clickhouse) Query(ctx context.Context, query string, args ...interface
 	return conn.query(ctx, ch.release, query, args...)
 }
 
-func (ch *clickhouse) QueryRow(ctx context.Context, query string, args ...interface{}) (rows driver.Row) {
+func (ch *clickhouse) QueryRow(ctx context.Context, query string, args ...any) (rows driver.Row) {
 	conn, err := ch.acquire(ctx)
 	if err != nil {
 		return &row{
@@ -133,7 +141,7 @@ func (ch *clickhouse) QueryRow(ctx context.Context, query string, args ...interf
 	return conn.queryRow(ctx, ch.release, query, args...)
 }
 
-func (ch *clickhouse) Exec(ctx context.Context, query string, args ...interface{}) error {
+func (ch *clickhouse) Exec(ctx context.Context, query string, args ...any) error {
 	conn, err := ch.acquire(ctx)
 	if err != nil {
 		return err
@@ -146,24 +154,34 @@ func (ch *clickhouse) Exec(ctx context.Context, query string, args ...interface{
 	return nil
 }
 
-func (ch *clickhouse) PrepareBatch(ctx context.Context, query string) (driver.Batch, error) {
+func (ch *clickhouse) PrepareBatch(ctx context.Context, query string, opts ...driver.PrepareBatchOption) (driver.Batch, error) {
 	conn, err := ch.acquire(ctx)
 	if err != nil {
 		return nil, err
 	}
-	batch, err := conn.prepareBatch(ctx, query, ch.release)
+	batch, err := conn.prepareBatch(ctx, query, getPrepareBatchOptions(opts...), ch.release, ch.acquire)
 	if err != nil {
 		return nil, err
 	}
 	return batch, nil
 }
 
-func (ch *clickhouse) AsyncInsert(ctx context.Context, query string, wait bool) error {
+func getPrepareBatchOptions(opts ...driver.PrepareBatchOption) driver.PrepareBatchOptions {
+	var options driver.PrepareBatchOptions
+
+	for _, opt := range opts {
+		opt(&options)
+	}
+
+	return options
+}
+
+func (ch *clickhouse) AsyncInsert(ctx context.Context, query string, wait bool, args ...any) error {
 	conn, err := ch.acquire(ctx)
 	if err != nil {
 		return err
 	}
-	if err := conn.asyncInsert(ctx, query, wait); err != nil {
+	if err := conn.asyncInsert(ctx, query, wait, args...); err != nil {
 		ch.release(conn, err)
 		return err
 	}
@@ -251,6 +269,10 @@ func (ch *clickhouse) acquire(ctx context.Context) (conn *connect, err error) {
 	}
 	select {
 	case <-timer.C:
+		select {
+		case <-ch.open:
+		default:
+		}
 		return nil, ErrAcquireConnTimeout
 	case conn := <-ch.idle:
 		if conn.isBad() {
@@ -277,6 +299,41 @@ func (ch *clickhouse) acquire(ctx context.Context) (conn *connect, err error) {
 	return conn, nil
 }
 
+func (ch *clickhouse) startAutoCloseIdleConnections() {
+	ticker := time.NewTicker(ch.opt.ConnMaxLifetime)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			ch.closeIdleExpired()
+		case <-ch.exit:
+			return
+		}
+	}
+}
+
+func (ch *clickhouse) closeIdleExpired() {
+	cutoff := time.Now().Add(-ch.opt.ConnMaxLifetime)
+	for {
+		select {
+		case conn := <-ch.idle:
+			if conn.connectedAt.Before(cutoff) {
+				conn.close()
+			} else {
+				select {
+				case ch.idle <- conn:
+				default:
+					conn.close()
+				}
+				return
+			}
+		default:
+			return
+		}
+	}
+}
+
 func (ch *clickhouse) release(conn *connect, err error) {
 	if conn.released {
 		return
@@ -289,6 +346,10 @@ func (ch *clickhouse) release(conn *connect, err error) {
 	if err != nil || time.Since(conn.connectedAt) >= ch.opt.ConnMaxLifetime {
 		conn.close()
 		return
+	}
+	if ch.opt.FreeBufOnConnRelease {
+		conn.buffer = new(chproto.Buffer)
+		conn.compressor.Data = nil
 	}
 	select {
 	case ch.idle <- conn:
@@ -303,6 +364,7 @@ func (ch *clickhouse) Close() error {
 		case c := <-ch.idle:
 			c.close()
 		default:
+			ch.exit <- struct{}{}
 			return nil
 		}
 	}

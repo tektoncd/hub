@@ -19,6 +19,7 @@ package column
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"fmt"
 	"github.com/ClickHouse/ch-go/proto"
 	"reflect"
@@ -51,7 +52,7 @@ func (col *UUID) Rows() int {
 	return col.col.Rows()
 }
 
-func (col *UUID) Row(i int, ptr bool) interface{} {
+func (col *UUID) Row(i int, ptr bool) any {
 	value := col.row(i)
 	if ptr {
 		return &value
@@ -59,7 +60,7 @@ func (col *UUID) Row(i int, ptr bool) interface{} {
 	return value
 }
 
-func (col *UUID) ScanRow(dest interface{}, row int) error {
+func (col *UUID) ScanRow(dest any, row int) error {
 	switch d := dest.(type) {
 	case *string:
 		*d = col.row(row).String()
@@ -85,7 +86,7 @@ func (col *UUID) ScanRow(dest interface{}, row int) error {
 	return nil
 }
 
-func (col *UUID) Append(v interface{}) (nulls []uint8, err error) {
+func (col *UUID) Append(v any) (nulls []uint8, err error) {
 	switch v := v.(type) {
 	case []string:
 		nulls = make([]uint8, len(v))
@@ -130,6 +131,19 @@ func (col *UUID) Append(v interface{}) (nulls []uint8, err error) {
 			}
 		}
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return nil, &ColumnConverterError{
+					Op:   "Append",
+					To:   "UUID",
+					From: fmt.Sprintf("%T", v),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.Append(val)
+		}
+
 		return nil, &ColumnConverterError{
 			Op:   "Append",
 			To:   "UUID",
@@ -139,7 +153,7 @@ func (col *UUID) Append(v interface{}) (nulls []uint8, err error) {
 	return
 }
 
-func (col *UUID) AppendRow(v interface{}) error {
+func (col *UUID) AppendRow(v any) error {
 	switch v := v.(type) {
 	case string:
 		u, err := uuid.Parse(v)
@@ -170,6 +184,18 @@ func (col *UUID) AppendRow(v interface{}) error {
 	case nil:
 		col.col.Append(uuid.UUID{})
 	default:
+		if valuer, ok := v.(driver.Valuer); ok {
+			val, err := valuer.Value()
+			if err != nil {
+				return &ColumnConverterError{
+					Op:   "AppendRow",
+					To:   "UUID",
+					From: fmt.Sprintf("%T", v),
+					Hint: "could not get driver.Valuer value",
+				}
+			}
+			return col.AppendRow(val)
+		}
 		if s, ok := v.(fmt.Stringer); ok {
 			return col.AppendRow(s.String())
 		}

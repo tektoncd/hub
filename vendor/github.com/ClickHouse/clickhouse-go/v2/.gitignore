@@ -29,3 +29,10 @@ coverage.txt
 .idea/**
 dev/*
 .run/**
+
+vendor
+
+**.tfstate*
+.terraform.lock.hcl
+**/.terraform*
+pipeline.auto.tfvars
