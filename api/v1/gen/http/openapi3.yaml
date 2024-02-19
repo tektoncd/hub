@@ -128,6 +128,7 @@ paths:
                     description: Maximum number of resources to be returned
                     default: 1000
                     example: 100
+                    format: int64
                   example: 100
                 - name: match
                   in: query
@@ -559,6 +560,7 @@ paths:
                     type: integer
                     description: ID of a resource
                     example: 1
+                    format: int64
                   example: 1
             responses:
                 "200":
@@ -595,6 +597,7 @@ paths:
                     type: integer
                     description: ID of a resource
                     example: 1
+                    format: int64
                   example: 1
             responses:
                 "200":
@@ -631,6 +634,7 @@ paths:
                     type: integer
                     description: Version ID of a resource's version
                     example: 1
+                    format: int64
                   example: 1
             responses:
                 "200":
@@ -668,6 +672,7 @@ paths:
                     description: Maximum number of resources to be returned
                     default: 1000
                     example: 100
+                    format: int64
                   example: 100
             responses:
                 "200":
@@ -707,6 +712,7 @@ components:
                     type: integer
                     description: ID is the unique id of the catalog
                     example: 1
+                    format: int64
                 name:
                     type: string
                     description: Name of catalog
@@ -739,6 +745,7 @@ components:
                     type: integer
                     description: ID is the unique id of the category
                     example: 1
+                    format: int64
                 name:
                     type: string
                     description: Name of category
@@ -832,6 +839,7 @@ components:
                     type: integer
                     description: ID is the unique id of the resource
                     example: 1
+                    format: int64
                 kind:
                     type: string
                     description: Kind of resource
@@ -925,6 +933,7 @@ components:
                     type: integer
                     description: ID is the unique id of resource's version
                     example: 1
+                    format: int64
                 minPipelinesVersion:
                     type: string
                     description: Minimum pipelines version the resource's version is compatible with
