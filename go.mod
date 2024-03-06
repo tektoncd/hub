@@ -31,8 +31,8 @@ require (
 	golang.org/x/term v0.18.0
 	golang.org/x/text v0.14.0
 	gopkg.in/h2non/gock.v1 v1.1.2
-	gorm.io/driver/postgres v1.5.2
-	gorm.io/gorm v1.25.5
+	gorm.io/driver/postgres v1.5.6
+	gorm.io/gorm v1.25.7-0.20240204074919-46816ad31dde
 	gotest.tools/v3 v3.5.1
 	k8s.io/apimachinery v0.29.0
 	k8s.io/client-go v0.27.1
@@ -99,7 +99,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
-	github.com/jackc/pgx/v5 v5.3.1 // indirect
+	github.com/jackc/pgx/v5 v5.4.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
