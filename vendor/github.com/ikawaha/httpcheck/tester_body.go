@@ -2,10 +2,12 @@ package httpcheck
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
 
+	"github.com/itchyny/gojq"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -189,5 +191,63 @@ func (tt *Tester) MustNotContainsString(substr string) *Tester {
 	}(body)
 
 	require.NotContains(tt.t, string(body), substr)
+	return tt
+}
+
+func (tt *Tester) MatchesJSONQuery(q string) *Tester {
+	body, err := io.ReadAll(tt.response.Body)
+	require.NoError(tt.t, err)
+	tt.response.Body.Close()
+	defer func(body []byte) {
+		tt.response.Body = io.NopCloser(bytes.NewReader(body))
+	}(body)
+	var in any
+	require.NoError(tt.t, json.Unmarshal(body, &in), "failed to unmarshal json: %s", string(body))
+	jq, err := gojq.Parse(q)
+	require.NoError(tt.t, err, "failed to parse query %q: %s", q)
+	it := jq.Run(in)
+	var detect bool
+	for {
+		v, ok := it.Next()
+		if !ok {
+			break
+		}
+		if err, ok := v.(error); ok {
+			require.NoError(tt.t, err, "query %q does not match: %s", q, string(body))
+		}
+		if v != nil {
+			detect = true
+		}
+	}
+	assert.True(tt.t, detect, "query %q does not match: %s", q, string(body))
+	return tt
+}
+
+func (tt *Tester) NotMatchesJSONQuery(q string) *Tester {
+	body, err := io.ReadAll(tt.response.Body)
+	require.NoError(tt.t, err)
+	tt.response.Body.Close()
+	defer func(body []byte) {
+		tt.response.Body = io.NopCloser(bytes.NewReader(body))
+	}(body)
+	var in any
+	require.NoError(tt.t, json.Unmarshal(body, &in))
+	jq, err := gojq.Parse(q)
+	require.NoError(tt.t, err, "failed to parse query %q: %s", q)
+	it := jq.Run(in)
+	var detect bool
+	for {
+		v, ok := it.Next()
+		if !ok {
+			break
+		}
+		if err, ok := v.(error); ok {
+			require.NoError(tt.t, err, "query %q does not match: %s", q, string(body))
+		}
+		if v != nil {
+			detect = true
+		}
+	}
+	assert.False(tt.t, detect, "query %q does not match: %s", q, string(body))
 	return tt
 }
