@@ -3,6 +3,7 @@ package httpcheck
 import (
 	"bytes"
 	"io"
+	"log"
 	"net/http"
 	"net/http/cookiejar"
 
@@ -22,6 +23,11 @@ type Tester struct {
 	*Checker
 }
 
+// T returns the TestingT.
+func (tt *Tester) T() TestingT {
+	return tt.t
+}
+
 // Check - Will make request to built request object.
 // After request is made, it will save response object for future assertions
 // Responsibility of this method is also to start and stop HTTP server
@@ -29,6 +35,19 @@ func (tt *Tester) Check() *Tester {
 	// start server in new goroutine
 	tt.run()
 	defer tt.stop()
+
+	if tt.debug {
+		log.Println("==", tt.request.Method, tt.request.URL)
+		log.Println(">> header", tt.request.Header)
+		body := "nil"
+		if tt.request.Body != nil {
+			b, err := io.ReadAll(tt.request.Body)
+			require.NoError(tt.t, err, "failed to read request body")
+			tt.request.Body = io.NopCloser(bytes.NewReader(b))
+			body = string(b)
+		}
+		log.Println(">> body:", string(body))
+	}
 
 	newJar, _ := cookiejar.New(nil)
 	for name := range tt.pcookies {
@@ -45,7 +64,9 @@ func (tt *Tester) Check() *Tester {
 	if err != nil {
 		assert.FailNow(tt.t, err.Error())
 	}
-	defer response.Body.Close()
+	defer func() {
+		_ = response.Body.Close()
+	}()
 
 	// save response for assertion checks
 	b, err := io.ReadAll(response.Body)
@@ -53,6 +74,12 @@ func (tt *Tester) Check() *Tester {
 
 	tt.response = response
 	tt.response.Body = io.NopCloser(bytes.NewReader(b))
+
+	if tt.debug {
+		log.Println("<< status:", tt.response.Status)
+		log.Println("<< body:", string(b))
+	}
+
 	return tt
 }
 
@@ -64,12 +91,18 @@ func (tt *Tester) Cb(callback func(*http.Response)) {
 // Will run HTTP server
 func (tt *Tester) run() {
 	// log.Println("running server")
+	if tt.external {
+		return
+	}
 	tt.server.Start()
 }
 
 // Will stop HTTP server
 func (tt *Tester) stop() {
 	// log.Println("stopping server")
+	if tt.external {
+		return
+	}
 	tt.server.Close()
 	tt.server = createServer(tt.handler)
 }
