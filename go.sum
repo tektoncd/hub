@@ -689,8 +689,8 @@ github.com/hinshun/vt10x v0.0.0-20220119200601-820417d04eec/go.mod h1:Q48J4R4Dvx
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
-github.com/ikawaha/goahttpcheck v1.15.4 h1:v26fh3WVPgNShGL09KqY5oHnVgNaa4pDAmOPYpIsJfI=
-github.com/ikawaha/goahttpcheck v1.15.4/go.mod h1:mw5fFArOWR0q+LsnXug0YBacao9w5rKvV8QjA8bmPeU=
+github.com/ikawaha/goahttpcheck v1.15.5 h1:0n/nn0SJJElMvuUUKDnUNUVLn4bdRN9sL7ctHAkMOUk=
+github.com/ikawaha/goahttpcheck v1.15.5/go.mod h1:4JbVbbXGsQjSLMjSVTTZBxrjypUAPC2uEvflkGHm0n8=
 github.com/ikawaha/httpcheck v1.12.1 h1:1LKyqEES9aTX8R04Qs1HmwntrrJHENPD/W0vS1akr6E=
 github.com/ikawaha/httpcheck v1.12.1/go.mod h1:nniPQtxrpgte1MmLZC4TL5gjqEn/P0A+8djBUOa1gXk=
 github.com/imdario/mergo v0.3.6/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
