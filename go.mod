@@ -31,7 +31,7 @@ require (
 	golang.org/x/term v0.19.0
 	golang.org/x/text v0.14.0
 	gopkg.in/h2non/gock.v1 v1.1.2
-	gorm.io/driver/postgres v1.5.2
+	gorm.io/driver/postgres v1.5.7
 	gorm.io/gorm v1.25.9
 	gotest.tools/v3 v3.5.1
 	k8s.io/apimachinery v0.29.0
