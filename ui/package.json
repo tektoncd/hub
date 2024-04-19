@@ -17,7 +17,7 @@
     "@types/react-syntax-highlighter": "^15.5.11",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
     "axios": "^1.6.8",
-    "core-js-compat": "^3.36.1",
+    "core-js-compat": "^3.37.0",
     "fuzzysort": "^2.0.4",
     "mobx": "^6.12.3",
     "mobx-react": "^9.1.1",
