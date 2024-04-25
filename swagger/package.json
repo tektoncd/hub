@@ -13,7 +13,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1",
-    "swagger-ui-react": "^5.16.2",
+    "swagger-ui-react": "^5.17.1",
     "typescript": "^5.4.5",
     "web-vitals": "^3.5.2"
   },
