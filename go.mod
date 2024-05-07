@@ -1,6 +1,6 @@
 module github.com/tektoncd/hub
 
-go 1.20
+go 1.21
 
 require (
 	github.com/ActiveState/vt10x v1.3.1
@@ -41,8 +41,6 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute v1.24.0 // indirect
-	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	contrib.go.opencensus.io/exporter/ocagent v0.7.1-0.20200907061046-05415f1de66d // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2 // indirect
 	github.com/AnatolyRugalev/goregen v0.1.0 // indirect
@@ -81,7 +79,6 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/cel-go v0.20.1 // indirect
-	github.com/google/gnostic v0.6.9 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-containerregistry v0.19.1 // indirect
@@ -190,7 +187,7 @@ require (
 
 // replacing k8s deps to 0.25 as knative is still using this
 replace (
-	k8s.io/api => k8s.io/api v0.26.6
-	k8s.io/apimachinery => k8s.io/apimachinery v0.26.6
-	k8s.io/client-go => k8s.io/client-go v0.25.9
+	k8s.io/api => k8s.io/api v0.28.5
+	k8s.io/apimachinery => k8s.io/apimachinery v0.28.5
+	k8s.io/client-go => k8s.io/client-go v0.28.5
 )
