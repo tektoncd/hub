@@ -46,7 +46,7 @@ Lets build and push all images to a registry and then create deployments.
 - To Build images for multi-architecture use the following command and default value of architecture is `linux/amd64`.
 
 ```
-docker builx build  --platform linux/amd64,linux/s390x,linux/ppc64le -f images/api.Dockerfile -t <image> --push .
+docker buildx build  --platform linux/amd64,linux/s390x,linux/ppc64le -f images/api.Dockerfile -t <image> --push .
 ```
 
 ### UI Image
