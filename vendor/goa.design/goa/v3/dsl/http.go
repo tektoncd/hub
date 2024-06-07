@@ -667,6 +667,7 @@ func Params(args any) {
 // Example:
 //
 //	var ShowPayload = Type("ShowPayload", func() {
+//	    Attribute("parentID", UInt64, "ID of parent account")
 //	    Attribute("id", UInt64, "Account ID")
 //	    Attribute("version", String, "Version", func() {
 //	        Enum("1.0", "2.0")
@@ -675,8 +676,8 @@ func Params(args any) {
 //
 //	var _ = Service("account", func() {
 //	    HTTP(func() {
-//	        Path("/{parentID}")
-//	        Param("parentID", UInt64, "ID of parent account")
+//	        Path("/{parentID}") // HTTP request uses ShowPayload "parentID"
+//	        // attribute to define "parentID" parameter.
 //	    })
 //	    Method("show", func() {  // default response type.
 //	        Payload(ShowPayload)
@@ -743,7 +744,8 @@ func Param(name string, args ...any) {
 //	})
 func MapParams(args ...any) {
 	if len(args) > 1 {
-		eval.ReportError("too many arguments")
+		eval.TooManyArgError()
+		return
 	}
 	e, ok := eval.Current().(*expr.HTTPEndpointExpr)
 	if !ok {
