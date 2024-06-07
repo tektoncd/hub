@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.11.0 - 2024-05-25
+
+- Add `OVERRIDING SYSTEM VALUE` for `INSERT` statements on PostgreSQL
+  ([#183](https://github.com/go-testfixtures/testfixtures/pull/183) by @amakmurr).
+- Upgraded dependencies.
+
 ## v3.10.0 - 2024-02-17
 
 - Fix usage with Microsoft SQL Server when the database is configured with a

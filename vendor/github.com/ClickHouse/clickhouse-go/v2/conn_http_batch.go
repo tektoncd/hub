@@ -21,13 +21,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"regexp"
+	"strings"
+
 	"github.com/ClickHouse/clickhouse-go/v2/lib/column"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/proto"
-	"io"
-	"io/ioutil"
-	"regexp"
-	"strings"
 )
 
 // \x60 represents a backtick
@@ -63,13 +63,18 @@ func (h *httpConnect) prepareBatch(ctx context.Context, query string, opts drive
 	var colNames []string
 	for r.Next() {
 		var (
-			colName string
-			colType string
-			ignore  string
+			colName      string
+			colType      string
+			default_type string
+			ignore       string
 		)
 
-		if err = r.Scan(&colName, &colType, &ignore, &ignore, &ignore, &ignore, &ignore); err != nil {
+		if err = r.Scan(&colName, &colType, &default_type, &ignore, &ignore, &ignore, &ignore); err != nil {
 			return nil, err
+		}
+		// these column types cannot be specified in INSERT queries
+		if default_type == "MATERIALIZED" || default_type == "ALIAS" {
+			continue
 		}
 		colNames = append(colNames, colName)
 		columns[colName] = colType
@@ -194,6 +199,7 @@ func (b *httpBatch) Send() (err error) {
 		headers["Content-Encoding"] = b.conn.compression.String()
 	case CompressionZSTD, CompressionLZ4:
 		options.settings["decompress"] = "1"
+		options.settings["compress"] = "1"
 	}
 
 	go func() {
@@ -224,7 +230,7 @@ func (b *httpBatch) Send() (err error) {
 	if res != nil {
 		defer res.Body.Close()
 		// we don't care about result, so just discard it to reuse connection
-		_, _ = io.Copy(ioutil.Discard, res.Body)
+		_, _ = io.Copy(io.Discard, res.Body)
 	}
 
 	return err

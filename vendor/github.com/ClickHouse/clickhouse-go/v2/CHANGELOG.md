@@ -1,3 +1,132 @@
+# v2.24.0, 2024-05-08 <!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Enhancements 🎉
+* Always compress responses when the client compression is on by @zhkvia in https://github.com/ClickHouse/clickhouse-go/pull/1286
+* Optional flag to close query with flush by @hongker in https://github.com/ClickHouse/clickhouse-go/pull/1276
+### Fixes 🐛
+* Fix prepare batch does not break on `values` substring in table name by @Wang in https://github.com/ClickHouse/clickhouse-go/pull/1290
+* Fix nil checks when appending slices of pointers by @markandrus in https://github.com/ClickHouse/clickhouse-go/pull/1283
+### Other Changes 🛠
+* Don't recreate keys from LC columns from direct stream by @genzgd in https://github.com/ClickHouse/clickhouse-go/pull/1291
+
+## New Contributors
+* @zhkvia made their first contribution in https://github.com/ClickHouse/clickhouse-go/pull/1286
+
+**Full Changelog**: https://github.com/ClickHouse/clickhouse-go/compare/v2.23.2...v2.24.0
+
+# v2.23.2, 2024-04-25 <!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Fixes 🐛
+* Fixed panic on concurrent context key map write by @Wang in https://github.com/ClickHouse/clickhouse-go/pull/1284
+### Other Changes 🛠
+* Fix ClickHouse Terraform provider version by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1285
+
+## New Contributors
+* @Wang made their first contribution in https://github.com/ClickHouse/clickhouse-go/pull/1284
+
+**Full Changelog**: https://github.com/ClickHouse/clickhouse-go/compare/v2.23.1...v2.23.2
+
+# v2.23.1, 2024-04-15 <!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Fixes 🐛
+* Zero-value timestamp to be formatted as toDateTime(0) in bind by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1260
+### Other Changes 🛠
+* Update #1127 test case to reproduce a progress handle when exception is thrown by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1259
+* Set max parallel for GH jobs by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1261
+* Ensure test container termination by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1274
+
+
+**Full Changelog**: https://github.com/ClickHouse/clickhouse-go/compare/v2.23.0...v2.23.1
+
+# v2.23.0, 2024-03-27 <!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Enhancements 🎉
+* Implement `ConnBeginTx` as replacement for deprecated `Begin` by @FelipeLema in https://github.com/ClickHouse/clickhouse-go/pull/1255
+### Other Changes 🛠
+* Align error message assertion to new missing custom setting error formatting by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1256
+* CI chores by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1258
+
+## New Contributors
+* @FelipeLema made their first contribution in https://github.com/ClickHouse/clickhouse-go/pull/1255
+
+**Full Changelog**: https://github.com/ClickHouse/clickhouse-go/compare/v2.22.4...v2.23.0
+
+# v2.22.4, 2024-03-25 <!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Fixes 🐛
+* Fix column name with parantheses handle in prepare batch by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1252
+### Other Changes 🛠
+* Fix TestBatchAppendRows work different on cloud by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1251
+
+
+**Full Changelog**: https://github.com/ClickHouse/clickhouse-go/compare/v2.22.3...v2.22.4
+
+# v2.22.3, 2024-03-25 <!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Fixes 🐛
+* Fix panic on tuple scan on []any by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1249
+### Other Changes 🛠
+* Error channel deadlock fix test case by @threadedstream in https://github.com/ClickHouse/clickhouse-go/pull/1239
+* Add a test case for #1127 by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1242
+* Run cloud/head jobs when label by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1250
+
+
+**Full Changelog**: https://github.com/ClickHouse/clickhouse-go/compare/v2.22.2...v2.22.3
+
+# v2.22.2, 2024-03-18 <!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Fixes 🐛
+* Fix for Map columns with Enums by @leklund in https://github.com/ClickHouse/clickhouse-go/pull/1236
+
+## New Contributors
+* @leklund made their first contribution in https://github.com/ClickHouse/clickhouse-go/pull/1236
+
+**Full Changelog**: https://github.com/ClickHouse/clickhouse-go/compare/v2.22.1...v2.22.2
+
+# v2.22.1, 2024-03-18 <!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Fixes 🐛
+* Make errors channel buffered inside query()  by @threadedstream in https://github.com/ClickHouse/clickhouse-go/pull/1237
+
+
+**Full Changelog**: https://github.com/ClickHouse/clickhouse-go/compare/v2.22.0...v2.22.1
+
+# v2.20.0, 2024-02-28 <!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Enhancements 🎉
+* Support [n]byte/[]byte type Scan/Append to FixedString column by @rogeryk in https://github.com/ClickHouse/clickhouse-go/pull/1205
+### Other Changes 🛠
+* Enable cloud tests by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1202
+* Removed LowCardinality(UInt64) tests that caused allow_suspicious_low_cardinality_types related error by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1206
+
+
+**Full Changelog**: https://github.com/ClickHouse/clickhouse-go/compare/v2.19.0...v2.20.0
+
+# v2.19.0, 2024-02-26 <!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Enhancements 🎉
+* handle ctx.Done() in acquire by @threadedstream in https://github.com/ClickHouse/clickhouse-go/pull/1199
+### Fixes 🐛
+* Fix panic on format nil *fmt.Stringer type value by @zaneli in https://github.com/ClickHouse/clickhouse-go/pull/1200
+### Other Changes 🛠
+* Update Go/ClickHouse versions by @jkaflik in https://github.com/ClickHouse/clickhouse-go/pull/1201
+
+## New Contributors
+* @threadedstream made their first contribution in https://github.com/ClickHouse/clickhouse-go/pull/1199
+* @zaneli made their first contribution in https://github.com/ClickHouse/clickhouse-go/pull/1200
+
+**Full Changelog**: https://github.com/ClickHouse/clickhouse-go/compare/v2.18.0...v2.19.0
+
 # v2.18.0, 2024-02-01 <!-- Release notes generated using configuration in .github/release.yml at main -->
 
 ## What's Changed
