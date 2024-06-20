@@ -258,8 +258,8 @@ github.com/gorilla/sessions
 # github.com/gorilla/websocket v1.5.1
 ## explicit; go 1.20
 github.com/gorilla/websocket
-# github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1
-## explicit; go 1.19
+# github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0
+## explicit; go 1.20
 github.com/grpc-ecosystem/grpc-gateway/v2/internal/httprule
 github.com/grpc-ecosystem/grpc-gateway/v2/runtime
 github.com/grpc-ecosystem/grpc-gateway/v2/utilities
@@ -552,7 +552,7 @@ github.com/stretchr/testify/require
 # github.com/subosito/gotenv v1.6.0
 ## explicit; go 1.18
 github.com/subosito/gotenv
-# github.com/tektoncd/pipeline v0.59.0
+# github.com/tektoncd/pipeline v0.60.2
 ## explicit; go 1.21
 github.com/tektoncd/pipeline/internal/artifactref
 github.com/tektoncd/pipeline/pkg/apis/config
@@ -599,8 +599,6 @@ github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1/task
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1/task/fake
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1/taskrun
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1/taskrun/fake
-github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1alpha1/stepaction
-github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1alpha1/stepaction/fake
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1alpha1/verificationpolicy
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1alpha1/verificationpolicy/fake
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/clustertask
@@ -609,6 +607,8 @@ github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/cus
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/customrun/fake
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/pipeline
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/pipeline/fake
+github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/stepaction
+github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/stepaction/fake
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/task
 github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/task/fake
 github.com/tektoncd/pipeline/pkg/client/listers/pipeline/v1
@@ -648,7 +648,6 @@ github.com/tektoncd/pipeline/pkg/result
 github.com/tektoncd/pipeline/pkg/spire/config
 github.com/tektoncd/pipeline/pkg/substitution
 github.com/tektoncd/pipeline/test
-github.com/tektoncd/pipeline/test/diff
 # github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
 ## explicit; go 1.13
 github.com/tektoncd/plumbing
@@ -680,13 +679,13 @@ go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/propagation
 go.opencensus.io/trace/tracestate
-# go.opentelemetry.io/otel v1.26.0
+# go.opentelemetry.io/otel v1.27.0
 ## explicit; go 1.21
 go.opentelemetry.io/otel/attribute
 go.opentelemetry.io/otel/codes
 go.opentelemetry.io/otel/internal
 go.opentelemetry.io/otel/internal/attribute
-# go.opentelemetry.io/otel/trace v1.26.0
+# go.opentelemetry.io/otel/trace v1.27.0
 ## explicit; go 1.21
 go.opentelemetry.io/otel/trace
 go.opentelemetry.io/otel/trace/embedded
@@ -776,7 +775,7 @@ golang.org/x/net/internal/socks
 golang.org/x/net/internal/timeseries
 golang.org/x/net/proxy
 golang.org/x/net/trace
-# golang.org/x/oauth2 v0.18.0
+# golang.org/x/oauth2 v0.20.0
 ## explicit; go 1.18
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
@@ -846,17 +845,8 @@ gomodules.xyz/jsonpatch/v2
 # google.golang.org/api v0.171.0
 ## explicit; go 1.19
 google.golang.org/api/support/bundler
-# google.golang.org/appengine v1.6.8
-## explicit; go 1.11
-google.golang.org/appengine/internal
-google.golang.org/appengine/internal/base
-google.golang.org/appengine/internal/datastore
-google.golang.org/appengine/internal/log
-google.golang.org/appengine/internal/remote_api
-google.golang.org/appengine/internal/urlfetch
-google.golang.org/appengine/urlfetch
-# google.golang.org/genproto/googleapis/api v0.0.0-20240318140521-94a12d6c2237
-## explicit; go 1.19
+# google.golang.org/genproto/googleapis/api v0.0.0-20240520151616-dc85e6b867a5
+## explicit; go 1.20
 google.golang.org/genproto/googleapis/api/expr/v1alpha1
 google.golang.org/genproto/googleapis/api/httpbody
 # google.golang.org/genproto/googleapis/rpc v0.0.0-20240515191416-fc5f0ca64291

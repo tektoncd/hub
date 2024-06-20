@@ -21,7 +21,7 @@ package stepaction
 import (
 	context "context"
 
-	v1alpha1 "github.com/tektoncd/pipeline/pkg/client/informers/externalversions/pipeline/v1alpha1"
+	v1beta1 "github.com/tektoncd/pipeline/pkg/client/informers/externalversions/pipeline/v1beta1"
 	factory "github.com/tektoncd/pipeline/pkg/client/injection/informers/factory"
 	controller "knative.dev/pkg/controller"
 	injection "knative.dev/pkg/injection"
@@ -37,16 +37,16 @@ type Key struct{}
 
 func withInformer(ctx context.Context) (context.Context, controller.Informer) {
 	f := factory.Get(ctx)
-	inf := f.Tekton().V1alpha1().StepActions()
+	inf := f.Tekton().V1beta1().StepActions()
 	return context.WithValue(ctx, Key{}, inf), inf.Informer()
 }
 
 // Get extracts the typed informer from the context.
-func Get(ctx context.Context) v1alpha1.StepActionInformer {
+func Get(ctx context.Context) v1beta1.StepActionInformer {
 	untyped := ctx.Value(Key{})
 	if untyped == nil {
 		logging.FromContext(ctx).Panic(
-			"Unable to fetch github.com/tektoncd/pipeline/pkg/client/informers/externalversions/pipeline/v1alpha1.StepActionInformer from context.")
+			"Unable to fetch github.com/tektoncd/pipeline/pkg/client/informers/externalversions/pipeline/v1beta1.StepActionInformer from context.")
 	}
-	return untyped.(v1alpha1.StepActionInformer)
+	return untyped.(v1beta1.StepActionInformer)
 }
