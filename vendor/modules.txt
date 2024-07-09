@@ -740,7 +740,7 @@ goa.design/plugins/v3/cors
 goa.design/plugins/v3/cors/dsl
 goa.design/plugins/v3/cors/expr
 goa.design/plugins/v3/zaplogger
-# golang.org/x/crypto v0.23.0
+# golang.org/x/crypto v0.24.0
 ## explicit; go 1.18
 golang.org/x/crypto/ed25519
 golang.org/x/crypto/internal/alias
@@ -764,7 +764,7 @@ golang.org/x/exp/slog/internal/buffer
 golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/module
 golang.org/x/mod/semver
-# golang.org/x/net v0.25.0
+# golang.org/x/net v0.26.0
 ## explicit; go 1.18
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -852,7 +852,7 @@ google.golang.org/genproto/googleapis/api/httpbody
 # google.golang.org/genproto/googleapis/rpc v0.0.0-20240515191416-fc5f0ca64291
 ## explicit; go 1.20
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.64.0
+# google.golang.org/grpc v1.64.1
 ## explicit; go 1.19
 google.golang.org/grpc
 google.golang.org/grpc/attributes
