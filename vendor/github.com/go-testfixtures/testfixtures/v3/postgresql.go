@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+
+	"golang.org/x/sync/errgroup"
 )
 
 type postgreSQL struct {
@@ -35,30 +37,33 @@ type pgConstraint struct {
 }
 
 func (h *postgreSQL) init(db *sql.DB) error {
-	var err error
-
-	h.tables, err = h.tableNames(db)
-	if err != nil {
+	var grp errgroup.Group
+	grp.Go(func() error {
+		var err error
+		h.tables, err = h.tableNames(db)
 		return err
-	}
-
-	h.sequences, err = h.getSequences(db)
-	if err != nil {
+	})
+	grp.Go(func() error {
+		var err error
+		h.sequences, err = h.getSequences(db)
 		return err
-	}
-
-	h.nonDeferrableConstraints, err = h.getNonDeferrableConstraints(db)
-	if err != nil {
+	})
+	grp.Go(func() error {
+		var err error
+		h.nonDeferrableConstraints, err = h.getNonDeferrableConstraints(db)
 		return err
-	}
-
-	h.constraints, err = h.getConstraints(db)
-	if err != nil {
+	})
+	grp.Go(func() error {
+		var err error
+		h.constraints, err = h.getConstraints(db)
 		return err
-	}
-
-	h.version, err = h.getMajorVersion(db)
-	if err != nil {
+	})
+	grp.Go(func() error {
+		var err error
+		h.version, err = h.getMajorVersion(db)
+		return err
+	})
+	if err := grp.Wait(); err != nil {
 		return err
 	}
 
@@ -334,32 +339,38 @@ func (h *postgreSQL) disableReferentialIntegrity(db *sql.DB, loadFn loadFunction
 }
 
 func (h *postgreSQL) resetSequences(db *sql.DB) error {
+	if len(h.sequences) == 0 {
+		return nil
+	}
+
 	resetSequencesTo := h.resetSequencesTo
 	if resetSequencesTo == 0 {
 		resetSequencesTo = 10000
 	}
 
+	b := strings.Builder{}
 	for _, sequence := range h.sequences {
-		_, err := db.Exec(fmt.Sprintf("SELECT SETVAL('%s', %d)", sequence, resetSequencesTo))
-		if err != nil {
-			return err
-		}
+		b.WriteString(fmt.Sprintf("SELECT SETVAL('%s', %d);", sequence, resetSequencesTo))
 	}
-	return nil
+
+	_, err := db.Exec(b.String())
+	return err
 }
 
 func (h *postgreSQL) isTableModified(q queryable, tableName string) (bool, error) {
-	checksum, err := h.getChecksum(q, tableName)
-	if err != nil {
-		return false, err
+	oldChecksum, found := h.tablesChecksum[tableName]
+	if !found {
+		return true, nil
 	}
 
-	oldChecksum := h.tablesChecksum[tableName]
-
-	return oldChecksum == "" || checksum != oldChecksum, nil
+	checksum, err := h.getChecksum(q, tableName)
+	if err != nil {
+		return true, err
+	}
+	return checksum != oldChecksum, nil
 }
 
-func (h *postgreSQL) afterLoad(q queryable) error {
+func (h *postgreSQL) computeTablesChecksum(q queryable) error {
 	if h.tablesChecksum != nil {
 		return nil
 	}
