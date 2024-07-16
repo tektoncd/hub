@@ -16,7 +16,7 @@ github.com/AlecAivazis/survey/v2/terminal
 ## explicit; go 1.21
 github.com/ClickHouse/ch-go/compress
 github.com/ClickHouse/ch-go/proto
-# github.com/ClickHouse/clickhouse-go/v2 v2.24.0
+# github.com/ClickHouse/clickhouse-go/v2 v2.26.0
 ## explicit; go 1.21
 github.com/ClickHouse/clickhouse-go/v2
 github.com/ClickHouse/clickhouse-go/v2/contributors
@@ -154,7 +154,7 @@ github.com/go-openapi/jsonreference/internal
 # github.com/go-openapi/swag v0.22.8
 ## explicit; go 1.19
 github.com/go-openapi/swag
-# github.com/go-testfixtures/testfixtures/v3 v3.11.0
+# github.com/go-testfixtures/testfixtures/v3 v3.12.0
 ## explicit; go 1.21
 github.com/go-testfixtures/testfixtures/v3
 # github.com/gogo/protobuf v1.3.2
