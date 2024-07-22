@@ -20,7 +20,7 @@
     "core-js-compat": "^3.37.1",
     "fuzzysort": "^3.0.2",
     "micromatch": "^4.0.7",
-    "mobx": "^6.13.0",
+    "mobx": "^6.13.1",
     "mobx-react": "^9.1.1",
     "mobx-state-tree": "^6.0.1",
     "moment": "^2.30.1",
