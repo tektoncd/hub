@@ -1383,12 +1383,16 @@ func buildViewedResultType(att, projected *expr.AttributeExpr, viewspkg string, 
 		if err := initTypeCodeTmpl.Execute(buf, data); err != nil {
 			panic(err) // bug
 		}
+		pkg := ""
+		if loc := codegen.UserTypeLocation(att.Type); loc != nil {
+			pkg = loc.PackageName()
+		}
 		name := "NewViewed" + resvar
 		init = &InitData{
 			Name:        name,
 			Description: fmt.Sprintf("%s initializes viewed result type %s from result type %s using the given view.", name, resvar, resvar),
 			Args: []*InitArgData{
-				{Name: "res", Ref: scope.GoTypeRef(att)},
+				{Name: "res", Ref: scope.GoFullTypeRef(att, pkg)},
 				{Name: "view", Ref: "string"},
 			},
 			ReturnTypeRef: vresref,
@@ -1399,6 +1403,9 @@ func buildViewedResultType(att, projected *expr.AttributeExpr, viewspkg string, 
 	// build constructor to initialize result type from viewed result type
 	var resinit *InitData
 	{
+		if loc := codegen.UserTypeLocation(att.Type); loc != nil {
+			resref = scope.GoFullTypeRef(att, loc.PackageName())
+		}
 		data := map[string]any{
 			"ToResult":      true,
 			"ArgVar":        "vres",
@@ -1534,11 +1541,15 @@ func buildTypeInits(projected, att *expr.AttributeExpr, viewspkg string, scope, 
 				code, helpers = buildConstructorCode(src, att, "vres", "res", srcCtx, tgtCtx, view.Name)
 			}
 
+			pkg := ""
+			if loc := codegen.UserTypeLocation(att.Type); loc != nil {
+				pkg = loc.PackageName()
+			}
 			init = append(init, &InitData{
 				Name:          name,
 				Description:   fmt.Sprintf("%s converts projected type %s to service type %s.", name, resvar, resvar),
 				Args:          []*InitArgData{{Name: "vres", Ref: viewScope.GoFullTypeRef(projected, viewspkg)}},
-				ReturnTypeRef: scope.GoTypeRef(att),
+				ReturnTypeRef: scope.GoFullTypeRef(att, pkg),
 				Code:          code,
 				Helpers:       helpers,
 			})
@@ -1613,10 +1624,14 @@ func buildProjections(projected, att *expr.AttributeExpr, viewspkg string, scope
 			code, helpers = buildConstructorCode(att, tgt, "res", "vres", srcCtx, tgtCtx, view.Name)
 		}
 
+		pkg := ""
+		if loc := codegen.UserTypeLocation(att.Type); loc != nil {
+			pkg = loc.PackageName()
+		}
 		projections = append(projections, &InitData{
 			Name:          name,
 			Description:   fmt.Sprintf("%s projects result type %s to projected type %s using the %q view.", name, scope.GoTypeName(att), tname, view.Name),
-			Args:          []*InitArgData{{Name: "res", Ref: scope.GoTypeRef(att)}},
+			Args:          []*InitArgData{{Name: "res", Ref: scope.GoFullTypeRef(att, pkg)}},
 			ReturnTypeRef: viewScope.GoFullTypeRef(projected, viewspkg),
 			Code:          code,
 			Helpers:       helpers,
