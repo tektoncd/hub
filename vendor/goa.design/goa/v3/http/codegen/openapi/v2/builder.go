@@ -22,7 +22,7 @@ func NewV2(root *expr.RootExpr, h *expr.HostExpr) (*V2, error) {
 	if err != nil {
 		// This should never happen because server expression must have been
 		// validated. If it does, then we must fix server validation.
-		return nil, fmt.Errorf("failed to parse server URL: %s", err)
+		return nil, fmt.Errorf("failed to parse server URL: %w", err)
 	}
 	host := u.Host
 	if !openapi.MustGenerate(root.API.Servers[0].Meta) || !openapi.MustGenerate(h.Meta) {
@@ -378,8 +378,8 @@ func responseSpecFromExpr(_ *V2, root *expr.RootExpr, r *expr.HTTPResponseExpr, 
 	var schema *openapi.Schema
 	if mt, ok := r.Body.Type.(*expr.ResultTypeExpr); ok {
 		view := expr.DefaultView
-		if v, ok := r.Body.Meta["view"]; ok {
-			view = v[0]
+		if v, ok := r.Body.Meta.Last(expr.ViewMetaKey); ok {
+			view = v
 		}
 		schema = openapi.NewSchema()
 		schema.Ref = openapi.ResultTypeRefWithPrefix(root.API, mt, view, typeNamePrefix)

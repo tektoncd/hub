@@ -68,10 +68,10 @@ func exampleServiceFile(genpkg string, _ *expr.RootExpr, svc *expr.ServiceExpr, 
 	specs := []*codegen.ImportSpec{
 		{Path: "io"},
 		{Path: "context"},
-		{Path: "log"},
 		{Path: "fmt"},
 		{Path: "strings"},
 		{Path: path.Join(genpkg, svcName), Name: data.PkgName},
+		{Path: "goa.design/clue/log"},
 		{Path: "goa.design/goa/v3/security"},
 	}
 	sections := []*codegen.SectionTemplate{
@@ -120,9 +120,9 @@ func basicEndpointSection(m *expr.MethodExpr, svcData *Data) *codegen.SectionTem
 		ed.ResultFullRef = svcData.Scope.GoFullTypeRef(m.Result, svcData.PkgName)
 		ed.ResultIsStruct = expr.IsObject(m.Result.Type)
 		if md.ViewedResult != nil {
-			view := "default"
-			if v, ok := m.Result.Meta["view"]; ok {
-				view = v[0]
+			view := expr.DefaultView
+			if v, ok := m.Result.Meta.Last(expr.ViewMetaKey); ok {
+				view = v
 			}
 			ed.ResultView = view
 		}
