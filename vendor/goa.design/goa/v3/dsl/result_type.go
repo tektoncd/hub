@@ -106,19 +106,19 @@ func ResultType(identifier string, args ...any) *expr.ResultTypeExpr {
 	}
 	canonicalID := expr.CanonicalIdentifier(identifier)
 	// Validate that result type identifier doesn't clash
-	for _, rt := range expr.Root.ResultTypes {
-		if re := rt.(*expr.ResultTypeExpr); re.Identifier == canonicalID {
+	for _, rt := range *expr.GeneratedResultTypes {
+		if rt.Identifier == canonicalID {
 			eval.ReportError(
 				"result type %#v with canonical identifier %#v is defined twice",
 				identifier, canonicalID)
 			return nil
 		}
 	}
-	// Now save the type in the API result types map
-	mt := expr.NewResultTypeExpr(typeName, identifier, fn)
-	expr.Root.ResultTypes = append(expr.Root.ResultTypes, mt)
+	// Add the type to the generated types root for later evaluation.
+	rt := expr.NewResultTypeExpr(typeName, identifier, fn)
+	expr.Root.ResultTypes = append(expr.Root.ResultTypes, rt)
 
-	return mt
+	return rt
 }
 
 // TypeName makes it possible to set the Go struct name for a type or result
@@ -198,46 +198,51 @@ func TypeName(name string) {
 //	    })
 //	})
 func View(name string, adsl ...func()) {
-	switch e := eval.Current().(type) {
-	case *expr.ResultTypeExpr:
-		if e.View(name) != nil {
-			eval.ReportError("multiple expressions for view %#v in result type %#v", name, e.TypeName)
-			return
+	if adsl == nil {
+		switch e := eval.Current().(type) {
+		case *expr.ResultTypeExpr:
+			e.AddMeta(expr.ViewMetaKey, name)
+		case *expr.AttributeExpr:
+			e.AddMeta(expr.ViewMetaKey, name)
+		default:
+			eval.IncompatibleDSL()
 		}
-		at := &expr.AttributeExpr{}
-		ok := false
-		var a *expr.Array
-		if len(adsl) > 0 {
-			ok = eval.Execute(adsl[0], at)
-		} else if a, ok = e.Type.(*expr.Array); ok {
-			// inherit view from collection element if present
-			if elem := a.ElemType; elem != nil {
-				if pa, ok2 := elem.Type.(*expr.ResultTypeExpr); ok2 {
-					print(pa)
-					print(pa.Views)
-					if v := pa.View(name); v != nil {
-						at = v.AttributeExpr
-					} else {
-						eval.ReportError("unknown view %#v", name)
-						return
-					}
+		return
+	}
+	rt, ok := eval.Current().(*expr.ResultTypeExpr)
+	if !ok {
+		eval.IncompatibleDSL()
+		return
+	}
+	if rt.View(name) != nil {
+		eval.ReportError("view %q is defined multiple times in result type %q", name, rt.TypeName)
+		return
+	}
+	at := &expr.AttributeExpr{}
+	ok = false
+	if len(adsl) > 0 {
+		ok = eval.Execute(adsl[0], at)
+	} else if a, ok := rt.Type.(*expr.Array); ok {
+		// inherit view from collection element if present
+		if elem := a.ElemType; elem != nil {
+			if pa, ok2 := elem.Type.(*expr.ResultTypeExpr); ok2 {
+				if v := pa.View(name); v != nil {
+					at = v.AttributeExpr
+					rt = pa
+				} else {
+					eval.ReportError("unknown view %#v", name)
+					return
 				}
 			}
 		}
-		if ok {
-			view, err := buildView(name, e, at)
-			if err != nil {
-				eval.ReportError(err.Error())
-				return
-			}
-			e.Views = append(e.Views, view)
+	}
+	if ok {
+		view, err := buildView(name, rt, at)
+		if err != nil {
+			eval.ReportError(err.Error())
+			return
 		}
-
-	case *expr.AttributeExpr:
-		e.AddMeta("view", name)
-
-	default:
-		eval.IncompatibleDSL()
+		rt.Views = append(rt.Views, view)
 	}
 }
 
@@ -342,11 +347,11 @@ func CollectionOf(v any, adsl ...func()) *expr.ResultTypeExpr {
 	}
 	id = mime.FormatMediaType(rtype, params)
 	canonical := expr.CanonicalIdentifier(id)
-	if mt := expr.Root.GeneratedResultType(canonical); mt != nil {
+	if mt := expr.GeneratedResultType(canonical); mt != nil {
 		// Already have a type for this collection, reuse it.
 		return mt
 	}
-	mt := expr.NewResultTypeExpr("", id, func() {
+	rt := expr.NewResultTypeExpr("", id, func() {
 		rt, ok := eval.Current().(*expr.ResultTypeExpr)
 		if !ok {
 			eval.IncompatibleDSL()
@@ -373,8 +378,8 @@ func CollectionOf(v any, adsl ...func()) *expr.ResultTypeExpr {
 	})
 	// do not execute the DSL right away, will be done last to make sure
 	// the element DSL has run first.
-	*expr.Root.GeneratedTypes = append(*expr.Root.GeneratedTypes, mt)
-	return mt
+	expr.GeneratedResultTypes.Append(rt)
+	return rt
 }
 
 // Reference sets a type or result type reference. The value itself can be a
@@ -521,8 +526,8 @@ func buildView(name string, mt *expr.ResultTypeExpr, at *expr.AttributeExpr) (*e
 		cat := nat.Attribute
 		if existing := mt.Find(n); existing != nil {
 			dup := expr.DupAtt(existing)
-			if _, ok := cat.Meta["view"]; ok {
-				dup.AddMeta("view", cat.Meta["view"]...)
+			if v, ok := cat.Meta.Last(expr.ViewMetaKey); ok {
+				dup.AddMeta("view", v)
 			}
 			o.Set(n, dup)
 		} else if n != "links" {
