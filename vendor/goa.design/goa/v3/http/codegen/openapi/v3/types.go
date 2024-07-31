@@ -117,8 +117,8 @@ func buildBodyTypes(api *expr.APIExpr) (map[string]map[string]*EndpointBodies, m
 			}
 			for _, resp := range resps {
 				var view string
-				if vs, ok := resp.Body.Meta["view"]; ok {
-					view = vs[0]
+				if v, ok := resp.Body.Meta.Last(expr.ViewMetaKey); ok {
+					view = v
 				}
 				body := resp.Body
 				if view != "" {
@@ -166,7 +166,7 @@ func (sf *schemafier) schemafy(attr *expr.AttributeExpr, noref ...bool) *openapi
 		case expr.Float64Kind:
 			s.Type = openapi.Type("number")
 			s.Format = "double"
-		case expr.BytesKind, expr.AnyKind:
+		case expr.BytesKind:
 			if bases := attr.Bases; len(bases) > 0 {
 				for _, b := range bases {
 					// Union type
@@ -177,6 +177,10 @@ func (sf *schemafier) schemafy(attr *expr.AttributeExpr, noref ...bool) *openapi
 				s.Type = openapi.Type("string")
 				s.Format = "binary"
 			}
+		case expr.AnyKind:
+			// A schema without a type matches any data type.
+			// See https://swagger.io/docs/specification/data-models/data-types/#any.
+			s.Type = openapi.Type("")
 		default:
 			s.Type = openapi.Type(t.Name())
 		}
@@ -428,8 +432,8 @@ func hashAttribute(att *expr.AttributeExpr, h hash.Hash64, seen map[string]*uint
 		// the computation of the hash.
 		rt := t.(*expr.ResultTypeExpr)
 		*res = hashString(rt.Identifier, h)
-		if view := rt.AttributeExpr.Meta["view"]; len(view) > 0 {
-			*res = orderedHash(*res, hashString(view[0], h), h)
+		if view, ok := rt.AttributeExpr.Meta.Last(expr.ViewMetaKey); ok {
+			*res = orderedHash(*res, hashString(view, h), h)
 		}
 
 	default: // Primitives or Any

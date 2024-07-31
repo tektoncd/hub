@@ -202,7 +202,7 @@ func Code(code int) {
 
 func grpcError(n string, p eval.Expression, args ...any) *expr.GRPCErrorExpr {
 	if len(args) == 0 {
-		eval.ReportError("not enough arguments, use Response(name, status), Response(name, status, func()) or Response(name, func())")
+		eval.TooFewArgError()
 		return nil
 	}
 	var (
@@ -247,7 +247,7 @@ func parseResponseArgs(val any, args ...any) (code int, fn func()) {
 		}
 	case func():
 		if len(args) > 0 {
-			eval.InvalidArgError("int (HTTP status code)", val)
+			eval.TooManyArgError()
 			return
 		}
 		fn = t
@@ -260,7 +260,7 @@ func parseResponseArgs(val any, args ...any) (code int, fn func()) {
 
 func httpError(n string, p eval.Expression, args ...any) *expr.HTTPErrorExpr {
 	if len(args) == 0 {
-		eval.ReportError("not enough arguments, use Response(name, status), Response(name, status, func()) or Response(name, func())")
+		eval.TooFewArgError()
 		return nil
 	}
 	var (
