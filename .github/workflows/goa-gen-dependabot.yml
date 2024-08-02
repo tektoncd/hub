@@ -28,6 +28,11 @@ jobs:
         # Compare the versions
         if [ "${currentVersion}" != "${listAllLatestVersions[-1]}" ]
         then
+          # Update goa version in presbumite-test.sh
+          go_install_command="go install goa.design/goa/v3/cmd/goa@"
+          sed -i "s#${go_install_command}v[0-9]\+\.[0-9]\+\.[0-9]\+#${go_install_command}${listAllLatestVersions[-1]}#" test/presubmit-tests.sh
+
+          # Update goa version in go.mod
           sed -i "s@goa.design/goa/v3 ${currentVersion}@goa.design/goa/v3 ${listAllLatestVersions[-1]}@g" go.mod
           sed -i "s@goa.design/plugins/v3 ${currentVersion}@goa.design/plugins/v3 ${listAllLatestVersions[-1]}@g" go.mod
           go mod tidy
