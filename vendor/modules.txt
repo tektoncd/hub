@@ -711,7 +711,7 @@ go.uber.org/zap/internal/stacktrace
 go.uber.org/zap/internal/ztest
 go.uber.org/zap/zapcore
 go.uber.org/zap/zaptest
-# goa.design/goa/v3 v3.18.0
+# goa.design/goa/v3 v3.18.2
 ## explicit; go 1.21.0
 goa.design/goa/v3/codegen
 goa.design/goa/v3/codegen/cli
