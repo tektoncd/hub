@@ -613,9 +613,11 @@ func (d ServicesData) analyze(service *expr.ServiceExpr) *Data {
 			collectUserTypes(m.StreamingPayload)
 			collectUserTypes(m.Result)
 			// Collect projected types
-			types, umeths := collectProjectedTypes(expr.DupAtt(m.Result), m.Result, viewspkg, scope, viewScope, seenProj)
-			projTypes = append(projTypes, types...)
-			viewedUnionMeths = append(viewedUnionMeths, umeths...)
+			if hasResultType(m.Result) {
+				types, umeths := collectProjectedTypes(expr.DupAtt(m.Result), m.Result, viewspkg, scope, viewScope, seenProj)
+				projTypes = append(projTypes, types...)
+				viewedUnionMeths = append(viewedUnionMeths, umeths...)
+			}
 			for _, er := range m.Errors {
 				recordError(er)
 			}
@@ -1251,6 +1253,44 @@ func collectProjectedTypes(projected, att *expr.AttributeExpr, viewspkg string, 
 		}
 	}
 	return
+}
+
+// hasResultType returns true if the given attribute has a result type recursively.
+func hasResultType(att *expr.AttributeExpr, seens ...map[string]struct{}) bool {
+	if _, ok := att.Type.(*expr.ResultTypeExpr); ok {
+		return true
+	}
+	var seen map[string]struct{}
+	if len(seens) > 0 {
+		seen = seens[0]
+	} else {
+		seen = make(map[string]struct{})
+	}
+	switch a := att.Type.(type) {
+	case expr.UserType:
+		if _, ok := seen[a.ID()]; ok {
+			return false
+		}
+		seen[a.ID()] = struct{}{}
+		return hasResultType(a.Attribute(), seen)
+	case *expr.Array:
+		return hasResultType(a.ElemType, seen)
+	case *expr.Map:
+		return hasResultType(a.KeyType, seen) || hasResultType(a.ElemType, seen)
+	case *expr.Object:
+		for _, nat := range *a {
+			if hasResultType(nat.Attribute, seen) {
+				return true
+			}
+		}
+	case *expr.Union:
+		for _, nat := range a.Values {
+			if hasResultType(nat.Attribute, seen) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // buildProjectedType builds projected type for the given user type.
