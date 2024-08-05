@@ -35,7 +35,7 @@
     "rehype-external-links": "^3.0.0",
     "remark-gfm": "^4.0.0",
     "typescript": "^5.5.3",
-    "use-debounce": "^10.0.1",
+    "use-debounce": "^10.0.2",
     "webpack-dev-server": "^5.0.4"
   },
   "scripts": {
