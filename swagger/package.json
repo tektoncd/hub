@@ -15,7 +15,7 @@
     "react-scripts": "^5.0.1",
     "swagger-ui-react": "^5.17.14",
     "typescript": "^5.5.4",
-    "web-vitals": "^4.2.2",
+    "web-vitals": "^4.2.3",
     "jsdom": "24.1.1"
   },
   "scripts": {
