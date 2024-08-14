@@ -103,7 +103,9 @@ export const CatalogStore = types
             provider: c.provider
           }));
           catalogs.forEach((c: ICatalog) => self.add(c));
-        } catch (err) {
+        } catch (error) {
+          const err = error as AxiosError;
+          self.err = err.toString();
           throw catalogConfigureError;
         }
       } catch (error) {

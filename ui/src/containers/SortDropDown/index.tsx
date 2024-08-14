@@ -35,13 +35,16 @@ const Sort: React.FC = observer(() => {
     value: string | SelectOptionObject,
     isPlaceholder: boolean | undefined
   ) => {
-    if (isPlaceholder) clearSelection();
-    else {
-      value.toString() === SortByFields.Name
-        ? resources.setSortBy(SortByFields.Name)
-        : value.toString() === SortByFields.Rating
-          ? resources.setSortBy(SortByFields.Rating)
-          : resources.setSortBy(SortByFields.RecentlyUpdated);
+    if (isPlaceholder) {
+      clearSelection();
+    } else {
+      if (value.toString() === SortByFields.Name) {
+        resources.setSortBy(SortByFields.Name);
+      } else if (value.toString() === SortByFields.Rating) {
+        resources.setSortBy(SortByFields.Rating);
+      } else {
+        resources.setSortBy(SortByFields.RecentlyUpdated);
+      }
       setIsOpen(false);
     }
   };
