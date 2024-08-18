@@ -60,6 +60,10 @@
       "last 1 safari version"
     ]
   },
+  "overrides": {
+    "nth-check": "2.1.1",
+    "postcss":"8.4.41"
+  },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@testing-library/react-hooks": "^8.0.1",
