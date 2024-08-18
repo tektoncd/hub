@@ -18,6 +18,10 @@
     "web-vitals": "^4.2.3",
     "jsdom": "24.1.1"
   },
+  "overrides": {
+    "nth-check": "2.1.1",
+    "postcss":"8.4.41"
+  },
   "scripts": {
     "start": "GENERATE_SOURCEMAP=false react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
