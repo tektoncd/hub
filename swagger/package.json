@@ -19,6 +19,7 @@
     "jsdom": "24.1.1"
   },
   "overrides": {
+    "async":"3.2.6",
     "nth-check": "2.1.1",
     "postcss":"8.4.41"
   },
