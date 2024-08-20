@@ -857,7 +857,6 @@ components:
                     type: string
                     description: status of the job
                     example: queued
-            description: The Job type describes a catalog refresh job that is run asynchronously
             required:
                 - id
                 - catalogName
@@ -869,21 +868,6 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/Category'
-        Platform:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    description: ID is the unique id of platform
-                    example: 1
-                    format: int64
-                name:
-                    type: string
-                    description: Name of platform
-                    example: linux/amd64
-            required:
-                - id
-                - name
         RefreshConfigResponseBody:
             type: object
             properties:
@@ -893,28 +877,6 @@ components:
                     example: 41ba391c8baf1fcd3c62c11272b913dc6613f4cf3b1833cfbb32431dc4384c93
             required:
                 - checksum
-        Resource:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/ResourceData'
-            required:
-                - data
-        ResourceContent:
-            type: object
-            properties:
-                readme:
-                    type: string
-                    description: Readme
-                    example: |-
-                        #Readme
-                         Sample readme content
-                yaml:
-                    type: string
-                    description: Yaml
-                    example: |-
-                        #YAML
-                         Sample yaml content
         ResourceData:
             type: object
             properties:
@@ -954,7 +916,7 @@ components:
                 platforms:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Platform'
+                        $ref: '#/components/schemas/Category'
                     description: Platforms related to resource
                     example:
                         - id: 1
@@ -967,7 +929,7 @@ components:
                 tags:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Tag'
+                        $ref: '#/components/schemas/Category'
                     description: Tags related to resource
                     example:
                         - id: 1
@@ -1000,13 +962,6 @@ components:
             type: array
             items:
                 $ref: '#/components/schemas/ResourceData'
-        ResourceVersion:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/ResourceVersionData'
-            required:
-                - data
         ResourceVersionData:
             type: object
             properties:
@@ -1042,7 +997,7 @@ components:
                 platforms:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Platform'
+                        $ref: '#/components/schemas/Category'
                     description: Platforms related to resource version
                     example:
                         - id: 1
@@ -1082,29 +1037,6 @@ components:
                 - resource
                 - hubURLPath
                 - hubRawURLPath
-        ResourceVersionReadme:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/ResourceContent'
-            description: README of a particular version of a Resource
-            required:
-                - data
-        ResourceVersionYaml:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/ResourceContent'
-            description: YAML of a particular version of a Resource
-            required:
-                - data
-        ResourceVersions:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/Versions'
-            required:
-                - data
         Resources:
             type: object
             properties:
@@ -1120,21 +1052,6 @@ components:
                     items:
                         $ref: '#/components/schemas/HubService'
                     description: List of services and their status
-        Tag:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    description: ID is the unique id of tag
-                    example: 1
-                    format: int64
-                name:
-                    type: string
-                    description: Name of tag
-                    example: image-build
-            required:
-                - id
-                - name
         UpdateAgentRequestBody:
             type: object
             properties:
@@ -1173,31 +1090,6 @@ components:
                     maximum: 5
             required:
                 - rating
-        Versions:
-            type: object
-            properties:
-                latest:
-                    $ref: '#/components/schemas/ResourceVersionData'
-                versions:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/ResourceVersionData'
-                    description: List of all versions of resource
-                    example:
-                        - hubRawURLPath: /resource/tektoncd/task/buildah/0.1/raw
-                          id: 1
-                          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                          version: "0.1"
-                          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                        - hubRawURLPath: /resource/tektoncd/task/buildah/0.2/raw
-                          id: 2
-                          rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
-                          version: "0.2"
-                          webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
-            description: The Versions type describes response for versions by resource id API.
-            required:
-                - latest
-                - versions
     securitySchemes:
         jwt_header_Authorization:
             type: http
