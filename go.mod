@@ -26,7 +26,7 @@ require (
 	github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
 	go.uber.org/automaxprocs v1.5.3
 	go.uber.org/zap v1.27.0
-	goa.design/goa/v3 v3.18.2
+	goa.design/goa/v3 v3.19.0-rc1
 	goa.design/plugins/v3 v3.16.2
 	golang.org/x/term v0.23.0
 	golang.org/x/text v0.17.0
@@ -154,15 +154,15 @@ require (
 	go.opentelemetry.io/otel/trace v1.28.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.25.0 // indirect
+	golang.org/x/crypto v0.26.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
-	golang.org/x/mod v0.19.0 // indirect
-	golang.org/x/net v0.27.0 // indirect
+	golang.org/x/mod v0.20.0 // indirect
+	golang.org/x/net v0.28.0 // indirect
 	golang.org/x/oauth2 v0.20.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.23.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.23.0 // indirect
+	golang.org/x/tools v0.24.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
 	google.golang.org/api v0.181.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240528184218-531527333157 // indirect
