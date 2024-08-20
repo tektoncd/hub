@@ -103,12 +103,8 @@ func Type(name string, args ...any) expr.UserType {
 	}
 
 	t := &expr.UserTypeExpr{
-		TypeName: name,
-		AttributeExpr: &expr.AttributeExpr{
-			Type:    base,
-			DSLFunc: fn,
-			Meta:    expr.MetaExpr{"openapi:typename": []string{name}},
-		},
+		TypeName:      name,
+		AttributeExpr: &expr.AttributeExpr{Type: base, DSLFunc: fn},
 	}
 	expr.Root.Types = append(expr.Root.Types, t)
 	return t

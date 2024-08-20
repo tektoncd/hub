@@ -104,7 +104,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/Resources'
+                        $ref: '#/definitions/ResourceQueryResponseBody'
                 "400":
                     description: Bad Request response.
                     schema:
@@ -155,7 +155,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/Resource'
+                        $ref: '#/definitions/ResourceByCatalogKindNameResponseBody'
                 "404":
                     description: Not Found response.
                     schema:
@@ -201,7 +201,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/ResourceVersion'
+                        $ref: '#/definitions/ResourceByCatalogKindNameVersionResponseBody'
                 "404":
                     description: Not Found response.
                     schema:
@@ -291,7 +291,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/ResourceVersionReadme'
+                        $ref: '#/definitions/ResourceByCatalogKindNameVersionReadmeResponseBody'
                 "404":
                     description: Not Found response.
                     schema:
@@ -337,7 +337,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/ResourceVersionYaml'
+                        $ref: '#/definitions/ResourceByCatalogKindNameVersionYamlResponseBody'
                 "404":
                     description: Not Found response.
                     schema:
@@ -404,7 +404,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/Resource'
+                        $ref: '#/definitions/ResourceByIDResponseBody'
                 "404":
                     description: Not Found response.
                     schema:
@@ -432,7 +432,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/ResourceVersions'
+                        $ref: '#/definitions/ResourceVersionsByIDResponseBody'
                 "404":
                     description: Not Found response.
                     schema:
@@ -460,7 +460,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/ResourceVersion'
+                        $ref: '#/definitions/ResourceByVersionIDResponseBody'
                 "404":
                     description: Not Found response.
                     schema:
@@ -489,7 +489,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/Resources'
+                        $ref: '#/definitions/ResourceListResponseBody'
                 "404":
                     description: Not Found response.
                     schema:
@@ -515,47 +515,6 @@ paths:
             schemes:
                 - https
 definitions:
-    Catalog:
-        title: 'Mediatype identifier: application/vnd.hub.catalog; view=default'
-        type: object
-        properties:
-            id:
-                type: integer
-                description: ID is the unique id of the catalog
-                example: 1
-                format: int64
-            name:
-                type: string
-                description: Name of catalog
-                example: Tekton
-            provider:
-                type: string
-                description: Provider of catalog
-                example: github
-            type:
-                type: string
-                description: Type of catalog
-                example: community
-                enum:
-                    - official
-                    - community
-            url:
-                type: string
-                description: URL of catalog
-                example: https://github.com/tektoncd/hub
-        description: CatalogResponseBody result type (default view)
-        example:
-            id: 1
-            name: Tekton
-            provider: github
-            type: community
-            url: https://github.com/tektoncd/hub
-        required:
-            - id
-            - name
-            - type
-            - url
-            - provider
     CatalogListInternalErrorResponseBody:
         title: 'Mediatype identifier: application/vnd.goa.error; view=default'
         type: object
@@ -606,7 +565,7 @@ definitions:
             data:
                 type: array
                 items:
-                    $ref: '#/definitions/Catalog'
+                    $ref: '#/definitions/CatalogResponseBody'
                 example:
                     - id: 1
                       name: Tekton
@@ -650,6 +609,47 @@ definitions:
                   provider: github
                   type: community
                   url: https://github.com/tektoncd/hub
+    CatalogResponseBody:
+        title: 'Mediatype identifier: application/vnd.hub.catalog; view=default'
+        type: object
+        properties:
+            id:
+                type: integer
+                description: ID is the unique id of the catalog
+                example: 1
+                format: int64
+            name:
+                type: string
+                description: Name of catalog
+                example: Tekton
+            provider:
+                type: string
+                description: Provider of catalog
+                example: github
+            type:
+                type: string
+                description: Type of catalog
+                example: community
+                enum:
+                    - official
+                    - community
+            url:
+                type: string
+                description: URL of catalog
+                example: https://github.com/tektoncd/hub
+        description: CatalogResponseBody result type (default view)
+        example:
+            id: 1
+            name: Tekton
+            provider: github
+            type: community
+            url: https://github.com/tektoncd/hub
+        required:
+            - id
+            - name
+            - type
+            - url
+            - provider
     CatalogResponseBodyMin:
         title: 'Mediatype identifier: application/vnd.hub.catalog; view=default'
         type: object
@@ -679,8 +679,8 @@ definitions:
             - id
             - name
             - type
-    Category:
-        title: Category
+    CategoryResponseBody:
+        title: CategoryResponseBody
         type: object
         properties:
             id:
@@ -698,8 +698,8 @@ definitions:
         required:
             - id
             - name
-    Platform:
-        title: Platform
+    PlatformResponseBody:
+        title: PlatformResponseBody
         type: object
         properties:
             id:
@@ -717,54 +717,6 @@ definitions:
         required:
             - id
             - name
-    Resource:
-        title: 'Mediatype identifier: application/vnd.hub.resource; view=default'
-        type: object
-        properties:
-            data:
-                $ref: '#/definitions/ResourceDataResponseBody'
-        description: ByCatalogKindNameResponseBody result type (default view)
-        example:
-            data:
-                catalog:
-                    id: 1
-                    name: tekton
-                    type: community
-                categories:
-                    - id: 1
-                      name: image-build
-                hubRawURLPath: /tekton/task/buildah/raw
-                hubURLPath: tekton/task/buildah
-                id: 1
-                kind: task
-                latestVersion:
-                    description: Buildah task builds source into a container image and then pushes it to a container registry.
-                    displayName: Buildah
-                    hubRawURLPath: /tekton/task/buildah/latest/raw
-                    id: 1
-                    minPipelinesVersion: 0.12.1
-                    platforms:
-                        - id: 1
-                          name: linux/amd64
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                    version: "0.1"
-                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                name: buildah
-                platforms:
-                    - id: 1
-                      name: linux/amd64
-                rating: 4.3
-                tags:
-                    - id: 1
-                      name: image-build
-                versions:
-                    - id: 1
-                      version: "0.1"
-                    - id: 2
-                      version: "0.2"
-        required:
-            - data
     ResourceByCatalogKindNameInternalErrorResponseBody:
         title: 'Mediatype identifier: application/vnd.goa.error; view=default'
         type: object
@@ -851,6 +803,54 @@ definitions:
             - temporary
             - timeout
             - fault
+    ResourceByCatalogKindNameResponseBody:
+        title: 'Mediatype identifier: application/vnd.hub.resource; view=default'
+        type: object
+        properties:
+            data:
+                $ref: '#/definitions/ResourceDataResponseBody'
+        description: ByCatalogKindNameResponseBody result type (default view)
+        example:
+            data:
+                catalog:
+                    id: 1
+                    name: tekton
+                    type: community
+                categories:
+                    - id: 1
+                      name: image-build
+                hubRawURLPath: /tekton/task/buildah/raw
+                hubURLPath: tekton/task/buildah
+                id: 1
+                kind: task
+                latestVersion:
+                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    displayName: Buildah
+                    hubRawURLPath: /tekton/task/buildah/latest/raw
+                    id: 1
+                    minPipelinesVersion: 0.12.1
+                    platforms:
+                        - id: 1
+                          name: linux/amd64
+                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
+                    version: "0.1"
+                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                name: buildah
+                platforms:
+                    - id: 1
+                      name: linux/amd64
+                rating: 4.3
+                tags:
+                    - id: 1
+                      name: image-build
+                versions:
+                    - id: 1
+                      version: "0.1"
+                    - id: 2
+                      version: "0.2"
+        required:
+            - data
     ResourceByCatalogKindNameVersionInternalErrorResponseBody:
         title: 'Mediatype identifier: application/vnd.goa.error; view=default'
         type: object
@@ -1023,6 +1023,62 @@ definitions:
             - temporary
             - timeout
             - fault
+    ResourceByCatalogKindNameVersionReadmeResponseBody:
+        title: 'Mediatype identifier: application/vnd.hub.resource.version.readme; view=default'
+        type: object
+        properties:
+            data:
+                $ref: '#/definitions/ResourceContentResponseBodyReadme'
+        description: ByCatalogKindNameVersionReadmeResponseBody result type (default view)
+        example:
+            data:
+                readme: |-
+                    #Readme
+                     Sample readme content
+        required:
+            - data
+    ResourceByCatalogKindNameVersionResponseBody:
+        title: 'Mediatype identifier: application/vnd.hub.resource.version; view=default'
+        type: object
+        properties:
+            data:
+                $ref: '#/definitions/ResourceVersionDataResponseBody'
+        description: ByCatalogKindNameVersionResponseBody result type (default view)
+        example:
+            data:
+                deprecated: true
+                description: Buildah task builds source into a container image and then pushes it to a container registry.
+                displayName: Buildah
+                hubRawURLPath: /tekton/task/buildah/raw
+                hubURLPath: tekton/task/buildah
+                id: 1
+                minPipelinesVersion: 0.12.1
+                platforms:
+                    - id: 1
+                      name: linux/s390x
+                rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                resource:
+                    catalog:
+                        id: 1
+                        type: community
+                    categories:
+                        - id: 1
+                          name: Build Tools
+                    id: 1
+                    kind: task
+                    name: buildah
+                    platforms:
+                        - id: 1
+                          name: linux/amd64
+                    rating: 4.3
+                    tags:
+                        - id: 1
+                          name: image-build
+                updatedAt: 2020-01-01 12:00:00 +0000 UTC
+                version: "0.1"
+                webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        required:
+            - data
     ResourceByCatalogKindNameVersionYamlInternalErrorResponseBody:
         title: 'Mediatype identifier: application/vnd.goa.error; view=default'
         type: object
@@ -1109,6 +1165,20 @@ definitions:
             - temporary
             - timeout
             - fault
+    ResourceByCatalogKindNameVersionYamlResponseBody:
+        title: 'Mediatype identifier: application/vnd.hub.resource.version.yaml; view=default'
+        type: object
+        properties:
+            data:
+                $ref: '#/definitions/ResourceContentResponseBodyYaml'
+        description: ByCatalogKindNameVersionYamlResponseBody result type (default view)
+        example:
+            data:
+                yaml: |-
+                    #YAML
+                     Sample yaml content
+        required:
+            - data
     ResourceByIDInternalErrorResponseBody:
         title: 'Mediatype identifier: application/vnd.goa.error; view=default'
         type: object
@@ -1195,6 +1265,54 @@ definitions:
             - temporary
             - timeout
             - fault
+    ResourceByIDResponseBody:
+        title: 'Mediatype identifier: application/vnd.hub.resource; view=default'
+        type: object
+        properties:
+            data:
+                $ref: '#/definitions/ResourceDataResponseBody'
+        description: ByIdResponseBody result type (default view)
+        example:
+            data:
+                catalog:
+                    id: 1
+                    name: tekton
+                    type: community
+                categories:
+                    - id: 1
+                      name: image-build
+                hubRawURLPath: /tekton/task/buildah/raw
+                hubURLPath: tekton/task/buildah
+                id: 1
+                kind: task
+                latestVersion:
+                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    displayName: Buildah
+                    hubRawURLPath: /tekton/task/buildah/latest/raw
+                    id: 1
+                    minPipelinesVersion: 0.12.1
+                    platforms:
+                        - id: 1
+                          name: linux/amd64
+                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
+                    version: "0.1"
+                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                name: buildah
+                platforms:
+                    - id: 1
+                      name: linux/amd64
+                rating: 4.3
+                tags:
+                    - id: 1
+                      name: image-build
+                versions:
+                    - id: 1
+                      version: "0.1"
+                    - id: 2
+                      version: "0.2"
+        required:
+            - data
     ResourceByVersionIDInternalErrorResponseBody:
         title: 'Mediatype identifier: application/vnd.goa.error; view=default'
         type: object
@@ -1281,6 +1399,48 @@ definitions:
             - temporary
             - timeout
             - fault
+    ResourceByVersionIDResponseBody:
+        title: 'Mediatype identifier: application/vnd.hub.resource.version; view=default'
+        type: object
+        properties:
+            data:
+                $ref: '#/definitions/ResourceVersionDataResponseBody'
+        description: ByVersionIdResponseBody result type (default view)
+        example:
+            data:
+                deprecated: true
+                description: Buildah task builds source into a container image and then pushes it to a container registry.
+                displayName: Buildah
+                hubRawURLPath: /tekton/task/buildah/raw
+                hubURLPath: tekton/task/buildah
+                id: 1
+                minPipelinesVersion: 0.12.1
+                platforms:
+                    - id: 1
+                      name: linux/s390x
+                rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                resource:
+                    catalog:
+                        id: 1
+                        type: community
+                    categories:
+                        - id: 1
+                          name: Build Tools
+                    id: 1
+                    kind: task
+                    name: buildah
+                    platforms:
+                        - id: 1
+                          name: linux/amd64
+                    rating: 4.3
+                    tags:
+                        - id: 1
+                          name: image-build
+                updatedAt: 2020-01-01 12:00:00 +0000 UTC
+                version: "0.1"
+                webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        required:
+            - data
     ResourceContentResponseBodyReadme:
         title: 'Mediatype identifier: application/vnd.hub.resourcecontent; view=default'
         type: object
@@ -1320,7 +1480,7 @@ definitions:
             categories:
                 type: array
                 items:
-                    $ref: '#/definitions/Category'
+                    $ref: '#/definitions/CategoryResponseBody'
                 description: Categories related to resource
                 example:
                     - id: 1
@@ -1351,7 +1511,7 @@ definitions:
             platforms:
                 type: array
                 items:
-                    $ref: '#/definitions/Platform'
+                    $ref: '#/definitions/PlatformResponseBody'
                 description: Platforms related to resource
                 example:
                     - id: 1
@@ -1364,7 +1524,7 @@ definitions:
             tags:
                 type: array
                 items:
-                    $ref: '#/definitions/Tag'
+                    $ref: '#/definitions/TagResponseBody'
                 description: Tags related to resource
                 example:
                     - id: 1
@@ -1440,7 +1600,7 @@ definitions:
             categories:
                 type: array
                 items:
-                    $ref: '#/definitions/Category'
+                    $ref: '#/definitions/CategoryResponseBody'
                 description: Categories related to resource
                 example:
                     - id: 1
@@ -1465,7 +1625,7 @@ definitions:
             platforms:
                 type: array
                 items:
-                    $ref: '#/definitions/Platform'
+                    $ref: '#/definitions/PlatformResponseBody'
                 description: Platforms related to resource
                 example:
                     - id: 1
@@ -1478,7 +1638,7 @@ definitions:
             tags:
                 type: array
                 items:
-                    $ref: '#/definitions/Tag'
+                    $ref: '#/definitions/TagResponseBody'
                 description: Tags related to resource
                 example:
                     - id: 1
@@ -1522,7 +1682,7 @@ definitions:
             categories:
                 type: array
                 items:
-                    $ref: '#/definitions/Category'
+                    $ref: '#/definitions/CategoryResponseBody'
                 description: Categories related to resource
                 example:
                     - id: 1
@@ -1553,7 +1713,7 @@ definitions:
             platforms:
                 type: array
                 items:
-                    $ref: '#/definitions/Platform'
+                    $ref: '#/definitions/PlatformResponseBody'
                 description: Platforms related to resource
                 example:
                     - id: 1
@@ -1566,7 +1726,7 @@ definitions:
             tags:
                 type: array
                 items:
-                    $ref: '#/definitions/Tag'
+                    $ref: '#/definitions/TagResponseBody'
                 description: Tags related to resource
                 example:
                     - id: 1
@@ -2030,6 +2190,113 @@ definitions:
             - temporary
             - timeout
             - fault
+    ResourceListResponseBody:
+        title: 'Mediatype identifier: application/vnd.hub.resources; view=default'
+        type: object
+        properties:
+            data:
+                $ref: '#/definitions/ResourceDataResponseBodyWithoutVersionCollection'
+        description: ListResponseBody result type (default view)
+        example:
+            data:
+                - catalog:
+                    id: 1
+                    name: tekton
+                    type: community
+                  categories:
+                    - id: 1
+                      name: image-build
+                  hubRawURLPath: /tekton/task/buildah/raw
+                  hubURLPath: tekton/task/buildah
+                  id: 1
+                  kind: task
+                  latestVersion:
+                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    displayName: Buildah
+                    hubRawURLPath: /tekton/task/buildah/latest/raw
+                    id: 1
+                    minPipelinesVersion: 0.12.1
+                    platforms:
+                        - id: 1
+                          name: linux/amd64
+                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
+                    version: "0.1"
+                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                  name: buildah
+                  platforms:
+                    - id: 1
+                      name: linux/amd64
+                  rating: 4.3
+                  tags:
+                    - id: 1
+                      name: image-build
+                - catalog:
+                    id: 1
+                    name: tekton
+                    type: community
+                  categories:
+                    - id: 1
+                      name: image-build
+                  hubRawURLPath: /tekton/task/buildah/raw
+                  hubURLPath: tekton/task/buildah
+                  id: 1
+                  kind: task
+                  latestVersion:
+                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    displayName: Buildah
+                    hubRawURLPath: /tekton/task/buildah/latest/raw
+                    id: 1
+                    minPipelinesVersion: 0.12.1
+                    platforms:
+                        - id: 1
+                          name: linux/amd64
+                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
+                    version: "0.1"
+                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                  name: buildah
+                  platforms:
+                    - id: 1
+                      name: linux/amd64
+                  rating: 4.3
+                  tags:
+                    - id: 1
+                      name: image-build
+                - catalog:
+                    id: 1
+                    name: tekton
+                    type: community
+                  categories:
+                    - id: 1
+                      name: image-build
+                  hubRawURLPath: /tekton/task/buildah/raw
+                  hubURLPath: tekton/task/buildah
+                  id: 1
+                  kind: task
+                  latestVersion:
+                    description: Buildah task builds source into a container image and then pushes it to a container registry.
+                    displayName: Buildah
+                    hubRawURLPath: /tekton/task/buildah/latest/raw
+                    id: 1
+                    minPipelinesVersion: 0.12.1
+                    platforms:
+                        - id: 1
+                          name: linux/amd64
+                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                    updatedAt: 2020-01-01 12:00:00 +0000 UTC
+                    version: "0.1"
+                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                  name: buildah
+                  platforms:
+                    - id: 1
+                      name: linux/amd64
+                  rating: 4.3
+                  tags:
+                    - id: 1
+                      name: image-build
+        required:
+            - data
     ResourceQueryInternalErrorResponseBody:
         title: 'Mediatype identifier: application/vnd.goa.error; view=default'
         type: object
@@ -2159,465 +2426,7 @@ definitions:
             - temporary
             - timeout
             - fault
-    ResourceVersion:
-        title: 'Mediatype identifier: application/vnd.hub.resource.version; view=default'
-        type: object
-        properties:
-            data:
-                $ref: '#/definitions/ResourceVersionDataResponseBody'
-        description: ByCatalogKindNameVersionResponseBody result type (default view)
-        example:
-            data:
-                deprecated: true
-                description: Buildah task builds source into a container image and then pushes it to a container registry.
-                displayName: Buildah
-                hubRawURLPath: /tekton/task/buildah/raw
-                hubURLPath: tekton/task/buildah
-                id: 1
-                minPipelinesVersion: 0.12.1
-                platforms:
-                    - id: 1
-                      name: linux/s390x
-                rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                resource:
-                    catalog:
-                        id: 1
-                        type: community
-                    categories:
-                        - id: 1
-                          name: Build Tools
-                    id: 1
-                    kind: task
-                    name: buildah
-                    platforms:
-                        - id: 1
-                          name: linux/amd64
-                    rating: 4.3
-                    tags:
-                        - id: 1
-                          name: image-build
-                updatedAt: 2020-01-01 12:00:00 +0000 UTC
-                version: "0.1"
-                webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-        required:
-            - data
-    ResourceVersionDataResponseBody:
-        title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
-        type: object
-        properties:
-            deprecated:
-                type: boolean
-                description: Deprecation status of a version
-                example: true
-            description:
-                type: string
-                description: Description of version
-                example: Buildah task builds source into a container image and then pushes it to a container registry.
-            displayName:
-                type: string
-                description: Display name of version
-                example: Buildah
-            hubRawURLPath:
-                type: string
-                description: Path of the api to get the raw yaml of resource from hub apiserver
-                example: /tekton/task/buildah/raw
-            hubURLPath:
-                type: string
-                description: Url path of the resource in hub
-                example: tekton/task/buildah
-            id:
-                type: integer
-                description: ID is the unique id of resource's version
-                example: 1
-                format: int64
-            minPipelinesVersion:
-                type: string
-                description: Minimum pipelines version the resource's version is compatible with
-                example: 0.12.1
-            platforms:
-                type: array
-                items:
-                    $ref: '#/definitions/Platform'
-                description: Platforms related to resource version
-                example:
-                    - id: 1
-                      name: linux/s390x
-            rawURL:
-                type: string
-                description: Raw URL of resource's yaml file of the version
-                example: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                format: uri
-            resource:
-                $ref: '#/definitions/ResourceDataResponseBodyInfo'
-            updatedAt:
-                type: string
-                description: Timestamp when version was last updated
-                example: 2020-01-01 12:00:00 +0000 UTC
-                format: date-time
-            version:
-                type: string
-                description: Version of resource
-                example: "0.1"
-            webURL:
-                type: string
-                description: Web URL of resource's yaml file of the version
-                example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                format: uri
-        description: The Version result type describes resource's version information. (default view)
-        example:
-            deprecated: true
-            description: Buildah task builds source into a container image and then pushes it to a container registry.
-            displayName: Buildah
-            hubRawURLPath: /tekton/task/buildah/raw
-            hubURLPath: tekton/task/buildah
-            id: 1
-            minPipelinesVersion: 0.12.1
-            platforms:
-                - id: 1
-                  name: linux/s390x
-            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-            resource:
-                catalog:
-                    id: 1
-                    type: community
-                categories:
-                    - id: 1
-                      name: Build Tools
-                id: 1
-                kind: task
-                name: buildah
-                platforms:
-                    - id: 1
-                      name: linux/amd64
-                rating: 4.3
-                tags:
-                    - id: 1
-                      name: image-build
-            updatedAt: 2020-01-01 12:00:00 +0000 UTC
-            version: "0.1"
-            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-        required:
-            - id
-            - version
-            - displayName
-            - description
-            - minPipelinesVersion
-            - rawURL
-            - webURL
-            - updatedAt
-            - platforms
-            - resource
-            - hubURLPath
-            - hubRawURLPath
-    ResourceVersionDataResponseBodyMin:
-        title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
-        type: object
-        properties:
-            hubRawURLPath:
-                type: string
-                description: Path of the api to get the raw yaml of resource from hub apiserver
-                example: /tekton/task/buildah/raw
-            hubURLPath:
-                type: string
-                description: Url path of the resource in hub
-                example: tekton/task/buildah
-            id:
-                type: integer
-                description: ID is the unique id of resource's version
-                example: 1
-                format: int64
-            platforms:
-                type: array
-                items:
-                    $ref: '#/definitions/Platform'
-                description: Platforms related to resource version
-                example:
-                    - id: 1
-                      name: linux/s390x
-            rawURL:
-                type: string
-                description: Raw URL of resource's yaml file of the version
-                example: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                format: uri
-            version:
-                type: string
-                description: Version of resource
-                example: "0.1"
-            webURL:
-                type: string
-                description: Web URL of resource's yaml file of the version
-                example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                format: uri
-        description: The Version result type describes resource's version information. (min view) (default view)
-        example:
-            hubRawURLPath: /tekton/task/buildah/raw
-            hubURLPath: tekton/task/buildah
-            id: 1
-            platforms:
-                - id: 1
-                  name: linux/s390x
-            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-            version: "0.1"
-            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-        required:
-            - id
-            - version
-            - rawURL
-            - webURL
-            - platforms
-            - hubURLPath
-            - hubRawURLPath
-    ResourceVersionDataResponseBodyTiny:
-        title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
-        type: object
-        properties:
-            id:
-                type: integer
-                description: ID is the unique id of resource's version
-                example: 1
-                format: int64
-            version:
-                type: string
-                description: Version of resource
-                example: "0.1"
-        description: The Version result type describes resource's version information. (tiny view) (default view)
-        example:
-            id: 1
-            version: "0.1"
-        required:
-            - id
-            - version
-    ResourceVersionDataResponseBodyWithoutResource:
-        title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
-        type: object
-        properties:
-            deprecated:
-                type: boolean
-                description: Deprecation status of a version
-                example: true
-            description:
-                type: string
-                description: Description of version
-                example: Buildah task builds source into a container image and then pushes it to a container registry.
-            displayName:
-                type: string
-                description: Display name of version
-                example: Buildah
-            hubRawURLPath:
-                type: string
-                description: Path of the api to get the raw yaml of resource from hub apiserver
-                example: /tekton/task/buildah/raw
-            hubURLPath:
-                type: string
-                description: Url path of the resource in hub
-                example: tekton/task/buildah
-            id:
-                type: integer
-                description: ID is the unique id of resource's version
-                example: 1
-                format: int64
-            minPipelinesVersion:
-                type: string
-                description: Minimum pipelines version the resource's version is compatible with
-                example: 0.12.1
-            platforms:
-                type: array
-                items:
-                    $ref: '#/definitions/Platform'
-                description: Platforms related to resource version
-                example:
-                    - id: 1
-                      name: linux/s390x
-            rawURL:
-                type: string
-                description: Raw URL of resource's yaml file of the version
-                example: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                format: uri
-            updatedAt:
-                type: string
-                description: Timestamp when version was last updated
-                example: 2020-01-01 12:00:00 +0000 UTC
-                format: date-time
-            version:
-                type: string
-                description: Version of resource
-                example: "0.1"
-            webURL:
-                type: string
-                description: Web URL of resource's yaml file of the version
-                example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                format: uri
-        description: The Version result type describes resource's version information. (withoutResource view) (default view)
-        example:
-            deprecated: true
-            description: Buildah task builds source into a container image and then pushes it to a container registry.
-            displayName: Buildah
-            hubRawURLPath: /tekton/task/buildah/raw
-            hubURLPath: tekton/task/buildah
-            id: 1
-            minPipelinesVersion: 0.12.1
-            platforms:
-                - id: 1
-                  name: linux/s390x
-            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-            updatedAt: 2020-01-01 12:00:00 +0000 UTC
-            version: "0.1"
-            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-        required:
-            - id
-            - version
-            - displayName
-            - description
-            - minPipelinesVersion
-            - rawURL
-            - webURL
-            - updatedAt
-            - platforms
-            - hubURLPath
-            - hubRawURLPath
-    ResourceVersionReadme:
-        title: 'Mediatype identifier: application/vnd.hub.resource.version.readme; view=default'
-        type: object
-        properties:
-            data:
-                $ref: '#/definitions/ResourceContentResponseBodyReadme'
-        description: ByCatalogKindNameVersionReadmeResponseBody result type (default view)
-        example:
-            data:
-                readme: |-
-                    #Readme
-                     Sample readme content
-        required:
-            - data
-    ResourceVersionYaml:
-        title: 'Mediatype identifier: application/vnd.hub.resource.version.yaml; view=default'
-        type: object
-        properties:
-            data:
-                $ref: '#/definitions/ResourceContentResponseBodyYaml'
-        description: ByCatalogKindNameVersionYamlResponseBody result type (default view)
-        example:
-            data:
-                yaml: |-
-                    #YAML
-                     Sample yaml content
-        required:
-            - data
-    ResourceVersions:
-        title: 'Mediatype identifier: application/vnd.hub.resource.versions; view=default'
-        type: object
-        properties:
-            data:
-                $ref: '#/definitions/VersionsResponseBody'
-        description: VersionsByIDResponseBody result type (default view)
-        example:
-            data:
-                latest:
-                    hubRawURLPath: /resource/tektoncd/task/buildah/raw
-                    id: 2
-                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
-                    version: "0.2"
-                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
-                versions:
-                    - hubRawURLPath: /resource/tektoncd/task/buildah/0.1/raw
-                      id: 1
-                      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
-                      version: "0.1"
-                      webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
-                    - hubRawURLPath: /resource/tektoncd/task/buildah/0.2/raw
-                      id: 2
-                      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
-                      version: "0.2"
-                      webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
-        required:
-            - data
-    ResourceVersionsByIDInternalErrorResponseBody:
-        title: 'Mediatype identifier: application/vnd.goa.error; view=default'
-        type: object
-        properties:
-            fault:
-                type: boolean
-                description: Is the error a server-side fault?
-                example: false
-            id:
-                type: string
-                description: ID is a unique identifier for this particular occurrence of the problem.
-                example: 123abc
-            message:
-                type: string
-                description: Message is a human-readable explanation specific to this occurrence of the problem.
-                example: parameter 'p' must be an integer
-            name:
-                type: string
-                description: Name is the name of this class of errors.
-                example: bad_request
-            temporary:
-                type: boolean
-                description: Is the error temporary?
-                example: true
-            timeout:
-                type: boolean
-                description: Is the error a timeout?
-                example: true
-        description: Internal Server Error (default view)
-        example:
-            fault: true
-            id: 123abc
-            message: parameter 'p' must be an integer
-            name: bad_request
-            temporary: true
-            timeout: false
-        required:
-            - name
-            - id
-            - message
-            - temporary
-            - timeout
-            - fault
-    ResourceVersionsByIDNotFoundResponseBody:
-        title: 'Mediatype identifier: application/vnd.goa.error; view=default'
-        type: object
-        properties:
-            fault:
-                type: boolean
-                description: Is the error a server-side fault?
-                example: true
-            id:
-                type: string
-                description: ID is a unique identifier for this particular occurrence of the problem.
-                example: 123abc
-            message:
-                type: string
-                description: Message is a human-readable explanation specific to this occurrence of the problem.
-                example: parameter 'p' must be an integer
-            name:
-                type: string
-                description: Name is the name of this class of errors.
-                example: bad_request
-            temporary:
-                type: boolean
-                description: Is the error temporary?
-                example: true
-            timeout:
-                type: boolean
-                description: Is the error a timeout?
-                example: true
-        description: Resource Not Found Error (default view)
-        example:
-            fault: true
-            id: 123abc
-            message: parameter 'p' must be an integer
-            name: bad_request
-            temporary: false
-            timeout: true
-        required:
-            - name
-            - id
-            - message
-            - temporary
-            - timeout
-            - fault
-    Resources:
+    ResourceQueryResponseBody:
         title: 'Mediatype identifier: application/vnd.hub.resources; view=default'
         type: object
         properties:
@@ -2724,8 +2533,396 @@ definitions:
                       name: image-build
         required:
             - data
-    Tag:
-        title: Tag
+    ResourceVersionDataResponseBody:
+        title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
+        type: object
+        properties:
+            deprecated:
+                type: boolean
+                description: Deprecation status of a version
+                example: true
+            description:
+                type: string
+                description: Description of version
+                example: Buildah task builds source into a container image and then pushes it to a container registry.
+            displayName:
+                type: string
+                description: Display name of version
+                example: Buildah
+            hubRawURLPath:
+                type: string
+                description: Path of the api to get the raw yaml of resource from hub apiserver
+                example: /tekton/task/buildah/raw
+            hubURLPath:
+                type: string
+                description: Url path of the resource in hub
+                example: tekton/task/buildah
+            id:
+                type: integer
+                description: ID is the unique id of resource's version
+                example: 1
+                format: int64
+            minPipelinesVersion:
+                type: string
+                description: Minimum pipelines version the resource's version is compatible with
+                example: 0.12.1
+            platforms:
+                type: array
+                items:
+                    $ref: '#/definitions/PlatformResponseBody'
+                description: Platforms related to resource version
+                example:
+                    - id: 1
+                      name: linux/s390x
+            rawURL:
+                type: string
+                description: Raw URL of resource's yaml file of the version
+                example: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                format: uri
+            resource:
+                $ref: '#/definitions/ResourceDataResponseBodyInfo'
+            updatedAt:
+                type: string
+                description: Timestamp when version was last updated
+                example: 2020-01-01 12:00:00 +0000 UTC
+                format: date-time
+            version:
+                type: string
+                description: Version of resource
+                example: "0.1"
+            webURL:
+                type: string
+                description: Web URL of resource's yaml file of the version
+                example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                format: uri
+        description: The Version result type describes resource's version information. (default view)
+        example:
+            deprecated: true
+            description: Buildah task builds source into a container image and then pushes it to a container registry.
+            displayName: Buildah
+            hubRawURLPath: /tekton/task/buildah/raw
+            hubURLPath: tekton/task/buildah
+            id: 1
+            minPipelinesVersion: 0.12.1
+            platforms:
+                - id: 1
+                  name: linux/s390x
+            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+            resource:
+                catalog:
+                    id: 1
+                    type: community
+                categories:
+                    - id: 1
+                      name: Build Tools
+                id: 1
+                kind: task
+                name: buildah
+                platforms:
+                    - id: 1
+                      name: linux/amd64
+                rating: 4.3
+                tags:
+                    - id: 1
+                      name: image-build
+            updatedAt: 2020-01-01 12:00:00 +0000 UTC
+            version: "0.1"
+            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        required:
+            - id
+            - version
+            - displayName
+            - description
+            - minPipelinesVersion
+            - rawURL
+            - webURL
+            - updatedAt
+            - platforms
+            - resource
+            - hubURLPath
+            - hubRawURLPath
+    ResourceVersionDataResponseBodyMin:
+        title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
+        type: object
+        properties:
+            hubRawURLPath:
+                type: string
+                description: Path of the api to get the raw yaml of resource from hub apiserver
+                example: /tekton/task/buildah/raw
+            hubURLPath:
+                type: string
+                description: Url path of the resource in hub
+                example: tekton/task/buildah
+            id:
+                type: integer
+                description: ID is the unique id of resource's version
+                example: 1
+                format: int64
+            platforms:
+                type: array
+                items:
+                    $ref: '#/definitions/PlatformResponseBody'
+                description: Platforms related to resource version
+                example:
+                    - id: 1
+                      name: linux/s390x
+            rawURL:
+                type: string
+                description: Raw URL of resource's yaml file of the version
+                example: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                format: uri
+            version:
+                type: string
+                description: Version of resource
+                example: "0.1"
+            webURL:
+                type: string
+                description: Web URL of resource's yaml file of the version
+                example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                format: uri
+        description: The Version result type describes resource's version information. (min view) (default view)
+        example:
+            hubRawURLPath: /tekton/task/buildah/raw
+            hubURLPath: tekton/task/buildah
+            id: 1
+            platforms:
+                - id: 1
+                  name: linux/s390x
+            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+            version: "0.1"
+            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        required:
+            - id
+            - version
+            - rawURL
+            - webURL
+            - platforms
+            - hubURLPath
+            - hubRawURLPath
+    ResourceVersionDataResponseBodyTiny:
+        title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
+        type: object
+        properties:
+            id:
+                type: integer
+                description: ID is the unique id of resource's version
+                example: 1
+                format: int64
+            version:
+                type: string
+                description: Version of resource
+                example: "0.1"
+        description: The Version result type describes resource's version information. (tiny view) (default view)
+        example:
+            id: 1
+            version: "0.1"
+        required:
+            - id
+            - version
+    ResourceVersionDataResponseBodyWithoutResource:
+        title: 'Mediatype identifier: application/vnd.hub.resource.version.data; view=default'
+        type: object
+        properties:
+            deprecated:
+                type: boolean
+                description: Deprecation status of a version
+                example: true
+            description:
+                type: string
+                description: Description of version
+                example: Buildah task builds source into a container image and then pushes it to a container registry.
+            displayName:
+                type: string
+                description: Display name of version
+                example: Buildah
+            hubRawURLPath:
+                type: string
+                description: Path of the api to get the raw yaml of resource from hub apiserver
+                example: /tekton/task/buildah/raw
+            hubURLPath:
+                type: string
+                description: Url path of the resource in hub
+                example: tekton/task/buildah
+            id:
+                type: integer
+                description: ID is the unique id of resource's version
+                example: 1
+                format: int64
+            minPipelinesVersion:
+                type: string
+                description: Minimum pipelines version the resource's version is compatible with
+                example: 0.12.1
+            platforms:
+                type: array
+                items:
+                    $ref: '#/definitions/PlatformResponseBody'
+                description: Platforms related to resource version
+                example:
+                    - id: 1
+                      name: linux/s390x
+            rawURL:
+                type: string
+                description: Raw URL of resource's yaml file of the version
+                example: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                format: uri
+            updatedAt:
+                type: string
+                description: Timestamp when version was last updated
+                example: 2020-01-01 12:00:00 +0000 UTC
+                format: date-time
+            version:
+                type: string
+                description: Version of resource
+                example: "0.1"
+            webURL:
+                type: string
+                description: Web URL of resource's yaml file of the version
+                example: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                format: uri
+        description: The Version result type describes resource's version information. (withoutResource view) (default view)
+        example:
+            deprecated: true
+            description: Buildah task builds source into a container image and then pushes it to a container registry.
+            displayName: Buildah
+            hubRawURLPath: /tekton/task/buildah/raw
+            hubURLPath: tekton/task/buildah
+            id: 1
+            minPipelinesVersion: 0.12.1
+            platforms:
+                - id: 1
+                  name: linux/s390x
+            rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+            updatedAt: 2020-01-01 12:00:00 +0000 UTC
+            version: "0.1"
+            webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+        required:
+            - id
+            - version
+            - displayName
+            - description
+            - minPipelinesVersion
+            - rawURL
+            - webURL
+            - updatedAt
+            - platforms
+            - hubURLPath
+            - hubRawURLPath
+    ResourceVersionsByIDInternalErrorResponseBody:
+        title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+        type: object
+        properties:
+            fault:
+                type: boolean
+                description: Is the error a server-side fault?
+                example: false
+            id:
+                type: string
+                description: ID is a unique identifier for this particular occurrence of the problem.
+                example: 123abc
+            message:
+                type: string
+                description: Message is a human-readable explanation specific to this occurrence of the problem.
+                example: parameter 'p' must be an integer
+            name:
+                type: string
+                description: Name is the name of this class of errors.
+                example: bad_request
+            temporary:
+                type: boolean
+                description: Is the error temporary?
+                example: true
+            timeout:
+                type: boolean
+                description: Is the error a timeout?
+                example: true
+        description: Internal Server Error (default view)
+        example:
+            fault: true
+            id: 123abc
+            message: parameter 'p' must be an integer
+            name: bad_request
+            temporary: true
+            timeout: false
+        required:
+            - name
+            - id
+            - message
+            - temporary
+            - timeout
+            - fault
+    ResourceVersionsByIDNotFoundResponseBody:
+        title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+        type: object
+        properties:
+            fault:
+                type: boolean
+                description: Is the error a server-side fault?
+                example: true
+            id:
+                type: string
+                description: ID is a unique identifier for this particular occurrence of the problem.
+                example: 123abc
+            message:
+                type: string
+                description: Message is a human-readable explanation specific to this occurrence of the problem.
+                example: parameter 'p' must be an integer
+            name:
+                type: string
+                description: Name is the name of this class of errors.
+                example: bad_request
+            temporary:
+                type: boolean
+                description: Is the error temporary?
+                example: true
+            timeout:
+                type: boolean
+                description: Is the error a timeout?
+                example: true
+        description: Resource Not Found Error (default view)
+        example:
+            fault: true
+            id: 123abc
+            message: parameter 'p' must be an integer
+            name: bad_request
+            temporary: false
+            timeout: true
+        required:
+            - name
+            - id
+            - message
+            - temporary
+            - timeout
+            - fault
+    ResourceVersionsByIDResponseBody:
+        title: 'Mediatype identifier: application/vnd.hub.resource.versions; view=default'
+        type: object
+        properties:
+            data:
+                $ref: '#/definitions/VersionsResponseBody'
+        description: VersionsByIDResponseBody result type (default view)
+        example:
+            data:
+                latest:
+                    hubRawURLPath: /resource/tektoncd/task/buildah/raw
+                    id: 2
+                    rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
+                    version: "0.2"
+                    webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
+                versions:
+                    - hubRawURLPath: /resource/tektoncd/task/buildah/0.1/raw
+                      id: 1
+                      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.1/buildah.yaml
+                      version: "0.1"
+                      webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.1/buildah.yaml
+                    - hubRawURLPath: /resource/tektoncd/task/buildah/0.2/raw
+                      id: 2
+                      rawURL: https://raw.githubusercontent.com/tektoncd/catalog/main/task/buildah/0.2/buildah.yaml
+                      version: "0.2"
+                      webURL: https://github.com/tektoncd/catalog/blob/main/task/buildah/0.2/buildah.yaml
+        required:
+            - data
+    TagResponseBody:
+        title: TagResponseBody
         type: object
         properties:
             id:
