@@ -738,6 +738,25 @@ components:
                 - type
                 - url
                 - provider
+        CatalogErrors:
+            type: object
+            properties:
+                errors:
+                    type: array
+                    items:
+                        type: string
+                    description: Catalog Error message
+                    example:
+                        - Resource tekton.dev/v1beta1, Kind=Task - buildah has no display name
+                        - Resource tekton.dev/v1beta1, Kind=task - curl has no display name
+                type:
+                    type: string
+                    description: Catalog Errror type
+                    example: warning
+            description: CatalogErrors define the errors that occurred during catalog refresh
+            required:
+                - type
+                - errors
         Category:
             type: object
             properties:
@@ -785,6 +804,49 @@ components:
                 - temporary
                 - timeout
                 - fault
+        HubService:
+            type: object
+            properties:
+                error:
+                    type: string
+                    description: Details of the error if any
+                    example: unable to reach db
+                name:
+                    type: string
+                    description: Name of the service
+                    example: api
+                status:
+                    type: string
+                    description: Status of the service
+                    example: ok
+                    enum:
+                        - ok
+                        - error
+            description: Describes the services and their status
+            required:
+                - name
+                - status
+        Job:
+            type: object
+            properties:
+                catalogName:
+                    type: string
+                    description: Name of the catalog
+                    example: tekton
+                id:
+                    type: integer
+                    description: id of the job
+                    example: 1
+                    format: int64
+                status:
+                    type: string
+                    description: status of the job
+                    example: queued
+            description: The Job type describes a catalog refresh job that is run asynchronously
+            required:
+                - id
+                - catalogName
+                - status
         ListResponseBody:
             type: object
             properties:
@@ -792,6 +854,21 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/Catalog'
+        Platform:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: ID is the unique id of platform
+                    example: 1
+                    format: int64
+                name:
+                    type: string
+                    description: Name of platform
+                    example: linux/amd64
+            required:
+                - id
+                - name
         Resource:
             type: object
             properties:
@@ -853,7 +930,7 @@ components:
                 platforms:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Category'
+                        $ref: '#/components/schemas/Platform'
                     description: Platforms related to resource
                     example:
                         - id: 1
@@ -866,7 +943,7 @@ components:
                 tags:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Category'
+                        $ref: '#/components/schemas/Tag'
                     description: Tags related to resource
                     example:
                         - id: 1
@@ -941,7 +1018,7 @@ components:
                 platforms:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Category'
+                        $ref: '#/components/schemas/Platform'
                     description: Platforms related to resource version
                     example:
                         - id: 1
@@ -986,6 +1063,7 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/ResourceContent'
+            description: README of a particular version of a Resource
             required:
                 - data
         ResourceVersionYaml:
@@ -993,6 +1071,7 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/ResourceContent'
+            description: YAML of a particular version of a Resource
             required:
                 - data
         ResourceVersions:
@@ -1009,6 +1088,21 @@ components:
                     $ref: '#/components/schemas/ResourceDataCollection'
             required:
                 - data
+        Tag:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: ID is the unique id of tag
+                    example: 1
+                    format: int64
+                name:
+                    type: string
+                    description: Name of tag
+                    example: image-build
+            required:
+                - id
+                - name
         Versions:
             type: object
             properties:

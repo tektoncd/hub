@@ -655,6 +655,10 @@ func NewGetRawYamlByCatalogKindNameVersionHandler(
 		o := res.(*resource.GetRawYamlByCatalogKindNameVersionResponseData)
 		defer o.Body.Close()
 		if wt, ok := o.Body.(io.WriterTo); ok {
+			if err := encodeResponse(ctx, w, res); err != nil {
+				errhandler(ctx, w, err)
+				return
+			}
 			n, err := wt.WriteTo(w)
 			if err != nil {
 				if n == 0 {
@@ -740,6 +744,10 @@ func NewGetLatestRawYamlByCatalogKindNameHandler(
 		o := res.(*resource.GetLatestRawYamlByCatalogKindNameResponseData)
 		defer o.Body.Close()
 		if wt, ok := o.Body.(io.WriterTo); ok {
+			if err := encodeResponse(ctx, w, res); err != nil {
+				errhandler(ctx, w, err)
+				return
+			}
 			n, err := wt.WriteTo(w)
 			if err != nil {
 				if n == 0 {
