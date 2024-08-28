@@ -25,7 +25,6 @@ import (
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/http/status/server"
-	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/gen/status"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/testutils"
@@ -63,11 +62,11 @@ type fakeService struct {
 
 var _ app.Service = (*fakeService)(nil)
 
-func (fs *fakeService) Logger(ctx context.Context) *log.Logger {
+func (fs *fakeService) Logger(ctx context.Context) *app.Logger {
 	return nil
 }
 
-func (fs *fakeService) LoggerWith(ctx context.Context, args ...interface{}) *log.Logger {
+func (fs *fakeService) LoggerWith(ctx context.Context, args ...interface{}) *app.Logger {
 	return nil
 }
 

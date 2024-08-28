@@ -23,7 +23,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/token"
@@ -33,7 +32,7 @@ import (
 
 type request struct {
 	db            *gorm.DB
-	log           *log.Logger
+	log           *app.Logger
 	user          *model.User
 	defaultScopes []string
 	jwtConfig     *app.JWTConfig

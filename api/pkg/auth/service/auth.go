@@ -23,7 +23,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/markbates/goth/gothic"
-	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	authApp "github.com/tektoncd/hub/api/pkg/auth/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
@@ -37,7 +36,7 @@ type service struct {
 
 type request struct {
 	db            *gorm.DB
-	log           *log.Logger
+	log           *app.Logger
 	defaultScopes []string
 	jwtConfig     *app.JWTConfig
 	provider      string
@@ -80,7 +79,7 @@ func Status(res http.ResponseWriter, req *http.Request) {
 		},
 	}
 
-	var log log.Logger
+	var log app.Logger
 	res.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(res).Encode(authSvc); err != nil {
 		log.Error(err)
@@ -220,7 +219,7 @@ func List(res http.ResponseWriter, req *http.Request) {
 		Data: providerList,
 	}
 
-	var log log.Logger
+	var log app.Logger
 	res.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(res).Encode(providers); err != nil {
 		log.Error(err)

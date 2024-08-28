@@ -19,11 +19,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tektoncd/hub/api/gen/log"
 	glog "gorm.io/gorm/logger"
 )
 
-func newGormLogger(mode EnvMode, l *log.Logger) glog.Interface {
+func newGormLogger(mode EnvMode, l *Logger) glog.Interface {
 	if mode == Production {
 		return glog.New(&prodWriter{l}, glog.Config{
 			SlowThreshold: 100 * time.Millisecond,
@@ -41,7 +40,7 @@ func newGormLogger(mode EnvMode, l *log.Logger) glog.Interface {
 
 // adaptor for gorm logger interface
 type prodWriter struct {
-	log *log.Logger
+	log *Logger
 }
 
 func (w *prodWriter) Printf(format string, data ...interface{}) {
@@ -78,7 +77,7 @@ func (w *prodWriter) Printf(format string, data ...interface{}) {
 
 // adaptor for gorm logger interface
 type devWriter struct {
-	log *log.Logger
+	log *Logger
 }
 
 func (w *devWriter) Printf(msg string, data ...interface{}) {

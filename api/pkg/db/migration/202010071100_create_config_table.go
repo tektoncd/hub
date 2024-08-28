@@ -16,12 +16,12 @@ package migration
 
 import (
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/tektoncd/hub/api/gen/log"
+	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gorm.io/gorm"
 )
 
-func createConfigTable(log *log.Logger) *gormigrate.Migration {
+func createConfigTable(log *app.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
 		ID: "202010071100_create_config_table",
