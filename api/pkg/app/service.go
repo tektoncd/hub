@@ -17,15 +17,14 @@ package app
 import (
 	"context"
 
-	"github.com/tektoncd/hub/api/gen/log"
 	"goa.design/goa/v3/middleware"
 	"gorm.io/gorm"
 )
 
 // Service defines methods on BaseService
 type Service interface {
-	Logger(ctx context.Context) *log.Logger
-	LoggerWith(ctx context.Context, args ...interface{}) *log.Logger
+	Logger(ctx context.Context) *Logger
+	LoggerWith(ctx context.Context, args ...interface{}) *Logger
 	DB(ctx context.Context) *gorm.DB
 	CatalogClonePath() string
 }
@@ -38,25 +37,25 @@ type environmenter interface {
 // db object with http request id
 type BaseService struct {
 	env      environmenter
-	logger   *log.Logger
+	logger   *Logger
 	db       *gorm.DB
 	basePath string
 }
 
 // Logger looks for http request id in passed context and append it to
 // logger. This would help in filtering logs with request id.
-func (s *BaseService) Logger(ctx context.Context) *log.Logger {
+func (s *BaseService) Logger(ctx context.Context) *Logger {
 	reqID := ctx.Value(middleware.RequestIDKey)
 	if reqID == nil {
 		return s.logger
 	}
-	return &log.Logger{SugaredLogger: s.logger.With("id", reqID.(string))}
+	return &Logger{SugaredLogger: s.logger.With("id", reqID.(string))}
 }
 
 // LoggerWith gets logger created with http request id from context
 // then appends args to it
-func (s *BaseService) LoggerWith(ctx context.Context, args ...interface{}) *log.Logger {
-	return &log.Logger{SugaredLogger: s.Logger(ctx).With(args...)}
+func (s *BaseService) LoggerWith(ctx context.Context, args ...interface{}) *Logger {
+	return &Logger{SugaredLogger: s.Logger(ctx).With(args...)}
 }
 
 // Returns the base path where catalog is to be cloned and stored
@@ -65,7 +64,7 @@ func (s *BaseService) CatalogClonePath() string {
 }
 
 // DB gets logger initialized with http request id and creates a gorm db
-// session replacing writer for gorm logger with log.Logger so that gorm log
+// session replacing writer for gorm logger with Logger so that gorm log
 // will have http request id.
 func (s *BaseService) DB(ctx context.Context) *gorm.DB {
 	return s.db.Session(&gorm.Session{

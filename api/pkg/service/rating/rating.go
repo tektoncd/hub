@@ -18,7 +18,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/gen/rating"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
@@ -38,7 +37,7 @@ type service struct {
 
 type request struct {
 	db     *gorm.DB
-	log    *log.Logger
+	log    *app.Logger
 	userID uint
 }
 

@@ -16,12 +16,12 @@ package migration
 
 import (
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/tektoncd/hub/api/gen/log"
+	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gorm.io/gorm"
 )
 
-func addAvatarURLColumnInUsersTable(log *log.Logger) *gormigrate.Migration {
+func addAvatarURLColumnInUsersTable(log *app.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
 		ID: "202103161200_add_avatar_url_column_in_users_table",

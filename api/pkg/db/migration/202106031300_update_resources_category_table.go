@@ -16,14 +16,14 @@ package migration
 
 import (
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/tektoncd/hub/api/gen/log"
+	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gorm.io/gorm"
 )
 
 // In order to create many to many relation between Resources
 // and Categories, update the resource and categories table
-func updateResourcesCategoryTable(log *log.Logger) *gormigrate.Migration {
+func updateResourcesCategoryTable(log *app.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
 		ID: "202110071100_update_resource_category_table",
