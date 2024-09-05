@@ -16,12 +16,12 @@ package migration
 
 import (
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gorm.io/gorm"
 )
 
-func updateCatalogBranchToMain(log *app.Logger) *gormigrate.Migration {
+func updateCatalogBranchToMain(log *log.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
 		ID: "202102171333_update_catalog_branch_to_main",

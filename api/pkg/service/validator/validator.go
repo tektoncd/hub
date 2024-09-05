@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/tektoncd/hub/api/gen/admin"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/token"
@@ -78,7 +79,7 @@ func (s *Service) JWTAuth(ctx context.Context, jwt string, scheme *security.JWTS
 }
 
 // Logger returns a logger with "user-id" added as a field
-func (s *Service) Logger(ctx context.Context) *app.Logger {
+func (s *Service) Logger(ctx context.Context) *log.Logger {
 	return s.LoggerWith(ctx, "user-id", UserID(ctx))
 }
 

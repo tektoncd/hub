@@ -19,7 +19,7 @@ package migration
 
 import (
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gorm.io/gorm"
 )
@@ -27,7 +27,7 @@ import (
 // This migration backups user details from `users` table into `user_backups` table
 // drops a few columns from `users` table and create `account` table which will
 // be linked to `users` table.
-func addUsersDetailsInAccountTable(log *app.Logger) *gormigrate.Migration {
+func addUsersDetailsInAccountTable(log *log.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
 		ID: "202111091037_backup_users_add_account_table_and_update_data",

@@ -16,12 +16,12 @@ package migration
 
 import (
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gorm.io/gorm"
 )
 
-func addProviderColumnInCatalogsTable(log *app.Logger) *gormigrate.Migration {
+func addProviderColumnInCatalogsTable(log *log.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
 		ID: "202109151102_add_provider_in_catalog_table",

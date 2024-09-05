@@ -16,12 +16,12 @@ package migration
 
 import (
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gorm.io/gorm"
 )
 
-func addDeprecatedColumnInResoureVersionTable(log *app.Logger) *gormigrate.Migration {
+func addDeprecatedColumnInResoureVersionTable(log *log.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
 		ID: "202106282200_add_deprecated_col_in_resource_version_table",

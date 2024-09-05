@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"github.com/tektoncd/hub/api/pkg/parser"
 	"gorm.io/gorm"
@@ -26,7 +26,7 @@ import (
 
 type Request struct {
 	Db         *gorm.DB
-	Log        *app.Logger
+	Log        *log.Logger
 	ID         uint
 	Name       string
 	Match      string
@@ -251,7 +251,7 @@ func orderByVersion(db *gorm.DB) *gorm.DB {
 	return db.Order("string_to_array(version, '.')::int[]")
 }
 
-func findOne(db *gorm.DB, log *app.Logger, result interface{}) error {
+func findOne(db *gorm.DB, log *log.Logger, result interface{}) error {
 
 	err := db.First(result).Error
 	if err != nil {

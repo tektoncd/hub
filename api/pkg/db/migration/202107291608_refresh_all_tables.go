@@ -18,7 +18,7 @@ import (
 	"fmt"
 
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gorm.io/gorm"
 )
@@ -28,7 +28,7 @@ import (
 // compatible with `gorm 2.0`. Also removing `removeCatgoryIdColumnAndConstraintsFromTagtable`
 // migration because refreshAllTables handles the case by dropping the tables and
 // creating the tables back
-func refreshAllTables(log *app.Logger) *gormigrate.Migration {
+func refreshAllTables(log *log.Logger) *gormigrate.Migration {
 	return &gormigrate.Migration{
 		ID: "202107291608_refresh_all_tables",
 		Migrate: func(db *gorm.DB) error {
@@ -45,7 +45,7 @@ func refreshAllTables(log *app.Logger) *gormigrate.Migration {
 	}
 }
 
-func migrateDB(txn *gorm.DB, log *app.Logger) error {
+func migrateDB(txn *gorm.DB, log *log.Logger) error {
 	var user []model.User
 	if err := txn.Find(&user).Error; err != nil {
 		log.Error(err)

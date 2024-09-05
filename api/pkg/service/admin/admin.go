@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	"github.com/tektoncd/hub/api/gen/admin"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/initializer"
 	"github.com/tektoncd/hub/api/pkg/db/model"
@@ -34,13 +35,13 @@ type service struct {
 
 type agentRequest struct {
 	db        *gorm.DB
-	log       *app.Logger
+	log       *log.Logger
 	jwtConfig *app.JWTConfig
 }
 
 type refreshRequest struct {
 	db  *gorm.DB
-	log *app.Logger
+	log *log.Logger
 	api app.BaseConfig
 }
 

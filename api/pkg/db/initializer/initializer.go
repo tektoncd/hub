@@ -18,6 +18,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/app"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gorm.io/gorm"
@@ -63,7 +64,7 @@ func (i *Initializer) Run(ctx context.Context) (*model.Config, error) {
 		return &config, nil
 	}
 
-	updateConfig := func(db *gorm.DB, log *app.Logger, data *app.Data) error {
+	updateConfig := func(db *gorm.DB, log *log.Logger, data *app.Data) error {
 		config.Checksum = data.Checksum
 		if err := db.Save(&config).Error; err != nil {
 			log.Error(err)
@@ -76,7 +77,7 @@ func (i *Initializer) Run(ctx context.Context) (*model.Config, error) {
 	// catalog refresh needs to be done, hence deleting the sha will
 	// run the catalog refresh forcefully
 	logger.Info("Forcing Catalog Refresh by deleting the Catalog SHA")
-	updateCatalogSha := func(db *gorm.DB, log *app.Logger, data *app.Data) error {
+	updateCatalogSha := func(db *gorm.DB, log *log.Logger, data *app.Data) error {
 		for _, c := range data.Catalogs {
 			if err := db.Model(&model.Catalog{}).Where("name = ?", c.Name).Update("sha", "").Error; err != nil {
 				log.Error(err)
@@ -99,9 +100,9 @@ func (i *Initializer) Run(ctx context.Context) (*model.Config, error) {
 	return &config, nil
 }
 
-type initFn func(*gorm.DB, *app.Logger, *app.Data) error
+type initFn func(*gorm.DB, *log.Logger, *app.Data) error
 
-func addCategories(db *gorm.DB, log *app.Logger, data *app.Data) error {
+func addCategories(db *gorm.DB, log *log.Logger, data *app.Data) error {
 
 	var configCatID []uint
 	for _, c := range data.Categories {
@@ -129,7 +130,7 @@ func addCategories(db *gorm.DB, log *app.Logger, data *app.Data) error {
 	return nil
 }
 
-func addCatalogs(db *gorm.DB, log *app.Logger, data *app.Data) error {
+func addCatalogs(db *gorm.DB, log *log.Logger, data *app.Data) error {
 
 	for _, c := range data.Catalogs {
 		cat := model.Catalog{
@@ -150,7 +151,7 @@ func addCatalogs(db *gorm.DB, log *app.Logger, data *app.Data) error {
 	return nil
 }
 
-func addUsers(db *gorm.DB, log *app.Logger, data *app.Data) error {
+func addUsers(db *gorm.DB, log *log.Logger, data *app.Data) error {
 	for _, s := range data.Scopes {
 		// Check if scopes exist or create it
 		scopeQuery := db.Where(&model.Scope{Name: s.Name})
@@ -205,7 +206,7 @@ func addUsers(db *gorm.DB, log *app.Logger, data *app.Data) error {
 	return nil
 }
 
-func withTransaction(db *gorm.DB, log *app.Logger, data *app.Data, fns ...initFn) error {
+func withTransaction(db *gorm.DB, log *log.Logger, data *app.Data, fns ...initFn) error {
 	txn := db.Begin()
 	for _, fn := range fns {
 		if err := fn(txn, log, data); err != nil {
@@ -218,7 +219,7 @@ func withTransaction(db *gorm.DB, log *app.Logger, data *app.Data, fns ...initFn
 	return nil
 }
 
-func addApiServerUser(db *gorm.DB, log *app.Logger) error {
+func addApiServerUser(db *gorm.DB, log *log.Logger) error {
 
 	newUser := model.User{
 		Type:  model.AgentUserType,
@@ -249,7 +250,7 @@ func addApiServerUser(db *gorm.DB, log *app.Logger) error {
 
 // Check if apiserver account exists or not
 // If does not exists, it creates apiserver account
-func (i *Initializer) CreateApiServerAccount(db *gorm.DB, logger *app.Logger) error {
+func (i *Initializer) CreateApiServerAccount(db *gorm.DB, logger *log.Logger) error {
 
 	q := db.Model(&model.Account{}).Where("user_name = ?", apiserverUserName)
 

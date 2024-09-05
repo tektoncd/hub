@@ -16,14 +16,14 @@ package migration
 
 import (
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/tektoncd/hub/api/pkg/app"
+	"github.com/tektoncd/hub/api/gen/log"
 	"github.com/tektoncd/hub/api/pkg/db/model"
 	"gorm.io/gorm"
 )
 
 // Drops existing foreign key constraints and create the same constraints
 // in order to add another OnDelete constraints to foriegn key
-func addOnDeleteConstraints(log *app.Logger) *gormigrate.Migration {
+func addOnDeleteConstraints(log *log.Logger) *gormigrate.Migration {
 
 	return &gormigrate.Migration{
 		ID: "202107221500_add_ondelete_constraints",
@@ -41,7 +41,7 @@ func addOnDeleteConstraints(log *app.Logger) *gormigrate.Migration {
 	}
 }
 
-func addOnDelete(txn *gorm.DB, log *app.Logger) error {
+func addOnDelete(txn *gorm.DB, log *log.Logger) error {
 	if err := txn.Migrator().DropConstraint(&model.ResourceCategory{}, "fk_resource_categories_resource"); err != nil {
 		log.Error(err)
 		return err

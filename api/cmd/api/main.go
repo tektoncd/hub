@@ -30,6 +30,7 @@ import (
 	admin "github.com/tektoncd/hub/api/gen/admin"
 	catalog "github.com/tektoncd/hub/api/gen/catalog"
 	category "github.com/tektoncd/hub/api/gen/category"
+	"github.com/tektoncd/hub/api/gen/log"
 	rating "github.com/tektoncd/hub/api/gen/rating"
 	resource "github.com/tektoncd/hub/api/gen/resource"
 	status "github.com/tektoncd/hub/api/gen/status"
@@ -71,7 +72,7 @@ func main() {
 
 	var (
 		api    app.Config
-		logger *app.Logger
+		logger *log.Logger
 		err    error
 	)
 	{

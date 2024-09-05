@@ -27,6 +27,7 @@ import (
 	"github.com/hako/durafmt"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
+	"github.com/tektoncd/hub/api/gen/log"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gorm.io/driver/postgres"
@@ -37,7 +38,7 @@ import (
 type BaseConfig interface {
 	Environment() EnvMode
 	Service(name string) Service
-	Logger(service string) *Logger
+	Logger(service string) *log.Logger
 	DB() *gorm.DB
 	Data() *Data
 	ReloadData() error
@@ -49,7 +50,7 @@ type APIBase struct {
 	env    EnvMode
 	dbConf *Database
 	db     *gorm.DB
-	logger *Logger
+	logger *log.Logger
 	data   Data
 }
 
@@ -124,7 +125,7 @@ func (ab *APIBase) DB() *gorm.DB {
 }
 
 // DBWithLogger returns gorm db object initialised with logger
-func DBWithLogger(env EnvMode, db *gorm.DB, logger *Logger) *gorm.DB {
+func DBWithLogger(env EnvMode, db *gorm.DB, logger *log.Logger) *gorm.DB {
 	db = db.Session(&gorm.Session{Logger: newGormLogger(env, logger)})
 	return db
 }
@@ -134,16 +135,16 @@ func (ab *APIBase) Database() Database {
 	return *ab.dbConf
 }
 
-// Logger returns app.Logger appended with service name
-func (ab *APIBase) Logger(service string) *Logger {
-	return &Logger{
+// Logger returns log.Logger appended with service name
+func (ab *APIBase) Logger(service string) *log.Logger {
+	return &log.Logger{
 		SugaredLogger: ab.logger.With(zap.String("service", service)),
 	}
 }
 
 // Service creates a base service object
 func (ab *APIBase) Service(name string) Service {
-	l := &Logger{
+	l := &log.Logger{
 		SugaredLogger: ab.logger.With(zap.String("service", name)),
 	}
 	return &BaseService{
@@ -303,7 +304,7 @@ func APIBaseFromEnvFile(file string) (*APIBase, error) {
 	env := Environment()
 
 	var err error
-	var l *Logger
+	var l *log.Logger
 	if l, err = initLogger(env); err != nil {
 		return nil, err
 	}
@@ -371,8 +372,8 @@ func initDB() (*Database, error) {
 	return db, nil
 }
 
-// initLogger returns a instance of app.Logger depending on the EnvMode
-func initLogger(mode EnvMode) (*Logger, error) {
+// initLogger returns a instance of log.Logger depending on the EnvMode
+func initLogger(mode EnvMode) (*log.Logger, error) {
 
 	var l *zap.Logger
 	var err error
@@ -389,7 +390,7 @@ func initLogger(mode EnvMode) (*Logger, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Logger{SugaredLogger: l.Sugar()}, nil
+	return &log.Logger{SugaredLogger: l.Sugar()}, nil
 }
 
 // configFileURL will look for CONFIG_FILE_URL to be defined among
