@@ -100,7 +100,7 @@ Make sure all images are public before creating deployments.
 
 Now, we have all images pushed to registry. Lets deploy the database first.
 
-Navigate to `config` directoy in the root of the project.
+Navigate to `config` directory in the root of the project.
 
 Execute below command
 
@@ -440,7 +440,7 @@ Update your GitHub OAuth created with the UI route in place of `Homepage URL` an
 
 ## Update Catalog and Catalog Refresh
 
-If you have added and modified catalog in the config file , then you will have to folllow following steps to see resources from catalog on Hub UI
+If you have added and modified catalog in the config file , then you will have to follow following steps to see resources from catalog on Hub UI
 
 1. Login through the Hub UI. Click on Login on right corner and then Sign in with GitHub/Github Enterprise.
 2. Copy the Hub Token by clicking on the user profile which is at the right corner on the Home Page
