@@ -1,8 +1,7 @@
 module github.com/tektoncd/hub
 
 go 1.22.0
-
-toolchain go1.22.5
+toolchain go1.23.1
 
 require (
 	github.com/ActiveState/vt10x v1.3.1
@@ -15,7 +14,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.1
-	github.com/gorilla/sessions v1.3.0
+	github.com/gorilla/sessions v1.4.0
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
 	github.com/ikawaha/goahttpcheck v1.15.9
 	github.com/joho/godotenv v1.5.1
