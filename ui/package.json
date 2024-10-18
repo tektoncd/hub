@@ -16,7 +16,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/react-syntax-highlighter": "^15.5.11",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
-    "axios": "^1.6.8",
+    "axios": "^1.7.7",
     "core-js-compat": "^3.37.0",
     "fuzzysort": "^2.0.4",
     "mobx": "^6.12.3",
