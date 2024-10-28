@@ -3,8 +3,6 @@ package testfixtures
 import (
 	"database/sql"
 	"fmt"
-
-	_ "github.com/ClickHouse/clickhouse-go/v2"
 )
 
 type clickhouse struct {
@@ -82,12 +80,6 @@ func (h *clickhouse) disableReferentialIntegrity(db *sql.DB, loadFn loadFunction
 	}
 
 	return tx.Commit()
-}
-
-// splitter is a batchSplitter interface implementation. We need it for
-// ClickHouseDB because clickhouse doesn't support multi-statements.
-func (*clickhouse) splitter() []byte {
-	return []byte(";\n")
 }
 
 func (h *clickhouse) cleanTableQuery(tableName string) string {
