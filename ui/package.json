@@ -6,7 +6,7 @@
     "@patternfly/patternfly": "^6.0.0",
     "@patternfly/react-core": "^4.276.6",
     "@seiboston/react-ghe-login": "^1.0.1",
-    "@testing-library/jest-dom": "^6.6.2",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
     "@types/enzyme": "^3.10.18",
