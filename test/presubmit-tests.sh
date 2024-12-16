@@ -77,7 +77,17 @@ ui-unittest() {
 
 install-postgres() {
   info Installing postgres 🛢🛢🛢
-  apt-get install wget ca-certificates
+  # Update the system and install prerequisites
+  apt-get update && apt-get install -y wget ca-certificates gnupg
+  
+  # Check if the system is on an unsupported version
+  if grep -q "lunar" /etc/os-release; then
+    echo "Detected Ubuntu Lunar (23.04), switching to old-releases repository."
+    sed -i 's|http://archive.ubuntu.com/ubuntu%7Chttp://old-releases.ubuntu.com/ubuntu%7Cg' /etc/apt/sources.list
+    sed -i 's|http://security.ubuntu.com/ubuntu%7Chttp://old-releases.ubuntu.com/ubuntu%7Cg' /etc/apt/sources.list
+    apt-get update
+  fi
+  
   wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
   sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
   apt-get update
