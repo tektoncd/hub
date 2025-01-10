@@ -6,7 +6,7 @@ ARG TARGETOS
 ARG TARGETARCH
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o api-server ./api/cmd/api/...
 
-FROM alpine:3.21.0
+FROM alpine:3.21.2
 
 RUN apk --no-cache add git ca-certificates openssh-client && addgroup -S hub && adduser -S hub -G hub
 USER hub
