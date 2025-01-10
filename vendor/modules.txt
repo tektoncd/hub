@@ -8,7 +8,7 @@ cloud.google.com/go/civil
 cloud.google.com/go/internal/fields
 cloud.google.com/go/internal/protostruct
 cloud.google.com/go/internal/trace
-# cloud.google.com/go/auth v0.9.8
+# cloud.google.com/go/auth v0.9.9
 ## explicit; go 1.21
 cloud.google.com/go/auth
 cloud.google.com/go/auth/credentials
@@ -44,7 +44,7 @@ cloud.google.com/go/longrunning/autogen/longrunningpb
 cloud.google.com/go/monitoring/apiv3/v2
 cloud.google.com/go/monitoring/apiv3/v2/monitoringpb
 cloud.google.com/go/monitoring/internal
-# cloud.google.com/go/spanner v1.70.0
+# cloud.google.com/go/spanner v1.73.0
 ## explicit; go 1.21
 cloud.google.com/go/spanner
 cloud.google.com/go/spanner/admin/database/apiv1
@@ -248,7 +248,7 @@ github.com/go-openapi/jsonreference/internal
 # github.com/go-openapi/swag v0.23.0
 ## explicit; go 1.20
 github.com/go-openapi/swag
-# github.com/go-testfixtures/testfixtures/v3 v3.13.0
+# github.com/go-testfixtures/testfixtures/v3 v3.14.0
 ## explicit; go 1.21
 github.com/go-testfixtures/testfixtures/v3
 # github.com/gogo/protobuf v1.3.2
@@ -1012,7 +1012,7 @@ golang.org/x/tools/internal/versions
 # gomodules.xyz/jsonpatch/v2 v2.4.0
 ## explicit; go 1.20
 gomodules.xyz/jsonpatch/v2
-# google.golang.org/api v0.201.0
+# google.golang.org/api v0.203.0
 ## explicit; go 1.21
 google.golang.org/api/googleapi
 google.golang.org/api/googleapi/transport
