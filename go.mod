@@ -1,7 +1,8 @@
 module github.com/tektoncd/hub
 
-go 1.22.0
-toolchain go1.22.5
+go 1.22.3
+
+toolchain go1.22.9
 
 require (
 	github.com/ActiveState/vt10x v1.3.1
