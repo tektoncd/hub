@@ -30,6 +30,12 @@ type (
 		// Schemes contains the security schemes types used by the
 		// all the endpoints.
 		Schemes SchemesData
+		// HasServerInterceptors indicates that the service has server-side
+		// interceptors.
+		HasServerInterceptors bool
+		// HasClientInterceptors indicates that the service has client-side
+		// interceptors.
+		HasClientInterceptors bool
 	}
 
 	// EndpointMethodData describes a single endpoint method.
@@ -61,7 +67,7 @@ func EndpointFile(genpkg string, service *expr.ServiceExpr) *codegen.File {
 	svc := Services.Get(service.Name)
 	svcName := svc.PathName
 	path := filepath.Join(codegen.Gendir, svcName, "endpoints.go")
-	data := endpointData(service)
+	data := endpointData(svc)
 	var (
 		sections []*codegen.SectionTemplate
 	)
@@ -128,8 +134,7 @@ func EndpointFile(genpkg string, service *expr.ServiceExpr) *codegen.File {
 	return &codegen.File{Path: path, SectionTemplates: sections}
 }
 
-func endpointData(service *expr.ServiceExpr) *EndpointsData {
-	svc := Services.Get(service.Name)
+func endpointData(svc *Data) *EndpointsData {
 	methods := make([]*EndpointMethodData, len(svc.Methods))
 	names := make([]string, len(svc.Methods))
 	for i, m := range svc.Methods {
@@ -142,16 +147,18 @@ func endpointData(service *expr.ServiceExpr) *EndpointsData {
 		}
 		names[i] = codegen.Goify(m.VarName, false)
 	}
-	desc := fmt.Sprintf("%s wraps the %q service endpoints.", endpointsStructName, service.Name)
+	desc := fmt.Sprintf("%s wraps the %q service endpoints.", endpointsStructName, svc.Name)
 	return &EndpointsData{
-		Name:           service.Name,
-		Description:    desc,
-		VarName:        endpointsStructName,
-		ClientVarName:  clientStructName,
-		ServiceVarName: serviceInterfaceName,
-		ClientInitArgs: strings.Join(names, ", "),
-		Methods:        methods,
-		Schemes:        svc.Schemes,
+		Name:                  svc.Name,
+		Description:           desc,
+		VarName:               endpointsStructName,
+		ClientVarName:         clientStructName,
+		ServiceVarName:        serviceInterfaceName,
+		ClientInitArgs:        strings.Join(names, ", "),
+		Methods:               methods,
+		Schemes:               svc.Schemes,
+		HasServerInterceptors: len(svc.ServerInterceptors) > 0,
+		HasClientInterceptors: len(svc.ClientInterceptors) > 0,
 	}
 }
 

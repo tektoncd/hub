@@ -34,6 +34,8 @@ type (
 		// PkgName is the service HTTP client package import name,
 		// e.g. "storagec".
 		PkgName string
+		// Interceptors contains the data for client interceptors if any.
+		Interceptors *InterceptorData
 	}
 
 	// SubcommandData contains the data needed to render a sub-command.
@@ -56,6 +58,16 @@ type (
 		Conversion string
 		// Example is a valid command invocation, starting with the command name.
 		Example string
+		// Interceptors contains the data for client interceptors if any apply to the endpoint method.
+		Interceptors *InterceptorData
+	}
+
+	// InterceptorData contains the data needed to generate interceptor code.
+	InterceptorData struct {
+		// VarName is the name of the interceptor variable.
+		VarName string
+		// PkgName is the package name containing the interceptor type.
+		PkgName string
 	}
 
 	// FlagData contains the data needed to render a command-line flag.
@@ -151,61 +163,71 @@ func BuildCommandData(data *service.Data) *CommandData {
 	if description == "" {
 		description = fmt.Sprintf("Make requests to the %q service", data.Name)
 	}
+
+	var interceptors *InterceptorData
+	if len(data.ClientInterceptors) > 0 {
+		interceptors = &InterceptorData{
+			VarName: "inter",
+			PkgName: data.PkgName,
+		}
+	}
+
 	return &CommandData{
-		Name:        codegen.KebabCase(data.Name),
-		VarName:     codegen.Goify(data.Name, false),
-		Description: description,
-		PkgName:     data.PkgName + "c",
+		Name:         codegen.KebabCase(data.Name),
+		VarName:      codegen.Goify(data.Name, false),
+		Description:  description,
+		PkgName:      data.PkgName + "c",
+		Interceptors: interceptors,
 	}
 }
 
 // BuildSubcommandData builds the data needed by CLI code generators to render
 // the CLI parsing of the service sub-command.
-func BuildSubcommandData(svcName string, m *service.MethodData, buildFunction *BuildFunctionData, flags []*FlagData) *SubcommandData {
-	var (
-		name        string
-		fullName    string
-		description string
+func BuildSubcommandData(data *service.Data, m *service.MethodData, buildFunction *BuildFunctionData, flags []*FlagData) *SubcommandData {
+	en := m.Name
+	name := codegen.KebabCase(en)
+	fullName := goifyTerms(data.Name, en)
+	description := m.Description
+	if description == "" {
+		description = fmt.Sprintf("Make request to the %q endpoint", m.Name)
+	}
 
-		conversion string
-	)
-	{
-		en := m.Name
-		name = codegen.KebabCase(en)
-		fullName = goifyTerms(svcName, en)
-		description = m.Description
-		if description == "" {
-			description = fmt.Sprintf("Make request to the %q endpoint", m.Name)
+	var conversion string
+	if m.Payload != "" && buildFunction == nil && len(flags) > 0 {
+		// No build function, just convert the arg to the body type
+		var convPre, convSuff string
+		target := "data"
+		if flagType(m.Payload) == "JSON" {
+			target = "val"
+			convPre = fmt.Sprintf("var val %s\n", m.Payload)
+			convSuff = "\ndata = val"
 		}
-
-		if m.Payload != "" && buildFunction == nil && len(flags) > 0 {
-			// No build function, just convert the arg to the body type
-			var convPre, convSuff string
-			target := "data"
+		conv, _, check := conversionCode(
+			"*"+flags[0].FullName+"Flag",
+			target,
+			m.Payload,
+			false,
+		)
+		conversion = convPre + conv + convSuff
+		if check {
+			conversion = "var err error\n" + conversion
+			conversion += "\nif err != nil {\n"
 			if flagType(m.Payload) == "JSON" {
-				target = "val"
-				convPre = fmt.Sprintf("var val %s\n", m.Payload)
-				convSuff = "\ndata = val"
+				conversion += fmt.Sprintf(`return nil, nil, fmt.Errorf("invalid JSON for %s, \nerror: %%s, \nexample of valid JSON:\n%%s", err, %q)`,
+					flags[0].FullName+"Flag", flags[0].Example)
+			} else {
+				conversion += fmt.Sprintf(`return nil, nil, fmt.Errorf("invalid value for %s, must be %s")`,
+					flags[0].FullName+"Flag", flags[0].Type)
 			}
-			conv, _, check := conversionCode(
-				"*"+flags[0].FullName+"Flag",
-				target,
-				m.Payload,
-				false,
-			)
-			conversion = convPre + conv + convSuff
-			if check {
-				conversion = "var err error\n" + conversion
-				conversion += "\nif err != nil {\n"
-				if flagType(m.Payload) == "JSON" {
-					conversion += fmt.Sprintf(`return nil, nil, fmt.Errorf("invalid JSON for %s, \nerror: %%s, \nexample of valid JSON:\n%%s", err, %q)`,
-						flags[0].FullName+"Flag", flags[0].Example)
-				} else {
-					conversion += fmt.Sprintf(`return nil, nil, fmt.Errorf("invalid value for %s, must be %s")`,
-						flags[0].FullName+"Flag", flags[0].Type)
-				}
-				conversion += "\n}"
-			}
+			conversion += "\n}"
+		}
+	}
+
+	var interceptors *InterceptorData
+	if len(m.ClientInterceptors) > 0 {
+		interceptors = &InterceptorData{
+			VarName: "inter",
+			PkgName: data.PkgName,
 		}
 	}
 	sub := &SubcommandData{
@@ -216,8 +238,9 @@ func BuildSubcommandData(svcName string, m *service.MethodData, buildFunction *B
 		MethodVarName: m.VarName,
 		BuildFunction: buildFunction,
 		Conversion:    conversion,
+		Interceptors:  interceptors,
 	}
-	generateExample(sub, svcName)
+	generateExample(sub, data.Name)
 
 	return sub
 }
@@ -333,66 +356,64 @@ func FieldLoadCode(f *FlagData, argName, argTypeName, validate string, defaultVa
 		startIf string
 		endIf   string
 	)
-	{
-		if !f.Required {
-			startIf = fmt.Sprintf("if %s != \"\" {\n", f.FullName)
-			endIf = "\n}"
+	if !f.Required {
+		startIf = fmt.Sprintf("if %s != \"\" {\n", f.FullName)
+		endIf = "\n}"
+	}
+	if argTypeName == codegen.GoNativeTypeName(expr.String) {
+		ref := "&"
+		if f.Required || defaultValue != nil {
+			ref = ""
 		}
-		if argTypeName == codegen.GoNativeTypeName(expr.String) {
-			ref := "&"
-			if f.Required || defaultValue != nil {
-				ref = ""
-			}
-			code = argName + " = " + ref + f.FullName
-			declErr = validate != ""
-		} else {
-			var checkErr bool
-			code, declErr, checkErr = conversionCode(f.FullName, argName, argTypeName, !f.Required && defaultValue == nil)
-			if checkErr {
-				code += "\nif err != nil {\n"
-				nilVal := "nil"
-				if expr.IsPrimitive(payload) {
-					code += fmt.Sprintf("var zero %s\n", payloadRef)
-					nilVal = "zero"
-				}
-				if flagType(argTypeName) == "JSON" {
-					code += fmt.Sprintf(`return %s, fmt.Errorf("invalid JSON for %s, \nerror: %%s, \nexample of valid JSON:\n%%s", err, %q)`,
-						nilVal, argName, f.Example)
-				} else {
-					code += fmt.Sprintf(`return %s, fmt.Errorf("invalid value for %s, must be %s")`,
-						nilVal, argName, f.Type)
-				}
-				code += "\n}"
-			}
-		}
-		if validate != "" {
-			nilCheck := "if " + argName + " != nil {"
-			if strings.HasPrefix(validate, nilCheck) {
-				// hackety hack... the validation code is generated for the client and needs to
-				// account for the fact that the field could be nil in this case. We are reusing
-				// that code to validate a CLI flag which can never be nil.  Lint tools complain
-				// about that so remove the if statements. Ideally we'd have a better way to do
-				// this but that requires a lot of changes and the added complexity might not be
-				// worth it.
-				var lines []string
-				ls := strings.Split(validate, "\n")
-				for i := 1; i < len(ls)-1; i++ {
-					if ls[i+1] == nilCheck {
-						i++ // skip both closing brace on previous line and check
-						continue
-					}
-					lines = append(lines, ls[i])
-				}
-				validate = strings.Join(lines, "\n")
-			}
-			code += "\n" + validate + "\n"
+		code = argName + " = " + ref + f.FullName
+		declErr = validate != ""
+	} else {
+		var checkErr bool
+		code, declErr, checkErr = conversionCode(f.FullName, argName, argTypeName, !f.Required && defaultValue == nil)
+		if checkErr {
+			code += "\nif err != nil {\n"
 			nilVal := "nil"
 			if expr.IsPrimitive(payload) {
 				code += fmt.Sprintf("var zero %s\n", payloadRef)
 				nilVal = "zero"
 			}
-			code += fmt.Sprintf("if err != nil {\n\treturn %s, err\n}", nilVal)
+			if flagType(argTypeName) == "JSON" {
+				code += fmt.Sprintf(`return %s, fmt.Errorf("invalid JSON for %s, \nerror: %%s, \nexample of valid JSON:\n%%s", err, %q)`,
+					nilVal, argName, f.Example)
+			} else {
+				code += fmt.Sprintf(`return %s, fmt.Errorf("invalid value for %s, must be %s")`,
+					nilVal, argName, f.Type)
+			}
+			code += "\n}"
 		}
+	}
+	if validate != "" {
+		nilCheck := "if " + argName + " != nil {"
+		if strings.HasPrefix(validate, nilCheck) {
+			// hackety hack... the validation code is generated for the client and needs to
+			// account for the fact that the field could be nil in this case. We are reusing
+			// that code to validate a CLI flag which can never be nil.  Lint tools complain
+			// about that so remove the if statements. Ideally we'd have a better way to do
+			// this but that requires a lot of changes and the added complexity might not be
+			// worth it.
+			var lines []string
+			ls := strings.Split(validate, "\n")
+			for i := 1; i < len(ls)-1; i++ {
+				if ls[i+1] == nilCheck {
+					i++ // skip both closing brace on previous line and check
+					continue
+				}
+				lines = append(lines, ls[i])
+			}
+			validate = strings.Join(lines, "\n")
+		}
+		code += "\n" + validate + "\n"
+		nilVal := "nil"
+		if expr.IsPrimitive(payload) {
+			code += fmt.Sprintf("var zero %s\n", payloadRef)
+			nilVal = "zero"
+		}
+		code += fmt.Sprintf("if err != nil {\n\treturn %s, err\n}", nilVal)
 	}
 	return fmt.Sprintf("%s%s%s", startIf, code, endIf), declErr
 }
@@ -682,7 +703,8 @@ const parseFlagsT = `var (
 `
 
 // input: commandData
-const commandUsageT = `{{ printf "%sUsage displays the usage of the %s command and its subcommands." .Name .Name | comment }}
+const commandUsageT = `
+{{ printf "%sUsage displays the usage of the %s command and its subcommands." .VarName .Name | comment }}
 func {{ .VarName }}Usage() {
 	fmt.Fprintf(os.Stderr, ` + "`" + `{{ printDescription .Description }}
 Usage:

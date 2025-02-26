@@ -47,7 +47,7 @@ func Files(genpkg string, service *expr.ServiceExpr, userTypePkgs map[string][]s
 		if m.StreamingPayloadDef != "" {
 			if _, ok := seen[m.StreamingPayload]; !ok {
 				addTypeDefSection(payloadPath, m.StreamingPayload, &codegen.SectionTemplate{
-					Name:   "service-streamig-payload",
+					Name:   "service-streaming-payload",
 					Source: readTemplate("streaming_payload"),
 					Data:   m,
 				})
@@ -122,16 +122,9 @@ func Files(genpkg string, service *expr.ServiceExpr, userTypePkgs map[string][]s
 
 	// transform result type functions
 	for _, t := range svc.viewedResultTypes {
-		svcSections = append(svcSections, &codegen.SectionTemplate{
-			Name:   "viewed-result-type-to-service-result-type",
-			Source: readTemplate("type_init"),
-			Data:   t.ResultInit,
-		})
-		svcSections = append(svcSections, &codegen.SectionTemplate{
-			Name:   "service-result-type-to-viewed-result-type",
-			Source: readTemplate("type_init"),
-			Data:   t.Init,
-		})
+		svcSections = append(svcSections,
+			&codegen.SectionTemplate{Name: "viewed-result-type-to-service-result-type", Source: readTemplate("type_init"), Data: t.ResultInit},
+			&codegen.SectionTemplate{Name: "service-result-type-to-viewed-result-type", Source: readTemplate("type_init"), Data: t.Init})
 	}
 	var projh []*codegen.TransformFunctionData
 	for _, t := range svc.projectedTypes {
@@ -194,6 +187,9 @@ func Files(genpkg string, service *expr.ServiceExpr, userTypePkgs map[string][]s
 		sections = append(sections, svcSections...)
 	}
 	files := []*codegen.File{{Path: svcPath, SectionTemplates: sections}}
+
+	// service and client interceptors
+	files = append(files, InterceptorsFiles(genpkg, service)...)
 
 	// user types
 	paths := make([]string, len(typeDefSections))
