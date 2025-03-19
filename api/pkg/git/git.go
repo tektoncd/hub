@@ -86,12 +86,17 @@ func (c *client) initRepo(spec FetchSpec) (*LocalRepo, error) {
 	clonePath := spec.clonePath()
 	repo := &LocalRepo{path: clonePath}
 
-	// if already cloned, cd to the cloned path
+	// if already cloned, cd to the cloned path otherwise create the directory
 	if _, err := os.Stat(clonePath); err == nil {
 		if err := os.Chdir(clonePath); err != nil {
 			return nil, fmt.Errorf("failed to change directory with path %s; err: %w", clonePath, err)
 		}
 		return repo, nil
+	} else {
+		err := os.MkdirAll(clonePath, 0755)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create directory with path %s; err: %w", clonePath, err)
+		}
 	}
 
 	if _, err := git(log, "", "init", clonePath); err != nil {
