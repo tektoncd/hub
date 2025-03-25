@@ -11,6 +11,9 @@ import (
 // Root is the root object built by the DSL.
 var Root = new(RootExpr)
 
+// DefaultProtoc is the default command to be invoked for generating code from protobuf schemas.
+const DefaultProtoc = "protoc"
+
 type (
 	// RootExpr is the struct built by the DSL on process start.
 	RootExpr struct {
@@ -18,6 +21,8 @@ type (
 		API *APIExpr
 		// Services contains the list of services exposed by the API.
 		Services []*ServiceExpr
+		// Interceptors contains the list of interceptors.
+		Interceptors []*InterceptorExpr
 		// Errors contains the list of errors returned by all the API
 		// methods.
 		Errors []*ErrorExpr
