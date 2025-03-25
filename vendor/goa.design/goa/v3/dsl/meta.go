@@ -5,6 +5,12 @@ import (
 	"goa.design/goa/v3/expr"
 )
 
+// DefaultProtoc is the default command to be invoked for generating code from protobuf schemas.
+// You may use this to prepend arguments/flags to the command or revert to the default command.
+//
+// See also [Meta]; this is useful with the "protoc:cmd" key.
+const DefaultProtoc = expr.DefaultProtoc
+
 // Meta defines a set of key/value pairs that can be assigned to an object. Each
 // value consists of a slice of strings so that multiple invocation of the Meta
 // function on the same target using the same key builds up the slice.
@@ -124,6 +130,32 @@ import (
 //	    })
 //	})
 //
+// - "protoc:cmd" provides an alternate command to execute for protoc with
+// optional arguments. Applicable to API and service definitions only. If used
+// on an API definition the include paths are used for all services, unless
+// specified otherwise for specific services. The first value will be used as
+// the command, and the following values will be used as initial arguments to
+// that command. The given command will have additional arguments appended and
+// is expected to behave similar to protoc.
+//
+// Can be used to specify custom options or alternate implementations. The
+// default command can be specified using DefaultProtoc.
+//
+//	// Use Go run to run a drop-in replacement for protoc.
+//	var _ = API("myapi", func() {
+//	    Meta("protoc:cmd", "go", "run", "github.com/duckbrain/goprotoc")
+//	})
+//
+//	// Specify the full path to protoc and turn on fatal warnings.
+//	var _ = Service("service1", func() {
+//	    Meta("protoc:cmd", "/usr/bin/protoc", "--fatal_warnings")
+//	})
+//
+//	// Restore defaults for a specific service.
+//	var _ = Service("service2", func() {
+//	    Meta("protoc:cmd", DefaultProtoc)
+//	})
+//
 // - "protoc:include" provides the list of import paths used to invoke protoc.
 // Applicable to API and service definitions only. If used on an API definition
 // the include paths are used for all services.
@@ -240,6 +272,25 @@ import (
 //	    Meta("openapi:extension:x-api", `{"foo":"bar"}`)
 //	})
 //
+// - "openapi:additionalProperties" sets the OpenAPI additionalProperties field.
+// The value can be true or false. Defaults to true. Applicable to types (including
+// embedded Payload and Result definitions).
+//
+//	var Foo = Type("Foo", func() {
+//	    Attribute("name", String)
+//	    Meta("openapi:additionalProperties", "false")
+//	})
+//
+//	Payload(Bar, func() {
+//	    Attribute("name", String)
+//	    Meta("openapi:additionalProperties", "false")
+//	})
+//
+//	Result(func() {
+//	    Attribute("name", String)
+//	    Meta("openapi:additionalProperties", "false")
+//	})
+//
 // - "openapi:typename" overrides the name of the type generated in the OpenAPI specification.
 // Applicable to types (including embedded Payload and Result definitions).
 //
@@ -284,6 +335,45 @@ func Meta(name string, value ...string) {
 	case expr.CompositeExpr:
 		att := e.Attribute()
 		att.Meta = appendMeta(att.Meta, name, value...)
+	default:
+		eval.IncompatibleDSL()
+	}
+}
+
+// RemoveMeta removes a meta key from an object.
+//
+// RemoveMeta may appear where Meta can appear.
+//
+// RemoveMeta takes a single argument, the name of the meta key to remove.
+func RemoveMeta(name string) {
+	switch e := eval.Current().(type) {
+	case *expr.APIExpr:
+		delete(e.Meta, name)
+	case *expr.ServerExpr:
+		delete(e.Meta, name)
+	case *expr.HostExpr:
+		delete(e.Meta, name)
+	case *expr.AttributeExpr:
+		delete(e.Meta, name)
+	case *expr.ResultTypeExpr:
+		delete(e.Meta, name)
+	case *expr.MethodExpr:
+		delete(e.Meta, name)
+	case *expr.ServiceExpr:
+		delete(e.Meta, name)
+	case *expr.HTTPServiceExpr:
+		delete(e.Meta, name)
+	case *expr.HTTPEndpointExpr:
+		delete(e.Meta, name)
+	case *expr.RouteExpr:
+		delete(e.Meta, name)
+	case *expr.HTTPFileServerExpr:
+		delete(e.Meta, name)
+	case *expr.HTTPResponseExpr:
+		delete(e.Meta, name)
+	case expr.CompositeExpr:
+		att := e.Attribute()
+		delete(att.Meta, name)
 	default:
 		eval.IncompatibleDSL()
 	}
