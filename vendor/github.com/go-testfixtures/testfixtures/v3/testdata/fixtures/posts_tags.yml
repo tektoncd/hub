@@ -1,6 +1,0 @@
-{{range $postId := $.PostIds}}
-{{range $tagId := $.TagIds}}
-- post_id: {{$postId}}
-  tag_id: {{$tagId}}
-{{end}}
-{{end}}
