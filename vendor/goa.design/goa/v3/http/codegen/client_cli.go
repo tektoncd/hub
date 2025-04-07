@@ -24,7 +24,7 @@ type subcommandData struct {
 	// MultipartFuncName is the name of the function used to render a multipart
 	// request encoder.
 	MultipartFuncName string
-	// MultipartFuncName is the name of the variabl used to render a multipart
+	// MultipartFuncName is the name of the variable used to render a multipart
 	// request encoder.
 	MultipartVarName string
 	// StreamFlag is the flag used to identify the file to be streamed when
@@ -87,7 +87,7 @@ func buildSubcommandData(sd *ServiceData, e *EndpointData) *subcommandData {
 	flags, buildFunction := buildFlags(sd, e)
 
 	sub := &subcommandData{
-		SubcommandData: cli.BuildSubcommandData(sd.Service.Name, e.Method, buildFunction, flags),
+		SubcommandData: cli.BuildSubcommandData(sd.Service, e.Method, buildFunction, flags),
 	}
 	if e.MultipartRequestEncoder != nil {
 		sub.MultipartVarName = e.MultipartRequestEncoder.VarName
@@ -127,6 +127,13 @@ func endpointParser(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr, da
 			Path: genpkg + "/http/" + sd.Service.PathName + "/client",
 			Name: sd.Service.PkgName + "c",
 		})
+		// Add interceptors import if service has client interceptors
+		if len(sd.Service.ClientInterceptors) > 0 {
+			specs = append(specs, &codegen.ImportSpec{
+				Path: genpkg + "/" + sd.Service.PathName,
+				Name: sd.Service.PkgName,
+			})
+		}
 	}
 
 	cliData := make([]*cli.CommandData, len(data))
