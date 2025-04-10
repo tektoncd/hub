@@ -233,7 +233,7 @@ func Produces(args ...string) {
 // As a special case, if you want to generate a path with a trailing slash, you can use
 // GET("/./") to generate a path such as '/foo/'.
 //
-// Path must appear in a API HTTP expression or a Service HTTP expression.
+// Path must appear in an API HTTP expression or a Service HTTP expression.
 //
 // Path accepts one argument: the HTTP path prefix.
 func Path(val string) {
@@ -755,7 +755,7 @@ func MapParams(args ...any) {
 	if len(args) > 0 {
 		mapName, ok = args[0].(string)
 		if !ok {
-			eval.ReportError("argument must be a string")
+			eval.InvalidArgError("string", args[0])
 		}
 	}
 	e.MapQueryParams = &mapName
@@ -972,7 +972,8 @@ func Body(args ...any) {
 			var ok bool
 			fn, ok = args[1].(func())
 			if !ok {
-				eval.ReportError("second argument must be a function")
+				eval.InvalidArgError("function", args[1])
+				return
 			}
 		}
 	case expr.UserType:
@@ -981,7 +982,8 @@ func Body(args ...any) {
 			var ok bool
 			fn, ok = args[1].(func())
 			if !ok {
-				eval.ReportError("second argument must be a function")
+				eval.InvalidArgError("function", args[1])
+				return
 			}
 		}
 	case func():
@@ -1166,7 +1168,7 @@ func cookies(exp eval.Expression) *expr.MappedAttributeExpr {
 }
 
 // params returns the mapped attribute containing the path and query params for
-// the given expression if it's either the root, a API server, a service or an
+// the given expression if it's either the root, an API server, a service or an
 // endpoint - nil otherwise.
 func params(exp eval.Expression) *expr.MappedAttributeExpr {
 	switch e := exp.(type) {
