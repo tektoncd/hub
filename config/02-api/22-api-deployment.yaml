@@ -100,6 +100,8 @@ spec:
               drop:
                 - ALL
           env:
+            - name: KUBERNETES_MIN_VERSION
+              value: "v1.28.0"
             - name: HOME
               value: /home/hub
             - name: POSTGRES_HOST

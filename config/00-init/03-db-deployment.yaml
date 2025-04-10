@@ -54,6 +54,8 @@ spec:
               drop:
                 - ALL
           env:
+            - name: KUBERNETES_MIN_VERSION
+              value: "v1.28.0"
             - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:
