@@ -137,6 +137,8 @@ github.com/go-faster/errors
 # github.com/go-gormigrate/gormigrate/v2 v2.1.2
 ## explicit; go 1.18
 github.com/go-gormigrate/gormigrate/v2
+# github.com/go-jose/go-jose/v4 v4.0.5
+## explicit; go 1.21
 # github.com/go-kit/log v0.2.1
 ## explicit; go 1.17
 github.com/go-kit/log
@@ -548,9 +550,10 @@ github.com/spf13/viper/internal/features
 # github.com/stoewer/go-strcase v1.2.0
 ## explicit; go 1.11
 github.com/stoewer/go-strcase
-# github.com/stretchr/testify v1.9.0
+# github.com/stretchr/testify v1.10.0
 ## explicit; go 1.17
 github.com/stretchr/testify/assert
+github.com/stretchr/testify/assert/yaml
 github.com/stretchr/testify/require
 # github.com/subosito/gotenv v1.6.0
 ## explicit; go 1.18
