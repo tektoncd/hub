@@ -34,6 +34,9 @@ api-lint: ## run API Lint
 	@echo "----------------------------"
 	@echo "-- Linting API Files... --"
 	@echo "----------------------------"
+	@echo "=================================="
+	golangci-lint version
+	@echo "======================================"
 	cd api && golangci-lint run -v ./pkg/... ./v1/service/... --timeout=5m
 
 
