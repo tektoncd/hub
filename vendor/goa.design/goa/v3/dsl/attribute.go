@@ -229,13 +229,13 @@ func OneOf(name string, args ...any) {
 	}
 	fn, ok := args[len(args)-1].(func())
 	if !ok {
-		eval.ReportError("OneOf: last argument must be a function")
+		eval.InvalidArgError("function", args[len(args)-1])
 	}
 	var desc string
 	if len(args) > 1 {
 		desc, ok = args[0].(string)
 		if !ok {
-			eval.ReportError("OneOf: description must be a string")
+			eval.InvalidArgError("string", args[0])
 		}
 	}
 	Attribute(name, &expr.Union{TypeName: name}, desc, fn)
@@ -336,11 +336,6 @@ func Example(args ...any) {
 	}
 	if ex.Value == nil {
 		eval.ReportError("example value is missing")
-		return
-	}
-	if a.Type != nil && !a.Type.IsCompatible(ex.Value) {
-		eval.ReportError("example value %#v is incompatible with attribute of type %s",
-			ex.Value, a.Type.Name())
 		return
 	}
 	a.UserExamples = append(a.UserExamples, ex)
