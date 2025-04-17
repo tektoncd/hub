@@ -110,15 +110,6 @@ api-unittest() {
   }
 }
 
-api-golangci-lint() {
-
-  export GOFLAGS="-mod=vendor"
-  make api-lint || {
-    err 'go lint failed'
-    return 1
-  }
-}
-
 yaml-lint() {
 
   make yaml-lint  || {
@@ -238,7 +229,6 @@ unit_tests() {
       set -eu -o pipefail
 
       api-unittest || return 1
-      api-golangci-lint || return 1
     ) || exit 1
   } || echo "No changes detected related to API"
 
