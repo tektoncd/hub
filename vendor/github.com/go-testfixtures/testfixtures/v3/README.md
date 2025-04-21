@@ -399,9 +399,6 @@ Tested using the [github.com/lib/pq](https://github.com/lib/pq) and
 
 ### MySQL / MariaDB
 
-Just make sure the connection string have
-[the multistatement parameter](https://github.com/go-sql-driver/mysql#multistatements)
-set to true, and use:
 
 ```go
 testfixtures.New(
@@ -411,6 +408,20 @@ testfixtures.New(
 ```
 
 Tested using the [github.com/go-sql-driver/mysql](https://github.com/go-sql-driver/mysql) driver.
+
+#### Multistatements parameter
+
+You can use [the multistatement parameter](https://github.com/go-sql-driver/mysql#multistatements) in the connection
+string to execute some of the setup statements in one query (instead of one query per statement) for a faster execution.
+
+
+```go
+testfixtures.New(
+        ...
+        testfixtures.Dialect("mysql"), // or "mariadb"
+        testfixtures.AllowMultipleStatementsInOneQuery(),
+)
+```
 
 ### SQLite
 
@@ -451,6 +462,18 @@ Tested using the `mssql` and `sqlserver` drivers from the
 testfixtures.New(
         ...
         testfixtures.Dialect("clickhouse"),
+)
+```
+
+### Spanner with GoogleSQL Dialect
+
+It's impossible to get Spanner database name to determine whether it's a test database or not. You need to make sure that you're actually using test database and use `testfixtures.DangerousSkipTestDatabaseCheck()` to skip the check.
+
+```go
+testfixtures.New(
+        ...
+        testfixtures.Dialect("spanner"),
+        testfixtures.DangerousSkipTestDatabaseCheck(),
 )
 ```
 

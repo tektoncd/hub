@@ -1,5 +1,19 @@
 # Changelog
 
+## v3.14.0 - 2024-12-22
+
+- feat(mysql): make multistatements parameter optional ([#249](https://github.com/go-testfixtures/testfixtures/pull/249) by @slsyy)
+- test: remove private api usage in assertFixturesLoaded ([#239](https://github.com/go-testfixtures/testfixtures/pull/239) by @slsyy)
+- Updated dependencies.
+
+## v3.13.0 - 2024-10-25
+
+- Add GCP Spanner support ([#211](https://github.com/go-testfixtures/testfixtures/pull/211) by @kikihakiem)
+- Remove ClickHouse underscore import by ([#220](https://github.com/go-testfixtures/testfixtures/pull/220) by @slsyy)
+- test: remove private api usages in tests ([#221](https://github.com/go-testfixtures/testfixtures/pull/221) by @slsyy)
+- CI: use `docker compose` instead of `docker-compose` ([#214](https://github.com/go-testfixtures/testfixtures/pull/214) by @slsyy)
+- Updated dependencies.
+
 ## v3.12.0 - 2024-07-13
 
 - Reset sequences in a single exec to improve performance

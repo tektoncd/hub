@@ -23,7 +23,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/ikawaha/goahttpcheck"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/gen/admin"

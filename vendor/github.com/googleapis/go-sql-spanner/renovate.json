@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "config:base",
+    "schedule:daily",
+    ":disableDependencyDashboard",
+    "docker:disable"
+  ],
+  "semanticCommits": false,
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
+  "commitMessagePrefix": "deps: ",
+  "commitMessageAction": "update",
+  "groupName": "deps",
+  "constraints": {
+      "go": "1.20"
+  }
+}
