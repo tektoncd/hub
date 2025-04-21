@@ -20,7 +20,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/tektoncd/hub/api/pkg/testutils"
 	userApp "github.com/tektoncd/hub/api/pkg/user/app"
