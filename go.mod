@@ -1,6 +1,6 @@
 module github.com/tektoncd/hub
 
-go 1.22
+go 1.23.0
 
 require (
 	github.com/ActiveState/vt10x v1.3.1
@@ -28,8 +28,8 @@ require (
 	go.uber.org/zap v1.27.0
 	goa.design/goa/v3 v3.18.2
 	goa.design/plugins/v3 v3.16.2
-	golang.org/x/term v0.27.0
-	golang.org/x/text v0.21.0
+	golang.org/x/term v0.31.0
+	golang.org/x/text v0.24.0
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.11
@@ -154,13 +154,13 @@ require (
 	go.opentelemetry.io/otel/trace v1.28.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
+	golang.org/x/crypto v0.37.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/mod v0.19.0 // indirect
 	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/oauth2 v0.20.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/sync v0.13.0 // indirect
+	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.23.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
