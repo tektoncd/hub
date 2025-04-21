@@ -1211,8 +1211,8 @@ github.com/syndtr/gocapability v0.0.0-20170704070218-db04d3cc01c8/go.mod h1:hkRG
 github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2/go.mod h1:hkRG7XYTFWNJGYcbNJQlaLq0fg1yr4J4t/NcTQtrfww=
 github.com/syndtr/gocapability v0.0.0-20200815063812-42c35b437635/go.mod h1:hkRG7XYTFWNJGYcbNJQlaLq0fg1yr4J4t/NcTQtrfww=
 github.com/tchap/go-patricia v2.2.6+incompatible/go.mod h1:bmLyhP68RS6kStMGxByiQ23RP/odRBOTVjwp2cDyi6I=
-github.com/tektoncd/pipeline v0.62.1 h1:l+EvRCrLqTHuHwas+C4bRP6jzln8E1J9I7tnfwmWfJQ=
-github.com/tektoncd/pipeline v0.62.1/go.mod h1:cYPH4n3X8t39arNMhgyU7swyv3hVeWToz1yYDRzTLT8=
+github.com/tektoncd/pipeline v0.62.8 h1:ZRKGwBOTnYW64ZFq73BWM8StVKkZxZvD2+2Iv3TjtYQ=
+github.com/tektoncd/pipeline v0.62.8/go.mod h1:VYlHwA2FU1n2QDF3xoy1dwKZz4Ai5F1Nrf8A9dmZBxA=
 github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb h1:LUUCR8pLF+MzdQ7kOQQrMzDahIPZLdPCzfnNow1Um3Y=
 github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb/go.mod h1:uJBaI0AL/kjPThiMYZcWRujEz7D401v643d6s/21GAg=
 github.com/tidwall/pretty v1.0.0/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
