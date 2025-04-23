@@ -17,7 +17,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/sessions v1.3.0
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
-	github.com/ikawaha/goahttpcheck v1.15.9
+	github.com/ikawaha/goahttpcheck v1.15.10
 	github.com/joho/godotenv v1.5.1
 	github.com/markbates/goth v1.81.0
 	github.com/mitchellh/go-homedir v1.1.0
