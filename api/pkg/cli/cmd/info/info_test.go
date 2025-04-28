@@ -205,7 +205,7 @@ func TestPipelineTask_MultiLineDescription(t *testing.T) {
 
 	defer gock.Off()
 
-	taskResWithLatestVersion.Description = "A Task is a collection of Steps that you define and arrange in a specific order of execution as part of your continuous integration flow. A Task executes as a Pod on your Kubernetes cluster. A Task is available within a specific namespace, while a ClusterTask is available across the entire cluster."
+	taskResWithLatestVersion.Description = "A Task is a collection of Steps that you define and arrange in a specific order of execution as part of your continuous integration flow. A Task executes as a Pod on your Kubernetes cluster. A Task is available within a specific namespace."
 
 	mockApi(InfoOptions{
 		ResId:   12,

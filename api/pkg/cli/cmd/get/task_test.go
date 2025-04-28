@@ -45,24 +45,6 @@ var taskWithNewVersionYaml = &res.ResourceContent{
 	Yaml: &task1,
 }
 
-var task2 = `---
-apiVersion: tekton.dev/v1beta1
-kind: Task
-metadata:
-  name: foo
-  annotations:
-    tekton.dev/pipelines.minVersion: '0.12.1'
-    tekton.dev/tags: cli
-    tekton.dev/displayName: 'foo-bar'
-spec:
-  description: >-
-    v0.1 Task to run foo
-`
-
-var taskWithOldVersionYaml = &res.ResourceContent{
-	Yaml: &task2,
-}
-
 func TestGetTask_WithNewVersion(t *testing.T) {
 	cli := test.NewCLI(hub.TektonHubType)
 
@@ -88,40 +70,6 @@ func TestGetTask_WithNewVersion(t *testing.T) {
 			from:    "tekton",
 			version: "0.3",
 		},
-	}
-
-	err := opts.run()
-	assert.NoError(t, err)
-	golden.Assert(t, buf.String(), fmt.Sprintf("%s.golden", t.Name()))
-	assert.Equal(t, gock.IsDone(), true)
-}
-
-func TestGetTask_AsClusterTask(t *testing.T) {
-	cli := test.NewCLI(hub.TektonHubType)
-
-	defer gock.Off()
-
-	rVer := &res.ResourceVersionYaml{Data: taskWithOldVersionYaml}
-	resWithVersion := res.NewViewedResourceVersionYaml(rVer, "default")
-
-	resInfo := fmt.Sprintf("%s/%s/%s/%s", "tekton", "task", "foo", "0.1")
-
-	gock.New(test.API).
-		Get("/resource/" + resInfo + "/yaml").
-		Reply(200).
-		JSON(&resWithVersion.Projected)
-	buf := new(bytes.Buffer)
-	cli.SetStream(buf, buf)
-
-	opts := taskOptions{
-		options: &options{
-			cli:     cli,
-			kind:    "task",
-			args:    []string{"foo"},
-			from:    "tekton",
-			version: "0.1",
-		},
-		clusterTask: true,
 	}
 
 	err := opts.run()
