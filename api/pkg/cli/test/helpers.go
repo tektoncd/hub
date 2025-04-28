@@ -29,9 +29,8 @@ import (
 )
 
 type Data struct {
-	Pipelines    []*v1beta1.Pipeline
-	Tasks        []*v1beta1.Task
-	ClusterTasks []*v1beta1.ClusterTask
+	Pipelines []*v1beta1.Pipeline
+	Tasks     []*v1beta1.Task
 }
 
 func SeedTestData(t *testing.T, d pipelinetest.Data) (pipelinetest.Clients, pipelinetest.Informers) {
