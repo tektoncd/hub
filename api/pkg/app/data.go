@@ -73,7 +73,7 @@ func httpRead(url string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf(resp.Status)
+		return nil, fmt.Errorf("error: %s", resp.Status)
 	}
 
 	return io.ReadAll(resp.Body)
