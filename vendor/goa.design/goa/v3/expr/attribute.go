@@ -212,6 +212,7 @@ func (a *AttributeExpr) Validate(ctx string, parent eval.Expression) *eval.Valid
 	if v := a.Validation; v != nil {
 		verr.Merge(v.Validate(ctx, parent))
 	}
+	verr.Merge(a.validateExamples(ctx, parent))
 	if o := AsObject(a.Type); o != nil {
 		for _, n := range a.AllRequired() {
 			if a.Find(n) == nil {
@@ -664,7 +665,7 @@ func (a *AttributeExpr) debug(prefix string, seen map[*AttributeExpr]int, indent
 	if rt, ok := a.Type.(*ResultTypeExpr); ok {
 		fmt.Printf("%s%sviews\n", tabs, tab)
 		for _, v := range rt.Views {
-			nats := *AsObject(v.AttributeExpr.Type)
+			nats := *AsObject(v.Type)
 			keys := make([]string, len(nats))
 			for i, n := range nats {
 				keys[i] = n.Name
@@ -729,6 +730,18 @@ func (a *AttributeExpr) validateEnumDefault(ctx string, parent eval.Expression) 
 				a.DefaultValue,
 				a.Validation.Values,
 			)
+		}
+	}
+	return verr
+}
+
+// validateExamples makes sure that the attribute example values are compatible
+// with the attribute type.
+func (a *AttributeExpr) validateExamples(ctx string, parent eval.Expression) *eval.ValidationErrors {
+	verr := new(eval.ValidationErrors)
+	for _, ex := range a.UserExamples {
+		if !a.Type.IsCompatible(ex.Value) { // DSL ensures ex.Value is not nil
+			verr.Add(parent, "%sexample value %#v is incompatible with type %s", ctx, ex.Value, a.Type.Name())
 		}
 	}
 	return verr
