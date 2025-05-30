@@ -15,7 +15,7 @@
     "react-scripts": "^5.0.1",
     "swagger-ui-react": "^5.21.0",
     "typescript": "^5.8.3",
-    "web-vitals": "^4.2.4",
+    "web-vitals": "^5.0.2",
     "jsdom": "26.1.0"
   },
   "overrides": {
