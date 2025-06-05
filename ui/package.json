@@ -36,7 +36,7 @@
     "remark-gfm": "^4.0.0",
     "typescript": "^5.7.3",
     "use-debounce": "^10.0.4",
-    "webpack-dev-server": "^5.2.0"
+    "webpack-dev-server": "^5.2.1"
   },
   "scripts": {
     "start": "react-app-rewired start",
