@@ -914,7 +914,7 @@ func Body(args ...any) {
 		}
 		kind = "Request"
 	case *expr.HTTPErrorExpr:
-		ref = e.ErrorExpr.AttributeExpr
+		ref = e.AttributeExpr
 		setter = func(att *expr.AttributeExpr) {
 			if e.Response == nil {
 				e.Response = &expr.HTTPResponseExpr{}
@@ -972,7 +972,8 @@ func Body(args ...any) {
 			var ok bool
 			fn, ok = args[1].(func())
 			if !ok {
-				eval.ReportError("second argument must be a function")
+				eval.InvalidArgError("function", args[1])
+				return
 			}
 		}
 	case expr.UserType:
@@ -981,7 +982,8 @@ func Body(args ...any) {
 			var ok bool
 			fn, ok = args[1].(func())
 			if !ok {
-				eval.ReportError("second argument must be a function")
+				eval.InvalidArgError("function", args[1])
+				return
 			}
 		}
 	case func():
