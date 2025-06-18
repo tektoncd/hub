@@ -31,6 +31,7 @@ spec:
           image: quay.io/tekton-hub/db-migration
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             runAsUser: 65532
             capabilities:
               drop:
