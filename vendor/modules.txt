@@ -677,8 +677,8 @@ goa.design/goa/v3/http/middleware
 goa.design/goa/v3/middleware
 goa.design/goa/v3/pkg
 goa.design/goa/v3/security
-# goa.design/plugins/v3 v3.20.0
-## explicit; go 1.23.0
+# goa.design/plugins/v3 v3.21.1
+## explicit; go 1.24.0
 goa.design/plugins/v3/cors
 goa.design/plugins/v3/cors/dsl
 goa.design/plugins/v3/cors/expr
