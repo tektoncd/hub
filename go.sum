@@ -435,8 +435,8 @@ github.com/getkin/kin-openapi v0.132.0/go.mod h1:3OlG51PCYNsPByuiMB0t4fjnNlIDnaE
 github.com/ghodss/yaml v0.0.0-20150909031657-73d445a93680/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/gliderlabs/ssh v0.2.2/go.mod h1:U7qILu1NlMHj9FlMhZLlkCdDnU1DBEAqr0aevW3Awn0=
-github.com/go-chi/chi/v5 v5.2.1 h1:KOIHODQj58PmL80G2Eak4WdvUzjSJSm0vG72crDCqb8=
-github.com/go-chi/chi/v5 v5.2.1/go.mod h1:L2yAIGWB3H+phAw1NxKwWM+7eUH/lU8pOMm5hHcoops=
+github.com/go-chi/chi/v5 v5.2.2 h1:CMwsvRVTbXVytCk1Wd72Zy1LAsAh9GxMmSNWLHCG618=
+github.com/go-chi/chi/v5 v5.2.2/go.mod h1:L2yAIGWB3H+phAw1NxKwWM+7eUH/lU8pOMm5hHcoops=
 github.com/go-co-op/gocron v1.37.0 h1:ZYDJGtQ4OMhTLKOKMIch+/CY70Brbb1dGdooLEhh7b0=
 github.com/go-co-op/gocron v1.37.0/go.mod h1:3L/n6BkO7ABj+TrfSVXLRzsP26zmikL4ISkLQ0O8iNY=
 github.com/go-fed/httpsig v1.1.0 h1:9M+hb0jkEICD8/cAiNqEB66R87tTINszBRTjwjQzWcI=
@@ -705,10 +705,10 @@ github.com/hinshun/vt10x v0.0.0-20220119200601-820417d04eec/go.mod h1:Q48J4R4Dvx
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
-github.com/ikawaha/goahttpcheck v1.15.10 h1:/HQonnd9OzZjM3Q6ln2TCbDaRb7kaU6YWTzEdurc0TU=
-github.com/ikawaha/goahttpcheck v1.15.10/go.mod h1:1Fnukg8S6EE92DrgAhOnvcIzUF5erCsiLK+eQ0IYA6w=
-github.com/ikawaha/httpcheck v1.12.3 h1:OCDe3yCTZWKhubT5rNOef26ulykUxQRx/GqSGm5lYMs=
-github.com/ikawaha/httpcheck v1.12.3/go.mod h1:K+Oyw7JUcLcRGOvIj2kTEzwPpxMqpXaafHiKb7WsJ4Q=
+github.com/ikawaha/goahttpcheck v1.15.11 h1:+wwLUM+g1jt3a61fRTTjbViGOk8d302iw7TmhYhpIgM=
+github.com/ikawaha/goahttpcheck v1.15.11/go.mod h1:O+3QNwO7QK9f9BoC3YX/1tIPrbjf7wD7nKWozeUfbLk=
+github.com/ikawaha/httpcheck v1.12.4 h1:TJ0csaV1Rcw8WdOWCMo22shntw7VvbB7c2ubj6HFG5E=
+github.com/ikawaha/httpcheck v1.12.4/go.mod h1:UVLEuAE4OixLO0n4mfjK7UZLNuo5IUrPEf9EikjmBmc=
 github.com/imdario/mergo v0.3.5/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/imdario/mergo v0.3.8/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/imdario/mergo v0.3.10/go.mod h1:jmQim1M+e3UYxmgPu/WyfjB3N3VflVyUjjjwH0dnCYA=
