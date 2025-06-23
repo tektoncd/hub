@@ -279,10 +279,10 @@ github.com/hashicorp/go-multierror
 ## explicit; go 1.12
 github.com/hashicorp/golang-lru
 github.com/hashicorp/golang-lru/simplelru
-# github.com/ikawaha/goahttpcheck v1.15.10
-## explicit; go 1.21.0
+# github.com/ikawaha/goahttpcheck v1.15.11
+## explicit; go 1.23.0
 github.com/ikawaha/goahttpcheck
-# github.com/ikawaha/httpcheck v1.12.3
+# github.com/ikawaha/httpcheck v1.12.4
 ## explicit; go 1.19
 github.com/ikawaha/httpcheck
 # github.com/inconshreveable/mousetrap v1.1.0
