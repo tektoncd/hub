@@ -62,3 +62,7 @@
 .pf-c-backdrop {
   backdrop-filter: blur(1px);
 }
+
+.hub-page {
+  display: block;
+}
