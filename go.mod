@@ -1,8 +1,6 @@
 module github.com/tektoncd/hub
 
-go 1.23.0
-
-toolchain go1.23.8
+go 1.24.0
 
 require (
 	github.com/ActiveState/vt10x v1.3.1
@@ -29,7 +27,7 @@ require (
 	go.uber.org/automaxprocs v1.6.0
 	go.uber.org/zap v1.27.0
 	goa.design/goa/v3 v3.21.1
-	goa.design/plugins/v3 v3.20.0
+	goa.design/plugins/v3 v3.21.1
 	golang.org/x/term v0.32.0
 	golang.org/x/text v0.26.0
 	gopkg.in/h2non/gock.v1 v1.1.2
