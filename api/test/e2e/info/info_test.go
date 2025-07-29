@@ -26,7 +26,7 @@ import (
 
 const expected = `📦 Name: tkn
 
-📌 Version: 0.1
+📌 Version: 0.1 (Deprecated)
 
 📖 Description: This task performs operations on Tekton resources using tkn
 
