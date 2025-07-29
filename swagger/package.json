@@ -58,7 +58,7 @@
     "@typescript-eslint/eslint-plugin": "^8.34.0",
     "@typescript-eslint/parser": "^8.32.0",
     "enzyme": "^3.11.0",
-    "eslint": "^9.26.0",
+    "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.2",
     "eslint-config-react": "^1.1.7",
     "eslint-plugin-prettier": "^5.4.1",
