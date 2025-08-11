@@ -3,8 +3,8 @@
 > [!IMPORTANT]
 > **The Tekon Hub project is deprecated.**
 >
-> - On September 1st, 2025, the public instance (https://hub.tekton.dev) will be shut-down.
-> - On November 1st, 2025, this repository will be archived (and thus frozen).
+> - On January 7th, 2026, the public instance (https://hub.tekton.dev) will be shut-down.
+> - On February 7th, 2026, this repository will be archived (and thus frozen).
 
 
 <p align="center">
