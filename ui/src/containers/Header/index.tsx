@@ -103,7 +103,7 @@ const Header: React.FC = observer(() => {
       <Banner variant="warning" isSticky={true}>
         <TextContent>
           <Text component={TextVariants.h1} className="hub-background-heading">
-            Tekton Hub is deprecated and will be shutdown on 2025-09-01.
+            Tekton Hub is deprecated and will be shutdown on January 2026, the 7th.
           </Text>
         </TextContent>
       </Banner>
