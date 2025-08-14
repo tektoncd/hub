@@ -12,24 +12,24 @@ import (
 )
 
 // ExampleServerFiles returns an example http service implementation.
-func ExampleServerFiles(genpkg string, root *expr.RootExpr) []*codegen.File {
+func ExampleServerFiles(genpkg string, data *ServicesData) []*codegen.File {
 	var fw []*codegen.File
-	for _, svr := range root.API.Servers {
-		if m := exampleServer(genpkg, root, svr); m != nil {
+	for _, svr := range data.Root.API.Servers {
+		if m := ExampleServer(genpkg, data.Root, svr, data); m != nil {
 			fw = append(fw, m)
 		}
 	}
-	for _, svc := range root.API.HTTP.Services {
-		if f := dummyMultipartFile(genpkg, root, svc); f != nil {
+	for _, svc := range data.Expressions.Services {
+		if f := dummyMultipartFile(genpkg, data.Root, svc, data); f != nil {
 			fw = append(fw, f)
 		}
 	}
 	return fw
 }
 
-// exampleServer returns an example HTTP server implementation.
-func exampleServer(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *codegen.File {
-	svrdata := example.Servers.Get(svr)
+// ExampleServer returns an example HTTP server implementation.
+func ExampleServer(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr, services *ServicesData) *codegen.File {
+	svrdata := example.Servers.Get(svr, root)
 	fpath := filepath.Join("cmd", svrdata.Dir, "http.go")
 	specs := []*codegen.ImportSpec{
 		{Path: "context"},
@@ -47,16 +47,17 @@ func exampleServer(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *co
 
 	scope := codegen.NewNameScope()
 	for _, svc := range root.API.HTTP.Services {
-		sd := HTTPServices.Get(svc.Name())
+		sd := services.Get(svc.Name())
 		svcName := sd.Service.PathName
-		specs = append(specs, &codegen.ImportSpec{
-			Path: path.Join(genpkg, "http", svcName, "server"),
-			Name: scope.Unique(sd.Service.PkgName + "svr"),
-		})
-		specs = append(specs, &codegen.ImportSpec{
-			Path: path.Join(genpkg, svcName),
-			Name: scope.Unique(sd.Service.PkgName),
-		})
+		specs = append(specs,
+			&codegen.ImportSpec{
+				Path: path.Join(genpkg, "http", svcName, "server"),
+				Name: scope.Unique(sd.Service.PkgName + "svr"),
+			},
+			&codegen.ImportSpec{
+				Path: path.Join(genpkg, svcName),
+				Name: scope.Unique(sd.Service.PkgName),
+			})
 	}
 
 	var (
@@ -70,13 +71,13 @@ func exampleServer(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *co
 		if idx > 0 {
 			rootPath = genpkg[:idx]
 		}
-		apiPkg = scope.Unique(strings.ToLower(codegen.Goify(root.API.Name, false)), "api")
+		apiPkg = scope.Unique(strings.ToLower(codegen.Goify(services.Root.API.Name, false) + "api"))
 	}
 	specs = append(specs, &codegen.ImportSpec{Path: rootPath, Name: apiPkg})
 
 	var svcdata []*ServiceData
 	for _, svc := range svr.Services {
-		if data := HTTPServices.Get(svc); data != nil {
+		if data := services.Get(svc); data != nil {
 			svcdata = append(svcdata, data)
 		}
 	}
@@ -85,42 +86,42 @@ func exampleServer(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *co
 		codegen.Header("", "main", specs),
 		{
 			Name:   "server-http-start",
-			Source: readTemplate("server_start"),
+			Source: httpTemplates.Read(serverStartT),
 			Data: map[string]any{
 				"Services": svcdata,
 			},
 		},
 		{
 			Name:   "server-http-encoding",
-			Source: readTemplate("server_encoding"),
+			Source: httpTemplates.Read(serverEncodingT),
 		},
 		{
 			Name:   "server-http-mux",
-			Source: readTemplate("server_mux"),
+			Source: httpTemplates.Read(serverMuxT),
 		},
 		{
 			Name:   "server-http-init",
-			Source: readTemplate("server_configure"),
+			Source: httpTemplates.Read(serverConfigureT),
 			Data: map[string]any{
 				"Services": svcdata,
 				"APIPkg":   apiPkg,
 			},
-			FuncMap: map[string]any{"needDialer": needDialer, "hasWebSocket": hasWebSocket},
+			FuncMap: map[string]any{"needDialer": NeedDialer, "hasWebSocket": HasWebSocket},
 		},
 		{
 			Name:   "server-http-middleware",
-			Source: readTemplate("server_middleware"),
+			Source: httpTemplates.Read(serverMiddlewareT),
 		},
 		{
 			Name:   "server-http-end",
-			Source: readTemplate("server_end"),
+			Source: httpTemplates.Read(serverEndT),
 			Data: map[string]any{
 				"Services": svcdata,
 			},
 		},
 		{
 			Name:   "server-http-errorhandler",
-			Source: readTemplate("server_error_handler"),
+			Source: httpTemplates.Read(serverErrorHandlerT),
 		},
 	}
 
@@ -129,7 +130,7 @@ func exampleServer(genpkg string, root *expr.RootExpr, svr *expr.ServerExpr) *co
 
 // dummyMultipartFile returns a dummy implementation of the multipart decoders
 // and encoders.
-func dummyMultipartFile(genpkg string, root *expr.RootExpr, svc *expr.HTTPServiceExpr) *codegen.File {
+func dummyMultipartFile(genpkg string, root *expr.RootExpr, svc *expr.HTTPServiceExpr, services *ServicesData) *codegen.File {
 	mpath := "multipart.go"
 	if _, err := os.Stat(mpath); !os.IsNotExist(err) {
 		return nil // file already exists, skip it.
@@ -141,13 +142,13 @@ func dummyMultipartFile(genpkg string, root *expr.RootExpr, svc *expr.HTTPServic
 		scope = codegen.NewNameScope()
 	)
 	// determine the unique API package name different from the service names
-	for _, svc := range root.Services {
-		s := HTTPServices.Get(svc.Name)
+	for _, httpSvc := range root.API.HTTP.Services {
+		s := services.Get(httpSvc.Name())
 		if s == nil {
-			panic("unknown http service, " + svc.Name) // bug
+			panic("unknown http service, " + httpSvc.Name()) // bug
 		}
 		if s.Service == nil {
-			panic("unknown service, " + svc.Name) // bug
+			panic("unknown service, " + httpSvc.Name()) // bug
 		}
 		scope.Unique(s.Service.PkgName)
 	}
@@ -155,7 +156,7 @@ func dummyMultipartFile(genpkg string, root *expr.RootExpr, svc *expr.HTTPServic
 		specs := []*codegen.ImportSpec{
 			{Path: "mime/multipart"},
 		}
-		data := HTTPServices.Get(svc.Name())
+		data := services.Get(svc.Name())
 		specs = append(specs, &codegen.ImportSpec{
 			Path: path.Join(genpkg, data.Service.PathName),
 			Name: scope.Unique(data.Service.PkgName, "svc"),
@@ -168,7 +169,7 @@ func dummyMultipartFile(genpkg string, root *expr.RootExpr, svc *expr.HTTPServic
 				mustGen = true
 				sections = append(sections, &codegen.SectionTemplate{
 					Name:   "dummy-multipart-request-decoder",
-					Source: readTemplate("dummy_multipart_request_decoder"),
+					Source: httpTemplates.Read(dummyMultipartRequestDecoderT),
 					Data:   e.MultipartRequestDecoder,
 				})
 			}
@@ -176,7 +177,7 @@ func dummyMultipartFile(genpkg string, root *expr.RootExpr, svc *expr.HTTPServic
 				mustGen = true
 				sections = append(sections, &codegen.SectionTemplate{
 					Name:   "dummy-multipart-request-encoder",
-					Source: readTemplate("dummy_multipart_request_encoder"),
+					Source: httpTemplates.Read(dummyMultipartRequestEncoderT),
 					Data:   e.MultipartRequestEncoder,
 				})
 			}
