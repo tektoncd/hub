@@ -16,8 +16,7 @@ import {
   TextListItem,
   Button,
   AlertVariant,
-  Divider,
-  Banner
+  Divider
 } from '@patternfly/react-core';
 import logo from '../../assets/logo/logo.png';
 import { IconSize } from '@patternfly/react-icons';
@@ -100,14 +99,6 @@ const Header: React.FC = observer(() => {
         }
         headerTools={headerTools}
       />
-      <Banner variant="warning" isSticky={true}>
-        <TextContent>
-          <Text component={TextVariants.h1} className="hub-background-heading">
-            Tekton Hub is deprecated and will be shutdown on January 2026, the 7th.
-          </Text>
-        </TextContent>
-      </Banner>
-
       <Modal
         variant={ModalVariant.small}
         title="Search tips:"
