@@ -141,7 +141,7 @@ github.com/go-openapi/swag
 ## explicit; go 1.23.0
 github.com/go-testfixtures/testfixtures/v3
 github.com/go-testfixtures/testfixtures/v3/shared
-# github.com/go-viper/mapstructure/v2 v2.2.1
+# github.com/go-viper/mapstructure/v2 v2.4.0
 ## explicit; go 1.18
 github.com/go-viper/mapstructure/v2
 github.com/go-viper/mapstructure/v2/internal/errors
