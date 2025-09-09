@@ -7,6 +7,7 @@ toolchain go1.23.8
 require (
 	github.com/ActiveState/vt10x v1.3.1
 	github.com/AlecAivazis/survey/v2 v2.3.7
+	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
 	github.com/fatih/color v1.18.0
 	github.com/go-co-op/gocron v1.37.0
