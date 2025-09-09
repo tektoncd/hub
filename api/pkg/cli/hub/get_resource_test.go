@@ -39,3 +39,12 @@ func TestGetResourceEndpoint(t *testing.T) {
 	url = opt.Endpoint()
 	assert.Equal(t, "/v1/resource/tekton/task/abc/0.1.1", url)
 }
+
+func TestSortVersionsSemanticaly(t *testing.T) {
+	// includes valid semver and some invalid strings (alpha/beta)
+	in := []string{"0.9.0", "1.0.0", "v0.10.0", "alpha", "2.0.0", "1.2.3", "beta"}
+	out := sortVersionsSemanticaly(in)
+
+	// valid semvers should be in descending order first
+	assert.Equal(t, []string{"2.0.0", "1.2.3", "1.0.0", "v0.10.0", "0.9.0", "beta", "alpha"}, out)
+}
