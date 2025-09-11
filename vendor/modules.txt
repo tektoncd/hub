@@ -598,8 +598,8 @@ github.com/tektoncd/pipeline/pkg/result
 github.com/tektoncd/pipeline/pkg/spire/config
 github.com/tektoncd/pipeline/pkg/substitution
 github.com/tektoncd/pipeline/test
-# github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
-## explicit; go 1.13
+# github.com/tektoncd/plumbing v0.0.0-20250430145243-3b7cd59879c1
+## explicit; go 1.23
 github.com/tektoncd/plumbing
 github.com/tektoncd/plumbing/scripts
 # github.com/titanous/rocacheck v0.0.0-20171023193734-afe73141d399

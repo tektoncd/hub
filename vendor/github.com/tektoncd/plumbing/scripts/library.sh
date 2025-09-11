@@ -20,7 +20,7 @@
 
 # Default GKE version to be used with Tekton Serving
 readonly SERVING_GKE_VERSION=gke-channel-regular
-readonly SERVING_GKE_IMAGE=cos
+readonly SERVING_GKE_IMAGE=cos_containerd
 
 # Conveniently set GOPATH if unset
 if [[ -z "${GOPATH:-}" ]]; then
@@ -356,6 +356,12 @@ function is_int() {
 # Parameters: $1 - full GCR name, e.g. gcr.io/tekton-foo-bar
 function is_protected_gcr() {
   [[ -n $1 && "$1" =~ "^gcr.io/tekton-(releases|nightly)/?$" ]]
+}
+
+# Return whether the given parameter is the tekton release/nightly GCF.
+# Parameters: $1 - full GHCR name, e.g. ghcr.io/tektoncd/foo-bar
+function is_protected_ghcr() {
+  [[ -n $1 && "$1" =~ "^ghcr.io/tektoncd/?$" ]]
 }
 
 # Remove symlinks in a path that are broken or lead outside the repo.
