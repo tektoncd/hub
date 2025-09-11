@@ -1,0 +1,147 @@
+name: Tekton Hub CI
+
+on:
+  push:
+    branches: [ main, release-* ]
+  pull_request:
+    branches: [ "**" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+  
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ui:
+    name: UI Build and Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ui
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        env:
+          CI: true
+        run: |
+          make ui-build
+      - name: Unit tests
+        env:
+          CI: true
+        run: |
+          make ui-test
+
+  api-build:
+    name: API Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build
+        run: |
+          make api-build
+
+  api-unit:
+    name: API Unit Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres" \
+          --health-interval 10s \
+          --health-timeout 5s \
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Wait for Postgres
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done
+
+      - name: Create test database
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -p 5432 -U postgres -c 'create database hub_test;'
+
+      - name: Run API unit tests
+        env:
+          ENVIRONMENT: test
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: "5432"
+          POSTGRES_DB: hub_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          JWT_SIGNING_KEY: TeKtOnHuB
+          ACCESS_JWT_EXPIRES_IN: 5m
+          REFRESH_JWT_EXPIRES_IN: 1h
+          GH_CLIENT_ID: client-id
+          GH_CLIENT_SECRET: client-secret
+          CONFIG_FILE_URL: file://$GITHUB_WORKSPACE/api/test/config/config.yaml
+        run: |
+          make api-test
+
+  api-integration:
+    name: API Integration (E2E)
+    runs-on: ubuntu-latest
+    needs: [api-unit]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Run integration tests
+        working-directory: api
+        run: |
+          go mod vendor
+          go build -o tkn-hub ./cmd/tkn-hub
+          export TEST_CLIENT_BINARY="${PWD}/tkn-hub"
+          go test -count=1 -tags=e2e ./test/...
+
+
