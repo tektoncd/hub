@@ -239,7 +239,7 @@ describe('Store functions', () => {
 
         store.setSearch('golang');
 
-        store.filteredResources;
+        void store.filteredResources;
 
         expect(store.filteredResources.length).toBe(1);
 
