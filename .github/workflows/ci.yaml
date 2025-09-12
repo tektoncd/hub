@@ -45,12 +45,12 @@ jobs:
         env:
           CI: true
         run: |
-          make ui-build
+          npm run build
       - name: Unit tests
         env:
           CI: true
         run: |
-          make ui-test
+          npm run test
 
   api-build:
     name: API Build
@@ -81,10 +81,10 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres" \
-          --health-interval 10s \
-          --health-timeout 5s \
-          --health-retries 5
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -95,6 +95,11 @@ jobs:
           go-version-file: go.mod
           cache: true
 
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
       - name: Wait for Postgres
         run: |
           until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done
@@ -104,7 +109,7 @@ jobs:
           PGPASSWORD: postgres
         run: |
           psql -h localhost -p 5432 -U postgres -c 'create database hub_test;'
-
+  
       - name: Run API unit tests
         env:
           ENVIRONMENT: test
@@ -118,10 +123,10 @@ jobs:
           REFRESH_JWT_EXPIRES_IN: 1h
           GH_CLIENT_ID: client-id
           GH_CLIENT_SECRET: client-secret
-          CONFIG_FILE_URL: file://$GITHUB_WORKSPACE/api/test/config/config.yaml
+          CONFIG_FILE_URL: file://${{ github.workspace }}/api/test/config/config.yaml
         run: |
-          make api-test
-
+          cd api && go mod vendor && go test -p 1 -v ./pkg/... ./v1/service/...
+        
   api-integration:
     name: API Integration (E2E)
     runs-on: ubuntu-latest
