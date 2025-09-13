@@ -1,7 +1,6 @@
 package codegen
 
 import (
-	"os"
 	"testing"
 
 	"goa.design/goa/v3/codegen/service"
@@ -11,22 +10,11 @@ import (
 // RunHTTPDSL returns the HTTP DSL root resulting from running the given DSL.
 func RunHTTPDSL(t *testing.T, dsl func()) *expr.RootExpr {
 	// reset all roots and codegen data structures
-	service.Services = make(service.ServicesData)
-	HTTPServices = make(ServicesData)
-	return expr.RunDSL(t, dsl)
+	root := expr.RunDSL(t, dsl)
+	return root
 }
 
-// makeGolden returns a file object used to write test expectations. If
-// makeGolden returns nil then the test should not generate test
-// expectations.
-func makeGolden(t *testing.T, p string) *os.File {
-	t.Helper()
-	if os.Getenv("GOLDEN") == "" {
-		return nil
-	}
-	f, err := os.OpenFile(p, os.O_CREATE|os.O_WRONLY, 0600)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return f
+// CreateHTTPServices creates a new ServicesData instance for testing.
+func CreateHTTPServices(root *expr.RootExpr) *ServicesData {
+	return NewServicesData(service.NewServicesData(root), root.API.HTTP)
 }
