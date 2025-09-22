@@ -1,8 +1,6 @@
 module github.com/tektoncd/hub
 
-go 1.23.0
-
-toolchain go1.23.8
+go 1.24.0
 
 require (
 	github.com/ActiveState/vt10x v1.3.1
@@ -23,15 +21,15 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/tektoncd/pipeline v1.0.0
 	github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb
 	go.uber.org/automaxprocs v1.6.0
 	go.uber.org/zap v1.27.0
-	goa.design/goa/v3 v3.21.1
-	goa.design/plugins/v3 v3.20.0
-	golang.org/x/term v0.32.0
-	golang.org/x/text v0.26.0
+	goa.design/goa/v3 v3.22.3
+	goa.design/plugins/v3 v3.22.3
+	golang.org/x/term v0.35.0
+	golang.org/x/text v0.29.0
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.30.0
@@ -43,7 +41,7 @@ require (
 )
 
 require (
-	cel.dev/expr v0.23.1 // indirect
+	cel.dev/expr v0.24.0 // indirect
 	cloud.google.com/go/kms v1.21.1 // indirect
 	contrib.go.opencensus.io/exporter/ocagent v0.7.1-0.20200907061046-05415f1de66d // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2 // indirect
@@ -65,11 +63,11 @@ require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
-	github.com/go-chi/chi/v5 v5.2.2 // indirect
-	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
+	github.com/go-chi/chi/v5 v5.2.3 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.1 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
-	github.com/go-logr/logr v1.4.2 // indirect
+	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
@@ -147,21 +145,21 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/crypto v0.42.0 // indirect
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac // indirect
-	golang.org/x/mod v0.25.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
-	golang.org/x/oauth2 v0.29.0 // indirect
-	golang.org/x/sync v0.15.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/mod v0.28.0 // indirect
+	golang.org/x/net v0.44.0 // indirect
+	golang.org/x/oauth2 v0.30.0 // indirect
+	golang.org/x/sync v0.17.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
-	golang.org/x/tools v0.33.0 // indirect
+	golang.org/x/tools v0.37.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
 	google.golang.org/api v0.229.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250414145226-207652e42e2e // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250428153025-10db94c68c34 // indirect
-	google.golang.org/grpc v1.72.1 // indirect
-	google.golang.org/protobuf v1.36.6 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250908214217-97024824d090 // indirect
+	google.golang.org/grpc v1.75.1 // indirect
+	google.golang.org/protobuf v1.36.9 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

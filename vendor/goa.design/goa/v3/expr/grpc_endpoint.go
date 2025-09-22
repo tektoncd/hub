@@ -2,6 +2,7 @@ package expr
 
 import (
 	"fmt"
+	"slices"
 
 	"goa.design/goa/v3/eval"
 )
@@ -197,13 +198,7 @@ func (e *GRPCEndpointExpr) Validate() error {
 				// security attributes
 				var found bool
 				for _, nat := range *pobj {
-					found = false
-					for _, n := range secAttrs {
-						if n == nat.Name {
-							found = true
-							break
-						}
-					}
+					found = slices.Contains(secAttrs, nat.Name)
 					if !found {
 						msgFields.Set(nat.Name, nat.Attribute)
 					}
@@ -577,6 +572,16 @@ func (e *GRPCEndpointExpr) hasAnyType(a *AttributeExpr, typ string, seen ...map[
 			if IsPrimitive(nat.Attribute.Type) {
 				if nat.Attribute.Type == Any {
 					verr.Add(e, "Attribute %q is Any type which is not supported in gRPC", nat.Name)
+				}
+				continue
+			}
+			verr.Merge(e.hasAnyType(nat.Attribute, typ, seen...))
+		}
+	case *Union:
+		for _, nat := range actual.Values {
+			if IsPrimitive(nat.Attribute.Type) {
+				if nat.Attribute.Type == Any {
+					verr.Add(e, "Union member %q is Any type which is not supported in gRPC", nat.Name)
 				}
 				continue
 			}
