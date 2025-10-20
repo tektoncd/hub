@@ -1,12 +1,8 @@
 {{ printf "%s returns an endpoint that makes HTTP requests to the %s service %s server." .EndpointInit .ServiceName .Method.Name | comment }}
 func (c *{{ .ClientStruct }}) {{ .EndpointInit }}({{ if .MultipartRequestEncoder }}{{ .MultipartRequestEncoder.VarName }} {{ .MultipartRequestEncoder.FuncName }}{{ end }}) goa.Endpoint {
 	var (
-		{{- if and .ClientWebSocket .RequestEncoder }}
+		{{- if .RequestEncoder }}
 		encodeRequest  = {{ .RequestEncoder }}({{ if .MultipartRequestEncoder }}{{ .MultipartRequestEncoder.InitName }}({{ .MultipartRequestEncoder.VarName }}){{ else }}c.encoder{{ end }})
-		{{- else }}
-			{{- if .RequestEncoder }}
-		encodeRequest  = {{ .RequestEncoder }}({{ if .MultipartRequestEncoder }}{{ .MultipartRequestEncoder.InitName }}({{ .MultipartRequestEncoder.VarName }}){{ else }}c.encoder{{ end }})
-			{{- end }}
 		{{- end }}
 		{{- if not (isSSEEndpoint .) }}
 		decodeResponse = {{ .ResponseDecoder }}(c.decoder, c.RestoreResponseBody)
@@ -62,6 +58,10 @@ func (c *{{ .ClientStruct }}) {{ .EndpointInit }}({{ if .MultipartRequestEncoder
 		return stream, nil
 	{{- else if isSSEEndpoint . }}
 		// For SSE endpoints, connect and return a stream
+		{{- if .HasMixedResults }}
+		// Set Accept header for content negotiation
+		req.Header.Set("Accept", "text/event-stream")
+		{{- end }}
 		resp, err := c.{{ .Method.VarName }}Doer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("{{ .ServiceName }}", "{{ .Method.Name }}", err)
@@ -78,7 +78,7 @@ func (c *{{ .ClientStruct }}) {{ .EndpointInit }}({{ if .MultipartRequestEncoder
 			return nil, fmt.Errorf("unexpected content type: %s (expected text/event-stream)", contentType)
 		}
 		
-		return New{{ .Method.VarName }}Stream(resp), nil
+		return New{{ .Method.VarName }}Stream(resp, c.decoder), nil
 	{{- else }}
 		resp, err := c.{{ .Method.VarName }}Doer.Do(req)
 		if err != nil {
