@@ -37,6 +37,9 @@ spec:
             capabilities:
               drop:
                 - ALL
+          volumeMounts:
+            - name: config-volume
+              mountPath: /tmp/config
           env:
             - name: API_URL
               valueFrom:
@@ -89,3 +92,6 @@ spec:
             periodSeconds: 5
             successThreshold: 1
             timeoutSeconds: 1
+      volumes:
+        - name: config-volume
+          emptyDir: {}
