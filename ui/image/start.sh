@@ -1,14 +1,24 @@
 #!//bin/bash
 set -e -u -o pipefail
 
-BASE_PATH="${BASE_PATH:-/usr/share/nginx/html}"
-CONFIG_JS="${BASE_PATH}"/config.js
+# Use writable directory for config.js (mounted via emptyDir volume)
+CONFIG_DIR="${CONFIG_DIR:-/tmp/config}"
+CONFIG_JS="${CONFIG_DIR}"/config.js
+
+# Create directory if it doesn't exist
+mkdir -p "${CONFIG_DIR}"
+
 echo "Current ENV"
 echo '----------------------------------------------'
-cat $CONFIG_JS
-echo '..............................................'
-ls -l  $CONFIG_JS
+if [ -f "$CONFIG_JS" ]; then
+  cat $CONFIG_JS
+  echo '..............................................'
+  ls -l  $CONFIG_JS
+else
+  echo "Config file does not exist yet, will be created"
+fi
 echo "whoami: $(id)"
+echo "Writing config to: $CONFIG_JS"
 echo '----------------------------------------------'
 
 cat <<-EOF > $CONFIG_JS
