@@ -1,6 +1,6 @@
 {{ printf "%s returns a decoder for requests sent to the %s %s endpoint." .RequestDecoder .ServiceName .Method.Name | comment }}
-func {{ .RequestDecoder }}(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (any, error) {
-	return func(r *http.Request) (any, error) {
+func {{ .RequestDecoder }}(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) ({{ .Payload.Ref }}, error) {
+	return func(r *http.Request) ({{ .Payload.Ref }}, error) {
 {{- if .MultipartRequestDecoder }}
 		var payload {{ .Payload.Ref }}
 		if err := decoder(r).Decode(&payload); err != nil {
@@ -18,11 +18,11 @@ func {{ .RequestDecoder }}(mux goahttp.Muxer, decoder func(*http.Request) goahtt
 		err = decoder(r).Decode(&body)
 		if err != nil {
 	{{- if .Payload.Request.MustHaveBody }}
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				return nil, goa.MissingPayloadError()
 			}
 	{{- else }}
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				err = nil
 			} else {
 	{{- end }}

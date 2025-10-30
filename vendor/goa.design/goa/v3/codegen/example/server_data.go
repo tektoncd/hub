@@ -2,6 +2,7 @@ package example
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -84,6 +85,17 @@ type (
 		Port string
 		// Transport is the transport type for the URL.
 		Transport *TransportData
+		// HandlerArgs are the precomputed handler arguments for this URI used by
+		// the example server template. Each entry may contain an Endpoint and/or
+		// Service argument name to be passed to the handler in order.
+		HandlerArgs []HandlerArg
+	}
+
+	// HandlerArg represents one argument slot to the handler call in the example
+	// server. Only one of Endpoint or Service may be set for each entry.
+	HandlerArg struct {
+		Endpoint string
+		Service  string
 	}
 
 	// TransportData contains the data about a transport (http or grpc).
@@ -109,11 +121,11 @@ const (
 
 // Get returns the server data for the given server expression. It builds the
 // server data if the server name does not exist in the map.
-func (d ServersData) Get(svr *expr.ServerExpr) *Data {
+func (d ServersData) Get(svr *expr.ServerExpr, root *expr.RootExpr) *Data {
 	if data, ok := d[svr.Name]; ok {
 		return data
 	}
-	sd := buildServerData(svr)
+	sd := buildServerData(svr, root)
 	d[svr.Name] = sd
 	return sd
 }
@@ -170,14 +182,10 @@ func (h *HostData) DefaultURL(transport Transport) string {
 }
 
 // buildServerData builds the server data for the given server expression.
-func buildServerData(svr *expr.ServerExpr) *Data {
-	var (
-		hosts []*HostData
-	)
-	{
-		for _, h := range svr.Hosts {
-			hosts = append(hosts, buildHostData(h))
-		}
+func buildServerData(svr *expr.ServerExpr, root *expr.RootExpr) *Data {
+	hosts := make([]*HostData, 0, len(svr.Hosts))
+	for _, h := range svr.Hosts {
+		hosts = append(hosts, buildHostData(h))
 	}
 
 	var (
@@ -185,16 +193,14 @@ func buildServerData(svr *expr.ServerExpr) *Data {
 
 		foundVars = make(map[string]struct{})
 	)
-	{
-		// collect all the URL variables defined in host expressions
-		for _, h := range hosts {
-			for _, v := range h.Variables {
-				if _, ok := foundVars[v.Name]; ok {
-					continue
-				}
-				variables = append(variables, v)
-				foundVars[v.Name] = struct{}{}
+	// collect all the URL variables defined in host expressions
+	for _, h := range hosts {
+		for _, v := range h.Variables {
+			if _, ok := foundVars[v.Name]; ok {
+				continue
 			}
+			variables = append(variables, v)
+			foundVars[v.Name] = struct{}{}
 		}
 	}
 
@@ -205,23 +211,29 @@ func buildServerData(svr *expr.ServerExpr) *Data {
 
 		foundTrans = make(map[Transport]struct{})
 	)
-	{
-		for _, svc := range svr.Services {
-			_, seenHTTP := foundTrans[TransportHTTP]
-			_, seenGRPC := foundTrans[TransportGRPC]
-			if expr.Root.API.HTTP.Service(svc) != nil {
-				httpServices = append(httpServices, svc)
-				if !seenHTTP {
-					transports = append(transports, newHTTPTransport())
-					foundTrans[TransportHTTP] = struct{}{}
-				}
+	for _, svc := range svr.Services {
+		_, seenHTTP := foundTrans[TransportHTTP]
+		_, seenGRPC := foundTrans[TransportGRPC]
+		if root.API.HTTP.Service(svc) != nil {
+			httpServices = append(httpServices, svc)
+			if !seenHTTP {
+				transports = append(transports, newHTTPTransport())
+				foundTrans[TransportHTTP] = struct{}{}
 			}
-			if expr.Root.API.GRPC.Service(svc) != nil {
-				grpcServices = append(grpcServices, svc)
-				if !seenGRPC {
-					transports = append(transports, newGRPCTransport())
-					foundTrans[TransportGRPC] = struct{}{}
-				}
+			seenHTTP = true
+		}
+		if root.API.JSONRPC.Service(svc) != nil {
+			// JSON-RPC implies HTTP transport; ensure HTTP transport exists
+			if !seenHTTP {
+				transports = append(transports, newHTTPTransport())
+				foundTrans[TransportHTTP] = struct{}{}
+			}
+		}
+		if root.API.GRPC.Service(svc) != nil {
+			grpcServices = append(grpcServices, svc)
+			if !seenGRPC {
+				transports = append(transports, newGRPCTransport())
+				foundTrans[TransportGRPC] = struct{}{}
 			}
 		}
 	}
@@ -233,7 +245,7 @@ func buildServerData(svr *expr.ServerExpr) *Data {
 			transport.Services = grpcServices
 		}
 	}
-	return &Data{
+	sd := &Data{
 		Name:        svr.Name,
 		Description: svr.Description,
 		Services:    svr.Services,
@@ -243,83 +255,79 @@ func buildServerData(svr *expr.ServerExpr) *Data {
 		Transports:  transports,
 		Dir:         codegen.SnakeCase(codegen.Goify(svr.Name, true)),
 	}
+	// Precompute handler args for each URI of each host
+	for _, h := range sd.Hosts {
+		for _, u := range h.URIs {
+			u.HandlerArgs = computeHandlerArgsForURI(u, sd, root)
+		}
+	}
+	return sd
 }
 
 // buildHostData builds the host data for the given host expression.
 func buildHostData(host *expr.HostExpr) *HostData {
-	var (
-		uris []*URIData
-	)
-	{
-		uris = make([]*URIData, len(host.URIs))
-		for i, uv := range host.URIs {
-			var (
-				t      *TransportData
-				scheme string
-				port   string
+	uris := make([]*URIData, len(host.URIs))
+	for i, uv := range host.URIs {
+		var (
+			t      *TransportData
+			scheme string
+			port   string
 
-				ustr = string(uv)
-			)
-			{
-				// Did not use url package to find scheme because the url may
-				// contain params (i.e. http://{version}.example.com) which needs
-				// substition for url.Parse to succeed. Also URIs in host must have
-				// a scheme otherwise validations would have failed.
-				switch {
-				case strings.HasPrefix(ustr, "https"):
-					scheme = "https"
-					port = "443"
-					t = newHTTPTransport()
-				case strings.HasPrefix(ustr, "http"):
-					scheme = "http"
-					port = "80"
-					t = newHTTPTransport()
-				case strings.HasPrefix(ustr, "grpcs"):
-					scheme = "grpcs"
-					port = "8443"
-					t = newGRPCTransport()
-				case strings.HasPrefix(ustr, "grpc"):
-					scheme = "grpc"
-					port = "8080"
-					t = newGRPCTransport()
+			ustr = string(uv)
+		)
+		// Did not use url package to find scheme because the url may
+		// contain params (i.e. http://{version}.example.com) which needs
+		// substition for url.Parse to succeed. Also URIs in host must have
+		// a scheme otherwise validations would have failed.
+		switch {
+		case strings.HasPrefix(ustr, "https"):
+			scheme = "https"
+			port = "443"
+			t = newHTTPTransport()
+		case strings.HasPrefix(ustr, "http"):
+			scheme = "http"
+			port = "80"
+			t = newHTTPTransport()
+		case strings.HasPrefix(ustr, "grpcs"):
+			scheme = "grpcs"
+			port = "8443"
+			t = newGRPCTransport()
+		case strings.HasPrefix(ustr, "grpc"):
+			scheme = "grpc"
+			port = "8080"
+			t = newGRPCTransport()
 
-					// No need for default case here because we only support the above
-					// possibilites for the scheme. Invalid scheme would have failed
-					// validations in the first place.
-				}
-			}
-			uris[i] = &URIData{
-				Scheme:    scheme,
-				URL:       ustr,
-				Port:      port,
-				Transport: t,
-			}
+			// No need for default case here because we only support the above
+			// possibilites for the scheme. Invalid scheme would have failed
+			// validations in the first place.
+		}
+		uris[i] = &URIData{
+			Scheme:    scheme,
+			URL:       ustr,
+			Port:      port,
+			Transport: t,
 		}
 	}
 
-	var (
-		variables []*VariableData
-	)
-	{
-		vars := expr.AsObject(host.Variables.Type)
-		if len(*vars) > 0 {
-			variables = make([]*VariableData, len(*vars))
-			for i, v := range *vars {
-				def := v.Attribute.DefaultValue
-				var values []string
-				if def == nil {
-					def = v.Attribute.Validation.Values[0]
-					// DSL ensures v.Attribute has either a
-					// default value or an enum validation
-					values = convertToString(v.Attribute.Validation.Values...)
-				}
-				variables[i] = &VariableData{
-					Name:         v.Name,
-					Description:  v.Attribute.Description,
-					VarName:      codegen.Goify(v.Name, false),
-					DefaultValue: convertToString(def)[0],
-					Values:       values,
-				}
+	vars := expr.AsObject(host.Variables.Type)
+	var variables []*VariableData
+	if len(*vars) > 0 {
+		variables = make([]*VariableData, len(*vars))
+		for i, v := range *vars {
+			def := v.Attribute.DefaultValue
+			var values []string
+			if def == nil {
+				def = v.Attribute.Validation.Values[0]
+				// DSL ensures v.Attribute has either a
+				// default value or an enum validation
+				values = convertToString(v.Attribute.Validation.Values...)
+			}
+			variables[i] = &VariableData{
+				Name:         v.Name,
+				Description:  v.Attribute.Description,
+				VarName:      codegen.Goify(v.Name, false),
+				DefaultValue: convertToString(def)[0],
+				Values:       values,
 			}
 		}
 	}
@@ -370,4 +378,54 @@ func newHTTPTransport() *TransportData {
 
 func newGRPCTransport() *TransportData {
 	return &TransportData{Type: TransportGRPC, Name: "gRPC"}
+}
+
+// computeHandlerArgsForURI returns the ordered handler arguments for the given URI.
+func computeHandlerArgsForURI(uri *URIData, server *Data, root *expr.RootExpr) []HandlerArg {
+	capHint := len(server.Services)
+	httpSvcNames := make([]string, 0, capHint)
+	grpcSvcNames := make([]string, 0, capHint)
+	jsonrpcSvcNames := make([]string, 0, len(root.API.JSONRPC.Services))
+	for _, t := range server.Transports {
+		if t.Type == TransportHTTP {
+			httpSvcNames = append(httpSvcNames, t.Services...)
+		}
+		if t.Type == TransportGRPC {
+			grpcSvcNames = append(grpcSvcNames, t.Services...)
+		}
+	}
+	for _, j := range root.API.JSONRPC.Services {
+		jsonrpcSvcNames = append(jsonrpcSvcNames, j.Name())
+	}
+	// Track HTTP services that actually define endpoints (not just file servers)
+	hasHTTPMethods := make(map[string]bool, len(root.API.HTTP.Services))
+	for _, hs := range root.API.HTTP.Services {
+		if len(hs.HTTPEndpoints) > 0 {
+			hasHTTPMethods[hs.Name()] = true
+		}
+	}
+	var out []HandlerArg
+	if uri.Transport.Type == TransportGRPC {
+		for _, name := range grpcSvcNames {
+			out = append(out, HandlerArg{Endpoint: codegen.Goify(name, false) + "Endpoints"})
+		}
+		return out
+	}
+	// Endpoints first for union(HTTP services, JSON-RPC services) in server.Services order
+	for _, svcName := range server.Services {
+		if (slices.Contains(httpSvcNames, svcName) && hasHTTPMethods[svcName]) || slices.Contains(jsonrpcSvcNames, svcName) {
+			out = append(out, HandlerArg{Endpoint: codegen.Goify(svcName, false) + "Endpoints"})
+		}
+	}
+	// Then JSON-RPC services: Service then Endpoints only if not already included above
+	for _, svcName := range server.Services {
+		if slices.Contains(jsonrpcSvcNames, svcName) {
+			out = append(out, HandlerArg{Service: codegen.Goify(svcName, false) + "Svc"})
+			if !slices.Contains(httpSvcNames, svcName) && !slices.Contains(jsonrpcSvcNames, svcName) {
+				// This branch will normally not run since JSON-RPC services are included above
+				out = append(out, HandlerArg{Endpoint: codegen.Goify(svcName, false) + "Endpoints"})
+			}
+		}
+	}
+	return out
 }
