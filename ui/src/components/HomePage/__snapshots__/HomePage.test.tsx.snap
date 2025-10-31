@@ -2,6 +2,13 @@
 
 exports[`should render the home page component 1`] = `
 "<Fragment>
+  <Banner variant=\\"warning\\" isSticky={true}>
+    <TextContent>
+      <Text component=\\"h1\\" className=\\"hub-banner-text\\">
+        Tekton Hub is deprecated and will be shutdown on January 2026, the 7th.
+      </Text>
+    </TextContent>
+  </Banner>
   <Background />
   <PageSection>
     <Grid hasGutter={true}>

@@ -56,19 +56,6 @@ exports[`Header should render the header component and find Search component 1`]
             </PageHeaderTools>
           </header>
         </PageHeader>
-        <Banner variant=\\"warning\\" isSticky={true}>
-          <div className=\\"pf-c-banner pf-m-warning pf-m-sticky\\">
-            <TextContent>
-              <div className=\\"pf-c-content\\">
-                <Text component=\\"h1\\" className=\\"hub-background-heading\\">
-                  <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-2\\" data-pf-content={true} className=\\"hub-background-heading\\">
-                    Tekton Hub is deprecated and will be shutdown on January 2026, the 7th.
-                  </h1>
-                </Text>
-              </div>
-            </TextContent>
-          </div>
-        </Banner>
         <Modal variant=\\"small\\" title=\\"Search tips:\\" isOpen={false} onClose={[Function: onClose]} className=\\"\\" titleIconVariant={{...}} titleLabel=\\"\\" aria-label=\\"\\" showClose={true} aria-describedby=\\"\\" aria-labelledby=\\"\\" id={[undefined]} actions={{...}} hasNoBodyWrapper={false} appendTo={[Function: appendTo]} ouiaSafe={true}>
           <Portal containerInfo={{...}}>
             <ModalContent variant=\\"small\\" isOpen={false} onClose={[Function: onClose]} className=\\"\\" showClose={true} id={[undefined]} actions={{...}} hasNoBodyWrapper={false} boxId=\\"pf-modal-part-0\\" labelId=\\"pf-modal-part-1\\" descriptorId=\\"pf-modal-part-2\\" title=\\"Search tips:\\" titleIconVariant={{...}} titleLabel=\\"\\" aria-label=\\"\\" aria-describedby=\\"\\" aria-labelledby=\\"\\" bodyAriaLabel={[undefined]} bodyAriaRole={[undefined]} ouiaId=\\"OUIA-Generated-Modal-small-1\\" ouiaSafe={true} />
