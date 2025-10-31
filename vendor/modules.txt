@@ -137,15 +137,15 @@ github.com/go-openapi/jsonreference/internal
 # github.com/go-openapi/swag v0.23.0
 ## explicit; go 1.20
 github.com/go-openapi/swag
-# github.com/go-testfixtures/testfixtures/v3 v3.16.0
-## explicit; go 1.23.0
+# github.com/go-testfixtures/testfixtures/v3 v3.19.0
+## explicit; go 1.24.0
 github.com/go-testfixtures/testfixtures/v3
 github.com/go-testfixtures/testfixtures/v3/shared
 # github.com/go-viper/mapstructure/v2 v2.4.0
 ## explicit; go 1.18
 github.com/go-viper/mapstructure/v2
 github.com/go-viper/mapstructure/v2/internal/errors
-# github.com/goccy/go-yaml v1.17.1
+# github.com/goccy/go-yaml v1.18.0
 ## explicit; go 1.21.0
 github.com/goccy/go-yaml
 github.com/goccy/go-yaml/ast
@@ -721,8 +721,8 @@ golang.org/x/net/trace
 ## explicit; go 1.23.0
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
-# golang.org/x/sync v0.16.0
-## explicit; go 1.23.0
+# golang.org/x/sync v0.17.0
+## explicit; go 1.24.0
 golang.org/x/sync/errgroup
 golang.org/x/sync/semaphore
 # golang.org/x/sys v0.34.0

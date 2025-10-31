@@ -14,8 +14,9 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/go-testfixtures/testfixtures/v3/shared"
 	"github.com/goccy/go-yaml"
+
+	"github.com/go-testfixtures/testfixtures/v3/shared"
 )
 
 // Loader is the responsible to loading fixtures.
@@ -110,17 +111,37 @@ func Database(db *sql.DB) func(*Loader) error {
 	}
 }
 
+type DialectOptions func(h helper) error
+
+// WithCustomPlaceholder - allow to provide custom placeholder in queries
+func WithCustomPlaceholder(placeholder ParamType) DialectOptions {
+	return func(l helper) error {
+		if err := placeholder.Valid(); err != nil {
+			return err
+		}
+
+		l.setCustomParamType(placeholder)
+		return nil
+	}
+}
+
 // Dialect informs Loader about which database dialect you're using.
 //
 // Possible options are "postgresql", "timescaledb", "mysql", "mariadb",
 // "sqlite", "sqlserver", "clickhouse", "spanner".
-func Dialect(dialect string) func(*Loader) error {
+func Dialect(dialect string, opts ...DialectOptions) func(*Loader) error {
 	return func(l *Loader) error {
 		h, err := helperForDialect(dialect)
 		if err != nil {
 			return err
 		}
+		for _, opt := range opts {
+			if err = opt(h); err != nil {
+				return err
+			}
+		}
 		l.helper = h
+
 		return nil
 	}
 }
@@ -616,11 +637,11 @@ func (l *Loader) buildInsertSQL(f *fixtureFile, record map[string]interface{}) (
 		}
 
 		switch l.helper.paramType() {
-		case paramTypeDollar:
+		case ParamTypeDollar:
 			sqlValues = append(sqlValues, fmt.Sprintf("$%d", i))
-		case paramTypeQuestion:
+		case ParamTypeQuestion:
 			sqlValues = append(sqlValues, "?")
-		case paramTypeAtSign:
+		case ParamTypeAtSign:
 			sqlValues = append(sqlValues, fmt.Sprintf("@p%d", i))
 		}
 
@@ -655,7 +676,8 @@ func (l *Loader) fixturesFromDir(dir string) ([]*fixtureFile, error) {
 			if err != nil {
 				return nil, fmt.Errorf(`testfixtures: could not read file "%s": %w`, fixture.path, err)
 			}
-			if err := l.processFileTemplate(fixture); err != nil {
+			fixture.content, err = l.preProcessContent(fixture.fileName, fixture.content)
+			if err != nil {
 				return nil, err
 			}
 			files = append(files, fixture)
@@ -679,7 +701,8 @@ func (l *Loader) fixturesFromFiles(fileNames ...string) ([]*fixtureFile, error) 
 		if err != nil {
 			return nil, fmt.Errorf(`testfixtures: could not read file "%s": %w`, fixture.path, err)
 		}
-		if err := l.processFileTemplate(fixture); err != nil {
+		fixture.content, err = l.preProcessContent(fixture.fileName, fixture.content)
+		if err != nil {
 			return nil, err
 		}
 		fixtureFiles = append(fixtureFiles, fixture)
@@ -730,7 +753,7 @@ func (l *Loader) fixturesFromFilesMultiTables(fileNames ...string) ([]*fixtureFi
 			return nil, fmt.Errorf(`testfixtures: could not read file "%s": %w`, f, err)
 		}
 
-		content, err = l.processTemplate(content)
+		content, err = l.preProcessContent(f, content)
 		if err != nil {
 			return nil, err
 		}
@@ -766,35 +789,23 @@ func (l *Loader) fixturesFromFilesMultiTables(fileNames ...string) ([]*fixtureFi
 	return fixtureFiles, nil
 }
 
-func (l *Loader) processFileTemplate(f *fixtureFile) error {
+func (l *Loader) preProcessContent(name string, content []byte) ([]byte, error) {
 	if !l.template {
-		return nil
+		return content, nil
 	}
-
-	var err error
-	f.content, err = l.processTemplate(f.content)
-	if err != nil {
-		return fmt.Errorf(`textfixtures: error on parsing template in %s: %w`, f.fileName, err)
-	}
-
-	return nil
-}
-
-func (l *Loader) processTemplate(content []byte) ([]byte, error) {
 	t := template.New("").
 		Funcs(l.templateFuncs).
 		Delims(l.templateLeftDelim, l.templateRightDelim).
 		Option(l.templateOptions...)
 	t, err := t.Parse(string(content))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`textfixtures: error on parsing template in %s: %w`, name, err)
 	}
 
 	var buffer bytes.Buffer
 	if err := t.Execute(&buffer, l.templateData); err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`textfixtures: error on execute template in %s: %w`, name, err)
 	}
 
 	return buffer.Bytes(), nil
 }
-
