@@ -10,7 +10,7 @@ type {{ .SSE.StructName }} struct {
 
 {{ printf "%s %s" .SSE.SendName .SSE.SendDesc | comment }}
 func (s *{{ .SSE.StructName }}) {{ .SSE.SendName }}(v {{ .SSE.EventTypeRef }}) error {
-	return s.{{ .SSE.SendWithContextName }}(context.Background(), v)
+    return s.{{ .SSE.SendWithContextName }}(context.Background(), v)
 }
 
 {{ printf "%s %s" .SSE.SendWithContextName .SSE.SendWithContextDesc | comment }}
@@ -38,7 +38,7 @@ func (s *{{ .SSE.StructName }}) {{ .SSE.SendWithContextName }}(ctx context.Conte
 	{{- else }}
 	res := v
 	{{- end }}
-	
+
 	{{ if .SSE.IDField }}
 	if id := res.{{ .SSE.IDField }}; id != "" {
 		fmt.Fprintf(s.w, "id: %s\n", id)
@@ -58,17 +58,68 @@ func (s *{{ .SSE.StructName }}) {{ .SSE.SendWithContextName }}(ctx context.Conte
 	{{- end }}
 
 	var data string
-	{{- if .SSE.DataField }}
-		dataField := res.{{ .SSE.DataField }}
-		{{- template "partial_sse_format" dict "TypeRef" .SSE.DataFieldTypeRef "VarName" "dataField" }}
+	var payload any
+	{{- if .SSE.HasResponseBody }}
+	body := New{{ goify .Method.Name true }}ResponseBody(res)
+		{{- if .SSE.DataField }}
+	payload = body.{{ .SSE.DataField }}
+		{{- else }}
+	payload = body
+		{{- end }}
 	{{- else }}
-		{{- template "partial_sse_format" dict "TypeRef" .SSE.EventTypeRef "VarName" "res" }}
+		{{- if .SSE.DataField }}
+	payload = res.{{ .SSE.DataField }}
+		{{- else }}
+	payload = res
+		{{- end }}
 	{{- end }}
+	switch v := payload.(type) {
+	case nil:
+		data = "null"
+	case string:
+		data = v
+	case []byte:
+		data = string(v)
+	case bool:
+		if v {
+			data = "true"
+		} else {
+			data = "false"
+		}
+	case int:
+		data = fmt.Sprintf("%d", v)
+	case int8:
+		data = fmt.Sprintf("%d", v)
+	case int16:
+		data = fmt.Sprintf("%d", v)
+	case int32:
+		data = fmt.Sprintf("%d", v)
+	case int64:
+		data = fmt.Sprintf("%d", v)
+	case uint:
+		data = fmt.Sprintf("%d", v)
+	case uint8:
+		data = fmt.Sprintf("%d", v)
+	case uint16:
+		data = fmt.Sprintf("%d", v)
+	case uint32:
+		data = fmt.Sprintf("%d", v)
+	case uint64:
+		data = fmt.Sprintf("%d", v)
+	case float32:
+		data = fmt.Sprintf("%g", v)
+	case float64:
+		data = fmt.Sprintf("%g", v)
+	default:
+		byts, err := json.Marshal(payload)
+		if err != nil {
+			return err
+		}
+		data = string(byts)
+	}
 	fmt.Fprintf(s.w, "data: %s\n\n", data)
 
-	if f, ok := s.w.(http.Flusher); ok {
-		f.Flush()
-	}
+	http.NewResponseController(s.w).Flush()
 	return nil
 }
 
