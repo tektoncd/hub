@@ -1,6 +1,6 @@
 module github.com/tektoncd/hub
 
-go 1.24.0
+go 1.24.4
 
 toolchain go1.24.6
 
@@ -30,7 +30,7 @@ require (
 	go.uber.org/automaxprocs v1.6.0
 	go.uber.org/zap v1.27.0
 	goa.design/goa/v3 v3.22.6
-	goa.design/plugins/v3 v3.20.0
+	goa.design/plugins/v3 v3.22.6
 	golang.org/x/term v0.36.0
 	golang.org/x/text v0.30.0
 	gopkg.in/h2non/gock.v1 v1.1.2
@@ -68,7 +68,7 @@ require (
 	github.com/go-chi/chi/v5 v5.2.3 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.2 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
-	github.com/go-logfmt/logfmt v0.6.0 // indirect
+	github.com/go-logfmt/logfmt v0.6.1 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
