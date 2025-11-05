@@ -2,11 +2,13 @@
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/go-testfixtures/testfixtures/v3?tab=doc)](https://pkg.go.dev/github.com/go-testfixtures/testfixtures/v3?tab=doc)
 
-> ***Warning***: this package will wipe the database data before loading the
+> [!WARNING]
+> This package will wipe the database data before loading the
 fixtures! It is supposed to be used on a test database. Please, double check
 if you are running it against the correct database.
 
-> **TIP**: There are options not described in this README page. It's
+> [!NOTE]
+> There are options not described in this README page. It's
 > recommended that you also check [the documentation][doc].
 
 Writing tests is hard, even more when you have to deal with an SQL database.
@@ -90,11 +92,19 @@ databases.
     post: "..."
 ```
 
-Binary columns can be represented as hexadecimal strings (should start with `0x`):
+Binary columns can be represented as hexadecimal strings (should start with `0x` and will be automatically converted to `[]byte`):
 
 ```yaml
 - id: 1
   binary_column: 0x1234567890abcdef
+```
+
+String values matching date/time formats (e.g., "2025-08-15", "20250815", "15/08/2025") will be automatically converted to `time.Time`. [See supported formats in time.go](https://github.com/go-testfixtures/testfixtures/blob/master/time.go#L8C1-L27C2). Use `RAW=` prefix to prevent conversion:
+
+```yaml
+- id: 1
+  created_at: 2025-08-15        # Will be converted to time.Time
+  updated_at: RAW=20250815      # Will remain as string
 ```
 
 If you need to write raw SQL, probably to call a function, prefix the value
@@ -515,7 +525,7 @@ The YAML file could look like this:
 {{end}}
 ```
 
-## Generating fixtures for a existing database
+## Generating fixtures for an existing database
 
 The following code will generate a YAML file for each table of the database
 into a given folder. It may be useful to boostrap a test scenario from a sample
@@ -543,22 +553,13 @@ if err := dumper.Dump(); err != nil {
 > This was intended to run in small sample databases. It will likely break
 if run in a production/big database.
 
-## Gotchas
 
-### Parallel testing
+## Parallel testing
 
-This library doesn't yet support running tests in parallel! Running tests
-in parallel can result in random data being present in the database, which
-will likely cause tests to randomly/intermittently fail.
+By default, the library assumes the access to the database is **exclusive to a
+single test**, but there are multiple ways to set up your tests to work both fast and in parallel.
 
-This is specially tricky since it's not immediately clear that `go test ./...`
-run tests for each package in parallel. If more than one package use this
-library, you can face this issue. Please, use `go test -p 1 ./...` or run tests
-for each package in separated commands to fix this issue.
-
-If you're looking into being able to run tests in parallel you can try using
-testfixtures together with the [txdb][gotxdb] package, which allows wrapping
-each test run in a transaction.
+Check our [dbtests/examples.md](./dbtests/examples.md) for more details.
 
 ## CLI
 
@@ -589,31 +590,28 @@ Use `testfixtures --help` for all flags.
 
 ## Contributing
 
-We recommend you to [install Task](https://taskfile.dev/installation/) and
-Docker before contributing to this package, since some stuff is automated
-using these tools.
+### Required tools
+* go 1.21 or newer
+* docker (for running tests)
+* [task](https://taskfile.dev/installation/) (for running tasks)
+* [golangci-lint](https://golangci-lint.run/docs/welcome/install/), the same version as in [CI](.github/workflows/lint.yml) (for running linters)
+* [GoReleaser](https://goreleaser.com/install/) (for CLI builds)
 
-It's recommended to use Docker Compose to run tests, since it runs tests for
-all supported databases once. To do that you just need to run:
+### Tests
+```shell
+# Run all tests
+task test
 
-```bash
-task docker
+# Run linters
+task lint
+
+# Check other possible tasks
+task
 ```
 
-But if you want to run tests locally, copy the `.sample.env` file as `.env`
-and edit it according to your database setup. You'll need to create a database
-(likely names `testfixtures_test`) before continuing. Then run the command
-for the database you want to run tests against:
-
-```bash
-task test:pg # PostgreSQL
-task test:crdb # CockroachDB
-task test:mysql # MySQL
-task test:sqlite # SQLite
-task test:sqlserver # Microsoft SQL Server
-```
-
-GitHub Actions (CI) runs the same Docker setup available locally.
+By default, tests will create disposable database containers using `docker`.
+You can also provide the database by yourself by specifying env variables,
+check [containers.go](./dbtests/containers.go) for details.
 
 ## Alternatives
 
