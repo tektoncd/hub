@@ -12,7 +12,7 @@ require (
 	github.com/fatih/color v1.18.0
 	github.com/go-co-op/gocron v1.37.0
 	github.com/go-gormigrate/gormigrate/v2 v2.1.4
-	github.com/go-testfixtures/testfixtures/v3 v3.16.0
+	github.com/go-testfixtures/testfixtures/v3 v3.19.0
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.1
@@ -74,7 +74,7 @@ require (
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
-	github.com/goccy/go-yaml v1.17.1 // indirect
+	github.com/goccy/go-yaml v1.18.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/gohugoio/hashstructure v0.6.0 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
