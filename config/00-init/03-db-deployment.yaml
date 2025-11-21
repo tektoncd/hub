@@ -29,13 +29,14 @@ spec:
         app: tekton-hub-db
     spec:
       securityContext:
-        fsGroup: 65532
+        fsGroup: 26
+        runAsUser: 26
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       containers:
         - name: tekton-hub-db
-          image: postgres:13
+          image: registry.redhat.io/rhel9/postgresql-15@sha256:90ec347a35ab8a5d530c8d09f5347b13cc71df04f3b994bfa8b1a409b1171d59
           resources:
             requests:
               cpu: 100m
@@ -48,44 +49,65 @@ spec:
             - containerPort: 5432
               protocol: TCP
           securityContext:
+            runAsUser: 26
             allowPrivilegeEscalation: false
-            runAsUser: 65532
             capabilities:
               drop:
                 - ALL
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/bash
+                  - -c
+                  - |
+                    nohup bash -c '
+                      sleep 15
+                      for i in {1..60}; do
+                        if pg_isready -U ${POSTGRESQL_USER} >/dev/null 2>&1; then
+                          psql -U ${POSTGRESQL_USER} -tc "SELECT 1 FROM pg_database WHERE datname = '\''${POSTGRESQL_DATABASE}'\''" 2>/dev/null | grep -q 1 || \
+                          psql -U ${POSTGRESQL_USER} -c "CREATE DATABASE ${POSTGRESQL_DATABASE};" >/dev/null 2>&1 || true
+                          exit 0
+                        fi
+                        sleep 2
+                      done
+                    ' >/dev/null 2>&1 &
+                    exit 0
           env:
-            - name: POSTGRES_DB
+            - name: PGDATA
+              value: /var/lib/pgsql/data
+            - name: POSTGRESQL_DATABASE
               valueFrom:
                 secretKeyRef:
                   name: tekton-hub-db
                   key: POSTGRES_DB
-            - name: POSTGRES_USER
+            - name: POSTGRESQL_USER
               valueFrom:
                 secretKeyRef:
                   name: tekton-hub-db
                   key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD
+            - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: tekton-hub-db
                   key: POSTGRES_PASSWORD
-            - name: PGDATA
-              value: /var/lib/postgresql/data/pgdata
           volumeMounts:
             - name: tekton-hub-db
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/pgsql/data
           readinessProbe:
             exec:
-              command: [bash, -c, "psql -w -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'SELECT 1'"]
-            initialDelaySeconds: 15
+              command: [bash, -c, "psql -w -U ${POSTGRESQL_USER} -d ${POSTGRESQL_DATABASE} -c 'SELECT 1'"]
+            initialDelaySeconds: 30
             timeoutSeconds: 2
             periodSeconds: 15
+            failureThreshold: 10
           livenessProbe:
             exec:
-              command: [bash, -c, "psql -w -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'SELECT 1'"]
-            initialDelaySeconds: 45
+              command: [bash, -c, "psql -w -U ${POSTGRESQL_USER} -d ${POSTGRESQL_DATABASE} -c 'SELECT 1'"]
+            initialDelaySeconds: 60
             timeoutSeconds: 2
             periodSeconds: 15
+            failureThreshold: 10
       volumes:
         - name: tekton-hub-db
           persistentVolumeClaim:
