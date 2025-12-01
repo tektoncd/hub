@@ -79,30 +79,17 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                 <Routes>
                   <RenderedRoute match={{...}} routeContext={{...}}>
                     <HomePage>
-                      <Banner variant=\\"warning\\" isSticky={true}>
-                        <div className=\\"pf-c-banner pf-m-warning pf-m-sticky\\">
-                          <TextContent>
-                            <div className=\\"pf-c-content\\">
-                              <Text component=\\"h1\\" className=\\"hub-banner-text\\">
-                                <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-2\\" data-pf-content={true} className=\\"hub-banner-text\\">
-                                  Tekton Hub is deprecated and will be shutdown on January 2026, the 7th.
-                                </h1>
-                              </Text>
-                            </div>
-                          </TextContent>
-                        </div>
-                      </Banner>
                       <Background>
                         <div className=\\"hub-background-image\\" style={{...}}>
                           <TextContent>
                             <div className=\\"pf-c-content\\">
                               <Text component=\\"h1\\" className=\\"hub-background-heading\\">
-                                <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-3\\" data-pf-content={true} className=\\"hub-background-heading\\">
+                                <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-2\\" data-pf-content={true} className=\\"hub-background-heading\\">
                                   Welcome to Tekton Hub
                                 </h1>
                               </Text>
                               <Text component=\\"h3\\" className=\\"hub-tag-line\\">
-                                <h3 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-4\\" data-pf-content={true} className=\\"hub-tag-line\\">
+                                <h3 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-3\\" data-pf-content={true} className=\\"hub-tag-line\\">
                                   Discover, search and share reusable Tasks and Pipelines
                                 </h3>
                               </Text>
@@ -161,7 +148,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                                                       <GridItem span={6}>
                                                         <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
                                                           <Text component=\\"h1\\" className=\\"hub-filter-header\\">
-                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-5\\" data-pf-content={true} className=\\"hub-filter-header\\">
+                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-4\\" data-pf-content={true} className=\\"hub-filter-header\\">
                                                               Kind
                                                             </h1>
                                                           </Text>
@@ -202,7 +189,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                                                       <GridItem span={6}>
                                                         <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
                                                           <Text component=\\"h1\\" className=\\"hub-filter-header\\">
-                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-6\\" data-pf-content={true} className=\\"hub-filter-header\\">
+                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-5\\" data-pf-content={true} className=\\"hub-filter-header\\">
                                                               Platform
                                                             </h1>
                                                           </Text>
@@ -243,7 +230,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                                                       <GridItem span={6}>
                                                         <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
                                                           <Text component=\\"h1\\" className=\\"hub-filter-header\\">
-                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-7\\" data-pf-content={true} className=\\"hub-filter-header\\">
+                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-6\\" data-pf-content={true} className=\\"hub-filter-header\\">
                                                               Catalog
                                                             </h1>
                                                           </Text>
@@ -284,7 +271,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                                                       <GridItem span={6}>
                                                         <div className=\\"pf-l-grid__item pf-m-6-col\\" style={[undefined]}>
                                                           <Text component=\\"h1\\" className=\\"hub-filter-header\\">
-                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-8\\" data-pf-content={true} className=\\"hub-filter-header\\">
+                                                            <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-7\\" data-pf-content={true} className=\\"hub-filter-header\\">
                                                               Category
                                                             </h1>
                                                           </Text>
@@ -357,11 +344,11 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                               <TextContent className=\\"hub-info-color\\">
                                 <div className=\\"pf-c-content hub-info-color\\">
                                   <Text component=\\"h3\\">
-                                    <h3 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-9\\" data-pf-content={true} className=\\"\\">
+                                    <h3 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-8\\" data-pf-content={true} className=\\"\\">
                                       Tekton is a
                                        
                                       <Text component=\\"a\\" href=\\"https://cd.foundation\\" target=\\"_\\">
-                                        <a data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-10\\" href=\\"https://cd.foundation\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
+                                        <a data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-9\\" href=\\"https://cd.foundation\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
                                           Continuous Delivery Foundation
                                         </a>
                                       </Text>
@@ -381,20 +368,20 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                           <GridItem span={12} className=\\"hub-footer-description\\">
                             <div className=\\"pf-l-grid__item pf-m-12-col hub-footer-description\\" style={[undefined]}>
                               <Text>
-                                <p data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-11\\" data-pf-content={true} className=\\"\\">
+                                <p data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-10\\" data-pf-content={true} className=\\"\\">
                                   © 
                                   2025
                                    The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
                                    
                                   <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\">
-                                    <a data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-12\\" href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
+                                    <a data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-11\\" href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
                                       Trademark Usage page
                                     </a>
                                   </Text>
                                   . Linux is a registered trademark of Linus Torvalds.
                                    
                                   <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/privacy/\\" target=\\"_\\">
-                                    <a data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-13\\" href=\\"https://www.linuxfoundation.org/privacy/\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
+                                    <a data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-12\\" href=\\"https://www.linuxfoundation.org/privacy/\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
                                       Privacy Policy
                                     </a>
                                   </Text>
@@ -402,7 +389,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                                   and
                                    
                                   <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/terms/\\" target=\\"_\\">
-                                    <a data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-14\\" href=\\"https://www.linuxfoundation.org/terms/\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
+                                    <a data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-13\\" href=\\"https://www.linuxfoundation.org/terms/\\" target=\\"_\\" data-pf-content={true} className=\\"\\">
                                       Terms of Use
                                     </a>
                                   </Text>

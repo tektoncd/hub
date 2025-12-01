@@ -14,7 +14,8 @@
   "rules": {
     "prettier/prettier": ["error", { "endOfLine": "auto" }],
     "no-console": "warn",
-    "@typescript-eslint/explicit-module-boundary-types": "off"
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "react/react-in-jsx-scope": "off"
   },
   "settings": {
     "react": {
