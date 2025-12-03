@@ -370,7 +370,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                               <Text>
                                 <p data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-10\\" data-pf-content={true} className=\\"\\">
                                   © 
-                                  2024
+                                  2025
                                    The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
                                    
                                   <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\">
