@@ -1134,8 +1134,8 @@ github.com/syndtr/gocapability v0.0.0-20170704070218-db04d3cc01c8/go.mod h1:hkRG
 github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2/go.mod h1:hkRG7XYTFWNJGYcbNJQlaLq0fg1yr4J4t/NcTQtrfww=
 github.com/syndtr/gocapability v0.0.0-20200815063812-42c35b437635/go.mod h1:hkRG7XYTFWNJGYcbNJQlaLq0fg1yr4J4t/NcTQtrfww=
 github.com/tchap/go-patricia v2.2.6+incompatible/go.mod h1:bmLyhP68RS6kStMGxByiQ23RP/odRBOTVjwp2cDyi6I=
-github.com/tektoncd/pipeline v1.6.0 h1:A+D+jzOVl2QNl/yiNT7csVgBUy2wpz6K6+/D4q5lfss=
-github.com/tektoncd/pipeline v1.6.0/go.mod h1:5SNoYgRYPQopkv7ApVq5GO3JqPk2AjV+VMMjwBsbJOg=
+github.com/tektoncd/pipeline v1.7.0 h1:+Rd/YGpxV8sgEmW9unSiS8RgBE4DqbPdz6zPh2pYDnk=
+github.com/tektoncd/pipeline v1.7.0/go.mod h1:+HsDce5knjq77Xv9FWg1W2wTuJRznR9lLEbkVjo62lU=
 github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb h1:LUUCR8pLF+MzdQ7kOQQrMzDahIPZLdPCzfnNow1Um3Y=
 github.com/tektoncd/plumbing v0.0.0-20220817140952-3da8ce01aeeb/go.mod h1:uJBaI0AL/kjPThiMYZcWRujEz7D401v643d6s/21GAg=
 github.com/titanous/rocacheck v0.0.0-20171023193734-afe73141d399 h1:e/5i7d4oYZ+C1wj2THlRK+oAhjeS/TRQwMfkIuet3w0=
