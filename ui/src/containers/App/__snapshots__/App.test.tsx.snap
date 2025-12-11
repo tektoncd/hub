@@ -85,7 +85,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                             <div className=\\"pf-c-content\\">
                               <Text component=\\"h1\\" className=\\"hub-banner-text\\">
                                 <h1 data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-2\\" data-pf-content={true} className=\\"hub-banner-text\\">
-                                  Tekton Hub is deprecated and will be shutdown on January 2026, the 7th.
+                                  Tekton Hub will be deprecated in v1.24.0 and removed in v1.26.0.
                                 </h1>
                               </Text>
                             </div>

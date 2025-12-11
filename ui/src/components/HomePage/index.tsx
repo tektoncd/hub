@@ -1,16 +1,15 @@
-import React from 'react';
 import {
   Banner,
   Grid,
   GridItem,
   PageSection,
+  Text,
   TextContent,
-  TextVariants,
-  Text
+  TextVariants
 } from '@patternfly/react-core';
-import LeftPane from '../LeftPane';
-import Background from '../Background';
 import Resources from '../../containers/Resources';
+import Background from '../Background';
+import LeftPane from '../LeftPane';
 import './HomePage.css';
 const HomePage = () => {
   return (
@@ -18,7 +17,7 @@ const HomePage = () => {
       <Banner variant="warning" isSticky={true}>
         <TextContent>
           <Text component={TextVariants.h1} className="hub-banner-text">
-            Tekton Hub is deprecated and will be shutdown on January 2026, the 7th.
+            Tekton Hub will be deprecated in v1.24.0 and removed in v1.26.0.
           </Text>
         </TextContent>
       </Banner>
