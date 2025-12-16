@@ -79,6 +79,8 @@ spec:
               mountPath: /var/run/postgresql
             - name: pg-tmp
               mountPath: /tmp
+            - name: pg-home
+              mountPath: /var/lib/pgsql
           readinessProbe:
             exec:
               command: [bash, -c, "psql -w -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'SELECT 1'"]
@@ -98,5 +100,7 @@ spec:
         - name: pg-run
           emptyDir: {}
         - name: pg-tmp
+          emptyDir: {}
+        - name: pg-home
           emptyDir: {}
       restartPolicy: Always
