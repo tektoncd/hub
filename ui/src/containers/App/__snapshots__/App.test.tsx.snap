@@ -348,7 +348,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                           <GridItem span={12} className=\\"hub-footer-info\\">
                             <div className=\\"pf-l-grid__item pf-m-12-col hub-footer-info\\" style={[undefined]}>
                               <a href=\\"https://cd.foundation\\" target=\\"_\\">
-                                <img src=\\"https://tekton.dev/partner-logos/cdf.png?1609496430000\\" alt=\\"tekton.dev\\" />
+                                <img src=\\"https://tekton.dev/partner-logos/cdf.png?1767262830000\\" alt=\\"tekton.dev\\" />
                               </a>
                             </div>
                           </GridItem>
@@ -375,7 +375,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                           </GridItem>
                           <GridItem span={12} className=\\"hub-logo-margin\\">
                             <div className=\\"pf-l-grid__item pf-m-12-col hub-logo-margin\\" style={[undefined]}>
-                              <img src=\\"tekton.png?1609496430000\\" alt=\\"Tekton\\" className=\\"hub-logo-size\\" />
+                              <img src=\\"tekton.png?1767262830000\\" alt=\\"Tekton\\" className=\\"hub-logo-size\\" />
                             </div>
                           </GridItem>
                           <GridItem span={12} className=\\"hub-footer-description\\">
@@ -383,7 +383,7 @@ exports[`App should render the component correctly and match the snapshot 1`] = 
                               <Text>
                                 <p data-ouia-component-type=\\"PF4/Text\\" data-ouia-safe={true} data-ouia-component-id=\\"OUIA-Generated-Text-11\\" data-pf-content={true} className=\\"\\">
                                   © 
-                                  2025
+                                  2026
                                    The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
                                    
                                   <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\">
