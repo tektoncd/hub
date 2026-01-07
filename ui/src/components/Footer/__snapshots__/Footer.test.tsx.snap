@@ -6,7 +6,7 @@ exports[`should render the footer component 1`] = `
     <Grid>
       <GridItem span={12} className=\\"hub-footer-info\\">
         <a href=\\"https://cd.foundation\\" target=\\"_\\">
-          <img src=\\"https://tekton.dev/partner-logos/cdf.png?1609496430000\\" alt=\\"tekton.dev\\" />
+          <img src=\\"https://tekton.dev/partner-logos/cdf.png?1767262830000\\" alt=\\"tekton.dev\\" />
         </a>
       </GridItem>
       <GridItem span={12} className=\\"hub-footer-info\\">
@@ -23,12 +23,12 @@ exports[`should render the footer component 1`] = `
         </TextContent>
       </GridItem>
       <GridItem span={12} className=\\"hub-logo-margin\\">
-        <img src=\\"tekton.png?1609496430000\\" alt=\\"Tekton\\" className=\\"hub-logo-size\\" />
+        <img src=\\"tekton.png?1767262830000\\" alt=\\"Tekton\\" className=\\"hub-logo-size\\" />
       </GridItem>
       <GridItem span={12} className=\\"hub-footer-description\\">
         <Text>
           © 
-          2025
+          2026
            The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our
            
           <Text component=\\"a\\" href=\\"https://www.linuxfoundation.org/trademark-usage/\\" target=\\"_\\">
