@@ -37,8 +37,8 @@ require (
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.31.1
 	gotest.tools/v3 v3.5.2
-	k8s.io/apimachinery v0.32.9
-	k8s.io/client-go v0.32.9
+	k8s.io/apimachinery v0.32.11
+	k8s.io/client-go v0.32.11
 	knative.dev/pkg v0.0.0-20250415155312-ed3e2158b883
 	sigs.k8s.io/yaml v1.6.0
 )
@@ -165,7 +165,7 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.32.9 // indirect
+	k8s.io/api v0.32.11 // indirect
 	k8s.io/apiextensions-apiserver v0.32.8 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20241212222426-2c72e554b1e7 // indirect
