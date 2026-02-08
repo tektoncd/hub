@@ -20,7 +20,7 @@ type (
 		Type         Type               `json:"type,omitempty" yaml:"type,omitempty"`
 		Items        *Schema            `json:"items,omitempty" yaml:"items,omitempty"`
 		Properties   map[string]*Schema `json:"properties,omitempty" yaml:"properties,omitempty"`
-		Definitions  map[string]*Schema `json:"definitions,omitempty" yaml:"definitions,omitempty"`
+		Defs         map[string]*Schema `json:"$defs,omitempty" yaml:"$defs,omitempty"`
 		Description  string             `json:"description,omitempty" yaml:"description,omitempty"`
 		DefaultValue any                `json:"default,omitempty" yaml:"default,omitempty"`
 		Example      any                `json:"example,omitempty" yaml:"example,omitempty"`
@@ -99,8 +99,8 @@ const (
 	File = "file"
 )
 
-// SchemaRef is the JSON Hyper-schema standard href.
-const SchemaRef = "http://json-schema.org/draft-04/hyper-schema"
+// SchemaRef is the JSON Schema draft 2020-12 meta-schema identifier.
+const SchemaRef = "https://json-schema.org/draft/2020-12/schema"
 
 var (
 	// Definitions contains the generated JSON schema definitions
@@ -115,8 +115,8 @@ func init() {
 // NewSchema instantiates a new JSON schema.
 func NewSchema() *Schema {
 	js := Schema{
-		Properties:  make(map[string]*Schema),
-		Definitions: make(map[string]*Schema),
+		Properties: make(map[string]*Schema),
+		Defs:       make(map[string]*Schema),
 	}
 	return &js
 }
@@ -156,8 +156,8 @@ func APISchema(api *expr.APIExpr, r *expr.RootExpr) *Schema {
 		Title:       api.Title,
 		Description: api.Description,
 		Type:        Object,
-		Definitions: Definitions,
-		Properties:  propertiesFromDefs(Definitions, "#/definitions/"),
+		Defs:        Definitions,
+		Properties:  propertiesFromDefs(Definitions, "#/$defs/"),
 		Links:       links,
 	}
 	return &s
@@ -250,7 +250,7 @@ func ResultTypeRefWithPrefix(api *expr.APIExpr, mt *expr.ResultTypeExpr, view, p
 		}
 		GenerateResultTypeDefinition(api, projected, expr.DefaultView)
 	}
-	return fmt.Sprintf("#/definitions/%s", projected.TypeName)
+	return fmt.Sprintf("#/$defs/%s", projected.TypeName)
 }
 
 // TypeRef produces the JSON reference to the type definition.
@@ -271,7 +271,7 @@ func TypeRefWithPrefix(api *expr.APIExpr, ut *expr.UserTypeExpr, prefix string) 
 	if _, ok := Definitions[typeName]; !ok {
 		GenerateTypeDefinitionWithName(api, ut, typeName)
 	}
-	return fmt.Sprintf("#/definitions/%s", typeName)
+	return fmt.Sprintf("#/$defs/%s", typeName)
 }
 
 // GenerateResultTypeDefinition produces the JSON schema corresponding to the
@@ -365,9 +365,30 @@ func TypeSchemaWithPrefix(api *expr.APIExpr, t expr.DataType, prefix string) *Sc
 			s.AdditionalProperties = true
 		}
 	case *expr.Union:
-		for _, val := range actual.Values {
-			s.AnyOf = append(s.AnyOf, AttributeTypeSchemaWithPrefix(api, val.Attribute, prefix))
+		// Unions are represented as an object with a discriminated value.
+		// The field names are configurable via Meta tags (defaults: "type" and "value").
+		typeKey := actual.GetTypeKey()
+		valueKey := actual.GetValueKey()
+
+		s.Type = Object
+		if s.Properties == nil {
+			s.Properties = make(map[string]*Schema)
 		}
+		// Discriminator with enum of branch names.
+		typeSchema := NewSchema()
+		typeSchema.Type = String
+		typeSchema.Enum = make([]any, len(actual.Values))
+		for i, val := range actual.Values {
+			typeSchema.Enum[i] = val.Name
+		}
+		// Value can be any of the branch schemas.
+		valueSchema := NewSchema()
+		for _, val := range actual.Values {
+			valueSchema.AnyOf = append(valueSchema.AnyOf, AttributeTypeSchemaWithPrefix(api, val.Attribute, prefix))
+		}
+		s.Properties[typeKey] = typeSchema
+		s.Properties[valueKey] = valueSchema
+		s.Required = append(s.Required, typeKey, valueKey)
 	case *expr.UserTypeExpr:
 		s.Ref = TypeRefWithPrefix(api, actual, prefix)
 	case *expr.ResultTypeExpr:
@@ -469,8 +490,8 @@ func (s *Schema) Dup() *Schema {
 	if s.Items != nil {
 		js.Items = s.Items.Dup()
 	}
-	for n, d := range s.Definitions {
-		js.Definitions[n] = d.Dup()
+	for n, d := range s.Defs {
+		js.Defs[n] = d.Dup()
 	}
 	return &js
 }

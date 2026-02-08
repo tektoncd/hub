@@ -130,6 +130,21 @@ const DefaultProtoc = expr.DefaultProtoc
 //	    })
 //	})
 //
+// - "struct:tag:json:name" sets the JSON field name used when Goa generates a
+// `json` struct tag for non-transport types (e.g., service types in gen/<svc>/service.go).
+// Goa appends ",omitempty" automatically when the attribute is not required by
+// its parent object. If "struct:tag:json" is also set, it takes precedence and
+// overrides the tag entirely.
+//
+// - "proto:tag:json" sets the JSON name emitted in the generated protobuf
+// field option. Applicable to attributes only.
+//
+//	var MyType = Type("MyType", func() {
+//	   Field(1, "id", String, func() {
+//	       Meta("proto:tag:json", "identifier")
+//	   })
+//	})
+//
 // - "protoc:cmd" provides an alternate command to execute for protoc with
 // optional arguments. Applicable to API and service definitions only. If used
 // on an API definition the include paths are used for all services, unless
@@ -299,42 +314,11 @@ const DefaultProtoc = expr.DefaultProtoc
 //	    Meta("openapi:typename", "Bar")
 //	})
 func Meta(name string, value ...string) {
-	appendMeta := func(meta expr.MetaExpr, name string, value ...string) expr.MetaExpr {
-		if meta == nil {
-			meta = make(map[string][]string)
-		}
-		meta[name] = append(meta[name], value...)
-		return meta
-	}
-
 	switch e := eval.Current().(type) {
-	case *expr.APIExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.ServerExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.HostExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.AttributeExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.ResultTypeExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.MethodExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.ServiceExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.HTTPServiceExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.HTTPEndpointExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.RouteExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.HTTPFileServerExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
-	case *expr.HTTPResponseExpr:
-		e.Meta = appendMeta(e.Meta, name, value...)
+	case expr.MetaAdder:
+		e.AddMeta(name, value...)
 	case expr.CompositeExpr:
-		att := e.Attribute()
-		att.Meta = appendMeta(att.Meta, name, value...)
+		e.Attribute().AddMeta(name, value...)
 	default:
 		eval.IncompatibleDSL()
 	}
@@ -347,33 +331,10 @@ func Meta(name string, value ...string) {
 // RemoveMeta takes a single argument, the name of the meta key to remove.
 func RemoveMeta(name string) {
 	switch e := eval.Current().(type) {
-	case *expr.APIExpr:
-		delete(e.Meta, name)
-	case *expr.ServerExpr:
-		delete(e.Meta, name)
-	case *expr.HostExpr:
-		delete(e.Meta, name)
-	case *expr.AttributeExpr:
-		delete(e.Meta, name)
-	case *expr.ResultTypeExpr:
-		delete(e.Meta, name)
-	case *expr.MethodExpr:
-		delete(e.Meta, name)
-	case *expr.ServiceExpr:
-		delete(e.Meta, name)
-	case *expr.HTTPServiceExpr:
-		delete(e.Meta, name)
-	case *expr.HTTPEndpointExpr:
-		delete(e.Meta, name)
-	case *expr.RouteExpr:
-		delete(e.Meta, name)
-	case *expr.HTTPFileServerExpr:
-		delete(e.Meta, name)
-	case *expr.HTTPResponseExpr:
-		delete(e.Meta, name)
+	case expr.MetaDeleter:
+		e.DeleteMeta(name)
 	case expr.CompositeExpr:
-		att := e.Attribute()
-		delete(att.Meta, name)
+		e.Attribute().DeleteMeta(name)
 	default:
 		eval.IncompatibleDSL()
 	}

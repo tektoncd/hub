@@ -3,6 +3,7 @@ package codegen
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"goa.design/goa/v3/codegen"
 	"goa.design/goa/v3/expr"
@@ -27,7 +28,9 @@ func sseClientFile(genpkg string, svc *expr.HTTPServiceExpr, services *ServicesD
 		return nil
 	}
 	path := filepath.Join(codegen.Gendir, "http", codegen.SnakeCase(svc.Name()), "client", "sse.go")
-	sections := []*codegen.SectionTemplate{
+	tmplSections := sseClientTemplateSections(data)
+	sections := make([]*codegen.SectionTemplate, 0, 1+len(tmplSections))
+	sections = append(sections,
 		codegen.Header(
 			"sse-client",
 			"client",
@@ -47,8 +50,8 @@ func sseClientFile(genpkg string, svc *expr.HTTPServiceExpr, services *ServicesD
 				{Path: "goa.design/goa/v3/http", Name: "goahttp"},
 			},
 		),
-	}
-	sections = append(sections, sseClientTemplateSections(data)...) // add SSE client methods
+	)
+	sections = append(sections, tmplSections...) // add SSE client methods
 	return &codegen.File{Path: path, SectionTemplates: sections}
 }
 
@@ -74,6 +77,9 @@ func sseClientTemplateSections(data *ServiceData) []*codegen.SectionTemplate {
 					dict[key] = values[i+1]
 				}
 				return dict, nil
+			},
+			"deref": func(ref string) string {
+				return strings.TrimPrefix(ref, "*")
 			},
 		}
 		sections = append(sections, &codegen.SectionTemplate{

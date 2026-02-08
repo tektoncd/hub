@@ -137,6 +137,14 @@ func initSSEData(ed *EndpointData, e *expr.HTTPEndpointExpr, sd *ServiceData) {
 		RequestIDPointer:    ridPtr,
 	}
 
+	// Mixed results SSE uses the streaming result type for events, not the unary
+	// HTTP response body type. Disable HTTP response body conversion in the SSE
+	// stream implementation and marshal the event value directly.
+	if ed.HasMixedResults {
+		ed.SSE.HasResponseBody = false
+		return
+	}
+
 	if ed.Result != nil {
 		for _, resp := range ed.Result.Responses {
 			if len(resp.ServerBody) > 0 {
@@ -168,7 +176,9 @@ func sseServerFile(genpkg string, svc *expr.HTTPServiceExpr, services *ServicesD
 	}
 
 	path := filepath.Join(codegen.Gendir, "http", codegen.SnakeCase(svc.Name()), "server", "sse.go")
-	sections := []*codegen.SectionTemplate{
+	tmplSections := sseTemplateSections(data)
+	sections := make([]*codegen.SectionTemplate, 0, 1+len(tmplSections))
+	sections = append(sections,
 		codegen.Header(
 			"sse",
 			"server",
@@ -184,8 +194,8 @@ func sseServerFile(genpkg string, svc *expr.HTTPServiceExpr, services *ServicesD
 				{Path: genpkg + "/" + codegen.SnakeCase(svc.Name()) + "/views", Name: data.Service.ViewsPkg},
 			},
 		),
-	}
-	sections = append(sections, sseTemplateSections(data)...)
+	)
+	sections = append(sections, tmplSections...)
 	return &codegen.File{Path: path, SectionTemplates: sections}
 }
 
@@ -197,23 +207,23 @@ func sseTemplateSections(data *ServiceData) []*codegen.SectionTemplate {
 			continue
 		}
 		// Create a map of template functions needed for the SSE template
-	funcs := map[string]any{
-		"dict": func(values ...any) (map[string]any, error) {
-			if len(values)%2 != 0 {
-				return nil, fmt.Errorf("odd number of arguments")
-			}
-			dict := make(map[string]any, len(values)/2)
-			for i := 0; i < len(values); i += 2 {
-				key, ok := values[i].(string)
-				if !ok {
-					return nil, fmt.Errorf("dict keys must be strings")
+		funcs := map[string]any{
+			"dict": func(values ...any) (map[string]any, error) {
+				if len(values)%2 != 0 {
+					return nil, fmt.Errorf("odd number of arguments")
 				}
-				dict[key] = values[i+1]
-			}
-			return dict, nil
-		},
-		"goify": codegen.Goify,
-	}
+				dict := make(map[string]any, len(values)/2)
+				for i := 0; i < len(values); i += 2 {
+					key, ok := values[i].(string)
+					if !ok {
+						return nil, fmt.Errorf("dict keys must be strings")
+					}
+					dict[key] = values[i+1]
+				}
+				return dict, nil
+			},
+			"goify": codegen.Goify,
+		}
 		sections = append(sections, &codegen.SectionTemplate{
 			Name:    "server-sse",
 			Source:  httpTemplates.Read(serverSseT, sseFormatP),

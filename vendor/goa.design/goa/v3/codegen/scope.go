@@ -143,7 +143,13 @@ func (s *NameScope) goTypeDefWithPkgOverride(att *expr.AttributeExpr, ptr, useDe
 		}
 		return fmt.Sprintf("map[%s]%s", keyDef, elemDef)
 	case *expr.Union:
-		return fmt.Sprintf("interface{\n\t%s()\n}", UnionValTypeName(actual.TypeName))
+		// Unions are generated as named sum-type structs. Refer to the named type
+		// here; the concrete definition is emitted separately by the service
+		// code generator.
+		if targetPkg != "" {
+			return s.GoFullTypeName(att, targetPkg)
+		}
+		return s.GoFullTypeName(att, "")
 	case *expr.Object:
 		ss := []string{"struct {"}
 		for _, nat := range *actual {
@@ -167,7 +173,7 @@ func (s *NameScope) goTypeDefWithPkgOverride(att *expr.AttributeExpr, ptr, useDe
 				if at.Description != "" {
 					desc = Comment(at.Description) + "\n\t"
 				}
-				tags = AttributeTags(att, at)
+				tags = AttributeTagsWithName(att, name, at)
 			}
 			ss = append(ss, fmt.Sprintf("\t%s%s %s%s", desc, fn, tdef, tags))
 		}
@@ -191,7 +197,14 @@ func (s *NameScope) goTypeDefWithPkgOverride(att *expr.AttributeExpr, ptr, useDe
 		} else if targetPkg != "" {
 			prefix = targetPkg + "."
 		}
-		return prefix + s.GoTypeName(att)
+		// Qualified references (pkg.Type) do not compete in the local identifier
+		// namespace. Never apply local scoping (suffixing) to the type name portion
+		// of an external reference, otherwise we can emit identifiers that do not
+		// exist in the referenced package (e.g., pkg.Foo2).
+		if prefix == "" {
+			return s.GoTypeName(att)
+		}
+		return prefix + Goify(actual.Name(), true)
 	default:
 		panic(fmt.Sprintf("unknown data type %T", actual)) // bug
 	}
@@ -273,11 +286,29 @@ func (s *NameScope) GoFullTypeName(att *expr.AttributeExpr, pkg string) string {
 		if actual == expr.ErrorResult {
 			return "goa.ServiceError"
 		}
-		n := s.HashedUnique(actual, Goify(actual.Name(), true), "")
+		// Qualified type references (pkg.Type) do not compete in the local
+		// identifier namespace.
+		//
+		// When generating qualified references, we must not blindly apply local
+		// scoping (suffixing) to the referenced type name, otherwise we can emit
+		// identifiers that do not exist in the referenced package (e.g., pkg.Foo2).
+		//
+		// However, when the scope already assigned a unique name to the referenced
+		// type (i.e., the type is defined in this scope and got suffixed due to a
+		// collision), qualified references must use that assigned name to stay
+		// consistent across packages. This is critical for transport packages that
+		// refer to types defined in the service package (e.g., grpc referencing a
+		// payload type defined as Request2).
+		base := Goify(actual.Name(), true)
 		if pkg == "" {
-			return n
+			return s.HashedUnique(actual, base, "")
 		}
-		return pkg + "." + n
+		if UserTypeLocation(actual) == nil {
+			if n, ok := s.names[actual.Hash()]; ok {
+				return pkg + "." + n
+			}
+		}
+		return pkg + "." + base
 	case expr.CompositeExpr:
 		return s.GoFullTypeName(actual.Attribute(), pkgWithDefault(actual.Attribute().Type, pkg))
 	default:

@@ -91,12 +91,10 @@ type (
 		// projectedTypes lists the types which uses pointers for all fields to
 		// define view specific validation logic.
 		projectedTypes []*ProjectedTypeData
-		// union methods that need to be defined in views package.
-		viewedUnionMethods []*UnionValueMethodData
+		// unions lists the sum-type unions defined for the service.
+		unions []*UnionTypeData
 		// viewedResultTypes lists all the viewed method result types.
 		viewedResultTypes []*ViewedResultTypeData
-		// unionValueMethods lists the methods used to define union types.
-		unionValueMethods []*UnionValueMethodData
 	}
 
 	// MethodData describes a single service method.
@@ -190,6 +188,10 @@ type (
 		// StreamKind is the kind of the stream (payload or result or
 		// bidirectional).
 		StreamKind expr.StreamKind
+		// HasMixedResults indicates whether the method defines both Result and
+		// StreamingResult with different types, enabling content negotiation at
+		// the transport layer (e.g. JSON vs SSE over HTTP).
+		HasMixedResults bool
 		// SkipRequestBodyEncodeDecode is true if the method payload includes
 		// the raw HTTP request body reader.
 		SkipRequestBodyEncodeDecode bool
@@ -208,6 +210,13 @@ type (
 		// struct to store the goa.Endpoint for this method. It is computed with a
 		// scope that includes method names to avoid field/method name collisions.
 		EndpointField string
+		// StreamEndpointField is the unique field name used in the generated client
+		// struct to store the "streaming mode" goa.Endpoint for mixed results. The
+		// transport endpoint forces server streaming (e.g. sets "Accept:
+		// text/event-stream") and returns the client stream interface.
+		//
+		// It is only set when HasMixedResults is true.
+		StreamEndpointField string
 	}
 
 	// StreamData is the data used to generate client and server interfaces that
@@ -421,19 +430,35 @@ type (
 		Type expr.UserType
 	}
 
-	// UnionValueMethodData describes a method used on a union value type.
-	UnionValueMethodData struct {
-		// Name is the name of the function.
+	// UnionTypeData describes a generated sum-type union for a service.
+	UnionTypeData struct {
+		// Name is the Go type name of the union struct.
 		Name string
-		// TypeRef is a reference on the target union value type.
-		TypeRef string
-		// Loc defines the file and Go package of the method if
-		// overridden in corresponding union type via Meta.
+		// KindName is the Go type name of the discriminator kind.
+		KindName string
+		// Fields describes each union branch.
+		Fields []*UnionFieldData
+		// Loc defines the file and Go package of the union type if overridden via
+		// Meta. When nil the type is generated in the default service file.
 		Loc *codegen.Location
-		// UnderlyingRef is the reference to the underlying concrete type for which
-		// a wrapper must be generated in the service package when the method is not
-		// emitted in the underlying type package.
-		UnderlyingRef string
+		// TypeKey is the discriminator field name for JSON marshaling (defaults to "type").
+		TypeKey string
+		// ValueKey is the value field name for JSON marshaling (defaults to "value").
+		ValueKey string
+	}
+
+	// UnionFieldData describes a single branch of a union.
+	UnionFieldData struct {
+		// Name is the branch name as defined in the DSL.
+		Name string
+		// KindConst is the Go identifier for the kind constant of this branch.
+		KindConst string
+		// FieldName is the struct field name in the union.
+		FieldName string
+		// FieldType is the Go type used in the union struct field and public API.
+		FieldType string
+		// TypeTag is the JSON "type" discriminator value for this branch.
+		TypeTag string
 	}
 
 	// SchemeData describes a single security scheme.
@@ -702,12 +727,11 @@ func (s SchemesData) DedupeByType() SchemesData {
 // It records the user types needed by the service definition in userTypes.
 func (d *ServicesData) analyze(service *expr.ServiceExpr) *Data {
 	var (
-		types            []*UserTypeData
-		errTypes         []*UserTypeData
-		errorInits       []*ErrorInitData
-		projTypes        []*ProjectedTypeData
-		viewedUnionMeths []*UnionValueMethodData
-		viewedRTs        []*ViewedResultTypeData
+		types      []*UserTypeData
+		errTypes   []*UserTypeData
+		errorInits []*ErrorInitData
+		projTypes  []*ProjectedTypeData
+		viewedRTs  []*ViewedResultTypeData
 	)
 	scope := codegen.NewNameScope()
 	scope.Unique("Use")       // Reserve "Use" for Endpoints struct Use method.
@@ -756,9 +780,8 @@ func (d *ServicesData) analyze(service *expr.ServiceExpr) *Data {
 		}
 		// Collect projected types
 		if hasResultType(m.Result) {
-			types, umeths := collectProjectedTypes(expr.DupAtt(m.Result), m.Result, viewspkg, scope, viewScope, seenProj)
-			projTypes = append(projTypes, types...)
-			viewedUnionMeths = append(viewedUnionMeths, umeths...)
+			ptypes := collectProjectedTypes(expr.DupAtt(m.Result), m.Result, viewspkg, scope, viewScope, seenProj)
+			projTypes = append(projTypes, ptypes...)
 		}
 		for _, er := range m.Errors {
 			recordError(er)
@@ -859,43 +882,44 @@ func (d *ServicesData) analyze(service *expr.ServiceExpr) *Data {
 	// existing method names.
 	for _, m := range methods {
 		m.EndpointField = scope.Unique(m.VarName+"Endpoint", "")
+		if m.HasMixedResults {
+			m.StreamEndpointField = scope.Unique(m.VarName+"StreamEndpoint", "")
+		}
 	}
 
-	unionMethods := make([]*UnionValueMethodData, 0, len(types)+len(errTypes))
-	var ms []*UnionValueMethodData
+	// Collect union sum-type definitions for the service.
+	unionByHash := make(map[string]*UnionTypeData)
 	seen = make(map[string]struct{})
+	collectUnions := func(att *expr.AttributeExpr, loc *codegen.Location) {
+		collectUnionTypes(att, scope, loc, unionByHash, seen)
+	}
 	for _, t := range types {
-		ms = append(ms, collectUnionMethods(&expr.AttributeExpr{Type: t.Type}, scope, t.Loc, seen)...)
+		collectUnions(&expr.AttributeExpr{Type: t.Type}, t.Loc)
 	}
 	for _, t := range errTypes {
-		ms = append(ms, collectUnionMethods(&expr.AttributeExpr{Type: t.Type}, scope, t.Loc, seen)...)
+		collectUnions(&expr.AttributeExpr{Type: t.Type}, t.Loc)
 	}
 	for _, m := range service.Methods {
 		if m.Payload != nil {
-			ms = append(ms, collectUnionMethods(m.Payload, scope, codegen.UserTypeLocation(m.Payload.Type), seen)...)
+			collectUnions(m.Payload, codegen.UserTypeLocation(m.Payload.Type))
 		}
 		if m.StreamingPayload != nil {
-			ms = append(ms, collectUnionMethods(m.StreamingPayload, scope, codegen.UserTypeLocation(m.StreamingPayload.Type), seen)...)
+			collectUnions(m.StreamingPayload, codegen.UserTypeLocation(m.StreamingPayload.Type))
 		}
 		if m.Result != nil {
-			ms = append(ms, collectUnionMethods(m.Result, scope, codegen.UserTypeLocation(m.Result.Type), seen)...)
+			collectUnions(m.Result, codegen.UserTypeLocation(m.Result.Type))
 		}
 		for _, e := range m.Errors {
-			ms = append(ms, collectUnionMethods(e.AttributeExpr, scope, codegen.UserTypeLocation(e.Type), seen)...)
+			collectUnions(e.AttributeExpr, codegen.UserTypeLocation(e.Type))
 		}
 	}
-	sort.Slice(ms, func(i, j int) bool {
-		return ms[i].Name < ms[j].Name
+	unions := make([]*UnionTypeData, 0, len(unionByHash))
+	for _, u := range unionByHash {
+		unions = append(unions, u)
+	}
+	sort.Slice(unions, func(i, j int) bool {
+		return unions[i].Name < unions[j].Name
 	})
-	pkgs := make(map[string]struct{})
-	for _, m := range ms {
-		key := m.TypeRef + "::" + m.Name + "::" + m.Loc.PackageName()
-		if _, ok := pkgs[key]; ok {
-			continue
-		}
-		pkgs[key] = struct{}{}
-		unionMethods = append(unionMethods, m)
-	}
 
 	desc := service.Description
 	if desc == "" {
@@ -923,9 +947,8 @@ func (d *ServicesData) analyze(service *expr.ServiceExpr) *Data {
 		errorInits:         errorInits,
 		userTypes:          types,
 		projectedTypes:     projTypes,
-		viewedUnionMethods: viewedUnionMeths,
 		viewedResultTypes:  viewedRTs,
-		unionValueMethods:  unionMethods,
+		unions:             unions,
 	}
 
 	d.Services[service.Name] = data
@@ -1021,83 +1044,144 @@ func collectTypes(at *expr.AttributeExpr, scope *codegen.NameScope, seen map[str
 	return data
 }
 
-// collectUnionMethods traverses the attribute to gather all union value methods.
-func collectUnionMethods(att *expr.AttributeExpr, scope *codegen.NameScope, loc *codegen.Location, seen map[string]struct{}) (data []*UnionValueMethodData) {
+// collectUnionTypes traverses the attribute to gather all union sum-type
+// definitions referenced by the service. It records each union by its hash to
+// avoid generating duplicate types.
+func collectUnionTypes(att *expr.AttributeExpr, scope *codegen.NameScope, loc *codegen.Location, unions map[string]*UnionTypeData, seen map[string]struct{}) {
 	if att == nil || att.Type == expr.Empty {
-		return data
-	}
-	collect := func(at *expr.AttributeExpr, loc *codegen.Location) []*UnionValueMethodData {
-		return collectUnionMethods(at, scope, loc, seen)
+		return
 	}
 	switch dt := att.Type.(type) {
 	case expr.UserType:
 		if _, ok := seen[dt.ID()]; ok {
-			return nil
+			return
 		}
 		seen[dt.ID()] = struct{}{}
-		data = append(data, collect(dt.Attribute(), codegen.UserTypeLocation(dt))...)
+		collectUnionTypes(dt.Attribute(), scope, codegen.UserTypeLocation(dt), unions, seen)
 	case *expr.Object:
 		for _, nat := range *dt {
-			data = append(data, collect(nat.Attribute, loc)...)
+			collectUnionTypes(nat.Attribute, scope, loc, unions, seen)
 		}
 	case *expr.Array:
-		data = append(data, collect(dt.ElemType, loc)...)
+		collectUnionTypes(dt.ElemType, scope, loc, unions, seen)
 	case *expr.Map:
-		data = append(data, collect(dt.KeyType, loc)...)
-		data = append(data, collect(dt.ElemType, loc)...)
+		collectUnionTypes(dt.KeyType, scope, loc, unions, seen)
+		collectUnionTypes(dt.ElemType, scope, loc, unions, seen)
 	case *expr.Union:
-		// Detect duplicate underlying user types across union values.
-		utCounts := make(map[string]int)
-		for _, v := range dt.Values {
-			if ut, ok := v.Attribute.Type.(expr.UserType); ok {
-				utCounts[ut.ID()]++
-			}
+		hash := dt.Hash()
+		if _, ok := unions[hash]; !ok {
+			unions[hash] = buildUnionTypeData(dt, scope, loc)
 		}
 		for _, nat := range dt.Values {
-			mloc := loc
-			var (
-				underlyingRef string
-				wrapperName   string
-				typeRef       string
-			)
-			if ut, ok := nat.Attribute.Type.(expr.UserType); ok {
-				uloc := codegen.UserTypeLocation(ut)
-				// Need wrapper if member type is in a different package than the union,
-				// or if the same underlying user type appears in multiple branches.
-				if uloc != nil && (uloc.PackageName() != loc.PackageName() || utCounts[ut.ID()] > 1) {
-					// If wrapper is emitted in the same package as the underlying type,
-					// use unqualified name to avoid self-import cycles.
-					if uloc.PackageName() == mloc.PackageName() {
-						underlyingRef = scope.GoTypeName(nat.Attribute)
-					} else {
-						underlyingRef = scope.GoFullTypeName(nat.Attribute, uloc.PackageName())
-					}
-					wrapperName = scope.Unique(codegen.Goify(dt.Name(), true)+codegen.Goify(nat.Name, true), "")
-					typeRef = wrapperName // wrappers use value receivers
-				} else {
-					// Same package and unique: attach marker directly to the member type.
-					mloc = uloc
-					wrapperName = scope.GoTypeName(nat.Attribute)
-					typeRef = scope.GoTypeRef(nat.Attribute) // preserve pointer/value semantics
-				}
-			} else {
-				// Non-user types always get per-branch wrappers for uniqueness.
-				underlyingRef = scope.GoTypeName(nat.Attribute)
-				wrapperName = scope.Unique(codegen.Goify(dt.Name(), true)+codegen.Goify(nat.Name, true), "")
-				typeRef = wrapperName // wrappers use value receivers
-			}
-			data = append(data, &UnionValueMethodData{
-				Name:          codegen.UnionValTypeName(dt.Name()),
-				TypeRef:       typeRef,
-				Loc:           mloc,
-				UnderlyingRef: underlyingRef,
-			})
-		}
-		for _, nat := range dt.Values {
-			data = append(data, collect(nat.Attribute, loc)...)
+			collectUnionTypes(nat.Attribute, scope, loc, unions, seen)
 		}
 	}
-	return data
+}
+
+// buildUnionTypeData creates the data needed to generate a sum-type union
+// struct, its discriminator kind, and branch metadata.
+func buildUnionTypeData(u *expr.Union, scope *codegen.NameScope, loc *codegen.Location) *UnionTypeData {
+	att := &expr.AttributeExpr{Type: u}
+	name := scope.GoTypeName(att)
+	kindName := scope.Unique(name + "Kind")
+	unionPkg := loc.PackageName()
+
+	fields := make([]*UnionFieldData, len(u.Values))
+	for i, nat := range u.Values {
+		fieldName := codegen.Goify(nat.Name, true)
+		var pkg string
+		if tloc := codegen.UserTypeLocation(nat.Attribute.Type); tloc != nil {
+			pkg = tloc.PackageName()
+			if pkg == unionPkg {
+				pkg = ""
+			}
+		}
+		fieldType := scope.GoFullTypeRef(nat.Attribute, pkg)
+		kindConst := kindName + codegen.Goify(nat.Name, true)
+		fields[i] = &UnionFieldData{
+			Name:      nat.Name,
+			KindConst: kindConst,
+			FieldName: fieldName,
+			FieldType: fieldType,
+			TypeTag:   nat.Name,
+		}
+	}
+
+	return &UnionTypeData{
+		Name:     name,
+		KindName: kindName,
+		Fields:   fields,
+		Loc:      loc,
+		TypeKey:  u.GetTypeKey(),
+		ValueKey: u.GetValueKey(),
+	}
+}
+
+// collectViewUnionTypes traverses the attribute to gather all union sum-type
+// definitions referenced by view-projected types. It always uses the provided
+// location for all nested user types so that unions are generated in the views
+// package and refer to view-local types (preventing import cycles).
+func collectViewUnionTypes(att *expr.AttributeExpr, scope *codegen.NameScope, loc *codegen.Location, unions map[string]*UnionTypeData, seen map[string]struct{}) {
+	if att == nil || att.Type == expr.Empty {
+		return
+	}
+	switch dt := att.Type.(type) {
+	case expr.UserType:
+		if _, ok := seen[dt.ID()]; ok {
+			return
+		}
+		seen[dt.ID()] = struct{}{}
+		collectViewUnionTypes(dt.Attribute(), scope, loc, unions, seen)
+	case *expr.Object:
+		for _, nat := range *dt {
+			collectViewUnionTypes(nat.Attribute, scope, loc, unions, seen)
+		}
+	case *expr.Array:
+		collectViewUnionTypes(dt.ElemType, scope, loc, unions, seen)
+	case *expr.Map:
+		collectViewUnionTypes(dt.KeyType, scope, loc, unions, seen)
+		collectViewUnionTypes(dt.ElemType, scope, loc, unions, seen)
+	case *expr.Union:
+		hash := dt.Hash()
+		if _, ok := unions[hash]; !ok {
+			unions[hash] = buildViewUnionTypeData(dt, scope, loc)
+		}
+		for _, nat := range dt.Values {
+			collectViewUnionTypes(nat.Attribute, scope, loc, unions, seen)
+		}
+	}
+}
+
+// buildViewUnionTypeData creates the data needed to generate a sum-type union
+// in the views package. Field types are computed using the view scope and are
+// always emitted unqualified so they refer to the view-local projected types.
+func buildViewUnionTypeData(u *expr.Union, scope *codegen.NameScope, loc *codegen.Location) *UnionTypeData {
+	att := &expr.AttributeExpr{Type: u}
+	name := scope.GoTypeName(att)
+	kindName := scope.Unique(name + "Kind")
+
+	fields := make([]*UnionFieldData, len(u.Values))
+	for i, nat := range u.Values {
+		fieldName := codegen.Goify(nat.Name, true)
+		fieldType := scope.GoTypeRef(nat.Attribute)
+		kindConst := kindName + codegen.Goify(nat.Name, true)
+		fields[i] = &UnionFieldData{
+			Name:      nat.Name,
+			KindConst: kindConst,
+			FieldName: fieldName,
+			FieldType: fieldType,
+			TypeTag:   nat.Name,
+		}
+	}
+
+	return &UnionTypeData{
+		Name:     name,
+		KindName: kindName,
+		Fields:   fields,
+		Loc:      loc,
+		TypeKey:  u.GetTypeKey(),
+		ValueKey: u.GetValueKey(),
+	}
 }
 
 // buildErrorInitData creates the data needed to generate code around endpoint error return values.
@@ -1260,6 +1344,7 @@ func (d *ServicesData) buildMethodData(m *expr.MethodExpr, scope *codegen.NameSc
 		Requirements:                 reqs,
 		Schemes:                      schemes,
 		StreamKind:                   m.Stream,
+		HasMixedResults:              m.HasMixedResults(),
 		SkipRequestBodyEncodeDecode:  skipRequestBodyEncodeDecode,
 		SkipResponseBodyEncodeDecode: skipResponseBodyEncodeDecode,
 		RequestStruct:                vname + "RequestData",
@@ -1657,16 +1742,17 @@ func collectAttributes(attrNames, parent *expr.AttributeExpr, scope *codegen.Nam
 	return data
 }
 
-// collectProjectedTypes builds a projected type for every user type found
-// when recursing through the attributes. The projected types live in the views
+// collectProjectedTypes builds a projected type for every user type found when
+// recursing through the attributes. The projected types live in the views
 // package and support the marshaling and unmarshalling of result types that
 // make use of views. We need to build projected types for all user types - not
-// just result types - because user types make contain result types and thus may
+// just result types - because user types may contain result types and thus may
 // need to be marshalled in different ways depending on the view being used.
-func collectProjectedTypes(projected, att *expr.AttributeExpr, viewspkg string, scope, viewScope *codegen.NameScope, seen map[string]*ProjectedTypeData) (data []*ProjectedTypeData, umeths []*UnionValueMethodData) {
-	collect := func(projected, att *expr.AttributeExpr) ([]*ProjectedTypeData, []*UnionValueMethodData) {
+func collectProjectedTypes(projected, att *expr.AttributeExpr, viewspkg string, scope, viewScope *codegen.NameScope, seen map[string]*ProjectedTypeData) []*ProjectedTypeData {
+	collect := func(projected, att *expr.AttributeExpr) []*ProjectedTypeData {
 		return collectProjectedTypes(projected, att, viewspkg, scope, viewScope, seen)
 	}
+	var data []*ProjectedTypeData
 	switch pt := projected.Type.(type) {
 	case expr.UserType:
 		dt := att.Type.(expr.UserType)
@@ -1679,53 +1765,41 @@ func collectProjectedTypes(projected, att *expr.AttributeExpr, viewspkg string, 
 			if pd != nil {
 				projected.Type = pd.Type
 			}
-			return data, umeths
+			return data
 		}
 		seen[dt.ID()] = nil
 		pt.Rename(pt.Name() + "View")
 		// We recurse before building the projected type so that user types within
 		// a projected type is also converted to their respective projected types.
-		types, ms := collect(pt.Attribute(), dt.Attribute())
+		types := collect(pt.Attribute(), dt.Attribute())
 		pd := buildProjectedType(projected, att, viewspkg, scope, viewScope)
 		seen[dt.ID()] = pd
 		data = append(data, pd)
 		data = append(data, types...)
-		umeths = append(umeths, ms...)
 	case *expr.Array:
 		dt := att.Type.(*expr.Array)
-		types, ms := collect(pt.ElemType, dt.ElemType)
+		types := collect(pt.ElemType, dt.ElemType)
 		data = append(data, types...)
-		umeths = append(umeths, ms...)
 	case *expr.Map:
 		dt := att.Type.(*expr.Map)
-		types, ms := collect(pt.KeyType, dt.KeyType)
+		types := collect(pt.KeyType, dt.KeyType)
 		data = append(data, types...)
-		umeths = append(umeths, ms...)
-		types, ms = collect(pt.ElemType, dt.ElemType)
+		types = collect(pt.ElemType, dt.ElemType)
 		data = append(data, types...)
-		umeths = append(umeths, ms...)
 	case *expr.Object:
 		dt := att.Type.(*expr.Object)
 		for _, n := range *pt {
-			types, ms := collect(n.Attribute, dt.Attribute(n.Name))
+			types := collect(n.Attribute, dt.Attribute(n.Name))
 			data = append(data, types...)
-			umeths = append(umeths, ms...)
 		}
 	case *expr.Union:
 		dt := att.Type.(*expr.Union)
 		for i, n := range pt.Values {
-			types, ms := collect(n.Attribute, dt.Values[i].Attribute)
+			types := collect(n.Attribute, dt.Values[i].Attribute)
 			data = append(data, types...)
-			umeths = append(umeths, ms...)
-		}
-		for _, nat := range pt.Values {
-			umeths = append(umeths, &UnionValueMethodData{
-				Name:    codegen.UnionValTypeName(pt.Name()),
-				TypeRef: scope.GoTypeRef(nat.Attribute),
-			})
 		}
 	}
-	return data, umeths
+	return data
 }
 
 // hasResultType returns true if the given attribute has a result type recursively.

@@ -32,7 +32,8 @@ type (
 
 	// Array is the type used to describe field arrays or repeated fields.
 	Array struct {
-		ElemType *AttributeExpr
+		ElemType         *AttributeExpr
+		NonNullableElems bool
 	}
 
 	// Map is the type used to describe maps of fields.
@@ -58,6 +59,10 @@ type (
 	Union struct {
 		TypeName string
 		Values   []*NamedAttributeExpr
+		// TypeKey is the discriminator field name for JSON marshaling (defaults to "type")
+		TypeKey string
+		// ValueKey is the value field name for JSON marshaling (defaults to "value")
+		ValueKey string
 	}
 
 	// UserType is the interface implemented by all user type
@@ -648,6 +653,24 @@ func (u *Union) Example(r *ExampleGenerator) any {
 		return nil
 	}
 	return u.Values[r.Int()%len(u.Values)].Attribute.Example(r)
+}
+
+// GetTypeKey returns the discriminator field name for JSON marshaling.
+// Defaults to "type" if not explicitly set via Meta("oneof:type:field").
+func (u *Union) GetTypeKey() string {
+	if u.TypeKey != "" {
+		return u.TypeKey
+	}
+	return "type"
+}
+
+// GetValueKey returns the value field name for JSON marshaling.
+// Defaults to "value" if not explicitly set via Meta("oneof:value:field").
+func (u *Union) GetValueKey() string {
+	if u.ValueKey != "" {
+		return u.ValueKey
+	}
+	return "value"
 }
 
 // QualifiedTypeName returns the qualified type name for the given data type.

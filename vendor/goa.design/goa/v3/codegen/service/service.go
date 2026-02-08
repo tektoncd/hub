@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"goa.design/goa/v3/codegen"
 	"goa.design/goa/v3/expr"
@@ -85,6 +86,13 @@ func Files(genpkg string, service *expr.ServiceExpr, services *ServicesData, use
 			})
 		}
 	}
+	for _, u := range svc.unions {
+		addTypeDefSection(pathWithDefault(u.Loc, svcPath), "~union:"+u.Name, &codegen.SectionTemplate{
+			Name:   "service-union-type",
+			Source: serviceTemplates.Read(unionTypeT),
+			Data:   u,
+		})
+	}
 
 	var errorTypes []*UserTypeData
 	seenErrs := make(map[string]struct{})
@@ -103,14 +111,6 @@ func Files(genpkg string, service *expr.ServiceExpr, services *ServicesData, use
 			}
 			errorTypes = append(errorTypes, et)
 		}
-	}
-
-	for _, m := range svc.unionValueMethods {
-		addTypeDefSection(pathWithDefault(m.Loc, svcPath), "~"+m.TypeRef+"."+m.Name, &codegen.SectionTemplate{
-			Name:   "service-union-value-method",
-			Source: serviceTemplates.Read(unionValueMethodT),
-			Data:   m,
-		})
 	}
 
 	for _, et := range errorTypes {
@@ -174,6 +174,12 @@ func Files(genpkg string, service *expr.ServiceExpr, services *ServicesData, use
 		codegen.GoaImport("security"),
 		codegen.NewImport(svc.ViewsPkg, genpkg+"/"+svcName+"/views"),
 	}
+	if len(svc.unions) > 0 {
+		imports = append(imports,
+			codegen.SimpleImport("encoding/json"),
+			codegen.SimpleImport("fmt"),
+		)
+	}
 	header := codegen.Header(service.Name+" service", svc.PkgName, imports)
 	def := &codegen.SectionTemplate{
 		Name:   "service",
@@ -190,13 +196,14 @@ func Files(genpkg string, service *expr.ServiceExpr, services *ServicesData, use
 	// service.go
 	var sections []*codegen.SectionTemplate
 	{
-		sections = []*codegen.SectionTemplate{header, def}
 		names := make([]string, len(typeDefSections[svcPath]))
 		i := 0
 		for n := range typeDefSections[svcPath] {
 			names[i] = n
 			i++
 		}
+		sections = make([]*codegen.SectionTemplate, 0, 2+len(names)+len(svcSections))
+		sections = append(sections, header, def)
 		sort.Strings(names)
 		for _, n := range names {
 			sections = append(sections, typeDefSections[svcPath][n])
@@ -221,9 +228,13 @@ func Files(genpkg string, service *expr.ServiceExpr, services *ServicesData, use
 			continue
 		}
 		var secs []*codegen.SectionTemplate
+		hasUnion := false
 		ts := typesByPath[p]
 		sort.Strings(ts)
 		for _, name := range ts {
+			if strings.HasPrefix(name, "~union:") {
+				hasUnion = true
+			}
 			hasName := false
 			for _, n := range userTypePkgs[p] {
 				if hasName = n == name; hasName {
@@ -241,7 +252,14 @@ func Files(genpkg string, service *expr.ServiceExpr, services *ServicesData, use
 		}
 		fullRelPath := filepath.Join(codegen.Gendir, p)
 		dir, _ := filepath.Split(fullRelPath)
-		h := codegen.Header("User types", codegen.Goify(filepath.Base(dir), false), nil)
+		imports := []*codegen.ImportSpec{
+			codegen.SimpleImport("fmt"),
+			codegen.GoaImport(""),
+		}
+		if hasUnion {
+			imports = append(imports, codegen.SimpleImport("encoding/json"))
+		}
+		h := codegen.Header("User types", codegen.Goify(filepath.Base(dir), false), imports)
 		sections := append([]*codegen.SectionTemplate{h}, secs...)
 		files = append(files, &codegen.File{Path: fullRelPath, SectionTemplates: sections})
 	}
@@ -302,18 +320,21 @@ func AddUserTypeImports(genpkg string, header *codegen.SectionTemplate, d *Data)
 		importsByPath[loc.FilePath] = &codegen.ImportSpec{Name: loc.PackageName(), Path: genpkg + "/" + loc.RelImportPath}
 	}
 
+	// Process method-specific locations
 	for _, m := range d.Methods {
 		initLoc(m.PayloadLoc)
 		initLoc(m.ResultLoc)
 		for _, l := range m.ErrorLocs {
 			initLoc(l)
 		}
-		for _, ut := range d.userTypes {
-			initLoc(ut.Loc)
-		}
-		for _, et := range d.errorTypes {
-			initLoc(et.Loc)
-		}
+	}
+
+	// Process service-level types once (not per method)
+	for _, ut := range d.userTypes {
+		initLoc(ut.Loc)
+	}
+	for _, et := range d.errorTypes {
+		initLoc(et.Loc)
 	}
 
 	for _, imp := range importsByPath { // Order does not matter, imports are sorted during formatting.

@@ -122,7 +122,7 @@ goa-gen() {
   go version
 
   export GOFLAGS=""
-  go install goa.design/goa/v3/cmd/goa@v3.20.0
+  go install goa.design/goa/v3/cmd/goa@v3.24.3
 
   goa version
 

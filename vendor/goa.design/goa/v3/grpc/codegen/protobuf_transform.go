@@ -168,14 +168,16 @@ func transformAttribute(source, target *expr.AttributeExpr, sourceVar, targetVar
 	{
 		switch {
 		case expr.IsArray(source.Type):
-			code, err = transformArray(expr.AsArray(source.Type), expr.AsArray(target.Type), sourceVar, targetVar, newVar, ta)
+			// Top-level array transforms never assign into a pointer field.
+			code, err = transformArray(expr.AsArray(source.Type), expr.AsArray(target.Type), sourceVar, targetVar, newVar, false, false, ta)
 		case expr.IsMap(source.Type):
-			code, err = transformMap(expr.AsMap(source.Type), expr.AsMap(target.Type), sourceVar, targetVar, newVar, ta)
+			code, err = transformMap(expr.AsMap(source.Type), expr.AsMap(target.Type), sourceVar, targetVar, newVar, false, ta)
 		case expr.IsObject(source.Type):
 			code, err = transformObject(source, target, sourceVar, targetVar, newVar, ta)
 		case expr.IsUnion(source.Type):
 			if ta.proto {
-				code, err = transformUnionToProto(source, target, sourceVar, targetVar, ta)
+				// At top-level we do not expect pointer-to-interface unions.
+				code, err = transformUnionToProto(source, target, sourceVar, targetVar, false, ta)
 			} else {
 				code, err = transformUnionFromProto(source, target, sourceVar, targetVar, ta)
 			}
@@ -317,9 +319,15 @@ func transformObject(source, target *expr.AttributeExpr, sourceVar, targetVar st
 			_, isUserType := srcc.Type.(expr.UserType)
 			switch {
 			case expr.IsArray(srcc.Type):
-				code, err = transformArray(expr.AsArray(srcc.Type), expr.AsArray(tgtc.Type), srcVar, tgtVar, false, ta)
+				// Go service types do not use pointer-to-slice fields.
+				// Protobuf messages also do not use pointer slices. Always false.
+				tgtPtr := false
+				// Source array fields are slices (nil when absent), not pointer-to-slice.
+				srcPtr := false
+				code, err = transformArray(expr.AsArray(srcc.Type), expr.AsArray(tgtc.Type), srcVar, tgtVar, false, tgtPtr, srcPtr, ta)
 			case expr.IsMap(srcc.Type):
-				code, err = transformMap(expr.AsMap(srcc.Type), expr.AsMap(tgtc.Type), srcVar, tgtVar, false, ta)
+				// Never use pointer-to-map on protobuf targets; default to false.
+				code, err = transformMap(expr.AsMap(srcc.Type), expr.AsMap(tgtc.Type), srcVar, tgtVar, false, false, ta)
 			case isUserType:
 				if ta.TargetCtx.IsInterface {
 					ref := ta.TargetCtx.Scope.Ref(target, ta.TargetCtx.Pkg(target))
@@ -331,7 +339,14 @@ func transformObject(source, target *expr.AttributeExpr, sourceVar, targetVar st
 			case expr.IsObject(srcc.Type):
 				code, err = transformAttribute(srcc, tgtc, srcVar, tgtVar, false, ta)
 			case expr.IsUnion(srcc.Type):
-				code, err = transformAttribute(srcc, tgtc, srcVar, tgtVar, false, ta)
+				if ta.proto {
+					// Go service union fields are interfaces (nil when absent); do not dereference.
+					code, err = transformUnionToProto(srcc, tgtc, srcVar, tgtVar, false, ta)
+				} else {
+					// Service unions in Goa are represented as interface types, not *interface.
+					// Always assign concrete values to the interface (no pointer-to-interface).
+					code, err = transformUnionFromProto(srcc, tgtc, srcVar, tgtVar, ta)
+				}
 			}
 		}
 		if err != nil {
@@ -352,7 +367,11 @@ func transformObject(source, target *expr.AttributeExpr, sourceVar, targetVar st
 			checkNil = isRef || marshalNonPrimitive
 		}
 		if code != "" && checkNil {
-			code = fmt.Sprintf("if %s != nil {\n\t%s}\n", srcVar, code)
+			cond := fmt.Sprintf("if %s != nil {\n", srcVar)
+			if expr.IsUnion(srcc.Type) && ta.proto {
+				cond = fmt.Sprintf("if %s.Kind() != \"\" {\n", srcVar)
+			}
+			code = fmt.Sprintf("%s\t%s}\n", cond, code)
 		}
 
 		// Default value handling. We need to handle default values if the target
@@ -370,6 +389,9 @@ func transformObject(source, target *expr.AttributeExpr, sourceVar, targetVar st
 					}
 					code += fmt.Sprintf("var tmp %s = %#v\n\t%s = &tmp\n", nativeTypeName, tdef, tgtVar)
 				} else {
+					// Use the actual default value for collections and other types.
+					// The %#v format will produce the correct Go literal representation
+					// of the default value, preserving type information.
 					code += fmt.Sprintf("%s = %#v\n", tgtVar, tdef)
 				}
 				code += "}\n"
@@ -405,7 +427,7 @@ func transformObject(source, target *expr.AttributeExpr, sourceVar, targetVar st
 // transformArray returns the code to transform source attribute of array
 // type to target attribute of array type. It returns an error if source
 // and target are not compatible for transformation.
-func transformArray(source, target *expr.Array, sourceVar, targetVar string, newVar bool, ta *transformAttrs) (string, error) {
+func transformArray(source, target *expr.Array, sourceVar, targetVar string, newVar bool, targetPtr bool, sourcePtr bool, ta *transformAttrs) (string, error) {
 	elem := target.ElemType
 	if ta.proto {
 		elem = unAlias(elem)
@@ -464,6 +486,8 @@ func transformArray(source, target *expr.Array, sourceVar, targetVar string, new
 		"TargetElem":     tgt,
 		"SourceVar":      sourceVar,
 		"TargetVar":      targetVar,
+		"TargetPtr":      targetPtr,
+		"SourcePtr":      sourcePtr,
 		"NewVar":         newVar,
 		"TransformAttrs": ta,
 		"LoopVar":        string(rune(105 + strings.Count(targetVar, "["))),
@@ -479,7 +503,7 @@ func transformArray(source, target *expr.Array, sourceVar, targetVar string, new
 // transformMap returns the code to transform source attribute of map
 // type to target attribute of map type. It returns an error if source
 // and target are not compatible for transformation.
-func transformMap(source, target *expr.Map, sourceVar, targetVar string, newVar bool, ta *transformAttrs) (string, error) {
+func transformMap(source, target *expr.Map, sourceVar, targetVar string, newVar bool, targetPtr bool, ta *transformAttrs) (string, error) {
 	// Target map key cannot be nested in protocol buffers. So no need to worry
 	// about unwrapping.
 	if err := codegen.IsCompatible(source.KeyType.Type, target.KeyType.Type, sourceVar+"[key]", targetVar+"[key]"); err != nil {
@@ -544,6 +568,7 @@ func transformMap(source, target *expr.Map, sourceVar, targetVar string, newVar 
 		"TargetElem":     tgt,
 		"SourceVar":      sourceVar,
 		"TargetVar":      targetVar,
+		"TargetPtr":      targetPtr,
 		"NewVar":         newVar,
 		"TransformAttrs": ta,
 		"LoopVar":        "",
@@ -559,30 +584,33 @@ func transformMap(source, target *expr.Map, sourceVar, targetVar string, newVar 
 }
 
 // transformUnionToProto returns the code to transform an attribute of type
-// union from Goa to protobuf. It returns an error if source and target are not
+// union from protobuf to Goa. It returns an error if source and target are not
 // compatible for transformation.
-func transformUnionToProto(source, target *expr.AttributeExpr, sourceVar, targetVar string, ta *transformAttrs) (string, error) {
+func transformUnionToProto(source, target *expr.AttributeExpr, sourceVar, targetVar string, sourcePtr bool, ta *transformAttrs) (string, error) {
 	if err := codegen.IsCompatible(source.Type, target.Type, sourceVar, targetVar); err != nil {
 		return "", err
 	}
 	tdata := transformUnionData(source, target, ta)
-	targetValueTypeNames := make([]string, len(tdata.TargetValues))
-	targetFieldNames := make([]string, len(tdata.TargetValues))
-	for i, v := range tdata.TargetValues {
-		fieldName := ta.TargetCtx.Scope.Field(v.Attribute, v.Name, true)
-		targetFieldNames[i] = fieldName
-		targetValueTypeNames[i] = ta.message + "_" + fieldName
+	cases := make([]map[string]any, 0, len(tdata.SourceValues))
+	for i, sv := range tdata.SourceValues {
+		tv := tdata.TargetValues[i]
+		fieldName := ta.TargetCtx.Scope.Field(tv.Attribute, tv.Name, true)
+		cases = append(cases, map[string]any{
+			"typeTag":           sv.Name,
+			"sourceFieldName":   codegen.Goify(sv.Name, true),
+			"sourceAttr":        sv.Attribute,
+			"targetAttr":        tv.Attribute,
+			"targetWrapperType": ta.message + "_" + fieldName,
+			"targetFieldName":   fieldName,
+		})
 	}
 
 	data := map[string]any{
-		"SourceVar":            sourceVar,
-		"TargetVar":            targetVar,
-		"SourceValueTypeRefs":  tdata.SourceValueTypeRefs,
-		"SourceValues":         tdata.SourceValues,
-		"TargetValues":         tdata.TargetValues,
-		"TransformAttrs":       ta,
-		"TargetValueTypeNames": targetValueTypeNames,
-		"TargetFieldNames":     targetFieldNames,
+		"SourceVar":      sourceVar,
+		"TargetVar":      targetVar,
+		"SourcePtr":      sourcePtr,
+		"TransformAttrs": ta,
+		"Cases":          cases,
 	}
 	var buf bytes.Buffer
 	if err := transformGoUnionToProtoT.Execute(&buf, data); err != nil {
@@ -592,28 +620,31 @@ func transformUnionToProto(source, target *expr.AttributeExpr, sourceVar, target
 }
 
 // transformUnionFromProto returns the code to transform an attribute of type
-// union from Goa to protobuf. It returns an error if source and target are not
+// union from protobuf to Goa. It returns an error if source and target are not
 // compatible for transformation.
 func transformUnionFromProto(source, target *expr.AttributeExpr, sourceVar, targetVar string, ta *transformAttrs) (string, error) {
 	if err := codegen.IsCompatible(source.Type, target.Type, sourceVar, targetVar); err != nil {
 		return "", err
 	}
 	tdata := transformUnionData(source, target, ta)
-	sourceFieldNames := make([]string, len(tdata.SourceValues))
-	for i, v := range tdata.SourceValues {
-		fieldName := ta.SourceCtx.Scope.Field(v.Attribute, v.Name, true)
-		sourceFieldNames[i] = fieldName
+	cases := make([]map[string]any, 0, len(tdata.SourceValues))
+	for i, sv := range tdata.SourceValues {
+		tv := tdata.TargetValues[i]
+		sourceFieldName := ta.SourceCtx.Scope.Field(sv.Attribute, sv.Name, true)
+		targetFieldName := codegen.Goify(tv.Name, true)
+		cases = append(cases, map[string]any{
+			"sourceValueTypeRef": tdata.SourceValueTypeRefs[i],
+			"sourceFieldName":    sourceFieldName,
+			"sourceAttr":         sv.Attribute,
+			"targetAttr":         tv.Attribute,
+			"targetFieldName":    targetFieldName,
+		})
 	}
-
 	data := map[string]any{
-		"SourceVar":           sourceVar,
-		"TargetVar":           targetVar,
-		"SourceValueTypeRefs": tdata.SourceValueTypeRefs,
-		"SourceFieldNames":    sourceFieldNames,
-		"SourceValues":        tdata.SourceValues,
-		"TargetValues":        tdata.TargetValues,
-		"TransformAttrs":      ta,
-		"TargetWrapperRefs":   tdata.TargetWrapperRefs,
+		"SourceVar":      sourceVar,
+		"TargetVar":      targetVar,
+		"TransformAttrs": ta,
+		"Cases":          cases,
 	}
 	var buf bytes.Buffer
 	if err := transformGoUnionFromProtoT.Execute(&buf, data); err != nil {
@@ -653,32 +684,22 @@ func convertType(src, tgt *expr.AttributeExpr, srcPtr bool, tgtPtr bool, srcVar 
 	return convertPrimitiveFromProto(src, tgt, srcPtr, tgtPtr, srcVar, ta)
 }
 
-const convertGoAnyToProtobufAnyFunc = `func() *anypb.Any {
+const convertGoAnyToProtobufValueFunc = `func() *structpb.Value {
+	// Convert Go any to protobuf Value directly
 	if %s == nil {
-		return nil
+		return structpb.NewNullValue()
 	}
-	// Convert Go any to protobuf Any using JSON marshaling
-	if jsonData, err := json.Marshal(%s); err == nil {
-		if data, err := anypb.New(&structpb.Value{
-			Kind: &structpb.Value_StringValue{StringValue: string(jsonData)},
-		}); err == nil {
-			return data
-		}
+	value, err := structpb.NewValue(%s)
+	if err != nil {
+		panic(fmt.Sprintf("failed to convert value to structpb.Value: %%v", err))
 	}
-	return nil
+	return value
 }()`
 
-const convertProtobufAnyToGoAnyFunc = `func() any {
+const convertProtobufValueToGoAnyFunc = `func() any {
+	// Convert protobuf Value to Go any directly
 	if %s != nil {
-		var value structpb.Value
-		if err := %s.UnmarshalTo(&value); err == nil {
-			if str := value.GetStringValue(); str != "" {
-				var result any
-				if err := json.Unmarshal([]byte(str), &result); err == nil {
-					return result
-				}
-			}
-		}
+		return %s.AsInterface()
 	}
 	return nil
 }()`
@@ -688,15 +709,15 @@ const convertProtobufAnyToGoAnyFunc = `func() any {
 // NOTE: For Int and UInt kinds, protocol buffer Go compiler generates
 // int32 and uint32 respectively whereas Goa generates int and uint.
 func convertPrimitiveToProto(_, tgt *expr.AttributeExpr, srcPtr, _ bool, srcVar string, _ *transformAttrs) string {
-	// Special handling for Any type conversion to google.protobuf.Any
+	// Special handling for Any type conversion to google.protobuf.Value
 	if tgt.Type.Kind() == expr.AnyKind {
 		if srcPtr {
 			srcVar = "*" + srcVar
 		}
 
-		return fmt.Sprintf(convertGoAnyToProtobufAnyFunc, srcVar, srcVar)
+		return fmt.Sprintf(convertGoAnyToProtobufValueFunc, srcVar, srcVar)
 	}
-	
+
 	tgtType := protoBufNativeGoTypeName(tgt.Type)
 	if srcPtr {
 		srcVar = "*" + srcVar
@@ -705,15 +726,15 @@ func convertPrimitiveToProto(_, tgt *expr.AttributeExpr, srcPtr, _ bool, srcVar 
 }
 
 func convertPrimitiveFromProto(_, tgt *expr.AttributeExpr, srcPtr, _ bool, srcVar string, ta *transformAttrs) string {
-	// Special handling for Any type conversion from google.protobuf.Any
+	// Special handling for Any type conversion from google.protobuf.Value
 	if tgt.Type.Kind() == expr.AnyKind {
 		if srcPtr {
 			srcVar = "*" + srcVar
 		}
 
-		return fmt.Sprintf(convertProtobufAnyToGoAnyFunc, srcVar, srcVar)
+		return fmt.Sprintf(convertProtobufValueToGoAnyFunc, srcVar, srcVar)
 	}
-	
+
 	tgtType, _ := codegen.GetMetaType(tgt)
 	if tgtType == "" {
 		tgtType = ta.TargetCtx.Scope.Ref(tgt, ta.TargetCtx.Pkg(tgt))

@@ -2,6 +2,7 @@ package service
 
 import (
 	"path/filepath"
+	"sort"
 
 	"goa.design/goa/v3/codegen"
 	"goa.design/goa/v3/expr"
@@ -21,12 +22,39 @@ func ViewsFile(_ string, service *expr.ServiceExpr, services *ServicesData) *cod
 	if len(svc.projectedTypes) == 0 {
 		return nil
 	}
+
+	// Collect union sum-type definitions for the views package.
+	//
+	// View-projected types cannot import the service package (which already
+	// depends on views), therefore unions must be generated in the views package
+	// when referenced by projected types.
+	unionByHash := make(map[string]*UnionTypeData)
+	seenUnions := make(map[string]struct{})
+	viewLoc := &codegen.Location{RelImportPath: "views"}
+	for _, t := range svc.projectedTypes {
+		collectViewUnionTypes(&expr.AttributeExpr{Type: t.Type}, svc.ViewScope, viewLoc, unionByHash, seenUnions)
+	}
+	unions := make([]*UnionTypeData, 0, len(unionByHash))
+	for _, u := range unionByHash {
+		unions = append(unions, u)
+	}
+	sort.Slice(unions, func(i, j int) bool {
+		return unions[i].Name < unions[j].Name
+	})
+
 	path := filepath.Join(codegen.Gendir, svc.PathName, "views", "view.go")
+	imports := []*codegen.ImportSpec{
+		codegen.GoaImport(""),
+		{Path: "unicode/utf8"},
+	}
+	if len(unions) > 0 {
+		imports = append(imports,
+			codegen.SimpleImport("encoding/json"),
+			codegen.SimpleImport("fmt"),
+		)
+	}
 	header := codegen.Header(service.Name+" views", "views",
-		[]*codegen.ImportSpec{
-			codegen.GoaImport(""),
-			{Path: "unicode/utf8"},
-		})
+		imports)
 	sections := []*codegen.SectionTemplate{header}
 
 	// type definitions
@@ -44,13 +72,11 @@ func ViewsFile(_ string, service *expr.ServiceExpr, services *ServicesData) *cod
 			Data:   t.UserTypeData,
 		})
 	}
-
-	// Union methods
-	for _, m := range svc.viewedUnionMethods {
+	for _, u := range unions {
 		sections = append(sections, &codegen.SectionTemplate{
-			Name:   "viewed-union-value-method",
-			Source: serviceTemplates.Read(unionValueMethodT),
-			Data:   m,
+			Name:   "projected-union-type",
+			Source: serviceTemplates.Read(unionTypeT),
+			Data:   u,
 		})
 	}
 

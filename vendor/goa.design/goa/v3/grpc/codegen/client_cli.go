@@ -61,7 +61,7 @@ func endpointParser(genpkg string, services *ServicesData, svr *expr.ServerExpr,
 		codegen.GoaNamedImport("grpc", "goagrpc"),
 		{Path: "google.golang.org/grpc", Name: "grpc"},
 	}
-	// Add anypb and structpb imports if Any type is used
+	// Add structpb import if Any type is used
 	needsAnyPb := false
 	for _, svc := range services.Root.API.GRPC.Services {
 		for _, e := range svc.GRPCEndpoints {
@@ -75,9 +75,7 @@ func endpointParser(genpkg string, services *ServicesData, svr *expr.ServerExpr,
 		}
 	}
 	if needsAnyPb {
-		specs = append(specs, 
-			&codegen.ImportSpec{Path: "encoding/json"},
-			&codegen.ImportSpec{Path: "google.golang.org/protobuf/types/known/anypb", Name: "anypb"},
+		specs = append(specs,
 			&codegen.ImportSpec{Path: "google.golang.org/protobuf/types/known/structpb", Name: "structpb"},
 		)
 	}
@@ -99,11 +97,12 @@ func endpointParser(genpkg string, services *ServicesData, svr *expr.ServerExpr,
 		}
 	}
 
-	sections := []*codegen.SectionTemplate{
+	sections := make([]*codegen.SectionTemplate, 0, 4+len(data))
+	sections = append(sections,
 		codegen.Header(title, "cli", specs),
 		cli.UsageCommands(data),
 		cli.UsageExamples(data),
-		{
+		&codegen.SectionTemplate{
 			Name:   "parse-endpoint-grpc",
 			Source: grpcTemplates.Read(grpcParseEndpointT),
 			Data: struct {
@@ -114,7 +113,7 @@ func endpointParser(genpkg string, services *ServicesData, svr *expr.ServerExpr,
 				data,
 			},
 		},
-	}
+	)
 	for _, cmd := range data {
 		sections = append(sections, cli.CommandUsage(cmd))
 	}
@@ -137,7 +136,7 @@ func payloadBuilders(genpkg string, svc *expr.GRPCServiceExpr, data *cli.Command
 		{Path: path.Join(genpkg, svcName), Name: sd.Service.PkgName},
 		{Path: path.Join(genpkg, "grpc", svcName, pbPkgName), Name: sd.PkgName},
 	}
-	// Add anypb and structpb imports if Any type is used
+	// Add structpb import if Any type is used
 	needsAnyPb := false
 	for _, e := range svc.GRPCEndpoints {
 		if hasAnyType(e.MethodExpr.Payload) || hasAnyType(e.MethodExpr.Result) {
@@ -146,8 +145,7 @@ func payloadBuilders(genpkg string, svc *expr.GRPCServiceExpr, data *cli.Command
 		}
 	}
 	if needsAnyPb {
-		specs = append(specs, 
-			&codegen.ImportSpec{Path: "google.golang.org/protobuf/types/known/anypb", Name: "anypb"},
+		specs = append(specs,
 			&codegen.ImportSpec{Path: "google.golang.org/protobuf/types/known/structpb", Name: "structpb"},
 		)
 	}

@@ -160,11 +160,6 @@ const (
 	CookieSameSiteDefault CookieSameSiteValue = "default"
 )
 
-// EvalName returns the name used by the DSL evaluation.
-func (*AttributeExpr) EvalName() string {
-	return "attribute"
-}
-
 // validated keeps track of validated attributes to handle cyclical definitions.
 var validated = make(map[*AttributeExpr]bool)
 
@@ -190,6 +185,51 @@ func TaggedAttribute(a *AttributeExpr, tag string) string {
 		}
 	}
 	return ""
+}
+
+// walkAttribute iterates over the given attribute, its bases and references
+// (if any). It calls the given function giving each attribute as it iterates.
+// It stops if the given attribute is not an object type or there is no more
+// attribute to iterate over or if the iterator function returned an error. It
+// is generally used in implementing the Validator interface since attribute
+// bases and references are only merged during Finalize. It is not a recursive
+// implementation.
+// Note: keep this function private as it does not walk through all types.
+// External packages should use the codegen.Walk function instead.
+func walkAttribute(att *AttributeExpr, it func(name string, a *AttributeExpr) error) error {
+	switch dt := att.Type.(type) {
+	case UserType:
+		if err := walkAttribute(dt.Attribute(), it); err != nil {
+			return err
+		}
+	case *Object:
+		for _, nat := range *dt {
+			if err := it(nat.Name, nat.Attribute); err != nil {
+				return err
+			}
+		}
+	}
+	for _, b := range att.Bases {
+		if err := walkAttribute(&AttributeExpr{Type: b}, it); err != nil {
+			return err
+		}
+	}
+	for _, r := range att.References {
+		if err := walkAttribute(&AttributeExpr{Type: r}, it); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// EvalName returns the name used by the DSL evaluation.
+func (a *AttributeExpr) EvalName() string {
+	if a != nil {
+		if n, ok := a.Meta["openapi:typename"]; ok && len(n) > 0 {
+			return fmt.Sprintf("type %#v", n[0])
+		}
+	}
+	return "attribute"
 }
 
 // Validate tests whether the attribute required fields exist.  Since attributes
@@ -237,11 +277,6 @@ func (a *AttributeExpr) Validate(ctx string, parent eval.Expression) *eval.Valid
 	} else if u := AsUnion(a.Type); u != nil {
 		for _, ut := range u.Values {
 			verr.Merge(ut.Attribute.Validate(ctx, parent))
-			if IsArray(ut.Attribute.Type) {
-				verr.Add(parent, "union type %s has array elements, not supported by gRPC", u.Name())
-			} else if IsMap(ut.Attribute.Type) {
-				verr.Add(parent, "union type %s has map elements, not supported by gRPC", u.Name())
-			}
 		}
 	}
 
@@ -276,6 +311,14 @@ func (a *AttributeExpr) validatePkgPath(pkgPath string, t DataType) *eval.Valida
 		verr.Merge(a.validatePkgPath(pkgPath, mp.KeyType.Type))
 		verr.Merge(a.validatePkgPath(pkgPath, mp.ElemType.Type))
 	}
+	if u := AsUnion(t); u != nil {
+		for _, nat := range u.Values {
+			if nat == nil || nat.Attribute == nil {
+				continue
+			}
+			verr.Merge(a.validatePkgPath(pkgPath, nat.Attribute.Type))
+		}
+	}
 	if ut, ok := t.(UserType); pkgPath != "" && ok {
 		// This check ensures we error if a sub-type has a different custom package type set
 		// or if two user types have different custom packages but share a sub-type (field that's a user type)
@@ -299,12 +342,8 @@ func (a *AttributeExpr) Finalize() {
 		return // Avoid infinite recursion.
 	}
 	a.finalized = true
-	var pkgPath string
 	if ut, ok := a.Type.(UserType); ok {
 		ut.Finalize()
-		if meta, ok := ut.Attribute().Meta["struct:pkg:path"]; ok {
-			pkgPath = meta[0]
-		}
 	}
 	switch {
 	case IsObject(a.Type):
@@ -329,20 +368,6 @@ func (a *AttributeExpr) Finalize() {
 		a.Bases = nil
 
 		for _, nat := range *AsObject(a.Type) {
-			if pkgPath != "" {
-				if u := AsUnion(nat.Attribute.Type); u != nil {
-					for _, nat := range u.Values {
-						// Union types are generated using a private interface
-						// to ensure that only types that are part of the enum
-						// can be assigned to the attribute. This means that the
-						// union values must be declared in the same package as
-						// the parent attribute.
-						if ut, ok := nat.Attribute.Type.(UserType); ok {
-							ut.Attribute().AddMeta("struct:pkg:path", pkgPath)
-						}
-					}
-				}
-			}
 			nat.Attribute.Finalize()
 		}
 	case IsUnion(a.Type):
@@ -458,11 +483,22 @@ func (a *AttributeExpr) IsPrimitivePointer(attName string, useDefault bool) bool
 	if att == nil {
 		return false
 	}
-	if IsPrimitive(att.Type) {
-		return att.Type.Kind() != BytesKind && att.Type.Kind() != AnyKind &&
-			!a.IsRequired(attName) && (!a.HasDefaultValue(attName) || !useDefault)
+	if !IsPrimitive(att.Type) {
+		return false
 	}
-	return false
+	t := unalias(att.Type)
+	return t.Kind() != BytesKind && t.Kind() != AnyKind &&
+		!a.IsRequired(attName) && (!a.HasDefaultValue(attName) || !useDefault)
+}
+
+func unalias(dt DataType) DataType {
+	if ut, ok := dt.(UserType); ok {
+		if _, ok := ut.Attribute().Type.(Primitive); ok {
+			return ut.Attribute().Type
+		}
+		return unalias(ut.Attribute().Type)
+	}
+	return dt
 }
 
 // HasTag returns true if the attribute is an object that has an attribute with
@@ -603,6 +639,11 @@ func (a *AttributeExpr) AddMeta(name string, vals ...string) {
 		a.Meta = make(MetaExpr)
 	}
 	a.Meta[name] = append(a.Meta[name], vals...)
+}
+
+// DeleteMeta removes the metadata entry with the given name.
+func (a *AttributeExpr) DeleteMeta(name string) {
+	delete(a.Meta, name)
 }
 
 // ExtractUserExamples return the examples defined in the design directly on the
@@ -987,37 +1028,4 @@ func (*AttributeExpr) IsSupportedValidationFormat(vf ValidationFormat) bool {
 		return true
 	}
 	return false
-}
-
-// walkAttribute iterates over the given attribute, its bases and references
-// (if any). It calls the given function giving each attribute as it iterates.
-// It stops if the given attribute is not an object type or there is no more
-// attribute to iterate over or if the iterator function returned an error. It
-// is generally used in implementing the Validator interface since attribute
-// bases and references are only merged during Finalize. It is not a recursive
-// implementation.
-func walkAttribute(att *AttributeExpr, it func(name string, a *AttributeExpr) error) error {
-	switch dt := att.Type.(type) {
-	case UserType:
-		if err := walkAttribute(dt.Attribute(), it); err != nil {
-			return err
-		}
-	case *Object:
-		for _, nat := range *dt {
-			if err := it(nat.Name, nat.Attribute); err != nil {
-				return err
-			}
-		}
-	}
-	for _, b := range att.Bases {
-		if err := walkAttribute(&AttributeExpr{Type: b}, it); err != nil {
-			return err
-		}
-	}
-	for _, r := range att.References {
-		if err := walkAttribute(&AttributeExpr{Type: r}, it); err != nil {
-			return err
-		}
-	}
-	return nil
 }
