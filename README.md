@@ -1,21 +1,24 @@
-# Tekton Hub 
+# Tekton Hub
 
-> [!IMPORTANT]
-> **The Tekon Hub project is deprecated.**
+> [!CAUTION]
+> **This repository is archived and no longer maintained.**
 >
-> - On January 7th, 2026, the public instance (https://hub.tekton.dev) will be shut-down.
-> - On February 7th, 2026, this repository will be archived (and thus frozen).
+> - The public Tekton Hub instance (hub.tekton.dev) was **shut down on January 8th, 2026**.
+> - This repository was **archived on February 10th, 2026** and is now read-only.
+>
+> **For self-hosted deployments:** If you need to deploy your own instance of Tekton Hub,
+> a maintained fork is available at [openshift-pipelines/hub](https://github.com/openshift-pipelines/hub)
+> which will continue to receive security fixes.
 
+---
 
 <p align="center">
 <img width="250" height="175" src="https://github.com/cdfoundation/artwork/blob/main/tekton/additional-artwork/tekton-hub/color/TektonHub_color.svg" alt="Tekton Hub logo"></img>
 </p>
 
-The Tekton hub is a web based platform for developers to discover,
+The Tekton Hub was a web based platform for developers to discover,
 share and contribute tasks and pipelines for Tekton. This repository
 contains the source code of this service.
-
-> Hub is launched as [hub.tekton.dev](https://hub.tekton.dev) :mega:
 
 ## Key features
 
